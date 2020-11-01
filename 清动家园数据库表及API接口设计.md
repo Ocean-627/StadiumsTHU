@@ -47,6 +47,7 @@ foredays     可提前预约天数
 
 ```js
 stadium      所属场馆
+floor        所在楼层
 type         场地类型(如羽毛球、网球)
 name         场地名称
 price        价格
@@ -113,7 +114,7 @@ information  评价信息
 
 ### **API设计**
 
-#### 普通用户相关接口（面向用户）
+#### 身份验证
 
 ##### 注册
 
@@ -121,11 +122,28 @@ information  评价信息
 Method: POST
 Request:
 URL: /api/logon
+Request:
 {
 	 'username': '',
 	 'password': '',
    'email': ''，
    'userId':''
+}
+Response:
+{
+	 'message': 'ok'
+}
+```
+
+##### 普通用户登录
+
+```js
+Method: POST
+URL: /api/user/login
+Request:
+{
+   'userId': '',
+   'password': ''
 }
 Response:
 {
@@ -143,27 +161,11 @@ Request:{
     'password': ''
 }
 Response:{
-  'id',1,
-  'username': '',
-  'token': '',
-  'workplace':''
+   'id',1,
+   'username': '',
+   'token': '',
+   'workplace':''
 }	
-```
-
-##### 普通用户登录
-
-```js
-Method: POST
-URL: /api/user/login
-Request:
-{
-   'userId': '',
-   'password': ''
-}
-Response:
-{
-	 'message': 'ok'
-}
 ```
 
 ##### 登出
@@ -183,22 +185,23 @@ Response:
 
 ```js
 Method: GET
-Response:
+URL: /api/user/stadium
+QueryParam:
 {
-    'message': 'success',
+    'message': 'ok',
      // stadims,一个列表,每个元素是一个字典，一个场馆的信息
     'stadiums':[
         {
             'id': '',
             'name': '',
             'information': '',
-            'foredays': '', 		         //可以考虑合并到infomartion
+            'foreDays': '', 		                      //可以考虑合并到infomartion
             'contact': '',
-            'opentime': '',
-            'closetime': '',
-            'openstate': '',
+            'openTime': '',
+            'closeTime': '',
+            'openState': '',
            	'openingHours': '',
-            'localtion': ''
+            'location': ''
         }
     ]
 }
@@ -207,10 +210,11 @@ Response:
 ##### 获取场地信息列表
 
 ```js
-Method: POST
-Request:
+Method: GET
+URL: /api/user/court
+QueryParam:
 {
-	'id': '',	// 场地id
+	  'id': ''	                     // 场馆id
 }
 Response:
 {
@@ -223,53 +227,25 @@ Response:
             'name': '',
             'price': '',
             'openingHours': '',
-            'openstate': '',
-            'localtion': ''		// 可选项，可以缺省
+            'openState': '',
+            'location': ''		    // 可选项，可以缺省
         }
     ]
 }
 ```
-
-##### **获取场地信息列表**
-
-```js
-Method:GET
-URL: /api/court
-QueryParam:{
-	'stadium': '',
-  'floor':'',
-  'date':'',
-}
-Response:{
-    'floor':'',
-    'number':'',
-    'duration':'01:00',
-    'court':[
-        {
-            'id':1,
-            'location':'',
-            'accessibleDuration':[('08:00','12:00'),('14:00','18:00')],
-            'reservedDuration':[(1,'08:00','9:00','清小软'),(6,'15:00','16:00','清大软')],
-            'notReservedDuration':[(2,'09:00','10:00'),(3,'10:00','11:00'),(4,'11:00','12:00'),(5,'14:00','15:00'),(7,'16:00','17:00'),(8,'17:00','18:00')],
-            'comment':''
-        }
-    ]
-}	
-```
-
-##### 
 
 ##### 获取预约时段信息
 
 ```js
-Method: POST
-Request:
+Method: GET
+URL: /api/user/reserve
+QueryParam:
 {
-	'id': '',	// 场地id
+	  'id': '',	                         // 场地id
 }
 Response:
 {
-    'message': 'success',
+    'message': 'ok',
     // durations,一个列表,每个元素是一个字典，包含该场地所有预约时段的信息
     'durations':[
         {
@@ -290,14 +266,15 @@ Response:
 
 ```js
 Method: POST
+URL: /api/user/reserve
 Request:
 {
-   'id': '',	    // 预约时段id
-   'userId':'',   // 申请者id
+    'id': '',	     // 预约时段id
+    'userId':'',   // 申请者id
 }
 Response:
 {
-   'message': 'ok',
+    'message': 'ok',
 }
 ```
 
@@ -305,9 +282,13 @@ Response:
 
 ```js
 Method: GET
+URL: /api/user/history
+QueryParam:
+{
+	  'userId': '',	                     // 用户id
+}
 Response:
 {
-    'message': 'ok',
     // history,一个列表,每个元素是一个字典，包含一次操作
     'history':[
         {
@@ -328,16 +309,6 @@ Response:
 其他操作相关：评价场地、付费。
 
 #### 管理员相关接口（面向管理员）
-
-##### **注销**
-
-```js
-Method:POST
-URL: /api/logout
-Response:{
-	'message': 'ok'
-}	
-```
 
 ##### **获取场地信息列表**
 
@@ -370,7 +341,7 @@ Response:{
 
 ```js
 Method:GET
-URL: /api/court/reserved
+URL: /api/manager/court/reserved
 QueryParam:{
 	'courtId': '',
     'durationId':''
@@ -392,7 +363,7 @@ Response:{
 
 ```js
 Method:POST
-URL: /api/change
+URL: /api/manager/change
 Request:{
     'id':1,
     'username':'管理员A',
@@ -411,7 +382,8 @@ Response:{
 ##### **（临时）添加场地占用**
 
 ```js
-Method:POST																URL: /api/event
+Method:POST
+URL: /api/manager/event
 Request:{
     'id':1,
     'username':'管理员A',
