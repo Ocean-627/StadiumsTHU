@@ -116,16 +116,35 @@ information  评价信息
 
 #### 身份验证
 
-##### 注册
+##### 普通用户注册
 
 ```js
 Method: POST
 Request:
-URL: /api/logon
+URL: /api/user/logon
 Request:
 {
-	 'username': '',
-	 'password': '',
+   'username': '',
+   'password': '',
+   'email': ''，
+   'userId':''
+}
+Response:
+{
+	 'message': 'ok'
+}
+```
+
+**管理员注册**
+
+```js
+Method: POST
+Request:
+URL: /api/manager/logon
+Request:
+{
+   'username': '',
+   'password': '',
    'email': ''，
    'userId':''
 }

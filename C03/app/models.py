@@ -7,8 +7,8 @@ class User(models.Model):
     username = models.CharField(max_length=32)
     password = models.CharField(max_length=32)
     userId = models.IntegerField()
+    email = models.EmailField()
     loginToken = models.CharField(max_length=100, null=True)
-    email = models.EmailField(null=True)
     phone = models.IntegerField(null=True)
     # TODO:加入未读通知列表和违规次数
 
