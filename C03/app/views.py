@@ -7,4 +7,3 @@ from django.http import JsonResponse
 def test(request):
     if request.method == 'POST':
         return JsonResponse({'test': 'just for test'})
-
