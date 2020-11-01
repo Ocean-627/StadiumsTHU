@@ -1,0 +1,12 @@
+C03/venv/*
+C03/app/__pycache__/*
+C03/C03/__pycache__/*
+C03/app/.DS_Store
+C03/.DS_Store
+C03/C03/.DS_Store
+.DS_Store
+C03/__pycache__/*
+C03/app/user/__pycache__/*
+C03/app/manager/__pycache__/*
+C03/app/migrations/__pycache__/*
+C03/.idea/*
