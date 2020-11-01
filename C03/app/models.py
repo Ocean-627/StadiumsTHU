@@ -32,8 +32,8 @@ class Stadium(models.Model):
     openingHours = models.CharField(max_length=50)
     # TODO:开放时间和关闭时间可以设置为DateField
     openTime = models.CharField(max_length=32)
-    closeTime = models.TimeField(max_length=32)
-    contact = models.IntegerField(null=True)
+    closeTime = models.CharField(max_length=32)
+    contact = models.CharField(max_length=32, null=True)
     openState = models.BooleanField()
     foreDays = models.IntegerField()
     # TODO:加入位置
@@ -46,7 +46,7 @@ class Court(models.Model):
     name = models.CharField(max_length=32, null=True)
     price = models.IntegerField()
     openingHours = models.CharField(max_length=50)
-    close = models.BooleanField()
+    openState = models.BooleanField()
     # TODO:加入位置,临时关闭时间
 
 
@@ -57,7 +57,7 @@ class Duration(models.Model):
     date = models.CharField(max_length=10)
     startTime = models.CharField(max_length=10)
     endTime = models.CharField(max_length=10)
-    close = models.BooleanField()
+    openState = models.BooleanField()
     accessible = models.BooleanField()
 
 
