@@ -18,10 +18,10 @@ class Manager(models.Model):
     username = models.CharField(max_length=32)
     password = models.CharField(max_length=32)
     userId = models.IntegerField()
-    workPlace = models.CharField(max_length=32)
-    workPlaceId = models.IntegerField()
+    email = models.EmailField()
+    workPlace = models.CharField(max_length=32, null=True)
+    workPlaceId = models.IntegerField(null=True)
     loginToken = models.CharField(max_length=100)
-    email = models.EmailField(null=True)
     # TODO:加入未读通知列表
 
 
