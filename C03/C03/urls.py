@@ -20,6 +20,13 @@ from app import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('test/', views.test),
-    path('api/user/logon/', views.userLogon),
-    path('api/manager/logon/', views.managerLogon),
+    # TODO:使用多级路由重构
+    # API for user
+    path('api/user/logon/', views.user_logon),
+    path('api/user/login/', views.user_login),
+    path('api/user/logout/', views.user_logout),
+    # API for manager
+    path('api/manager/logon/', views.manager_logon),
+    path('api/manager/login/', views.manager_login),
+    path('api/manager/logout/', views.manager_logout),
 ]
