@@ -15,18 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import include
 from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('test/', views.test),
-    # TODO:使用多级路由重构
-    # API for user
-    path('api/user/logon/', views.user_logon),
-    path('api/user/login/', views.user_login),
-    path('api/user/logout/', views.user_logout),
-    # API for manager
-    path('api/manager/logon/', views.manager_logon),
-    path('api/manager/login/', views.manager_login),
-    path('api/manager/logout/', views.manager_logout),
+    # Urls for user
+    path(r'api/user/', include('app.user.urls')),
+    # Urls for manager
+    path(r'api/manager/', include('app.manager.urls')),
 ]
