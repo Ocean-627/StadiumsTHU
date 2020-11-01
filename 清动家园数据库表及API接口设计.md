@@ -238,7 +238,7 @@ Response:
 
 ```js
 Method: GET
-URL: /api/user/reserve
+URL: /api/user/court/reserve
 QueryParam:
 {
 	  'id': '',	                         // 场地id
@@ -314,7 +314,7 @@ Response:
 
 ```js
 Method:GET
-URL: /api/court
+URL: /api/manager/court
 QueryParam:{
 	'workplace': '',
     'floor':'',
@@ -341,7 +341,7 @@ Response:{
 
 ```js
 Method:GET
-URL: /api/manager/court/reserved
+URL: /api/manager/court/reserve
 QueryParam:{
 	'courtId': '',
     'durationId':''
@@ -403,7 +403,8 @@ Response:{
 ##### **查看用户列表**
 
 ```js
-Method:GET															URL: /api/users
+Method:GET
+URL: /api/manager/users
 QueryParam:{
     'id':1,
     'username':'管理员A',
@@ -423,7 +424,8 @@ Response:{
 ##### **获取历史操作列表**
 
 ```js
-Method:GET																URL: /api/operations
+Method:GET
+URL: /api/manager/history
 QueryParam:{
     'id':1,
     'username':'管理员A',
@@ -445,7 +447,8 @@ Response:{
 ##### **查看修改场地预订时间详情**
 
 ```js
-Method:GET																URL: /api/change
+Method:GET
+URL: /api/manager/change
 QueryParam:{
     'id':2,
     'userId':2018013396,
@@ -463,7 +466,8 @@ Response:{
 ##### **查看添加临时占用事件详情**
 
 ```js
-Method:GET																URL: /api/event
+Method:GET
+URL: /api/manager/event
 QueryParam:{
     'id':2,
     'userId':2018013396,
@@ -482,7 +486,8 @@ Response:{
 ##### **撤销操作请求**
 
 ```js
-Method:POST																URL: /api/revoke
+Method:POST
+URL: /api/manager/revoke
 QueryParam:{
     'id':2,
     'userId':2018013396,
