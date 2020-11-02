@@ -67,11 +67,15 @@ class ReserveEvent(models.Model):
     stadiumName = models.CharField(max_length=32)
     courtId = models.IntegerField()
     courtName = models.CharField(max_length=32, null=True)
-    result = models.BooleanField()
+    result = models.IntegerField()
+    userId = models.IntegerField()
+    # result = -1 申请失败
+    # result = 0 申请中
+    # result = 1 申请成功
     startTime = models.CharField(max_length=50)
     endTime = models.CharField(max_length=50)
-    payment = models.BooleanField()
-    cancel = models.BooleanField()
-    checked = models.BooleanField()
-    leave = models.BooleanField()
+    payment = models.BooleanField(null=True)
+    cancel = models.BooleanField(null=True)
+    checked = models.BooleanField(null=True)
+    leave = models.BooleanField(null=True)
     # TODO:完善事件信息

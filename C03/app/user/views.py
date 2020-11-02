@@ -19,7 +19,6 @@ def logon(request):
     return JsonResponse({'message': 'ok'})
 
 
-
 def login(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Requires POST'})
@@ -38,7 +37,7 @@ def login(request):
         loginToken = hashlib.sha1(userId.encode('utf-8')).hexdigest()
         userInfo.loginToken = loginToken
         userInfo.save()
-        resp = JsonResponse({'message': 'ok'})
+        resp = JsonResponse({'message': 'ok', 'id': userInfo.id})
         # 设置Cookie
         resp.set_cookie('loginToken', loginToken)
         return resp
@@ -79,7 +78,50 @@ def get_courts(request):
     if not id:
         return JsonResponse({'error': 'Requires id of stadium'})
     # TODO:使用Json格式传输
+    # TODO:检查参数
     id = int(id)
     courts = Court.objects.filter(stadiumId=id)
     courts = json(courts)
     return JsonResponse({'message': 'ok', 'courts': courts})
+
+
+def get_durations(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Requires GET'})
+    if 'loginToken' not in request.COOKIES:
+        return JsonResponse({'error': 'Not yet logged in'})
+    id = request.GET.get('id', '')
+    if not id:
+        return JsonResponse({'error': 'Requires id of court'})
+    # TODO:检查参数
+    id = int(id)
+    durations = Duration.objects.filter(courtId=id)
+    durations = json(durations)
+    return JsonResponse({'message': 'ok', 'durations': durations})
+
+
+def reserve(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Requires POST'})
+    if 'loginToken' not in request.COOKIES:
+        return JsonResponse({'error': 'Not yet logged in'})
+    # 时段id和用户id
+    durationId = request.POST.get('durationId', '')
+    userId = request.POST.get('userId', '')
+    if not durationId or not userId:
+        return JsonResponse({'error': 'Incomplete information'})
+    duration = Duration.objects.filter(id=durationId)
+    if not duration.count():
+        return JsonResponse({'error': 'Invalid duration id'})
+    duration = duration[0]
+    stadiumId = duration.stadiumId
+    stadiumName = Stadium.objects.get(id=stadiumId).name
+    courtId = duration.courtId
+    courtName = Court.objects.get(id=courtId).name
+    # 创建事件
+    reserveevent = ReserveEvent(stadiumId=stadiumId, stadiumName=stadiumName, courtId=courtId, courtName=courtName,
+                                userId=userId, startTime=duration.startTime, endTime=duration.endTime, result=0)
+    reserveevent.save()
+    # TODO:不允许预定场地多次
+    # TODO:更多信息
+    return JsonResponse({'message': 'ok'})

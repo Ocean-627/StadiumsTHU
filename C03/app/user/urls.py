@@ -11,4 +11,6 @@ urlpatterns = [
     path('logout/', views.logout),
     path('stadium/', views.get_stadiums),
     path('court/', views.get_courts),
+    path('court/reserve/', views.get_durations),
+    path('reserve/', views.reserve),
 ]

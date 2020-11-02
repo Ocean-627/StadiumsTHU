@@ -166,7 +166,8 @@ Request:
 }
 Response:
 {
-	 'message': 'ok'
+	 'message': 'ok',
+     'id': ''		// 用户ID
 }
 ```
 
@@ -288,7 +289,7 @@ Method: POST
 URL: /api/user/reserve
 Request:
 {
-    'id': '',	     // 预约时段id
+    'durationId': '',	     // 预约时段id
     'userId':'',   // 申请者id
 }
 Response:
