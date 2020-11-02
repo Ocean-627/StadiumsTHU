@@ -36,6 +36,7 @@ class Stadium(models.Model):
     contact = models.CharField(max_length=32, null=True)
     openState = models.BooleanField()
     foreDays = models.IntegerField()
+    duration = models.CharField(max_length=32, null=True)
     # TODO:加入位置
 
 
@@ -78,4 +79,12 @@ class ReserveEvent(models.Model):
     cancel = models.BooleanField(null=True)
     checked = models.BooleanField(null=True)
     leave = models.BooleanField(null=True)
+    # TODO:完善事件信息
+
+
+class ChangeDuration(models.Model):
+    # （永久）修改预约时段事件
+    stadiumId = models.IntegerField()
+    openingHours = models.CharField(max_length=300)
+    date = models.CharField(max_length=32)
     # TODO:完善事件信息
