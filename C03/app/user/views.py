@@ -82,6 +82,7 @@ def get_courts(request):
     id = int(id)
     try:
         stadium = Stadium.objects.get(id=id).name
+        # TODO:应该使用id查询而不是名字
         courts = Court.objects.filter(stadium=stadium)
         courts = json(courts)
         return JsonResponse({'message': 'ok', 'courts': courts})
