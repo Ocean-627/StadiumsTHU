@@ -80,11 +80,6 @@ def get_courts(request):
         return JsonResponse({'error': 'Requires id of stadium'})
     # TODO:使用Json格式传输
     id = int(id)
-    try:
-        stadium = Stadium.objects.get(id=id).name
-        # TODO:应该使用id查询而不是名字
-        courts = Court.objects.filter(stadium=stadium)
-        courts = json(courts)
-        return JsonResponse({'message': 'ok', 'courts': courts})
-    except Stadium.DoesNotExist:
-        return JsonResponse({'error': 'Stadium id does not exist'})
+    courts = Court.objects.filter(stadiumId=id)
+    courts = json(courts)
+    return JsonResponse({'message': 'ok', 'courts': courts})

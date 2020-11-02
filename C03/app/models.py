@@ -41,7 +41,7 @@ class Stadium(models.Model):
 
 class Court(models.Model):
     # 场地
-    stadium = models.CharField(max_length=32)
+    stadiumId = models.IntegerField()
     type = models.CharField(max_length=20)
     name = models.CharField(max_length=32, null=True)
     price = models.IntegerField()
@@ -52,8 +52,8 @@ class Court(models.Model):
 
 class Duration(models.Model):
     # 预约时段
-    stadium = models.CharField(max_length=32)
-    court = models.CharField(max_length=32, null=True)
+    stadiumId = models.IntegerField()
+    courtId = models.IntegerField()
     date = models.CharField(max_length=10)
     startTime = models.CharField(max_length=10)
     endTime = models.CharField(max_length=10)

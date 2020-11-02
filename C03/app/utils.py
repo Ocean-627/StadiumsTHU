@@ -29,24 +29,26 @@ stadiums = [
 def initStadium(stadium):
     # 创建场馆
     Stadium.objects.create(**stadium)
+    stadiumId = Stadium.objects.get(name=stadium['name']).id
     # 创建场地
     courtNum = 5
     for i in range(courtNum):
-        court = Court(stadium=stadium['name'], type='羽毛球', name='场地' + str(i), price=30,
+        court = Court(stadiumId=stadiumId, type='羽毛球', name='场地' + str(i), price=30,
                       openingHours=stadium['openingHours'], openState=stadium['openState'])
         court.save()
+        courtId = court.id
         # 创建时段
         openingHours = court.openingHours.split(',')
         t1, t2 = openingHours[0].split('-')
         t1, t2 = int(t1), int(t2)
         for t in range(t1, t2):
-            duration = Duration(stadium=court.stadium, court=court.name, date='11.1', startTime=str(t),
+            duration = Duration(stadiumId=stadiumId, courtId=courtId, date='11.1', startTime=str(t),
                                 endTime=str(t + 1), openState=True, accessible=True)
             duration.save()
         t1, t2 = openingHours[1].split('-')
         t1, t2 = int(t1), int(t2)
         for t in range(t1, t2):
-            duration = Duration(stadium=court.stadium, court=court.name, date='11.1', startTime=str(t),
+            duration = Duration(stadiumId=stadiumId, courtId=courtId, date='11.1', startTime=str(t),
                                 endTime=str(t + 1), openState=True, accessible=True)
             duration.save()
 
