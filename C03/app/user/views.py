@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from app.models import *
+from app.utils import *
 import hashlib
 
 
@@ -55,5 +56,34 @@ def logout(request):
     userInfo.loginToken = ''
     userInfo.save()
     resp = JsonResponse({'message': 'ok'})
-    resp.delete_cookie('loginToke')
+    resp.delete_cookie('loginToken')
     return resp
+
+
+def get_stadiums(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Requires GET'})
+    if 'loginToken' not in request.COOKIES:
+        return JsonResponse({'error': 'Not yet logged in'})
+    stadiums = Stadium.objects.all()
+    stadiums = json(stadiums)
+    return JsonResponse({'message': 'ok', 'stadiums': stadiums})
+
+
+def get_courts(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Requires GET'})
+    if 'loginToken' not in request.COOKIES:
+        return JsonResponse({'error': 'Not yet logged in'})
+    id = request.GET.get('id', '')
+    if not id:
+        return JsonResponse({'error': 'Requires id of stadium'})
+    # TODO:使用Json格式传输
+    id = int(id)
+    try:
+        stadium = Stadium.objects.get(id=id).name
+        courts = Court.objects.filter(stadium=stadium)
+        courts = json(courts)
+        return JsonResponse({'message': 'ok', 'courts': courts})
+    except Stadium.DoesNotExist:
+        return JsonResponse({'error': 'Stadium id does not exist'})

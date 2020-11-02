@@ -2,6 +2,7 @@
 In this file we implement helper functions
 """
 from app.models import *
+from django.forms.models import model_to_dict
 
 stadiums = [
     {'name': 'xxh的场馆',
@@ -51,6 +52,12 @@ def initStadium(stadium):
 
 
 def clearDatabase():
+    # 清空场馆相关信息
     Stadium.objects.all().delete()
     Court.objects.all().delete()
     Duration.objects.all().delete()
+
+
+def json(vec):
+    # 转化为json格式
+    return [model_to_dict(item) for item in vec]

@@ -54,5 +54,5 @@ def logout(request):
     managerInfo.loginToken = ''
     managerInfo.save()
     resp = JsonResponse({'message': 'ok'})
-    resp.delete_cookie('loginToke')
+    resp.delete_cookie('loginToken')
     return resp
