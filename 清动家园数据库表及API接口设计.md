@@ -41,6 +41,8 @@ openstate    是否开放
 openingHours 开放时间段划分情况
 location     位置信息            // 可能是存一个指向地图的url
 foredays     可提前预约天数
+// 新增
+duration     单次预订时常限制
 ```
 
 #### Court 场地
@@ -52,7 +54,7 @@ type         场地类型(如羽毛球、网球)
 name         场地名称
 price        价格
 openingHours 开放时间段划分情况
-durations    单次预订时常限制
+duration     单次预订时常限制
 location     位置信息
 close        是否临时关闭
 closeTime    临时关闭时间
@@ -68,6 +70,9 @@ startTime     开始时间
 endTime       结束时间
 cloes         是否临时关闭         // 高级需求
 accessible    是否已被预订
+// 新增
+reserver      预订者用户名
+reserverId    预订者学号
 ```
 
 #### **ChangeDuration （永久）修改预约时段事件**
@@ -75,6 +80,8 @@ accessible    是否已被预订
 ```js
 stadiumId    场馆ID
 openingHours 开放时间段划分情况     
+// 新增
+startDate    生效日期
 ```
 
 #### **AddEvent （临时）添加活动事件**
@@ -101,6 +108,8 @@ cancel       是否已取消
 repayment    是否已还款
 checked      是否已使用
 leave        是否已离开
+// 新增
+durationId   时段ID
 ```
 
 #### **Comment** 评价场地信息 （可留作后续迭代）
@@ -192,7 +201,7 @@ Response:{
 
 ```js
 Method: POST
-URL: /api/logout
+URL: /api/logout/
 Response:
 {
 	'message': 'ok'
@@ -336,13 +345,13 @@ Response:
 Method:GET
 URL: /api/manager/court
 QueryParam:{
-	'workplace': '',
-    'floor':'',
-    'date':'',
+	'workplace': '19',
+  'floor':'1',
+  'date':'2020-10-31',
 }
 Response:{
     'floor':'',
-    'number':'',
+    'number':'',// 该层场地总数
     'duration':'01:00',
     'court':[
         {
@@ -364,7 +373,7 @@ Method:GET
 URL: /api/manager/court/reserve
 QueryParam:{
 	'courtId': '',
-    'durationId':''
+  'durationId':''
 }
 Response:{
     'userId':'',
@@ -379,20 +388,21 @@ Response:{
 }	
 ```
 
-##### **（永久）修改场地预约时间**
+##### **（永久）修改场馆预约时间**  
 
 ```js
 Method:POST
 URL: /api/manager/change
 Request:{
-    'id':1,
+    // 该处应为场馆id，即stadiumId
+    'id':1,                                     
     'username':'管理员A',
-	'stadium': '紫荆乒羽馆',
+	  'stadium': '紫荆乒羽馆',
     'startDate':'2020-11-01',
     'duration':'02:00',
     'openTime':'09:00',
     'closeTime':'22:00',
-    'openHours':[(09:00,12:00),(13:00,17:00),(18:00,22:00)]
+    'openHours':'09:00-12:00 13:00-17:00 18:00-22:00'
 }
 Response:{
     'message':'ok',
