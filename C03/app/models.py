@@ -10,7 +10,7 @@ class User(models.Model):
     email = models.EmailField()
     loginToken = models.CharField(max_length=100, null=True)
     phone = models.IntegerField(null=True)
-    # TODO:加入未读通知列表和违规次数
+    # TODO:完善信息
 
 
 class Manager(models.Model):
@@ -22,7 +22,7 @@ class Manager(models.Model):
     workPlace = models.CharField(max_length=32, null=True)
     workPlaceId = models.IntegerField(null=True)
     loginToken = models.CharField(max_length=100)
-    # TODO:加入未读通知列表
+    # TODO:完善信息
 
 
 class Stadium(models.Model):
@@ -37,7 +37,7 @@ class Stadium(models.Model):
     openState = models.BooleanField()
     foreDays = models.IntegerField()
     schedule = models.CharField(max_length=32, null=True)
-    # TODO:加入位置
+    # TODO:完善信息
 
 
 class Court(models.Model):
@@ -48,7 +48,7 @@ class Court(models.Model):
     price = models.IntegerField()
     openingHours = models.CharField(max_length=50)
     openState = models.BooleanField()
-    # TODO:加入位置,临时关闭时间
+    # TODO:完善信息
 
 
 class Duration(models.Model):
@@ -76,8 +76,9 @@ class ReserveEvent(models.Model):
     stadiumName = models.CharField(max_length=32)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
     courtName = models.CharField(max_length=32, null=True)
-    result = models.CharField(max_length=2, choices=APPLY_RESULT, default=WAITING)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    duration = models.ForeignKey(Duration, on_delete=models.CASCADE)
+    result = models.CharField(max_length=2, choices=APPLY_RESULT, default=WAITING)
     startTime = models.CharField(max_length=50)
     endTime = models.CharField(max_length=50)
     payment = models.BooleanField(null=True, verbose_name='Whether user has payed')

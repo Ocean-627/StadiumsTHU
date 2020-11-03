@@ -16,7 +16,6 @@ def fake(request):
         return JsonResponse({'error': 'Requires POST'})
     # 清空此前的场馆信息
     clearDatabase()
-    # return JsonResponse({'message': 'ok'})
     # 创建场馆
     for info in stadiums:
         initStadium(info)

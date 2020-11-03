@@ -129,9 +129,28 @@ def reserve(request):
     court = duration.court
     courtName = court.name
     # 创建事件
+    curevents = user.reserveevent_set.filter(duration_id=durationId)
+    if curevents.count():
+        return JsonResponse({'error': 'Apply for that duration has been submitted. Please wait for result'})
     reserveevent = ReserveEvent(stadium=stadium, stadiumName=stadiumName, court=court, courtName=courtName,
-                                user=user, startTime=duration.startTime, endTime=duration.endTime, result='W')
+                                user=user, duration=duration, result='W', startTime=duration.startTime,
+                                endTime=duration.endTime)
     reserveevent.save()
-    # TODO:不允许预定场地多次
     # TODO:更多信息
     return JsonResponse({'message': 'ok'})
+
+
+def history(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Requires GET'})
+    if 'loginToken' not in request.COOKIES:
+        return JsonResponse({'error': 'Not yet logged in'})
+    userId = request.GET.get('userId', '')
+    if not userId:
+        return JsonResponse({'error': 'Incomplete information'})
+    user = User.objects.filter(id=userId)
+    if not user.count():
+        return JsonResponse({'error': 'User does not exist'})
+    user = user[0]
+    events = user.reserveevent_set.all()
+    return JsonResponse({'message': 'ok', 'history': json(events)})

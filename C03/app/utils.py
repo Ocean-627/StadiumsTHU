@@ -55,8 +55,6 @@ def initStadium(info):
 def clearDatabase():
     # 清空场馆相关信息
     Stadium.objects.all().delete()
-    Court.objects.all().delete()
-    Duration.objects.all().delete()
 
 
 def json(vec):
