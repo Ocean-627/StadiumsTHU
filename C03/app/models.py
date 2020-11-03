@@ -48,6 +48,7 @@ class Court(models.Model):
     price = models.IntegerField()
     openingHours = models.CharField(max_length=50)
     openState = models.BooleanField()
+    floor = models.IntegerField(null=True)
     # TODO:完善信息
 
 

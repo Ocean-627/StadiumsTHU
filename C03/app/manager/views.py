@@ -59,9 +59,12 @@ def logout(request):
     resp.delete_cookie('loginToken')
     return resp
 
+
 """
-    以下API未经过严格测试，请谨慎使用
+以下API未经过严格测试，请谨慎使用
 """
+
+
 def get_court(request):
     if request.method != 'GET':
         return JsonResponse({'error': 'Requires GET'})
@@ -71,8 +74,9 @@ def get_court(request):
     if not workplace or not floor or not date:
         return JsonResponse({'error': 'Incomplete information'})
     stadium = Stadium.objects.all().filter(id=int(workplace))[0]
-    courts = Court.objects.all()
-    courts = courts.filter(stadiumId=workplace)
+    courts = stadium.court_set.all()
+    # courts = Court.objects.all()
+    # courts = courts.filter(stadiumId=workplace)
     # TODO: 根据楼层筛选
     # courts = courts.filter(floor=floor)
     response = {}
