@@ -80,9 +80,12 @@ def get_courts(request):
     # TODO:使用Json格式传输
     # TODO:检查参数
     id = int(id)
-    courts = Court.objects.filter(stadiumId=id)
-    courts = json(courts)
-    return JsonResponse({'message': 'ok', 'courts': courts})
+    stadium = Stadium.objects.filter(id=id)
+    if not stadium.count():
+        return JsonResponse({'error': 'Stadium does not exist'})
+    stadium = stadium[0]
+    courts = stadium.court_set.all()
+    return JsonResponse({'message': 'ok', 'courts': json(courts)})
 
 
 def get_durations(request):
@@ -95,9 +98,12 @@ def get_durations(request):
         return JsonResponse({'error': 'Requires id of court'})
     # TODO:检查参数
     id = int(id)
-    durations = Duration.objects.filter(courtId=id)
-    durations = json(durations)
-    return JsonResponse({'message': 'ok', 'durations': durations})
+    court = Court.objects.filter(id=id)
+    if not court.count():
+        return JsonResponse({'error': 'Court does not exist'})
+    court = court[0]
+    durations = court.duration_set.all()
+    return JsonResponse({'message': 'ok', 'durations': json(durations)})
 
 
 def reserve(request):
@@ -114,13 +120,17 @@ def reserve(request):
     if not duration.count():
         return JsonResponse({'error': 'Invalid duration id'})
     duration = duration[0]
-    stadiumId = duration.stadiumId
-    stadiumName = Stadium.objects.get(id=stadiumId).name
-    courtId = duration.courtId
-    courtName = Court.objects.get(id=courtId).name
+    user = User.objects.filter(id=userId)
+    if not user.count():
+        return JsonResponse({'error': 'Invalid user id'})
+    user = user[0]
+    stadium = duration.stadium
+    stadiumName = stadium.name
+    court = duration.court
+    courtName = court.name
     # 创建事件
-    reserveevent = ReserveEvent(stadiumId=stadiumId, stadiumName=stadiumName, courtId=courtId, courtName=courtName,
-                                userId=userId, startTime=duration.startTime, endTime=duration.endTime, result=0)
+    reserveevent = ReserveEvent(stadium=stadium, stadiumName=stadiumName, court=court, courtName=courtName,
+                                user=user, startTime=duration.startTime, endTime=duration.endTime, result='W')
     reserveevent.save()
     # TODO:不允许预定场地多次
     # TODO:更多信息

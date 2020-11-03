@@ -18,7 +18,7 @@ def fake(request):
     clearDatabase()
     # return JsonResponse({'message': 'ok'})
     # 创建场馆
-    for stadium in stadiums:
-        initStadium(stadium)
+    for info in stadiums:
+        initStadium(info)
     return JsonResponse({'message': 'ok'})
 
