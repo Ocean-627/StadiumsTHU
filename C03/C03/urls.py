@@ -21,6 +21,7 @@ from app import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('test/', views.test),
+    path('fake/', views.fake),
     # Urls for user
     path(r'api/user/', include('app.user.urls')),
     # Urls for manager

@@ -6,26 +6,28 @@
 
 ```js
 username    用户名
-major       所在院系        // 可选
 password    密码
 userId      学号
-email       邮箱           // 可选
-phone       手机号         // 可选
+email       邮箱        
 loginToken  登录的令牌
+phone		手机号
+// 尚未加入
+major       所在院系        
 notice      未读通知列表
-violations  违规次数        // 高级需求
+violations  违规次数        
 ```
 
 #### Manager 场馆管理员
 
 ```js
 username    用户名
-workplace   所在场馆名称
-workplaceId 所在场馆编号
-email       邮箱          // 可选
 password    密码
 userId      工号
+email       邮箱
+workplace   所在场馆名称
+workplaceId 所在场馆编号
 loginToken  登录的令牌
+// 尚未加入
 notice      未读通知列表
 ```
 
@@ -34,27 +36,30 @@ notice      未读通知列表
 ```js
 name         场馆名称
 information  场馆信息
-contact      联系方式            // 可考虑与场馆信息合并
+openingHours 开放时间段划分情况
 openTime     开馆时间
 closeTime    闭馆时间
-openstate    是否开放
-openingHours 开放时间段划分情况
-location     位置信息            // 可能是存一个指向地图的url
+contact      联系方式            
+openstate    是否开放        
 foredays     可提前预约天数
+shedule      单次预订时常限制
+// 尚未加入
+location	 位置
 ```
 
 #### Court 场地
 
 ```js
 stadium      所属场馆
-floor        所在楼层
 type         场地类型(如羽毛球、网球)
 name         场地名称
 price        价格
 openingHours 开放时间段划分情况
-durations    单次预订时常限制
+openState	 开放状态
+// 尚未加入
+floor        所在楼层
+duration     单次预订时常限制
 location     位置信息
-close        是否临时关闭
 closeTime    临时关闭时间
 ```
 
@@ -62,12 +67,15 @@ closeTime    临时关闭时间
 
 ```js
 stadium       所属场馆
-name          场地名称
+court		  所属场地
 date          日期
 startTime     开始时间
 endTime       结束时间
-cloes         是否临时关闭         // 高级需求
-accessible    是否已被预订
+openState     开放状态
+accessible    是否可以预订
+// 尚未加入
+reserver      预订者用户名
+reserverId    预订者学号
 ```
 
 #### **ChangeDuration （永久）修改预约时段事件**
@@ -75,6 +83,8 @@ accessible    是否已被预订
 ```js
 stadiumId    场馆ID
 openingHours 开放时间段划分情况     
+// 新增
+startDate    生效日期
 ```
 
 #### **AddEvent （临时）添加活动事件**
@@ -88,14 +98,15 @@ date         事件日期
 #### **ReserveEvent 预订事件**
 
 ```js
-stadiumId    场馆ID
+stadium      对应场馆
 stadiumName  场馆名
-courtId      场地ID
+court        对应场地
 courtName    场地名
-userId       用户ID
+user         对应用户
+duration	 对应时段
 startTime    开始时间
 endTime      结束时间
-result       预约结果            // 针对填志愿和抽签需求
+result       预约结果
 payment      是否已付费
 cancel       是否已取消
 repayment    是否已还款
@@ -166,7 +177,8 @@ Request:
 }
 Response:
 {
-	 'message': 'ok'
+	 'message': 'ok',
+     'id': ''		// 用户ID
 }
 ```
 
@@ -191,7 +203,7 @@ Response:{
 
 ```js
 Method: POST
-URL: /api/logout
+URL: /api/logout/
 Response:
 {
 	'message': 'ok'
@@ -288,7 +300,7 @@ Method: POST
 URL: /api/user/reserve
 Request:
 {
-    'id': '',	     // 预约时段id
+    'durationId': '',	     // 预约时段id
     'userId':'',   // 申请者id
 }
 Response:
@@ -335,13 +347,13 @@ Response:
 Method:GET
 URL: /api/manager/court
 QueryParam:{
-	'workplace': '',
-    'floor':'',
-    'date':'',
+	'workplace': '19',
+  'floor':'1',
+  'date':'2020-10-31',
 }
 Response:{
     'floor':'',
-    'number':'',
+    'number':'',// 该层场地总数
     'duration':'01:00',
     'court':[
         {
@@ -363,7 +375,7 @@ Method:GET
 URL: /api/manager/court/reserve
 QueryParam:{
 	'courtId': '',
-    'durationId':''
+  'durationId':''
 }
 Response:{
     'userId':'',
@@ -378,20 +390,21 @@ Response:{
 }	
 ```
 
-##### **（永久）修改场地预约时间**
+##### **（永久）修改场馆预约时间**  
 
 ```js
 Method:POST
 URL: /api/manager/change
 Request:{
-    'id':1,
+    // 该处应为场馆id，即stadiumId
+    'id':1,                                     
     'username':'管理员A',
-	'stadium': '紫荆乒羽馆',
+	  'stadium': '紫荆乒羽馆',
     'startDate':'2020-11-01',
     'duration':'02:00',
     'openTime':'09:00',
     'closeTime':'22:00',
-    'openHours':[(09:00,12:00),(13:00,17:00),(18:00,22:00)]
+    'openHours':'09:00-12:00 13:00-17:00 18:00-22:00'
 }
 Response:{
     'message':'ok',

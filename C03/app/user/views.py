@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from app.models import *
+from app.utils import *
 import hashlib
 
 
@@ -16,7 +17,6 @@ def logon(request):
     user = User(username=username, password=password, email=email, userId=userId)
     user.save()
     return JsonResponse({'message': 'ok'})
-
 
 
 def login(request):
@@ -37,7 +37,7 @@ def login(request):
         loginToken = hashlib.sha1(userId.encode('utf-8')).hexdigest()
         userInfo.loginToken = loginToken
         userInfo.save()
-        resp = JsonResponse({'message': 'ok'})
+        resp = JsonResponse({'message': 'ok', 'id': userInfo.id})
         # 设置Cookie
         resp.set_cookie('loginToken', loginToken)
         return resp
@@ -55,5 +55,102 @@ def logout(request):
     userInfo.loginToken = ''
     userInfo.save()
     resp = JsonResponse({'message': 'ok'})
-    resp.delete_cookie('loginToke')
+    resp.delete_cookie('loginToken')
     return resp
+
+
+def get_stadiums(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Requires GET'})
+    if 'loginToken' not in request.COOKIES:
+        return JsonResponse({'error': 'Not yet logged in'})
+    stadiums = Stadium.objects.all()
+    stadiums = json(stadiums)
+    return JsonResponse({'message': 'ok', 'stadiums': stadiums})
+
+
+def get_courts(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Requires GET'})
+    if 'loginToken' not in request.COOKIES:
+        return JsonResponse({'error': 'Not yet logged in'})
+    id = request.GET.get('id', '')
+    if not id:
+        return JsonResponse({'error': 'Requires id of stadium'})
+    # TODO:使用Json格式传输
+    # TODO:检查参数
+    id = int(id)
+    stadium = Stadium.objects.filter(id=id)
+    if not stadium.count():
+        return JsonResponse({'error': 'Stadium does not exist'})
+    stadium = stadium[0]
+    courts = stadium.court_set.all()
+    return JsonResponse({'message': 'ok', 'courts': json(courts)})
+
+
+def get_durations(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Requires GET'})
+    if 'loginToken' not in request.COOKIES:
+        return JsonResponse({'error': 'Not yet logged in'})
+    id = request.GET.get('id', '')
+    if not id:
+        return JsonResponse({'error': 'Requires id of court'})
+    # TODO:检查参数
+    id = int(id)
+    court = Court.objects.filter(id=id)
+    if not court.count():
+        return JsonResponse({'error': 'Court does not exist'})
+    court = court[0]
+    durations = court.duration_set.all()
+    return JsonResponse({'message': 'ok', 'durations': json(durations)})
+
+
+def reserve(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Requires POST'})
+    if 'loginToken' not in request.COOKIES:
+        return JsonResponse({'error': 'Not yet logged in'})
+    # 时段id和用户id
+    durationId = request.POST.get('durationId', '')
+    userId = request.POST.get('userId', '')
+    if not durationId or not userId:
+        return JsonResponse({'error': 'Incomplete information'})
+    duration = Duration.objects.filter(id=durationId)
+    if not duration.count():
+        return JsonResponse({'error': 'Invalid duration id'})
+    duration = duration[0]
+    user = User.objects.filter(id=userId)
+    if not user.count():
+        return JsonResponse({'error': 'Invalid user id'})
+    user = user[0]
+    stadium = duration.stadium
+    stadiumName = stadium.name
+    court = duration.court
+    courtName = court.name
+    # 创建事件
+    curevents = user.reserveevent_set.filter(duration_id=durationId)
+    if curevents.count():
+        return JsonResponse({'error': 'Apply for that duration has been submitted. Please wait for result'})
+    reserveevent = ReserveEvent(stadium=stadium, stadiumName=stadiumName, court=court, courtName=courtName,
+                                user=user, duration=duration, result='W', startTime=duration.startTime,
+                                endTime=duration.endTime)
+    reserveevent.save()
+    # TODO:更多信息
+    return JsonResponse({'message': 'ok'})
+
+
+def history(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Requires GET'})
+    if 'loginToken' not in request.COOKIES:
+        return JsonResponse({'error': 'Not yet logged in'})
+    userId = request.GET.get('userId', '')
+    if not userId:
+        return JsonResponse({'error': 'Incomplete information'})
+    user = User.objects.filter(id=userId)
+    if not user.count():
+        return JsonResponse({'error': 'User does not exist'})
+    user = user[0]
+    events = user.reserveevent_set.all()
+    return JsonResponse({'message': 'ok', 'history': json(events)})
