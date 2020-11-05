@@ -3,6 +3,7 @@ from datetime import datetime
 from app.models import *
 import datetime
 import hashlib
+from app.utils import *
 
 
 def logon(request):
@@ -75,35 +76,16 @@ def get_court(request):
         return JsonResponse({'error': 'Incomplete information'})
     stadium = Stadium.objects.all().filter(id=int(workplace))[0]
     courts = stadium.court_set.all()
-    # courts = Court.objects.all()
-    # courts = courts.filter(stadiumId=workplace)
-    # TODO: 根据楼层筛选
-    # courts = courts.filter(floor=floor)
-    response = {}
-    response["floor"] = floor
-    response["number"] = len(courts)
-    response["duration"] = stadium.duration
-    returnCourts = []
-    durations = Duration.objects.all()
-    for item in courts:
-        myCourt = {}
-        myCourt["id"] = item.id
-        myCourt["location"] = ""
-        myCourt['accessibleDuration'] = []
-        openHours = item.openingHours.split()
-        for openHour in openHours:
-            time = openHour.split('-')
-            myCourt['accessibleDuration'].append((time[0], time[1]))
-        reservedDurations = durations.filter(courtId=item.id, accessible=False)
-        myCourt['reservedDuration'] = []
-
-        # TODO: duration中添加预订者及预订者学号等信息
+    courts = courts.filter(floor=floor)
+    response = {"floor": floor, "number": len(courts), "duration": stadium.duration}
+    for court in courts:
+        myCourt = {"id": court.id, "location": court.location, 'accessibleDuration': court.stadium.openingHours,
+                   'reservedDuration': [], 'notReservedDuration': []}
+        durations = court.duration_set.all()
+        reservedDurations = durations.filter(accessible=False)
         for duration in reservedDurations:
-            myCourt['reservedDuration'].append((duration.id, duration.startTime, duration.endTime))
-
-        notReservedDurations = durations.filter(courtId=item.id, accessible=False)
-        myCourt['notReservedDuration'] = []
-        # TODO: duration中添加预订者及预订者学号等信息
+            myCourt['reservedDuration'].append((duration.id, duration.startTime, duration.endTime, duration.user.username))
+        notReservedDurations = durations.filter(accessible=False)
         for duration in notReservedDurations:
             myCourt['notReservedDuration'].append((duration.id, duration.startTime, duration.endTime))
         myCourt["comment"] = []
@@ -117,21 +99,8 @@ def get_court_reserve(request):
     durationId = request.GET.get('durationId', '')
     if not courtId or not durationId:
         return JsonResponse({'error': 'Incomplete information'})
-    court = Court.objects.all().filter(id=int(courtId))[0]
-    duration = Duration.objects.all().filter(id=int(durationId))[0]
-    # TODO: ReserveEvent中添加预订时期Id
     event = ReserveEvent.objects.all().filter(durationId=int(durationId))[0]
-    response = {}
-    response["userId"] = event.userId
-    response["eventId"] = event.id
-    response["startTime"] = event.startTime
-    response["endTime"] = event.endTime
-    response["cancle"] = event.cancle
-    response["payment"] = event.checked
-    response["checked"] = event.checked
-    response["repayment"] = event.repayment
-    response["leave"] = event.leave
-    return JsonResponse(response)
+    return json(event)
 
 
 def change_duration(request):
@@ -154,26 +123,20 @@ def change_duration(request):
     myStadium.openTime = openTime
     myStadium.closeTime = closeTime
     myStadium.duration = duration
-    myCourts = Court.objects.all().filter(stadiumId=stadiumId)
-    for myCourt in myCourts:
-        myCourt.openingHours = openHours
-    myDurations = Duration.objects.all().filter(stadiumId=stadiumId)
+    myCourts = myStadium.court_set.all()
+    myDurations = myStadium.duration_set.all()
+
+    # 删除更改时间段后的不合法时间段，该时间段的date属性应不早于startDate
     for myDuration in myDurations:
-        target_time = myDuration.date
-        cur_time = datetime.now()
-        format_pattern = '%Y-%m-%d'
-        cur_time = cur_time.strftime(format_pattern)
-        difference = (datetime.strptime(target_time, format_pattern) - datetime.strptime(cur_time, format_pattern))
-        if difference.days >= 0:
+        if judgeDate(myDuration.date, startDate) >= 0:
             myDuration.delete()
-    target_time = startDate
-    cur_time = datetime.now()
-    format_pattern = '%Y-%m-%d'
-    cur_time = cur_time.strftime(format_pattern)
-    difference = (datetime.strptime(target_time, format_pattern) - datetime.strptime(cur_time, format_pattern))
-    if difference.days <= myStadium:
+
+    startDate = datetime.datetime.strptime(startDate, '%Y-%m-%d')
+    foreDays = judgeDate(calculateDate(datetime.now().strftime('%Y-%m-%d'), myStadium.foreDays), startDate)
+    if foreDays < 0:
         return JsonResponse({'message': 'ok'})
-    else:
+    for i in range(foreDays + 1):
+        date = (startDate+datetime.timedelta(days=+i)).strftime("%Y-%m-%d")
         openHours = openHours.split()
         for openHour in openHours:
             startTime, endTime = openHour.split('-')
@@ -187,17 +150,14 @@ def change_duration(request):
                 return JsonResponse({'error': 'can not make durations according to temp information'})
             else:
                 start = openHour.split('-')[0]
-                end = openHour.split('-')[1]
                 myTime = start
-                for i in range(int(totalSeconds//seconds)):
+                for k in range(int(totalSeconds // seconds)):
                     for j in range(len(myCourts)):
-                        # TODO: 添加时段并完善相关信息操作
                         duration = Duration()
                         duration.name = myCourts[j].name
                         duration.startTime = myTime
-                        myTime = datetime.datetime.strptime(myTime, "%H:%M") + datetime.timedelta(seconds)
+                        myTime = datetime.datetime.strptime(myTime, "%H:%M") + datetime.timedelta(seconds * (i + 1))
                         duration.endTime = myTime.strftime('%H:%M')
                         duration.save()
 
     return JsonResponse({'message': 'ok'})
-

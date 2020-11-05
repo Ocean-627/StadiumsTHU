@@ -3,6 +3,8 @@ In this file we implement helper functions
 """
 from app.models import *
 from django.forms.models import model_to_dict
+from datetime import datetime
+import datetime
 
 stadiums = [
     {'name': 'xxh的场馆',
@@ -60,3 +62,19 @@ def clearDatabase():
 def json(vec):
     # 转化为json格式
     return [model_to_dict(item) for item in vec]
+
+
+def judgeDate(A, B):
+    # 判断给定日期B是否严格在A日期之前
+    format_pattern = '%Y-%m-%d'
+    B = B.strftime(format_pattern)
+    difference = (datetime.strptime(A, format_pattern) - datetime.strptime(B, format_pattern))
+    return difference.days
+
+
+def calculateDate(A, B):
+    # 返回A日期B天之后的日期
+    dateTime_p = datetime.datetime.strptime(A, '%Y-%m-%d')
+    return (dateTime_p + datetime.timedelta(days=+B)).strftime("%Y-%m-%d")
+
+

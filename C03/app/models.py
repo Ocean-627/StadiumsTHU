@@ -46,9 +46,9 @@ class Court(models.Model):
     type = models.CharField(max_length=20)
     name = models.CharField(max_length=32, null=True)
     price = models.IntegerField()
-    openingHours = models.CharField(max_length=50)
     openState = models.BooleanField()
     floor = models.IntegerField(null=True)
+    location = models.CharField(max_length=100)
     # TODO:完善信息
 
 
@@ -61,6 +61,7 @@ class Duration(models.Model):
     endTime = models.CharField(max_length=10)
     openState = models.BooleanField()
     accessible = models.BooleanField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class ReserveEvent(models.Model):
