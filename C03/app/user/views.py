@@ -154,3 +154,25 @@ def history(request):
     user = user[0]
     events = user.reserveevent_set.all()
     return JsonResponse({'message': 'ok', 'history': json(events)})
+
+
+def cancel(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Requires POST'})
+    if 'loginToken' not in request.COOKIES:
+        return JsonResponse({'error': 'Not yet logged in'})
+    userId = request.POST.get('userId', '')
+    durationId = request.POST.get('durationId', '')
+    if not userId or not durationId:
+        return JsonResponse({'error': 'Incomplete information'})
+    user = User.objects.filter(id=userId)
+    if not user.count():
+        return JsonResponse({'error': 'User does not exist'})
+    user = user[0]
+    event = user.reserveevent_set.filter(duration_id=durationId)
+    if not event.count():
+        return JsonResponse({'error': 'Reserve does not exist'})
+    event = event[0]
+    event.delete()
+    return JsonResponse({'message': 'ok'})
+

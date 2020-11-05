@@ -14,4 +14,5 @@ urlpatterns = [
     path('court/reserve/', views.get_durations),
     path('reserve/', views.reserve),
     path('history/', views.history),
+    path('cancel/', views.cancel),
 ]
