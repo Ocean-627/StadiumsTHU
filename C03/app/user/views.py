@@ -27,6 +27,7 @@ def login(request):
     try:
         userInfo = User.objects.get(userId=userId)
         # 已经登录
+        # TODO:登陆时应该向微信服务器发送请求，获取Session
         if 'loginToken' in request.COOKIES:
             loginToken = request.COOKIES['loginToken']
             if loginToken == userInfo.loginToken:
@@ -48,6 +49,7 @@ def login(request):
 def logout(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Requires POST'})
+    # TODO:其他所有时刻都是检查一个Token是否在Header或者Body中
     if 'loginToken' not in request.COOKIES:
         return JsonResponse({'error': 'Not yet logged in'})
     loginToken = request.COOKIES['loginToken']
