@@ -87,6 +87,7 @@ openingHours 开放时间段划分情况
 // 新增
 startDate    生效日期
 time         操作时间
+type         操作类型            // 默认修改预约时段事件类型为1
 ```
 
 #### **AddEvent （临时）添加活动事件**
@@ -98,6 +99,7 @@ startTime    开始时间
 endTime      结束时间
 date         活动日期
 time         操作时间
+type         操作类型            // 默认修改预约时段事件类型为2
 ```
 
 #### **ReserveEvent 预订事件**
@@ -459,18 +461,17 @@ Response:{
 Method:GET
 URL: /api/manager/history
 QueryParam:{
-    'id':1,
-    'username':'管理员A',
-    'page':1,
-    'size':10
+    'managerId':1,
+    // 暂不支持
+    //'page':1,
+    //'size':10
 }
 Response:{
     'operations':[
         {
             'time':'2020-10-30T15:00:00+08:00',
             'type':1,
-            'name':'修改场地预订时间'，
-            'id':2
+            'eventId':2
         }
     ]
 }	
@@ -480,11 +481,9 @@ Response:{
 
 ```js
 Method:GET
-URL: /api/manager/change
+URL: /api/manager/get/change
 QueryParam:{
-    'id':2,
-    'userId':2018013396,
-    'username':'管理员A'
+    'eventId':2,
 }
 Response:{
     'startDate':'2020-11-01',
@@ -499,11 +498,9 @@ Response:{
 
 ```js
 Method:GET
-URL: /api/manager/event
+URL: /api/manager/get/event
 QueryParam:{
-    'id':2,
-    'userId':2018013396,
-    'username':'管理员A'
+  	'eventId':2,
 }
 Response:{
     'court':'九号场地',
@@ -515,7 +512,7 @@ Response:{
 }	
 ```
 
-##### **撤销操作请求**
+##### **撤销操作请求**(未做)
 
 ```js
 Method:POST

@@ -1,8 +1,6 @@
 from django.http import JsonResponse
-from datetime import datetime
-from app.models import *
-import datetime
 import hashlib
+from operator import itemgetter
 from app.utils import *
 
 
@@ -143,12 +141,8 @@ def change_duration(request):
         openHours = openHours.split()
         for openHour in openHours:
             startTime, endTime = openHour.split('-')
-            time_1_struct = datetime.strptime(startTime, "%H:%M")
-            time_2_struct = datetime.strptime(endTime, "%H:%M")
-            totalSeconds = (time_2_struct - time_1_struct).seconds / 60
-            time_1_struct = datetime.strptime("00:00", "%H:%M")
-            time_2_struct = datetime.strptime(duration, "%H:%M")
-            seconds = (time_2_struct - time_1_struct).seconds / 60
+            totalSeconds = judgeTime(endTime, startTime) / 60
+            seconds = judgeTime(duration, "00:00") / 60
             if totalSeconds % seconds != 0:
                 return JsonResponse({'error': 'can not make durations according to temp information'})
             else:
@@ -156,12 +150,9 @@ def change_duration(request):
                 myTime = start
                 for k in range(int(totalSeconds // seconds)):
                     for j in range(len(myCourts)):
-                        duration = Duration()
-                        duration.name = myCourts[j].name
-                        duration.startTime = myTime
+                        duration = Duration(name=myCourts[j].name, startTime=myTime, date=date)
                         myTime = datetime.datetime.strptime(myTime, "%H:%M") + datetime.timedelta(seconds * (i + 1))
                         duration.endTime = myTime.strftime('%H:%M')
-                        duration.date = date
                         duration.save()
 
     return JsonResponse({'message': 'ok'})
@@ -206,6 +197,58 @@ def get_users(request):
         return JsonResponse({'error': 'Incomplete information'})
     users = User.objects.all()
     return JsonResponse({'users': json(users)})
+
+# def get_history(request):
+#     if request.method != 'GET':
+#         return JsonResponse({'error': 'Requires GET'})
+#     managerId = request.GET.get('managerId', '')
+#     manager = Manager.objects.all().filter(id=int(managerId))[0]
+#     if not managerId:
+#         return JsonResponse({'error': 'Incomplete information'})
+#     changeDuration = manager.changeduration_set.all()
+#     addEvent = manager.addevent_set.all()
+#     return JsonResponse({'changeDuration': json(changeDuration), 'addEvent': json(addEvent)})
+
+
+def get_history(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Requires GET'})
+    managerId = request.GET.get('managerId', '')
+    manager = Manager.objects.all().filter(id=int(managerId))[0]
+    if not managerId:
+        return JsonResponse({'error': 'Incomplete information'})
+    changeDuration = manager.changeduration_set.all()
+    addEvent = manager.addevent_set.all()
+    myOperations = changeDuration + addEvent
+    myOperations.sort(key=itemgetter('date'), reverse=True)
+    operations = []
+    for operation in myOperations:
+        operations.append({'time': operation.time, 'type': operation.type, 'eventId': operation.id})
+    return JsonResponse({'operations': operations})
+
+
+def get_detail_change(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Requires GET'})
+    eventId = request.GET.get('eventId', '')
+    if not eventId:
+        return JsonResponse({'error': 'Incomplete information'})
+    changeDuration = ChangeDuration.objects.all().filter(id=int(eventId))[0]
+    return json(changeDuration)
+
+
+def get_detail_event(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Requires GET'})
+    eventId = request.GET.get('eventId', '')
+    if not eventId:
+        return JsonResponse({'error': 'Incomplete information'})
+    addEvent = AddEvent.objects.all().filter(id=int(eventId))[0]
+    return json(addEvent)
+
+
+def revoke(request):
+    return JsonResponse({'message': 'ok'})
 
 
 

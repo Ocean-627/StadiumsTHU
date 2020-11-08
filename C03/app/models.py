@@ -98,6 +98,7 @@ class ChangeDuration(models.Model):
     openingHours = models.CharField(max_length=300)
     date = models.CharField(max_length=32)
     time = models.DateTimeField(default=timezone.now)
+    type = models.IntegerField(default=1)
     # TODO:完善事件信息
 
 
@@ -109,4 +110,5 @@ class AddEvent(models.Model):
     endTime = models.CharField(max_length=32)
     data = models.CharField(max_length=32)
     time = models.DateTimeField(default=timezone.now)
+    type = models.IntegerField(default=2)
     # TODO:完善事件信息
