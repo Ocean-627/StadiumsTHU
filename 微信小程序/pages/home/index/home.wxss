@@ -1,0 +1,198 @@
+/* pages/home/home.wxss */
+page {
+  background-color: #F2F2F2;
+}
+
+.container {
+  width: 100%;
+  padding:0;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+.menu-wrapper {
+  width:100%;
+  height:100rpx;
+  background-color: #760280;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+/*搜索框以及扫一扫*/
+.searchbar {
+  width:75%;
+  height:70%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.menu-wrapper .searchbar image {
+  margin-left:5%;
+  width:40rpx;
+  height:40rpx;
+}
+
+.menu-wrapper .searchbar text {
+  margin-left:5%;
+  color:#e6e6e6;
+  font-size: medium;
+}
+
+.menu-wrapper .scan-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.menu-wrapper .scan-btn image {
+  width:50rpx;
+  height:50rpx;
+}
+
+/*滚动图片*/
+.gallery {
+  width:100%;
+  height:350rpx;
+}
+
+.gallery swiper {
+  background-color: white;
+  height:100%;
+}
+
+.gallery swiper-item {
+  text-align: center;
+}
+
+.gallery image {
+  height:100%;
+  justify-self: center;
+}
+
+/*排序*/
+.sort-container {
+  width:100%;
+  height:75rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  background-color: white;
+  box-shadow: 0 1px 5px 0 rgba(0,0,0,.2);
+}
+
+.sort-container .sort-wrapper {
+  width:25%;
+  height:100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.sort-container .clicksort {
+  background-color: rgba(100,100,100,.2);
+}
+
+.sort-container .sort-wrapper text{
+  color:#9B9B9B;
+  font-size: smaller;
+}
+
+.sort-container .sort-wrapper .sort {
+  color:black;
+  font-weight: 500;
+}
+
+/*场馆列表*/
+.stadium-list {
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stadium-item {
+  width:95%;
+  margin-top: 10rpx;
+  background-color: white;
+  border-radius: 20rpx;
+  box-shadow: 1px 1px 6px 0 rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.stadium-item .pic-wrapper {
+  width:30%;
+}
+
+.stadium-item .pic-wrapper image {
+  width: 200rpx;
+  height: 150rpx;
+  border-radius: 20rpx;
+  margin-top:10rpx;
+  margin-left:10rpx;
+}
+
+.stadium-item .info-wrapper {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.stadium-item .info-wrapper #name {
+  font-weight: 800;
+  font-size:30rpx;
+}
+
+.stadium-item .info-wrapper #star {
+  color:#FF8300;
+  font-size: 20rpx;
+}
+
+.stadium-item .info-wrapper #comment, #position, #distance {
+  color:rgba(0,0,0,0.4);
+  font-size: 20rpx;
+}
+
+.stadium-item .info-wrapper #opentime {
+  color:#FF8300;
+  font-size: 25rpx;
+}
+
+.stadium-item .info-wrapper #sports {
+  color:rgba(0,0,0,0.4);
+  font-size: 25rpx;
+}
+
+.stadium-item .comment-wrapper {
+  margin-top: -10rpx;
+}
+
+.stadium-item .pos-wrapper {
+  margin-top:-10rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.stadium-item .comment-wrapper image {
+  width:20rpx;
+  height:20rpx;
+}
+
+.stadium-item .favor-wrapper {
+  width:10%;
+}
+
+.stadium-item .favor-wrapper image {
+  width:70rpx;
+  height: 70rpx;
+}
+

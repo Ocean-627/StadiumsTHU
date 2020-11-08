@@ -1,0 +1,61 @@
+{
+  "pages": [
+    "pages/message/message",
+    "pages/stadium/comment/comment",
+    "pages/stadium/info/stadium",
+    "pages/login/login",
+    "pages/home/index/home",
+    "pages/map/map",
+    "pages/user/index/user",
+    "pages/user/info/info",
+    "pages/logs/logs",
+    "pages/home/result/result"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "清动家园",
+    "navigationBarTextStyle": "black"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "您的位置信息将用于确认场馆与您的距离"
+    }
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "useExtendedLib": {
+    "weui": true
+  },
+  "tabBar": {
+    "color": "#a9b7b7",
+    "selectedColor": "#A300B2",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/index/home",
+        "iconPath": "res/imgs/tab_home.png",
+        "selectedIconPath": "res/imgs/tab_home_select.png",
+        "text": "主页"
+      },
+      {
+        "pagePath": "pages/message/message",
+        "iconPath": "res/imgs/tab_msg.png",
+        "selectedIconPath": "res/imgs/tab_msg_select.png",
+        "text": "消息"
+      },
+      {
+        "pagePath": "pages/map/map",
+        "iconPath": "res/imgs/tab_map.png",
+        "selectedIconPath": "res/imgs/tab_map_select.png",
+        "text": "地图"
+      },
+      {
+        "pagePath": "pages/user/index/user",
+        "iconPath": "res/imgs/tab_user.png",
+        "selectedIconPath": "res/imgs/tab_user_select.png",
+        "text": "用户"
+      }
+    ]
+  }
+}

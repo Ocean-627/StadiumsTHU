@@ -1,0 +1,58 @@
+/* pages/user/info/info.wxss */
+page {
+  background-color: #F2F2F2;
+}
+
+.container {
+  width: 100%;
+  padding:0;
+  height:80%;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-menu {
+  position: relative;
+  width:100%;
+  height:20%;
+  background-color: white;
+}
+
+.info-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.info-menu .pic-wrapper {
+  margin-left:auto;
+  margin-right: auto;
+  margin-top:3%;
+}
+
+.info-menu .btn-wrapper {
+  margin-left: 58%;
+  margin-top:-5%;
+}
+
+.info-menu .pic-wrapper image {
+  height: 150rpx;
+  width: 150rpx;
+  border-radius: 50%;
+}
+
+.info-menu .btn-wrapper image {
+  height:40rpx;
+  width:40rpx;
+}
+
+.info-menu #nickname {
+  margin-left:auto;
+  margin-right: auto;
+  color:#999999;
+  font-size:large;
+}
+
+.hmenu {
+  width:100%;
+}

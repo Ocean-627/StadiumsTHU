@@ -1,0 +1,32 @@
+<!--pages/stadium/comment/comment.wxml-->
+<mp-navigation-bar show="{{true}}" back="{{true}}" color="#000" background="#f8f8f8" title="评论">
+</mp-navigation-bar>
+<view class="container">
+  <view class="info-wrapper">
+    <image src="{{stadium_img}}"></image>
+    <view class="stadium-info">
+      <text id="stadium-name">{{stadium_name}}</text>
+      <text id="court-name">{{court_name}}</text>
+    </view>
+  </view>
+  <view class="score-wrapper">
+    <view class="left-deco"></view>
+    <text>打分</text>
+    <view class="right-deco"></view>
+  </view>
+  <view class="star-wrapper">
+    <view class="star" wx:for="{{star_list}}" data-index="{{index}}" bindtap="change_score">
+      <image src="/res/imgs/info_isfavor.png" wx:if="{{item === 1}}"></image>
+      <image src="/res/imgs/info_notfavor.png" wx:else></image>
+    </view>
+  </view>
+  <view class="input-wrapper">
+    <textarea placeholder="说点什么。。"></textarea>
+  </view>
+  <view class="pic-chooser">
+    <mp-uploader bindfail="uploadError" bindsuccess="uploadSuccess" select="{{selectFile}}" upload="{{uplaodFile}}" files="{{files}}" max-count="5" title="图片上传" tips="图片上传提示"></mp-uploader>
+  </view>
+  <view class="upload-wrapper">
+    <button id="upload-btn">发表</button>
+  </view>
+</view>

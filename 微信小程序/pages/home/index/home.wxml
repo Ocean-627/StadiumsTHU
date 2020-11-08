@@ -1,0 +1,69 @@
+<!--pages/home/home.wxml-->
+<mp-navigation-bar show="{{true}}" back="{{false}}" color="#000" background="#f8f8f8">
+  <text slot="left">主页</text>
+</mp-navigation-bar>
+<view class="container">
+  <!--搜索框-->
+  <view class="menu-wrapper">
+      <view class="searchbar">
+        <image src="/res/imgs/home_search.png"></image>
+        <text>搜索</text>
+      </view>
+      <view class="scan-btn">
+        <image src="/res/imgs/home_scan.png"></image>
+      </view>
+  </view>
+  <!--滚动图片-->
+  <view class="gallery">
+    <swiper indicator-dots="true"
+        autoplay="true" interval="2000" duration="500">
+        <view wx:for="{{gallery_imgs}}" wx:key="*this">
+          <swiper-item>
+            <image class="gallery-img" src="{{item}}" mode="heightFix"></image>
+          </swiper-item>
+        </view>
+      </swiper>
+  </view>
+  <!--排序框-->
+  <view class="sort-container">
+    <view class="sort-wrapper" bindtap="sortdis" hover-class="clicksort">
+      <text class="{{sort_dis}}">距离</text>
+    </view>
+    <view class="sort-wrapper" bindtap="sortscore" hover-class="clicksort">
+      <text class="{{sort_score}}">评分</text>
+    </view>
+    <view class="sort-wrapper" bindtap="sortpop" hover-class="clicksort">
+      <text class="{{sort_pop}}">人气</text>
+    </view>
+  </view>
+  <!--场馆信息-->
+  <view class="stadium-list">
+    <view class="stadium-item" wx:for="{{stadium_list}}">
+      <view class="pic-wrapper">
+        <image src="{{item.imgpath}}" bindtap="jmpInfo" data-stadiumId="{{index}}"></image>
+      </view>
+      <view class="info-wrapper">
+        <text id="name" bindtap="jmpInfo" data-stadiumId="{{index}}">{{item.name}}</text>
+        <view class="comment-wrapper">
+          <image src="/res/imgs/info_star.png"></image>
+          <text id="star">{{item.star}}分</text>
+          <text id="comment">  |  {{item.comment_num}}条评论</text>
+        </view>
+        <view class="pos-wrapper">
+          <view class="pos">
+            <text id="position">{{item.pos}}</text>
+          </view>
+          <view class="dis">
+            <text id="distance">距离我{{item.dis}}m</text>
+          </view>
+        </view>
+        <text id="opentime">开放时间:{{item.opentime}}</text>
+        <text id="sports">运动项目:{{item.sports}}</text>
+      </view>
+      <view class="favor-wrapper">
+        <image src="/res/imgs/info_isfavor.png" wx:if="{{item.favor}}" bindtap="addFavor"></image>
+        <image src="/res/imgs/info_notfavor.png" wx:else bindtap="removeFavor"></image>
+      </view>
+    </view>
+  </view>
+</view>

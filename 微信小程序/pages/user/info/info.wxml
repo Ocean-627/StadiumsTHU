@@ -1,0 +1,36 @@
+<!--pages/user/info/info.wxml-->
+<mp-navigation-bar show="{{true}}" color="#000" background="#f8f8f8" title="个人资料" back="{{true}}"></mp-navigation-bar>
+<view class="container">
+  <!--头像栏-->
+  <view class="info-menu">
+    <view class="info-wrapper">
+      <view class="pic-wrapper">
+        <image src="{{pic_path}}"></image>
+      </view>
+      <view class="btn-wrapper" bindtap="choosePic">
+        <image src="/res/imgs/camera.png"></image>
+      </view>
+      <text id="nickname">一个大萝卜</text>
+    </view>
+  </view>
+  <!--信息栏-->
+  <view class="hmenu">
+    <mp-cells>
+      <mp-cell value="姓名" footer="胡浩宇"></mp-cell>
+      <mp-cell value="学号(工号)" footer="2017013594"></mp-cell>
+      <mp-cell link value="昵称" footer="{{usr_nickname}}" bindtap="showNicDialog"></mp-cell>
+      <mp-cell link value="手机号" footer="{{usr_phone}}" bindtap="showPhDialog"></mp-cell>
+      <mp-cell link value="邮箱" footer="{{usr_mail}}" bindtap="showMailDialog"></mp-cell>
+    </mp-cells>
+  </view>
+  <!--弹窗-->
+  <mp-dialog title="修改昵称" show="{{dia_mNickname}}" bindbuttontap="modifyNickname" buttons="{{buttons}}">
+    <input value="{{input_nickname}}" bindinput="mInput"/>
+  </mp-dialog>
+  <mp-dialog title="修改手机号" show="{{dia_mPhone}}" bindbuttontap="modifyPhone" buttons="{{buttons}}">
+    <input value="{{input_phone}}" bindinput="mInput"/>
+  </mp-dialog>
+  <mp-dialog title="修改邮箱" show="{{dia_mMail}}" bindbuttontap="modifyMail" buttons="{{buttons}}">
+    <input value="{{input_mail}}" bindinput="mInput"/>
+  </mp-dialog>
+</view>

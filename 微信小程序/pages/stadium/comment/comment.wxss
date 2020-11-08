@@ -1,0 +1,108 @@
+/* pages/stadium/comment/comment.wxss */
+page {
+  background-color: #F2F2F2;
+}
+
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  width: 96%;
+  margin-top: 30rpx;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-color:white;
+  border-radius: 20rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-wrapper {
+  width:100%;
+  margin-top:20px;
+  display: flex;
+  flex-direction: row;
+}
+
+.info-wrapper image {
+  height: 60px;
+  width: 60px;
+  border-radius: 10%;
+  margin-left:5%;
+}
+
+.info-wrapper .stadium-info {
+  margin-left:5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.stadium-info #stadium-name {
+  font-weight: 600;
+  font-size:20px;
+}
+
+.stadium-info #court-name {
+  color:rgba(0,0,0,0.4);
+  font-size:18px;
+}
+
+.score-wrapper {
+  width:100%;
+  margin-top:20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.score-wrapper .left-deco, .score-wrapper .right-deco {
+  width:30%;
+  height:1px;
+  background-color: rgba(0,0,0,0.2);
+}
+
+.score-wrapper text {
+  font-size: 15px;
+  margin-left:3%;
+  margin-right: 3%;
+}
+
+.star-wrapper {
+  width:100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.star-wrapper image {
+  height: 30px;
+  width: 30px;
+}
+
+.input-wrapper {
+  box-sizing: border-box;
+  padding:5px 10px;
+  width:90%;
+  border:solid 1px rgba(0,0,0,0.2);
+}
+
+.pic-chooser {
+  width:90%;
+  margin-top:10px;
+  border-top:solid 1px rgba(0,0,0,0.2);
+  border-bottom:solid 1px rgba(0,0,0,0.2);
+  padding-bottom: 10px;
+}
+
+.upload-wrapper {
+  margin-top:20px;
+  margin-bottom: 20px;
+}
+
+.upload-wrapper #upload-btn {
+  background-color: #A300B2;
+  color:white;
+}

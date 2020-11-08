@@ -1,0 +1,218 @@
+/* pages/stadium/stadium.wxss */
+
+page {
+  background-color: #F2F2F2;
+}
+
+.container {
+  width: 100%;
+  padding:0;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+/*滚动图片*/
+.gallery {
+  width:100%;
+  height:350rpx;
+}
+
+.gallery swiper {
+  background-color: white;
+  height:100%;
+}
+
+.gallery swiper-item {
+  text-align: center;
+}
+
+.gallery image {
+  height:100%;
+  justify-self: center;
+}
+
+/*各项信息*/
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top:10rpx;
+}
+
+.info .basic-info, .intro, .notice, .review {
+  background-color: white;
+  box-sizing: border-box;
+  width:100%;
+  padding-left: 2%;
+  padding-right: 2%;
+  margin-top:20rpx;
+  border-radius: 20rpx;
+}
+
+.info .basic-info .name {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.info .basic-info #name {
+  font-weight: 800;
+  font-size:23px;
+}
+
+.info .basic-info #opentime {
+  color:#FF8300;
+  font-size: 14px;
+}
+
+.info .basic-info .pos {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top:4%;
+}
+
+.info .pos image {
+  height:13px;
+  width:13px;
+  margin-left:auto;
+}
+
+.info .pos text {
+  color:rgba(0,0,0,0.4);
+  font-size: 10px;
+}
+
+.info .head-wrapper {
+  width:100%;
+  border-bottom: solid 1px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.info .head-wrapper image {
+  height:14px;
+  width: 14px;
+  margin-right:2%;
+}
+
+.info .head {
+  color:black;
+  font-size:18px;
+}
+
+.info #introduction, #note {
+  color:rgb(100,100,100);
+  font-size:15px;
+}
+
+/*评论区*/
+.info .review #more {
+  color:rgba(0,0,0,0.4);
+  font-size: 10px;
+  margin-left: auto;
+}
+
+.comment-list {
+  width:100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-item {
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  border-bottom: solid 1px rgba(0, 0, 0, 0.2);
+}
+
+.comment-item .reviewer-info, .img-list {
+  width:100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.comment-item .reviewer-info .reviewer_header {
+  width:40px;
+  height:40px;
+  border-radius: 50%;
+}
+
+.comment-item .reviewer-info .middle {
+  width:60%;
+  display: flex;
+  flex-direction: column;
+  margin-left:2%;
+}
+
+.reviewer-info .middle #name {
+  font-size:14px;
+}
+
+.reviewer-info .middle #date {
+  font-size:10px;
+  color:rgba(0, 0, 0, 0.4);
+}
+
+.comment-item .reviewer-info .score {
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.reviewer-info .score image {
+  height:14px;
+  width:14px;
+}
+
+.reviewer-info .score text {
+  color:#FF8300;
+  font-size: 10px;
+  margin-left:2px;
+}
+
+.comment-item .img-item image{
+  height:120rpx;
+  width: 120rpx;
+  margin-right:2px;
+}
+
+.comment-list image {
+  height: 30px;
+  width: 30px;
+}
+
+/*预定按钮*/
+.jmp-book {
+  width:100%;
+  height:40px;
+  margin-top:10%;
+  margin-bottom: 10%;
+}
+
+.jmp-book .input-left, .jmp-book .input-right {
+  position: absolute;
+  width:40px;
+  height:40px;
+  border-radius: 50%;
+  background-color: #A300B2;
+}
+
+.jmp-book .input-right {
+  margin-left:calc(90% - 20px);
+}
+
+.jmp-book .input-left {
+  margin-left:calc(10% - 20px);
+}
+
+.jmp-book #jmpbook-btn {
+  width:80%;
+  background-color: #A300B2;
+  color:white;
+}

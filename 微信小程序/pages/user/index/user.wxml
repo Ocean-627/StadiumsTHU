@@ -1,0 +1,55 @@
+<!--pages/user/user.wxml-->
+<mp-navigation-bar show="{{true}}" back="{{false}}" color="#000" background="#f8f8f8">
+  <text slot="left">我的</text>
+</mp-navigation-bar>
+<view class="container">
+  <!--信息栏-->
+  <view class="info-menu">
+    <view class="info-wrapper">
+      <view class="pic-wrapper">
+        <image src="/res/imgs/menu_my.png"></image>
+      </view>
+      <view class="text_wrapper">
+        <text id="nickname">昵称</text>
+        <text id="userId">学号</text>
+      </view>
+    </view>
+    <view class="menu-wrapper">
+      <view class="choice-wrapper">
+        <image src="/res/imgs/menu_favor.png"></image>
+        <text>收藏</text>
+      </view>
+      <view class="choice-wrapper">
+        <image src="/res/imgs/menu_my.png"></image>
+        <text>我的预约</text>
+      </view>
+      <view class="choice-wrapper">
+        <image src="/res/imgs/menu_history.png"></image>
+        <text>浏览历史</text>
+      </view>
+      <view class="choice-wrapper">
+        <image src="/res/imgs/menu_calindar.png"></image>
+        <text>预约记录</text>
+      </view>
+    </view>
+  </view>
+  <!--菜单-->
+  <view class="hmenu">
+    <view class="hmenu-wrapper">
+      <view class="choice-wrapper" bindtap="jmpinfo">
+        <text>个人资料</text>
+        <image src="/res/imgs/hmenu_info.png"></image>
+      </view>
+      <view class="choice-wrapper">
+        <text>常见问题</text>
+        <image src="/res/imgs/hmenu_question.png"></image>
+      </view>
+      <view class="choice-wrapper">
+        <text>设置</text>
+        <image src="/res/imgs/hmenu_settings.png"></image>
+      </view>
+    </view>
+    <!--退出按钮-->
+    <button id="exit">退出登录</button>
+  </view>
+</view>

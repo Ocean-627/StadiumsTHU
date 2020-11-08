@@ -1,0 +1,38 @@
+<!--pages/map/map.wxml-->
+<mp-navigation-bar back="{{false}}">
+  <text slot="left">地图</text>
+</mp-navigation-bar>
+
+<view class="container">
+  <view class="search-wrapper">
+    <mp-searchbar 
+    bindselectresult="selectResult" 
+    search="{{search}}"
+    bindblur="show_map"
+    wx:if="{{!showmap}}" 
+    focus="true"
+    ></mp-searchbar>
+  </view>
+  <view class="map-wrapper" wx:if="{{showmap}}">
+    <map 
+    id="map" 
+    longitude="{{longitude}}" 
+    latitude="{{latitude}}" 
+    scale="{{scale}}"
+    markers="{{markers}}" 
+    polyline="{{polyline}}" 
+    show-location="true"
+    show-compass="true"
+    >
+      <view class="search-btn" hover-class="clickedBtn" bindtap="show_search">
+        <image src="/res/imgs/map_search.png"></image>
+      </view>
+      <view class="my-pos" hover-class="clickedBtn" bindtap="back_to_mypos">
+        <image src="/res/imgs/map_mypos.png"></image>
+      </view>
+    </map>
+  </view>
+  <view class="history_wrapper" wx:if="{{!showmap}}">
+
+  </view>
+</view>

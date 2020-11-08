@@ -1,0 +1,29 @@
+<!--pages/message/message.wxml-->
+<mp-navigation-bar show="{{true}}" back="{{false}}" color="#000" background="#f8f8f8">
+  <text slot="left">我的消息</text>
+</mp-navigation-bar>
+
+<view class="container">
+  <view class="notice">
+    <text id="count">您有{{not_read_num}}条未读消息</text>
+    <text id="mark-all" bindtap="mark_all">标为已读</text>
+  </view>
+  <view class="msg-list" wx:for="{{msg_list}}">
+    <view class="msg-item">
+      <view class="info">
+        <view class="img-wrapper">
+          <image id="icon" src="{{item.icon_path}}"></image>
+        </view>
+        <view class="title">
+          <text id="disc">{{item.discription}}</text>
+          <text id="date">{{item.date}}</text>
+        </view>
+        <image id="dot" src="/res/imgs/msg_reddot.png" wx:if="{{msg_read[index]}}"></image>
+      </view>
+      <view class="content">
+        <text id="plain-text">{{item.content}}</text>
+      </view>
+    </view>
+  </view>
+</view>
+

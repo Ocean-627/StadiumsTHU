@@ -1,0 +1,86 @@
+<!--pages/stadium/stadium.wxml-->
+<mp-navigation-bar show="{{true}}" back="{{true}}" color="#000" background="#f8f8f8" title="场馆详情">
+</mp-navigation-bar>
+<view class="container">
+  <!--滚动图片-->
+  <view class="gallery">
+    <swiper indicator-dots="true"
+        autoplay="true" interval="2000" duration="500">
+        <view wx:for="{{gallery_imgs}}" wx:key="*this">
+          <swiper-item>
+            <image class="gallery-img" src="{{item}}" mode="heightFix"></image>
+          </swiper-item>
+        </view>
+      </swiper>
+  </view>
+  <!--各项信息-->
+  <view class="info">
+    <view class="basic-info">
+      <view class="name">
+        <text id="name">综合体育馆</text>
+        <text id="opentime">开放时间</text>
+      </view>
+      <view class="pos">
+        <text id="pos">新民路</text>
+        <image src="/res/imgs/tab_map_select.png"></image>
+        <text id="dis">距离我xxxm</text>
+      </view>
+    </view>
+    <view class="intro">
+      <view class="head-wrapper">
+        <image src="/res/imgs/stadium_info.png"></image>
+        <text class="head">介绍</text>
+      </view>
+      <text id="introduction">
+        综合体育馆于2000年建成，为2001年第21届世界大学生运动会男篮比赛场馆，2008年为北京奥运会男篮和轮椅篮球...
+      </text>
+    </view>
+    <view class="notice">
+      <view class="head-wrapper">
+        <image src="/res/imgs/stadium_notice.png"></image>
+        <text class="head">场馆须知</text>
+      </view>
+      <text id="note">
+        1. 入场前需要出示学生卡或教职工证明
+        2. 爱惜运动器材
+        3. 每天17:30后禁止入场
+      </text>
+    </view>
+    <!--评论区-->
+    <view class="review">
+      <view class="head-wrapper">
+        <image src="/res/imgs/stadium_comment.png"></image>
+        <text class="head">评论区</text>
+        <text id="more">查看更多  ></text>
+      </view>
+      <view class="comment-list">
+        <view class="comment-item" wx:for="{{comment_list}}">
+          <view class="reviewer-info">
+            <image class="reviewer_header" src="{{item.headerPath}}"></image>
+            <view class="middle">
+              <text id="name">{{item.name}}</text>
+              <text id="date">{{item.date}}</text>
+            </view>
+            <view class="score">
+              <image src="/res/imgs/info_star.png"></image>
+              <text>{{item.score}}分</text>
+            </view>
+          </view>
+          <view class="content">
+            <text>{{item.content}}</text>
+          </view>
+          <view class="img-list">
+            <view class="img-item" wx:for="{{item.imgs}}">
+              <image src="{{item}}"></image>
+            </view>
+          </view>
+        </view> 
+      </view>
+    </view>
+  </view>
+  <view class="jmp-book">
+    <view class="input-left"></view>
+    <view class="input-right"></view>
+    <button id="jmpbook-btn">我要预约</button>
+  </view>
+</view>
