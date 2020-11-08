@@ -113,6 +113,8 @@ def change_duration(request):
     openTime = request.POST.get('openTime', '')
     closeTime = request.POST.get('closeTime', '')
     openHours = request.POST.get('openHours', '')
+    if not stadiumId or not managerId or not startDate or not duration or not openTime or not closeTime or not openHours:
+        return JsonResponse({'error': 'Incomplete information'})
     manager = Manager.objects.all().filter(id=int(managerId))[0]
     stadium = Stadium.objects.all().filter(id=int(stadiumId))[0]
     changeDuration = ChangeDuration(stadium=stadium, manager=manager, openingHours=openHours, startDate=startDate)
@@ -173,11 +175,14 @@ def add_event(request):
     date = request.POST.get('date', '')
     startTime = request.POST.get('startTime', '')
     endTime = request.POST.get('endTime', '')
+    if not managerId or not courtId or not date or not startTime or not endTime:
+        return JsonResponse({'error': 'Incomplete information'})
     manager = Manager.objects.all().filter(id=int(managerId))[0]
     court = Court.objects.all().filter(id=int(courtId))[0]
     addEvent = AddEvent(manager=manager, court=court, startTime=startTime, endTime=endTime, date=date)
-    myDurations = court.duration_set.all().filter(date=date)
+    addEvent.save()
 
+    myDurations = court.duration_set.all().filter(date=date)
     for myDuration in myDurations:
         cp1 = judgeTime(myDuration.endTime, startTime)
         cp2 = judgeTime(startTime, myDuration.startTime)
@@ -190,6 +195,20 @@ def add_event(request):
         flag += cp2 > 0 and cp3 > 0
         if flag > 0:
             myDuration.openState = 2
-    addEvent.save()
+    return JsonResponse({'message': 'ok'})
+
+
+def get_users(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Requires GET'})
+    managerId = request.GET.get('managerId', '')
+    if not managerId:
+        return JsonResponse({'error': 'Incomplete information'})
+    users = User.objects.all()
+    return JsonResponse({'users': json(users)})
+
+
+
+
 
 

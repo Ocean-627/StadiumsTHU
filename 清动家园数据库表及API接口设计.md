@@ -86,6 +86,7 @@ stadium      场馆                // 外键
 openingHours 开放时间段划分情况     
 // 新增
 startDate    生效日期
+time         操作时间
 ```
 
 #### **AddEvent （临时）添加活动事件**
@@ -95,7 +96,8 @@ manager      管理员              // 外键
 court        场地                // 外键
 startTime    开始时间
 endTime      结束时间
-date         事件日期
+date         活动日期
+time         操作时间
 ```
 
 #### **ReserveEvent 预订事件**
@@ -437,8 +439,7 @@ Response:{
 Method:GET
 URL: /api/manager/users
 QueryParam:{
-    'id':1,
-    'username':'管理员A',
+    'managerId':1
 }
 Response:{
     'users':[

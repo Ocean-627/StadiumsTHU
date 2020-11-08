@@ -12,5 +12,6 @@ urlpatterns = [
     path('court/', views.get_court),
     path('court/reserve/', views.get_court_reserve),
     path('change/', views.change_duration),
-    path('event/', views.add_event)
+    path('event/', views.add_event),
+    path('users/', views.get_users)
 ]

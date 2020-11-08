@@ -1,4 +1,5 @@
 from django.db import models
+import django.utils.timezone as timezone
 
 
 # Create your models here.
@@ -96,6 +97,7 @@ class ChangeDuration(models.Model):
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     openingHours = models.CharField(max_length=300)
     date = models.CharField(max_length=32)
+    time = models.DateTimeField(default=timezone.now)
     # TODO:完善事件信息
 
 
@@ -106,4 +108,5 @@ class AddEvent(models.Model):
     startTime = models.CharField(max_length=32)
     endTime = models.CharField(max_length=32)
     data = models.CharField(max_length=32)
+    time = models.DateTimeField(default=timezone.now)
     # TODO:完善事件信息
