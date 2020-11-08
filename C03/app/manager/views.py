@@ -105,20 +105,21 @@ def get_court_reserve(request):
 
 def change_duration(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'Requires GET'})
-    stadiumId = request.POST.get('id', '')
-    username = request.POST.get('username', '')
-    stadium = request.POST.get('stadium', '')
+        return JsonResponse({'error': 'Requires POST'})
+    stadiumId = request.POST.get('stadiumId', '')
+    managerId = request.POST.get('managerId', '')
     startDate = request.POST.get('startDate', '')
     duration = request.POST.get('duration', '')
     openTime = request.POST.get('openTime', '')
     closeTime = request.POST.get('closeTime', '')
     openHours = request.POST.get('openHours', '')
-    changeDuration = ChangeDuration(stadiumId=stadiumId, openingHours=openHours, startDate=startDate)
+    manager = Manager.objects.all().filter(id=int(managerId))[0]
+    stadium = Stadium.objects.all().filter(id=int(stadiumId))[0]
+    changeDuration = ChangeDuration(stadium=stadium, manager=manager, openingHours=openHours, startDate=startDate)
     changeDuration.save()
 
     # TODO: 立刻处理更改时段操作
-    myStadium = Stadium.objects.all().filter(id=stadiumId)[0]
+    myStadium = stadium
     myStadium.openingHours = openHours
     myStadium.openTime = openTime
     myStadium.closeTime = closeTime
@@ -158,6 +159,37 @@ def change_duration(request):
                         duration.startTime = myTime
                         myTime = datetime.datetime.strptime(myTime, "%H:%M") + datetime.timedelta(seconds * (i + 1))
                         duration.endTime = myTime.strftime('%H:%M')
+                        duration.date = date
                         duration.save()
 
     return JsonResponse({'message': 'ok'})
+
+
+def add_event(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Requires POST'})
+    managerId = request.POST.get('managerId', '')
+    courtId = request.POST.get('courtId', '')
+    date = request.POST.get('date', '')
+    startTime = request.POST.get('startTime', '')
+    endTime = request.POST.get('endTime', '')
+    manager = Manager.objects.all().filter(id=int(managerId))[0]
+    court = Court.objects.all().filter(id=int(courtId))[0]
+    addEvent = AddEvent(manager=manager, court=court, startTime=startTime, endTime=endTime, date=date)
+    myDurations = court.duration_set.all().filter(date=date)
+
+    for myDuration in myDurations:
+        cp1 = judgeTime(myDuration.endTime, startTime)
+        cp2 = judgeTime(startTime, myDuration.startTime)
+        cp3 = judgeTime(myDuration.endTime, endTime)
+        cp4 = judgeTime(endTime, myDuration.endTime)
+        flag = 0
+        flag += cp1 > 0 and cp2 > 0
+        flag += cp3 > 0 and cp4 > 0
+        flag += cp2 < 0 and cp3 < 0
+        flag += cp2 > 0 and cp3 > 0
+        if flag > 0:
+            myDuration.openState = 2
+    addEvent.save()
+
+

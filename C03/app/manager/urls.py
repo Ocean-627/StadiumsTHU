@@ -11,5 +11,6 @@ urlpatterns = [
     path('logout/', views.logout),
     path('court/', views.get_court),
     path('court/reserve/', views.get_court_reserve),
-    path('change/', views.change_duration)
+    path('change/', views.change_duration),
+    path('event/', views.add_event)
 ]

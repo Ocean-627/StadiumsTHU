@@ -65,7 +65,7 @@ def json(vec):
 
 
 def judgeDate(A, B):
-    # 判断给定日期B是否严格在A日期之前
+    # 判断A日期在B日期之后的天数
     format_pattern = '%Y-%m-%d'
     B = B.strftime(format_pattern)
     difference = (datetime.strptime(A, format_pattern) - datetime.strptime(B, format_pattern))
@@ -76,5 +76,12 @@ def calculateDate(A, B):
     # 返回A日期B天之后的日期
     dateTime_p = datetime.datetime.strptime(A, '%Y-%m-%d')
     return (dateTime_p + datetime.timedelta(days=+B)).strftime("%Y-%m-%d")
+
+
+def judgeTime(A, B):
+    # 判断A时刻在B时刻之后的秒数
+    format_pattern = '%H:%M'
+    difference = (datetime.strptime(A, format_pattern) - datetime.strptime(B, format_pattern))
+    return difference.seconds
 
 

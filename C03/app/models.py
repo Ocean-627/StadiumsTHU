@@ -93,7 +93,7 @@ class ReserveEvent(models.Model):
 class ChangeDuration(models.Model):
     # （永久）修改预约时段事件
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
-    stadiumId = models.IntegerField()
+    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     openingHours = models.CharField(max_length=300)
     date = models.CharField(max_length=32)
     # TODO:完善事件信息
@@ -102,7 +102,7 @@ class ChangeDuration(models.Model):
 class AddEvent(models.Model):
     # （临时）添加活动事件
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
-    courtId = models.IntegerField()
+    court = models.ForeignKey(Court, on_delete=models.CASCADE)
     startTime = models.CharField(max_length=32)
     endTime = models.CharField(max_length=32)
     data = models.CharField(max_length=32)

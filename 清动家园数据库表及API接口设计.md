@@ -81,8 +81,8 @@ reserverId    预订者学号
 #### **ChangeDuration （永久）修改预约时段事件**
 
 ```js
-manager      管理员      // 外键
-stadiumId    场馆ID
+manager      管理员              // 外键
+stadium      场馆                // 外键           
 openingHours 开放时间段划分情况     
 // 新增
 startDate    生效日期
@@ -91,8 +91,8 @@ startDate    生效日期
 #### **AddEvent （临时）添加活动事件**
 
 ```js
-manager      管理员ID    // 外键
-courtId      场地ID
+manager      管理员              // 外键
+court        场地                // 外键
 startTime    开始时间
 endTime      结束时间
 date         事件日期
@@ -420,7 +420,6 @@ Response:{
 Method:POST
 URL: /api/manager/event
 Request:{
-    'stadiumId':1,
     'managerId':2018013396,
     'courtId':9,
     'date':'2020-10-31',
