@@ -81,6 +81,7 @@ reserverId    预订者学号
 #### **ChangeDuration （永久）修改预约时段事件**
 
 ```js
+manager      管理员      // 外键
 stadiumId    场馆ID
 openingHours 开放时间段划分情况     
 // 新增
@@ -90,8 +91,10 @@ startDate    生效日期
 #### **AddEvent （临时）添加活动事件**
 
 ```js
+manager      管理员ID    // 外键
 courtId      场地ID
-openingHours 开放时间段划分情况
+startTime    开始时间
+endTime      结束时间
 date         事件日期
 ```
 
@@ -398,9 +401,8 @@ Method:POST
 URL: /api/manager/change
 Request:{
     // 该处应为场馆id，即stadiumId
-    'id':1,                                     
-    'username':'管理员A',
-	  'stadium': '紫荆乒羽馆',
+    'stadiumId':1,                                     
+    'managerId':2018013396,
     'startDate':'2020-11-01',
     'duration':'02:00',
     'openTime':'09:00',
@@ -409,7 +411,7 @@ Request:{
 }
 Response:{
     'message':'ok',
-}	
+}
 ```
 
 ##### **（临时）添加场地占用**
@@ -418,15 +420,12 @@ Response:{
 Method:POST
 URL: /api/manager/event
 Request:{
-    'id':1,
-    'username':'管理员A',
-	'stadium': '紫荆乒羽馆',
-    'court':'九号场地',
+    'stadiumId':1,
+    'managerId':2018013396,
     'courtId':9,
     'date':'2020-10-31',
     'startTime':'09:00',
-    'endTime':'12:00',
-    'closeDuration':[(08:00,10:00),(10:00,12:00)]
+    'endTime':'12:00'
 }
 Response:{
     'message':'ok'
