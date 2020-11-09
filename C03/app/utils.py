@@ -6,6 +6,16 @@ from django.forms.models import model_to_dict
 from datetime import datetime
 import datetime
 
+
+def md5(userId):
+    import hashlib
+    import time
+    ctime = str(time.time())
+    m = hashlib.md5(bytes(userId, encoding='utf-8'))
+    m.update(bytes(ctime, encoding='utf-8'))
+    return m.hexdigest()
+
+
 stadiums = [
     {'name': 'xxh的场馆',
      'information': 'xxh用来debug的场馆',
@@ -83,5 +93,3 @@ def judgeTime(A, B):
     format_pattern = '%H:%M'
     difference = (datetime.strptime(A, format_pattern) - datetime.strptime(B, format_pattern))
     return difference.seconds
-
-

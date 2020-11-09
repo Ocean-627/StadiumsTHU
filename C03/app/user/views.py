@@ -1,180 +1,123 @@
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from django.http import JsonResponse
-from app.models import *
+from app.authtication import UserAuthtication
 from app.utils import *
-import hashlib
 
 
-def logon(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Requires POST'})
-    username = request.POST.get('username', '')
-    password = request.POST.get('password', '')
-    email = request.POST.get('email', '')
-    userId = request.POST.get('userId', '')
-    # TODO:额外定义函数进行参数检查，这里只检查了不为空
-    if not username or not password or not email or not userId:
-        return JsonResponse({'error': 'Incomplete information'})
-    user = User(username=username, password=password, email=email, userId=userId)
-    user.save()
-    return JsonResponse({'message': 'ok'})
+class LogonView(APIView):
+    """
+    用户注册
+    """
+
+    def post(self, request):
+        req_data = request.data
+        username = req_data.get('username')
+        password = req_data.get('password')
+        email = req_data.get('email')
+        userId = req_data.get('userId')
+        if not username or not password or not email or not userId:
+            return Response({'error': 'Incomplete information'})
+        user = User(username=username, password=password, email=email, userId=userId)
+        user.save()
+        return Response({'message': 'ok'})
 
 
-def login(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Requires POST'})
-    userId = request.POST.get('userId', '')
-    password = request.POST.get('password', '')
-    try:
-        userInfo = User.objects.get(userId=userId)
-        # 已经登录
-        # TODO:登陆时应该向微信服务器发送请求，获取Session
-        if 'loginToken' in request.COOKIES:
-            loginToken = request.COOKIES['loginToken']
-            if loginToken == userInfo.loginToken:
-                return JsonResponse({'message': 'ok'})
-        if password != userInfo.password:
-            return JsonResponse({'error': 'Wrong password'})
-        # TODO:使用更合理的session算法
-        loginToken = hashlib.sha1(userId.encode('utf-8')).hexdigest()
-        userInfo.loginToken = loginToken
-        userInfo.save()
-        resp = JsonResponse({'message': 'ok', 'id': userInfo.id})
-        # 设置Cookie
-        resp.set_cookie('loginToken', loginToken)
-        return resp
-    except User.DoesNotExist:
-        return JsonResponse({'error': 'User does not exist'})
+class LoginView(APIView):
+    """
+    用户登录
+    """
+
+    def post(self, request):
+        req_data = request.data
+        userId = req_data.get('userId')
+        password = req_data.get('password')
+        obj = User.objects.filter(userId=userId, password=password).first()
+        if not obj:
+            return Response({'error': 'Login failed'})
+        loginToken = md5(userId)
+        obj.loginToken = loginToken
+        obj.save()
+        return Response({'message': 'ok', 'loginToken': loginToken})
 
 
-def logout(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Requires POST'})
-    # TODO:其他所有时刻都是检查一个Token是否在Header或者Body中
-    if 'loginToken' not in request.COOKIES:
-        return JsonResponse({'error': 'Not yet logged in'})
-    loginToken = request.COOKIES['loginToken']
-    userInfo = User.objects.get(loginToken=loginToken)
-    userInfo.loginToken = ''
-    userInfo.save()
-    resp = JsonResponse({'message': 'ok'})
-    resp.delete_cookie('loginToken')
-    return resp
+class StadiumView(APIView):
+    """
+    场馆信息
+    """
+    authentication_classes = [UserAuthtication]
+
+    def get(self, request):
+        stadiums = Stadium.objects.all()
+        return Response({'message': 'ok', 'stadiums': json(stadiums)})
 
 
-def get_stadiums(request):
-    if request.method != 'GET':
-        return JsonResponse({'error': 'Requires GET'})
-    if 'loginToken' not in request.COOKIES:
-        return JsonResponse({'error': 'Not yet logged in'})
-    stadiums = Stadium.objects.all()
-    stadiums = json(stadiums)
-    return JsonResponse({'message': 'ok', 'stadiums': stadiums})
+class CourtView(APIView):
+    """
+    场地信息
+    """
+    authentication_classes = [UserAuthtication]
+
+    def get(self, request):
+        req_data = request.query_params
+        id = req_data.get('id')
+        stadium = Stadium.objects.filter(id=id).first()
+        if not stadium:
+            return Response({'error': 'Stadium does not exist'})
+        courts = stadium.court_set.all()
+        return Response({'message': 'ok', 'courts': json(courts)})
 
 
-def get_courts(request):
-    if request.method != 'GET':
-        return JsonResponse({'error': 'Requires GET'})
-    if 'loginToken' not in request.COOKIES:
-        return JsonResponse({'error': 'Not yet logged in'})
-    id = request.GET.get('id', '')
-    if not id:
-        return JsonResponse({'error': 'Requires id of stadium'})
-    # TODO:使用Json格式传输
-    # TODO:检查参数
-    id = int(id)
-    stadium = Stadium.objects.filter(id=id)
-    if not stadium.count():
-        return JsonResponse({'error': 'Stadium does not exist'})
-    stadium = stadium[0]
-    courts = stadium.court_set.all()
-    return JsonResponse({'message': 'ok', 'courts': json(courts)})
+class DurationView(APIView):
+    """
+    时段信息
+    """
+    authentication_classes = [UserAuthtication]
+
+    def get(self, request):
+        req_data = request.query_params
+        id = req_data.get('id')
+        court = Court.objects.filter(id=id).first()
+        if not court:
+            return Response({'error': 'Court does not exist'})
+        durations = court.duration_set.all()
+        return Response({'message': 'ok', 'durations': json(durations)})
 
 
-def get_durations(request):
-    if request.method != 'GET':
-        return JsonResponse({'error': 'Requires GET'})
-    if 'loginToken' not in request.COOKIES:
-        return JsonResponse({'error': 'Not yet logged in'})
-    id = request.GET.get('id', '')
-    if not id:
-        return JsonResponse({'error': 'Requires id of court'})
-    # TODO:检查参数
-    id = int(id)
-    court = Court.objects.filter(id=id)
-    if not court.count():
-        return JsonResponse({'error': 'Court does not exist'})
-    court = court[0]
-    durations = court.duration_set.all()
-    return JsonResponse({'message': 'ok', 'durations': json(durations)})
+class ReserveView(APIView):
+    """
+    预订信息
+    """
+    authentication_classes = [UserAuthtication]
 
+    def get(self, request):
+        # 获取预订信息
+        user = request.user
+        events = user.reserveevent_set.all()
+        return Response({'message': 'ok', 'history': json(events)})
 
-def reserve(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Requires POST'})
-    if 'loginToken' not in request.COOKIES:
-        return JsonResponse({'error': 'Not yet logged in'})
-    # 时段id和用户id
-    durationId = request.POST.get('durationId', '')
-    userId = request.POST.get('userId', '')
-    if not durationId or not userId:
-        return JsonResponse({'error': 'Incomplete information'})
-    duration = Duration.objects.filter(id=durationId)
-    if not duration.count():
-        return JsonResponse({'error': 'Invalid duration id'})
-    duration = duration[0]
-    user = User.objects.filter(id=userId)
-    if not user.count():
-        return JsonResponse({'error': 'Invalid user id'})
-    user = user[0]
-    stadium = duration.stadium
-    stadiumName = stadium.name
-    court = duration.court
-    courtName = court.name
-    # 创建事件
-    curevents = user.reserveevent_set.filter(duration_id=durationId)
-    if curevents.count():
-        return JsonResponse({'error': 'Apply for that duration has been submitted. Please wait for result'})
-    reserveevent = ReserveEvent(stadium=stadium, stadiumName=stadiumName, court=court, courtName=courtName,
-                                user=user, duration=duration, result='W', startTime=duration.startTime,
-                                endTime=duration.endTime)
-    reserveevent.save()
-    # TODO:更多信息
-    return JsonResponse({'message': 'ok'})
+    def post(self, request):
+        # 预定场地
+        req_data = request.data
+        durationId = req_data.get('durationId')
+        duration = Duration.objects.filter(id=durationId).first()
+        if not duration:
+            return Response({'error': 'Invalid duration id'})
+        user = request.user
+        stadium = duration.stadium
+        court = duration.court
+        reserveevent = ReserveEvent(stadium=stadium, court=court, user=user, duration=duration, result='W',
+                                    startTime=duration.startTime,
+                                    endTime=duration.endTime)
+        reserveevent.save()
+        return JsonResponse({'message': 'ok', 'eventId':reserveevent.id})
 
-
-def history(request):
-    if request.method != 'GET':
-        return JsonResponse({'error': 'Requires GET'})
-    if 'loginToken' not in request.COOKIES:
-        return JsonResponse({'error': 'Not yet logged in'})
-    userId = request.GET.get('userId', '')
-    if not userId:
-        return JsonResponse({'error': 'Incomplete information'})
-    user = User.objects.filter(id=userId)
-    if not user.count():
-        return JsonResponse({'error': 'User does not exist'})
-    user = user[0]
-    events = user.reserveevent_set.all()
-    return JsonResponse({'message': 'ok', 'history': json(events)})
-
-
-def cancel(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Requires POST'})
-    if 'loginToken' not in request.COOKIES:
-        return JsonResponse({'error': 'Not yet logged in'})
-    userId = request.POST.get('userId', '')
-    durationId = request.POST.get('durationId', '')
-    if not userId or not durationId:
-        return JsonResponse({'error': 'Incomplete information'})
-    user = User.objects.filter(id=userId)
-    if not user.count():
-        return JsonResponse({'error': 'User does not exist'})
-    user = user[0]
-    event = user.reserveevent_set.filter(duration_id=durationId)
-    if not event.count():
-        return JsonResponse({'error': 'Reserve does not exist'})
-    event = event[0]
-    event.delete()
-    return JsonResponse({'message': 'ok'})
-
+    def delete(self, request):
+        # 取消预订
+        req_data = request.data
+        eventId = req_data.get('eventId')
+        event = ReserveEvent.objects.filter(id=eventId).first()
+        if not event:
+            return Response({'error': 'Reserve does not exist'})
+        event.delete()
+        return Response({'message': 'ok'})

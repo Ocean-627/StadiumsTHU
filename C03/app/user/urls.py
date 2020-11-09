@@ -6,13 +6,10 @@ from app.user import views
 
 urlpatterns = [
     # API for user
-    path('logon/', views.logon),
-    path('login/', views.login),
-    path('logout/', views.logout),
-    path('stadium/', views.get_stadiums),
-    path('court/', views.get_courts),
-    path('court/reserve/', views.get_durations),
-    path('reserve/', views.reserve),
-    path('history/', views.history),
-    path('cancel/', views.cancel),
+    path('logon/', views.LogonView.as_view()),
+    path('login/', views.LoginView.as_view()),
+    path('stadium/', views.StadiumView.as_view()),
+    path('court/', views.CourtView.as_view()),
+    path('duration/', views.DurationView.as_view()),
+    path('reserve/', views.ReserveView.as_view()),
 ]

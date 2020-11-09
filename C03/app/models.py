@@ -37,7 +37,7 @@ class Stadium(models.Model):
     contact = models.CharField(max_length=32, null=True)
     openState = models.BooleanField()
     foreDays = models.IntegerField()
-    schedule = models.CharField(max_length=32, null=True)
+    durations = models.CharField(max_length=32, null=True)
     # TODO:完善信息
 
 
@@ -76,9 +76,7 @@ class ReserveEvent(models.Model):
     )
     # 预定事件
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
-    stadiumName = models.CharField(max_length=32)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
-    courtName = models.CharField(max_length=32, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     duration = models.ForeignKey(Duration, on_delete=models.CASCADE)
     result = models.CharField(max_length=2, choices=APPLY_RESULT, default=WAITING)
