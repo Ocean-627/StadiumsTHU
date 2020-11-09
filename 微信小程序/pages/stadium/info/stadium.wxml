@@ -79,8 +79,6 @@
     </view>
   </view>
   <view class="jmp-book">
-    <view class="input-left"></view>
-    <view class="input-right"></view>
     <button id="jmpbook-btn">我要预约</button>
   </view>
 </view>

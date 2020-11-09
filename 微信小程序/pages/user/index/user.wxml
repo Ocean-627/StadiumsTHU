@@ -3,6 +3,8 @@
   <text slot="left">我的</text>
 </mp-navigation-bar>
 <view class="container">
+  <view class="rect1"></view>
+  <view class="rect2"></view>
   <!--信息栏-->
   <view class="info-menu">
     <view class="info-wrapper">
@@ -19,7 +21,7 @@
         <image src="/res/imgs/menu_favor.png"></image>
         <text>收藏</text>
       </view>
-      <view class="choice-wrapper">
+      <view class="choice-wrapper" bindtap="jmpMyBook">
         <image src="/res/imgs/menu_my.png"></image>
         <text>我的预约</text>
       </view>
@@ -49,7 +51,7 @@
         <image src="/res/imgs/hmenu_settings.png"></image>
       </view>
     </view>
-    <!--退出按钮-->
-    <button id="exit">退出登录</button>
   </view>
+  <!--退出按钮-->
+  <button id="exit">退出登录</button>
 </view>

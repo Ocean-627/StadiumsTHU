@@ -77,8 +77,8 @@ def json(vec):
 def judgeDate(A, B):
     # 判断A日期在B日期之后的天数
     format_pattern = '%Y-%m-%d'
-    B = B.strftime(format_pattern)
-    difference = (datetime.strptime(A, format_pattern) - datetime.strptime(B, format_pattern))
+    # B = B.strftime(format_pattern)
+    difference = (datetime.datetime.strptime(A, format_pattern) - datetime.datetime.strptime(B, format_pattern))
     return difference.days
 
 
@@ -91,5 +91,5 @@ def calculateDate(A, B):
 def judgeTime(A, B):
     # 判断A时刻在B时刻之后的秒数
     format_pattern = '%H:%M'
-    difference = (datetime.strptime(A, format_pattern) - datetime.strptime(B, format_pattern))
-    return difference.seconds
+    difference = (datetime.datetime.strptime(A, format_pattern) - datetime.datetime.strptime(B, format_pattern))
+    return difference.total_seconds()

@@ -67,15 +67,14 @@ closeTime    临时关闭时间
 
 ```js
 stadium       所属场馆
-court		  所属场地
+court		      所属场地
 date          日期
 startTime     开始时间
 endTime       结束时间
 openState     开放状态
 accessible    是否可以预订
 // 尚未加入
-reserver      预订者用户名
-reserverId    预订者学号
+reserverId    预订者ID
 ```
 
 #### **ChangeDuration （永久）修改预约时段事件**
@@ -110,7 +109,7 @@ stadiumName  场馆名
 court        对应场地
 courtName    场地名
 user         对应用户
-duration	 对应时段
+duration	   对应时段
 startTime    开始时间
 endTime      结束时间
 result       预约结果
@@ -354,9 +353,9 @@ Response:
 Method:GET
 URL: /api/manager/court
 QueryParam:{
-	'workplace': '19',
-  'floor':'1',
-  'date':'2020-10-31',
+	 'stadiumId': '19',
+   'floor':'1',
+   'date':'2020-10-31',
 }
 Response:{
     'floor':'',

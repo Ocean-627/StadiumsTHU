@@ -46,7 +46,7 @@
   <view class="btn">
     <view class="wrapper">
       <view class="input-left"></view>
-        <button id="login-btn">{{btn_text}}</button>
+      <button id="login-btn">{{btn_text}}</button>
       <view class="input-right"></view>
     </view>
   </view>

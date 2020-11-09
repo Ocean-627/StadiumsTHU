@@ -1,0 +1,125 @@
+/* pages/user/book/book.wxss */
+page {
+  background-color: #F2F2F2;
+}
+
+.container {
+  width: 100%;
+  padding:0;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+/*场馆列表*/
+.booking-list {
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.booking-item {
+  box-sizing: border-box;
+  position: relative;
+  width:95%;
+  margin-top: 10rpx;
+  background-color: white;
+  border-radius: 20rpx;
+  box-shadow: 1px 1px 6px 0 rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  padding-left:2%;
+  padding-right: 2%;
+}
+
+.booking-info {
+  display: flex;
+  flex-direction: row;
+  margin-top:10rpx;
+}
+
+.booking-info .pic-wrapper {
+  width:30%;
+}
+
+.booking-info .pic-wrapper image {
+  width: 200rpx;
+  height: 150rpx;
+  border-radius: 20rpx;
+  margin-top:10rpx;
+  margin-left:10rpx;
+}
+
+.booking-info .info-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-left:5%;
+  width:50%;
+}
+
+.booking-info .info-wrapper #name {
+  font-weight: 800;
+  font-size:30rpx;
+}
+
+.info-wrapper #court{
+  font-size:26rpx;
+  color:rgba(0,0,0,0.4)
+}
+
+.info-wrapper #date-title {
+  margin-top:20rpx;
+  font-size:28rpx;
+}
+
+.info-wrapper #date {
+  font-size: 26rpx;
+  color:#FF8300;
+}
+
+.booking-info #status{
+  font-size:22rpx;
+  color:#E72343;
+}
+
+.booking-item #price {
+  margin-left:auto;
+  margin-top:20rpx;
+}
+
+.booking-item .btns { 
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  margin-top:20px;
+  margin-bottom: 20px;
+}
+
+.btns #cancel {
+  color:white;
+  background-color: #E72343;
+  width:200rpx;
+  height:60rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+  padding:0;
+  padding-top:10rpx;
+  margin:0;
+  border-radius: 30rpx;
+}
+
+.btns #modify {
+  color:black;
+  background-color: white;
+  width:200rpx;
+  height:60rpx;
+  margin:0;
+  margin-right:10px;
+  font-size: 30rpx;
+  font-weight: 500;
+  padding:0;
+  padding-top:10rpx;
+  border-radius: 30rpx;
+  border: solid 1px rgba(0,0,0,0.2);
+}
