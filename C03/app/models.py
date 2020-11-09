@@ -110,3 +110,9 @@ class AddEvent(models.Model):
     time = models.DateTimeField(default=timezone.now)
     type = models.IntegerField(default=2)
     # TODO:完善事件信息
+
+
+class Comment(models.Model):
+    # 场地评论
+    court = models.ForeignKey(Court, on_delete=models.CASCADE)
+    content = models.CharField(max_length=300)
