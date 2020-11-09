@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
 from app.authtication import UserAuthtication
+from app.serializer import *
 from app.utils import *
 
 
@@ -49,7 +50,8 @@ class StadiumView(APIView):
 
     def get(self, request):
         stadiums = Stadium.objects.all()
-        return Response({'message': 'ok', 'stadiums': json(stadiums)})
+        stadiums = StadiumSerializer(stadiums, many=True)
+        return Response({'message': 'ok', 'stadiums': stadiums.data})
 
 
 class CourtView(APIView):
@@ -65,7 +67,8 @@ class CourtView(APIView):
         if not stadium:
             return Response({'error': 'Stadium does not exist'})
         courts = stadium.court_set.all()
-        return Response({'message': 'ok', 'courts': json(courts)})
+        courts = CourtSerializer(courts, many=True)
+        return Response({'message': 'ok', 'courts': courts.data})
 
 
 class DurationView(APIView):
@@ -81,7 +84,8 @@ class DurationView(APIView):
         if not court:
             return Response({'error': 'Court does not exist'})
         durations = court.duration_set.all()
-        return Response({'message': 'ok', 'durations': json(durations)})
+        durations = DurationSerializer(durations, many=True)
+        return Response({'message': 'ok', 'durations': durations.data})
 
 
 class ReserveView(APIView):
@@ -94,7 +98,8 @@ class ReserveView(APIView):
         # 获取预订信息
         user = request.user
         events = user.reserveevent_set.all()
-        return Response({'message': 'ok', 'history': json(events)})
+        events = ReserveEventSerializer(events, many=True)
+        return Response({'message': 'ok', 'history': events.data})
 
     def post(self, request):
         # 预定场地
@@ -119,5 +124,6 @@ class ReserveView(APIView):
         event = ReserveEvent.objects.filter(id=eventId).first()
         if not event:
             return Response({'error': 'Reserve does not exist'})
-        event.delete()
+        event.cancel = True
+        # TODO:退款等操作
         return Response({'message': 'ok'})
