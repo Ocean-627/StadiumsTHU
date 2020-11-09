@@ -6,7 +6,13 @@ Page({
 
   jmpinfo:function() {
     wx.navigateTo({
-      url: '../info/info',
+      url: '/pages/user/info/info',
+    })
+  },
+
+  jmpMyBook:function() {
+    wx.navigateTo({
+      url: '/pages/user/book/book',
     })
   }
 })

@@ -1,0 +1,28 @@
+<!--pages/user/book/book.wxml-->
+<mp-navigation-bar show="{{true}}" back="{{true}}" color="#000" background="#f8f8f8" title="我的预约">
+</mp-navigation-bar>
+
+<view class="container">
+  <!--预定信息-->
+  <view class="booking-list">
+    <view class="booking-item" wx:for="{{booking_list}}">
+      <view class="booking-info">
+        <view class="pic-wrapper">
+          <image src="{{item.imgpath}}" bindtap="jmpInfo" data-stadiumId="{{index}}"></image>
+        </view>
+        <view class="info-wrapper">
+          <text id="name" bindtap="jmpInfo" data-stadiumId="{{index}}">{{item.stadium_name}}</text>
+          <text id="court">{{item.court_name}}</text>
+          <text id="date-title">预约时间</text>
+          <text id="date">{{item.book_time}}</text>
+        </view>
+        <text id="status">{{item.status}}</text>
+      </view>
+      <text id="price">价格￥{{item.price}}</text>
+      <view class="btns">
+        <button id="cancel">取消预约</button>
+        <button id="modify">修改时间</button>
+      </view>
+    </view>
+  </view>
+</view>

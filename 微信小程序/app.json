@@ -1,10 +1,11 @@
 {
   "pages": [
+    "pages/home/index/home",
+    "pages/user/book/book",
     "pages/message/message",
     "pages/stadium/comment/comment",
     "pages/stadium/info/stadium",
     "pages/login/login",
-    "pages/home/index/home",
     "pages/map/map",
     "pages/user/index/user",
     "pages/user/info/info",
