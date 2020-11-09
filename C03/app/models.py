@@ -106,7 +106,7 @@ class AddEvent(models.Model):
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
     startTime = models.CharField(max_length=32)
     endTime = models.CharField(max_length=32)
-    data = models.CharField(max_length=32)
+    date = models.CharField(max_length=32)
     time = models.DateTimeField(default=timezone.now)
     type = models.IntegerField(default=2)
     # TODO:完善事件信息
