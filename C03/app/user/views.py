@@ -10,6 +10,7 @@ class LogonView(APIView):
     """
     用户注册
     """
+
     def post(self, request):
         req_data = request.data
         # 校验输入
@@ -63,11 +64,14 @@ class CourtView(APIView):
 
     def get(self, request):
         req_data = request.query_params
+        # TODO:支持更多筛选条件
         id = req_data.get('id')
-        stadium = Stadium.objects.filter(id=id).first()
-        if not stadium:
-            return Response({'error': 'Stadium does not exist'})
-        courts = stadium.court_set.all()
+        type = req_data.get('type')
+        courts = None
+        if id:
+            courts = Court.objects.filter(stadium=id)
+        if type:
+            courts = Court.objects.filter(type=type)
         courts = CourtSerializer(courts, many=True)
         return Response({'message': 'ok', 'courts': courts.data})
 
@@ -80,7 +84,7 @@ class DurationView(APIView):
 
     def get(self, request):
         req_data = request.query_params
-        id = req_data.get('id')
+        id = req_data.get('courtId')
         court = Court.objects.filter(id=id).first()
         if not court:
             return Response({'error': 'Court does not exist'})
@@ -106,17 +110,21 @@ class ReserveView(APIView):
         # 预定场地
         req_data = request.data
         durationId = req_data.get('durationId')
-        duration = Duration.objects.filter(id=durationId).first()
+        duration = Duration.objects.filter(id=durationId, accessible=True).first()
         if not duration:
-            return Response({'error': 'Invalid duration id'})
+            return Response({'error': 'Reserve failed'})
         user = request.user
         stadium = duration.stadium
         court = duration.court
+        # 不允许重复预订
+        obj = ReserveEvent.objects.filter(id=durationId, user=user, result='W').first()
+        if obj:
+            return Response({'error': 'Same reverse has applied'})
         reserveevent = ReserveEvent(stadium=stadium, court=court, user=user, duration=duration, result='W',
                                     startTime=duration.startTime,
                                     endTime=duration.endTime)
         reserveevent.save()
-        return JsonResponse({'message': 'ok', 'eventId':reserveevent.id})
+        return JsonResponse({'message': 'ok', 'eventId': reserveevent.id})
 
     def delete(self, request):
         # 取消预订
@@ -127,4 +135,42 @@ class ReserveView(APIView):
             return Response({'error': 'Reserve does not exist'})
         event.cancel = True
         # TODO:退款等操作
+        return Response({'message': 'ok'})
+
+
+class CommentView(APIView):
+    """
+    评价场馆
+    """
+    authentication_classes = [UserAuthtication]
+
+    def post(self, request):
+        req_data = request.query_params
+        ser = CommentSerializer(data=req_data)
+        if not ser.is_valid():
+            return Response({'error': ser.errors})
+        user = request.user
+        courtId = req_data.get('courtId')
+        court = Court.objects.filter(id=courtId).first()
+        if not court:
+            return Response({'error': 'Court does not exist'})
+        content = req_data.get('content')
+        comment = Comment(user=user, court=court, content=content)
+        comment.save()
+        return Response({'message': 'ok'})
+
+    def get(self, request):
+        user = request.user
+        comments = user.comment_set.all()
+        comments = CommentSerializer(comments, many=True)
+        return Response({'message': 'ok', 'comments': comments.data})
+
+    def delete(self, request):
+        req_data = request.data
+        id = req_data.get('commentId')
+        user = request.user
+        comment = user.comment_set.filter(id=id).first()
+        if not comment:
+            return Response({'error': 'Delete comment failed'})
+        comment.delete()
         return Response({'message': 'ok'})

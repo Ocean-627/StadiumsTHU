@@ -44,3 +44,11 @@ class ReserveEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReserveEvent
         fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    courtName = serializers.CharField(source='court.name')
+
+    class Meta:
+        model = Comment
+        fields = '__all__'

@@ -42,7 +42,7 @@ closeTime    闭馆时间
 contact      联系方式            
 openstate    是否开放        
 foredays     可提前预约天数
-shedule      单次预订时常限制
+durations    ??
 // 尚未加入
 location	 位置
 ```
@@ -56,10 +56,10 @@ name         场地名称
 price        价格
 openingHours 开放时间段划分情况
 openState	 开放状态
-// 尚未加入
 floor        所在楼层
-duration     单次预订时常限制
 location     位置信息
+// 尚未加入
+duration     单次预订时常限制
 closeTime    临时关闭时间
 ```
 
@@ -67,14 +67,13 @@ closeTime    临时关闭时间
 
 ```js
 stadium       所属场馆
-court		      所属场地
+court		  所属场地
+user		  预订者
 date          日期
 startTime     开始时间
 endTime       结束时间
 openState     开放状态
 accessible    是否可以预订
-// 尚未加入
-reserverId    预订者ID
 ```
 
 #### **ChangeDuration （永久）修改预约时段事件**
@@ -105,11 +104,9 @@ type         操作类型            // 默认修改预约时段事件类型为2
 
 ```js
 stadium      对应场馆
-stadiumName  场馆名
 court        对应场地
-courtName    场地名
 user         对应用户
-duration	   对应时段
+duration	 对应时段
 startTime    开始时间
 endTime      结束时间
 result       预约结果
@@ -125,7 +122,6 @@ leave        是否已离开
 ```js
 stadiumId    场馆ID
 courtId      场地ID
-userId       用户ID            // 扩展：匿名？
 information  评价信息
 ```
 
@@ -141,14 +137,14 @@ Request:
 URL: /api/user/logon
 Request:
 {
-   'username': '',
-   'password': '',
-   'email': ''，
-   'userId':''
+   	'username': '',
+   	'password': '',
+   	'email': ''，
+   	'userId':''
 }
 Response:
 {
-	 'message': 'ok'
+	'message': 'ok'
 }
 ```
 
@@ -160,10 +156,10 @@ Request:
 URL: /api/manager/logon
 Request:
 {
-   'username': '',
-   'password': '',
-   'email': ''，
-   'userId':''
+   	'username': '',
+   	'password': '',
+   	'email': ''，
+   	'userId':''
 }
 Response:
 {
@@ -178,13 +174,13 @@ Method: POST
 URL: /api/user/login
 Request:
 {
-   'userId': '',
-   'password': ''
+   	'userId': '',
+   	'password': ''
 }
 Response:
 {
-	 'message': 'ok',
-   'id': ''		// 用户ID
+	'message': 'ok',
+    'loginToken': '546sdwe54'		
 }
 ```
 
@@ -198,11 +194,11 @@ Request:{
     'password': ''
 }
 Response:{
-   'id',1,
-   'username': '',
-   'token': '',
-   'stadiumId':'',
-   'stadium':''
+   	'id',1,
+   	'username': '',
+   	'token': '',
+   	'stadiumId':'',
+   	'stadium':''
 }	
 ```
 
@@ -225,6 +221,7 @@ Response:
 Method: GET
 URL: /api/user/stadium
 QueryParam:
+Response:
 {
     'message': 'ok',
      // stadims,一个列表,每个元素是一个字典，一个场馆的信息
@@ -252,11 +249,12 @@ Method: GET
 URL: /api/user/court
 QueryParam:
 {
-	  'id': ''	                     // 场馆id
+    'id': ''	                     // 可选参数，场馆id
+    'type': ''						 //	可选参数，场地类型
 }
 Response:
 {
-    'message': 'success',
+    'message': 'ok',
     // courts,一个列表,每个元素是一个字典，包含该场馆所有场地的信息
     'courts':[
         {
@@ -308,7 +306,6 @@ URL: /api/user/reserve
 Request:
 {
     'durationId': '',	     // 预约时段id
-    'userId':'',   // 申请者id
 }
 Response:
 {
@@ -320,14 +317,12 @@ Response:
 
 ```js
 Method: GET
-URL: /api/user/history
+URL: /api/user/reserve
 QueryParam:
-{
-	  'userId': '',	                     // 用户id
-}
 Response:
 {
     // history,一个列表,每个元素是一个字典，包含一次操作
+    'message': 'ok',
     'history':[
         {
             'stadiumName': '',
