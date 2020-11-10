@@ -14,18 +14,6 @@ class User(models.Model):
     # TODO:完善信息
 
 
-class Manager(models.Model):
-    # 场馆管理员
-    username = models.CharField(max_length=32)
-    password = models.CharField(max_length=32)
-    userId = models.IntegerField(verbose_name='managerId')
-    email = models.EmailField()
-    workPlace = models.CharField(max_length=32, null=True)
-    workPlaceId = models.IntegerField(null=True)
-    loginToken = models.CharField(max_length=100)
-    # TODO:完善信息
-
-
 class Stadium(models.Model):
     # 场馆
     name = models.CharField(max_length=32)
@@ -38,6 +26,17 @@ class Stadium(models.Model):
     openState = models.BooleanField()
     foreDays = models.IntegerField()
     durations = models.CharField(max_length=32, null=True)
+    # TODO:完善信息
+
+
+class Manager(models.Model):
+    # 场馆管理员
+    username = models.CharField(max_length=32)
+    password = models.CharField(max_length=32)
+    userId = models.IntegerField(verbose_name='managerId')
+    email = models.EmailField()
+    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
+    loginToken = models.CharField(max_length=100)
     # TODO:完善信息
 
 
