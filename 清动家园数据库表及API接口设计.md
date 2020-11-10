@@ -184,7 +184,7 @@ Request:
 Response:
 {
 	 'message': 'ok',
-     'id': ''		// 用户ID
+   'id': ''		// 用户ID
 }
 ```
 
@@ -201,7 +201,8 @@ Response:{
    'id',1,
    'username': '',
    'token': '',
-   'workplace':''
+   'stadiumId':'',
+   'stadium':''
 }	
 ```
 
