@@ -41,7 +41,9 @@ class LoginView(APIView):
         loginToken = md5(userId)
         obj.loginToken = loginToken
         obj.save()
-        return Response({'message': 'ok', 'loginToken': loginToken, 'username': obj.username, 'stadium': obj.stadium.name, 'stadiumId': obj.stadium.id})
+        return Response(
+            {'message': 'ok', 'loginToken': loginToken, 'username': obj.username, 'stadium': obj.stadium.name,
+             'stadiumId': obj.stadium.id})
 
 
 class LogoutView(APIView):
@@ -83,7 +85,8 @@ class CourtView(APIView):
                        'reservedDuration': [], 'notReservedDuration': []}
             reservedDurations = court.duration_set.all().filter(accessible=False, date=date)
             for duration in reservedDurations:
-                myCourt['reservedDuration'].append((duration.id, duration.startTime, duration.endTime, duration.user.username))
+                myCourt['reservedDuration'].append(
+                    (duration.id, duration.startTime, duration.endTime, duration.user.username))
             notReservedDurations = court.duration_set.all().filter(accessible=True, date=date)
             for duration in notReservedDurations:
                 myCourt['notReservedDuration'].append((duration.id, duration.startTime, duration.endTime))
@@ -143,7 +146,8 @@ class ChangeDurationView(APIView):
             if judgeDate(str(myDuration.date), str(startDate)) >= 0:
                 myDuration.delete()
         startDate = str(datetime.datetime.strptime(startDate, '%Y-%m-%d')).split()[0]
-        foreDays = judgeDate(str(calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), myStadium.foreDays)), startDate)
+        foreDays = judgeDate(str(calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), myStadium.foreDays)),
+                             startDate)
         if foreDays < 0:
             return JsonResponse({'message': 'ok'})
         openHours = openHours.split()
@@ -156,11 +160,13 @@ class ChangeDurationView(APIView):
                 return JsonResponse({'error': 'can not make durations according to temp information'})
             else:
                 for k in range(int(totalSeconds // seconds)):
-                    endTime = (datetime.datetime.strptime(str(startTime), "%H:%M") + datetime.timedelta(seconds=seconds)).strftime('%H:%M')
+                    endTime = (datetime.datetime.strptime(str(startTime), "%H:%M") + datetime.timedelta(
+                        seconds=seconds)).strftime('%H:%M')
                     for i in range(foreDays + 1):
                         date = calculateDate(startDate, i)
                         for j in range(len(myCourts)):
-                            myDuration = Duration(stadium=stadium, court=myCourts[j], startTime=startTime, endTime=endTime, date=date, openState=1, accessible=1)
+                            myDuration = Duration(stadium=stadium, court=myCourts[j], startTime=startTime,
+                                                  endTime=endTime, date=date, openState=1, accessible=1)
                             myDuration.save()
                     startTime = endTime
         return JsonResponse({'message': 'ok'})
@@ -222,6 +228,7 @@ class UsersView(APIView):
     """
     用户信息
     """
+
     def get(self, request):
         req_data = request.query_params
         managerId = req_data.get('managerId', '')
