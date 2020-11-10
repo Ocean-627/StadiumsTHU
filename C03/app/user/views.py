@@ -10,15 +10,16 @@ class LogonView(APIView):
     """
     用户注册
     """
-
     def post(self, request):
         req_data = request.data
+        # 校验输入
+        ser = UserSerializer(data=req_data)
+        if not ser.is_valid():
+            return Response({'error': ser.errors})
         username = req_data.get('username')
         password = req_data.get('password')
         email = req_data.get('email')
         userId = req_data.get('userId')
-        if not username or not password or not email or not userId:
-            return Response({'error': 'Incomplete information'})
         user = User(username=username, password=password, email=email, userId=userId)
         user.save()
         return Response({'message': 'ok'})
