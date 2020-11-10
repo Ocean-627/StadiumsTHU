@@ -67,7 +67,7 @@ class CourtView(APIView):
     """
 
     def get(self, request):
-        req_data = request.data
+        req_data = request.query_params
         workplace = req_data.get('stadiumId', '')
         floor = req_data.get('floor', '')
         date = req_data.get('date', '')
@@ -98,7 +98,7 @@ class ReserveEventView(APIView):
     """
 
     def get(self, request):
-        req_data = request.data
+        req_data = request.query_params
         courtId = req_data.get('courtId', '')
         durationId = req_data.get('durationId', '')
         if not courtId or not durationId:
@@ -166,7 +166,8 @@ class ChangeDurationView(APIView):
         return JsonResponse({'message': 'ok'})
 
     def get(self, request):
-        eventId = request.GET.get('eventId', '')
+        req_data = request.query_params
+        eventId = req_data.get('eventId', '')
         if not eventId:
             return JsonResponse({'error': 'Incomplete information'})
         changeDuration = ChangeDuration.objects.all().filter(id=int(eventId))[0]
@@ -209,7 +210,7 @@ class AddEventView(APIView):
         return JsonResponse({'message': 'ok'})
 
     def get(self, request):
-        req_data = request.data
+        req_data = request.query_params
         eventId = req_data.get('eventId', '')
         if not eventId:
             return JsonResponse({'error': 'Incomplete information'})
@@ -222,7 +223,7 @@ class UsersView(APIView):
     用户信息
     """
     def get(self, request):
-        req_data = request.data
+        req_data = request.query_params
         managerId = req_data.get('managerId', '')
         if not managerId:
             return JsonResponse({'error': 'Incomplete information'})
@@ -236,7 +237,7 @@ class HistoryView(APIView):
     """
 
     def get(self, request):
-        req_data = request.data
+        req_data = request.query_params
         managerId = req_data.get('managerId', '')
         manager = Manager.objects.all().filter(id=int(managerId))[0]
         if not managerId:
