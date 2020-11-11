@@ -36,7 +36,7 @@ class Manager(models.Model):
     userId = models.IntegerField(verbose_name='managerId')
     email = models.EmailField()
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
-    loginToken = models.CharField(max_length=100)
+    loginToken = models.CharField(max_length=100, null=True)
     # TODO:完善信息
 
 

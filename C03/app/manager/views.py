@@ -1,11 +1,11 @@
 from django.http import JsonResponse
-import hashlib
 from itertools import chain
 from operator import attrgetter
 from app.utils import *
+from app.serializer import *
+from app.authtication import ManagerAuthtication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from app.authtication import UserAuthtication
 
 
 class LogonView(APIView):
@@ -19,9 +19,11 @@ class LogonView(APIView):
         password = req_data.get('password')
         email = req_data.get('email')
         userId = req_data.get('userId')
-        if not username or not password or not email or not userId:
+        stadiumId = req_data.get('stadiumId')
+        # TODO:检查stadium是否存在
+        if not username or not password or not email or not userId or not stadiumId:
             return Response({'error': 'Incomplete information'})
-        manager = Manager(username=username, password=password, email=email, userId=userId)
+        manager = Manager(username=username, password=password, email=email, userId=userId, stadium_id=stadiumId)
         manager.save()
         return Response({'message': 'ok'})
 
@@ -40,27 +42,28 @@ class LoginView(APIView):
             return Response({'error': 'Login failed'})
         loginToken = md5(userId)
         obj.loginToken = loginToken
+        print(loginToken)
         obj.save()
-        return Response(
-            {'message': 'ok', 'loginToken': loginToken, 'username': obj.username, 'stadium': obj.stadium.name,
+        ret = Response(
+            {'message': 'ok', 'username': obj.username, 'stadium': obj.stadium.name,
              'stadiumId': obj.stadium.id})
+        ret.set_cookie('loginToken', loginToken)
+        return ret
 
 
 class LogoutView(APIView):
     """
     管理员注销
     """
+    authentication_classes = [ManagerAuthtication]
 
     def post(self, request):
-        if 'loginToken' not in request.COOKIES:
-            return JsonResponse({'error': 'Not yet logged in'})
-        loginToken = request.COOKIES['loginToken']
-        managerInfo = Manager.objects.get(loginToken=loginToken)
-        managerInfo.loginToken = ''
-        managerInfo.save()
-        resp = JsonResponse({'message': 'ok'})
-        resp.delete_cookie('loginToken')
-        return resp
+        manager = request.user
+        manager.loginToken = ''
+        manager.save()
+        ret = JsonResponse({'message': 'ok'})
+        ret.delete_cookie('loginToken')
+        return ret
 
 
 class CourtView(APIView):
