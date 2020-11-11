@@ -25,9 +25,7 @@ class ManagerAuthtication(BaseAuthentication):
     """
 
     def authenticate(self, request):
-        if 'Cookie' not in request.headers:
-            raise AuthenticationFailed({'error': 'Requires loginToken'})
-        loginToken = request.headers['Cookie'].split('=')[1]
+        loginToken = request.COOKIES.get('loginToken')
         if not loginToken:
             raise AuthenticationFailed({'error': 'Requires loginToken'})
         obj = Manager.objects.filter(loginToken=loginToken).first()

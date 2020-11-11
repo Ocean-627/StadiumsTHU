@@ -70,6 +70,7 @@ class CourtView(APIView):
     """
     场地信息
     """
+    authentication_classes = [ManagerAuthtication]
 
     def get(self, request):
         req_data = request.query_params
@@ -102,6 +103,7 @@ class ReserveEventView(APIView):
     """
     预约信息
     """
+    authentication_classes = [ManagerAuthtication]
 
     def get(self, request):
         req_data = request.query_params
@@ -118,6 +120,7 @@ class ChangeDurationView(APIView):
     """
     修改预约时段信息
     """
+    authentication_classes = [ManagerAuthtication]
 
     def post(self, request):
         req_data = request.data
@@ -187,6 +190,7 @@ class AddEventView(APIView):
     """
     添加场地占用事件信息
     """
+    authentication_classes = [ManagerAuthtication]
 
     def post(self, request):
         req_data = request.data
@@ -231,6 +235,7 @@ class UsersView(APIView):
     """
     用户信息
     """
+    authentication_classes = [ManagerAuthtication]
 
     def get(self, request):
         req_data = request.query_params
@@ -245,6 +250,7 @@ class HistoryView(APIView):
     """
     历史操作信息
     """
+    authentication_classes = [ManagerAuthtication]
 
     def get(self, request):
         req_data = request.query_params
