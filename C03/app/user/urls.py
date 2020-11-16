@@ -12,5 +12,6 @@ urlpatterns = [
     path('court/', views.CourtView.as_view()),
     path('duration/', views.DurationView.as_view()),
     path('reserve/', views.ReserveView.as_view()),
-    path('comment', views.CourtView.as_view())
+    path('comment/', views.CommentView.as_view()),
+    path('commentimage/', views.CommentImageView.as_view()),
 ]

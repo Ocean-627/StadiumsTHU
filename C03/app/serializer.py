@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 class StadiumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stadium
-        exclude = ['img']
+        fields = '__all__'
 
 
 class CourtSerializer(serializers.ModelSerializer):
@@ -48,7 +48,19 @@ class ReserveEventSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     courtName = serializers.CharField(source='court.name')
+    images = serializers.SerializerMethodField()
+
+    def get_images(self, obj):
+        images_list = obj.commentimage_set.all()
+        images_list = CommentImageSerializer(images_list, many=True)
+        return images_list.data
 
     class Meta:
         model = Comment
+        fields = '__all__'
+
+
+class CommentImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentImage
         fields = '__all__'
