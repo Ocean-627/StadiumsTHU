@@ -28,7 +28,7 @@ SECRET_KEY = 'sb3b_blolhwgshchtd-*ozoe(64q=rmy+)c^9cmlv7qqv*%u&t'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -90,9 +90,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'platform',
-        'USER': 'debian-sys-maint',
-        'PASSWORD': '1OpN9k8rLhRFyFBC',
-        'HOST': '140.143.163.227',
+        'USER': 'root',
+        'PASSWORD': '1234567890',
+        'HOST': 'db',
         'PORT': '3306',
     }
 }
