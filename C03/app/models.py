@@ -10,6 +10,7 @@ class User(models.Model):
     userId = models.IntegerField(verbose_name='学生编号', unique=True)
     email = models.EmailField()
     loginToken = models.CharField(max_length=100, null=True)
+    loginTime = models.DateTimeField(auto_now=True, null=True)
     phone = models.CharField(max_length=20, null=True)
     # TODO:完善信息
 
@@ -33,7 +34,7 @@ class Manager(models.Model):
     # 场馆管理员
     username = models.CharField(max_length=32)
     password = models.CharField(max_length=32)
-    userId = models.IntegerField(verbose_name='管理员编号')
+    userId = models.IntegerField(verbose_name='管理员编号', unique=True)
     email = models.EmailField()
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     loginToken = models.CharField(max_length=100, null=True)

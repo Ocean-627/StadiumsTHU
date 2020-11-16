@@ -2,7 +2,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.utils.timezone import now
 from app.authtication import UserAuthtication
+from app.throttle import UserThrottle
 from app.serializer import *
 from app.utils import *
 
@@ -41,6 +43,7 @@ class LoginView(APIView):
             return Response({'error': 'Login failed'})
         loginToken = md5(userId)
         obj.loginToken = loginToken
+        obj.loginTime = now()
         obj.save()
         return Response({'message': 'ok', 'loginToken': loginToken})
 
@@ -63,6 +66,7 @@ class StadiumView(APIView):
     场馆信息
     """
     authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
 
     def get(self, request):
         # TODO:支持筛选
@@ -76,6 +80,7 @@ class CourtView(APIView):
     场地信息
     """
     authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
 
     def get(self, request):
         req_data = request.query_params
@@ -96,6 +101,7 @@ class DurationView(APIView):
     时段信息
     """
     authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
 
     def get(self, request):
         # TODO:支持筛选
@@ -114,6 +120,7 @@ class ReserveView(APIView):
     预订信息
     """
     authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
 
     def get(self, request):
         # 获取预订信息
@@ -159,6 +166,7 @@ class CommentView(APIView):
     评价场馆
     """
     authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
 
     def post(self, request):
         req_data = request.data

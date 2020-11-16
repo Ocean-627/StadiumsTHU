@@ -1,6 +1,10 @@
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authentication import BaseAuthentication
+from django.utils.timezone import now
 from app.models import *
+
+# 过期时间
+EXPIRED_TIME = 10
 
 
 class UserAuthtication(BaseAuthentication):
@@ -16,6 +20,9 @@ class UserAuthtication(BaseAuthentication):
         obj = User.objects.filter(loginToken=loginToken).first()
         if not obj:
             raise AuthenticationFailed({'error': 'Invalid loginToken'})
+        now_time = now()
+        if(now_time - obj.loginTime).days > EXPIRED_TIME:
+            raise AuthenticationFailed({'error': 'Login timeout'})
         return obj, loginToken
 
 
