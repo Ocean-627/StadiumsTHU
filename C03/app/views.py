@@ -2,13 +2,16 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.http import JsonResponse
+from django.http import HttpResponse
 from app.utils import *
 
 
 def test(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Requires POST'})
-    return JsonResponse({'test': 'just for test'})
+    ImageItem.objects.all().delete()
+    img = request.FILES.get('image')
+    item = ImageItem(img=img)
+    item.save()
+    return HttpResponse(item.img, content_type='image/jpeg')
 
 
 def fake(request):

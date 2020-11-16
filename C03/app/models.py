@@ -7,7 +7,7 @@ class User(models.Model):
     # 普通用户
     username = models.CharField(max_length=32)
     password = models.CharField(max_length=32)
-    userId = models.IntegerField(verbose_name='studentId')
+    userId = models.IntegerField(verbose_name='学生编号')
     email = models.EmailField()
     loginToken = models.CharField(max_length=100, null=True)
     phone = models.IntegerField(null=True)
@@ -17,8 +17,9 @@ class User(models.Model):
 class Stadium(models.Model):
     # 场馆
     name = models.CharField(max_length=32)
+    img = models.ImageField(upload_to='img/%Y/%m/%d', null=True, verbose_name='场馆图片')
     information = models.CharField(max_length=300)
-    openingHours = models.CharField(max_length=50, verbose_name='scheduleForCourt')
+    openingHours = models.CharField(max_length=50, verbose_name='开放时间')
     # TODO:开放时间和关闭时间可以设置为DateField
     openTime = models.CharField(max_length=32)
     closeTime = models.CharField(max_length=32)
@@ -33,7 +34,7 @@ class Manager(models.Model):
     # 场馆管理员
     username = models.CharField(max_length=32)
     password = models.CharField(max_length=32)
-    userId = models.IntegerField(verbose_name='managerId')
+    userId = models.IntegerField(verbose_name='管理员编号')
     email = models.EmailField()
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     loginToken = models.CharField(max_length=100, null=True)
@@ -43,7 +44,7 @@ class Manager(models.Model):
 class Court(models.Model):
     # 场地
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
-    type = models.CharField(max_length=20)
+    type = models.CharField(max_length=20, verbose_name='场馆类型')
     name = models.CharField(max_length=32, null=True)
     price = models.IntegerField()
     openState = models.BooleanField()
@@ -78,7 +79,7 @@ class ReserveEvent(models.Model):
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     duration = models.ForeignKey(Duration, on_delete=models.CASCADE)
-    result = models.CharField(max_length=2, choices=APPLY_RESULT, default=WAITING)
+    result = models.CharField(max_length=2, choices=APPLY_RESULT, default=WAITING, verbose_name='预定结果')
     # TODO:开始时间和结束时间可以处理掉
     startTime = models.CharField(max_length=50)
     endTime = models.CharField(max_length=50)
@@ -117,3 +118,5 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
     content = models.CharField(max_length=300)
+
+

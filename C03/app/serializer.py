@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 class StadiumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stadium
-        fields = '__all__'
+        exclude = ['img']
 
 
 class CourtSerializer(serializers.ModelSerializer):
