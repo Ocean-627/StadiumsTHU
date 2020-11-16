@@ -7,17 +7,17 @@ class User(models.Model):
     # 普通用户
     username = models.CharField(max_length=32)
     password = models.CharField(max_length=32)
-    userId = models.IntegerField(verbose_name='学生编号')
+    userId = models.IntegerField(verbose_name='学生编号', unique=True)
     email = models.EmailField()
     loginToken = models.CharField(max_length=100, null=True)
-    phone = models.IntegerField(null=True)
+    loginTime = models.DateTimeField(auto_now=True, null=True)
+    phone = models.CharField(max_length=20, null=True)
     # TODO:完善信息
 
 
 class Stadium(models.Model):
     # 场馆
     name = models.CharField(max_length=32)
-    img = models.ImageField(upload_to='img/%Y/%m/%d', null=True, verbose_name='场馆图片')
     information = models.CharField(max_length=300)
     openingHours = models.CharField(max_length=50, verbose_name='开放时间')
     # TODO:开放时间和关闭时间可以设置为DateField
@@ -34,7 +34,7 @@ class Manager(models.Model):
     # 场馆管理员
     username = models.CharField(max_length=32)
     password = models.CharField(max_length=32)
-    userId = models.IntegerField(verbose_name='管理员编号')
+    userId = models.IntegerField(verbose_name='管理员编号', unique=True)
     email = models.EmailField()
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     loginToken = models.CharField(max_length=100, null=True)
@@ -57,7 +57,7 @@ class Duration(models.Model):
     # 预约时段
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     date = models.CharField(max_length=10)
     startTime = models.CharField(max_length=10)
     endTime = models.CharField(max_length=10)
@@ -120,3 +120,21 @@ class Comment(models.Model):
     content = models.CharField(max_length=300)
 
 
+class CommentImage(models.Model):
+    # 评论图片
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='img/%Y/%m/%d')
+
+
+class UserImage(models.Model):
+    # 用户图片
+    # TODO:提供接口让用户提交图片
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='img/user')
+
+
+class StadiumImage(models.Model):
+    # 场馆图片
+    # TODO:解决如何导入场馆信息的问题
+    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='img/stadium')

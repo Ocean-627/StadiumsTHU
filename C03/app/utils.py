@@ -19,21 +19,23 @@ def md5(userId):
 stadiums = [
     {'name': 'xxh的场馆',
      'information': 'xxh用来debug的场馆',
-     'openingHours': '8-12,14-18',
+     'openingHours': '08:00-12:00,14:00-18:00',
      'openTime': '8:00',
      'closeTime': '18:00',
      'contact': '4008823823',
      'openState': True,
      'foreDays': 3
+     ,'durations': '01:00'
      },
     {'name': 'cbx的场馆',
      'information': 'cbx用来写bug的场馆',
-     'openingHours': '7-11,15-18',
-     'openTime': '7:00',
+     'openingHours': '07:00-11:00,15:00-18:00',
+     'openTime': '07:00',
      'closeTime': '18:00',
      'contact': '18801225328',
      'openState': True,
-     'foreDays': 2
+     'foreDays': 2,
+     'durations': '02:00'
      }
 ]
 
@@ -46,21 +48,12 @@ def initStadium(info):
     courtNum = 5
     for i in range(courtNum):
         court = Court(stadium=stadium, type='羽毛球', name='场地' + str(i), price=30,
-                      openingHours=stadium.openingHours, openState=stadium.openState)
+                      openState=stadium.openState, floor=1, location='110B')
         court.save()
         # 创建时段
-        openingHours = court.openingHours.split(',')
-        t1, t2 = openingHours[0].split('-')
-        t1, t2 = int(t1), int(t2)
-        for t in range(t1, t2):
-            duration = Duration(stadium=stadium, court=court, date='11.1', startTime=str(t),
-                                endTime=str(t + 1), openState=True, accessible=True)
-            duration.save()
-        t1, t2 = openingHours[1].split('-')
-        t1, t2 = int(t1), int(t2)
-        for t in range(t1, t2):
-            duration = Duration(stadium=stadium, court=court, date='11.1', startTime=str(t),
-                                endTime=str(t + 1), openState=True, accessible=True)
+        for t in range(10, 18):
+            duration = Duration(stadium=stadium, court=court, date='11.16', startTime=str(t) + ':00',
+                                endTime=str(t + 1) + ':00', openState=True, accessible=True)
             duration.save()
 
 

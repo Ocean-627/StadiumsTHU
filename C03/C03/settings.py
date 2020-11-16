@@ -28,7 +28,7 @@ SECRET_KEY = 'sb3b_blolhwgshchtd-*ozoe(64q=rmy+)c^9cmlv7qqv*%u&t'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -92,7 +92,7 @@ DATABASES = {
         'NAME': 'platform',
         'USER': 'root',
         'PASSWORD': '1234567890',
-        'HOST': 'db',
+        'HOST': '140.143.163.227',
         'PORT': '3306',
     }
 }
@@ -135,3 +135,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': ['app.throttle.UserThrottle'],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '10/m'
+    }
+}
