@@ -1,0 +1,10 @@
+django
+mysqlclient
+gunicorn
+pyjwt
+PyMySQL
+scrypt
+python-dotenv
+pyyaml
+djangorestframework
+Pillow
