@@ -138,7 +138,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
-    'DEFAULT_THROTTLE_CLASSES': ['app.throttle.UserThrottle'],
+    'DEFAULT_THROTTLE_CLASSES': ['app.utils.throttle.UserThrottle'],
     'DEFAULT_THROTTLE_RATES': {
         'user': '10/m'
     },

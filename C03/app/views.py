@@ -8,22 +8,9 @@ from app.utils.utils import *
 
 
 def test(request):
-    img = request.FILES.get('image')
-    stadium = Stadium(
-        name='测试场馆',
-        img=img,
-        information='随便',
-        openingHours='7-11,15-18',
-        openTime='7:00',
-        closeTime='18:00',
-        contact='18801225328',
-        openState=True,
-        foreDays=1,
-        durations='01:00'
-    )
-    stadium.save()
-    stadium = StadiumSerializer(stadium, many=False)
-    return JsonResponse({'stadium': stadium.data})
+    A = '08:00'
+    B = '12:00'
+    return JsonResponse({'time': judgeTime(A, B)})
 
 
 def fake(request):
