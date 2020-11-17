@@ -264,15 +264,3 @@ class HistoryView(APIView):
         operations = [model_to_dict(myOperation, fields=['time', 'type', 'id']) for myOperation in myOperations]
         return JsonResponse({'operations': operations})
 
-# def get_history(request):
-#     if request.method != 'GET':
-#         return JsonResponse({'error': 'Requires GET'})
-#     managerId = request.GET.get('managerId', '')
-#     manager = Manager.objects.all().filter(id=int(managerId))[0]
-#     if not managerId:
-#         return JsonResponse({'error': 'Incomplete information'})
-#     changeDuration = manager.changeduration_set.all()
-#     addEvent = manager.addevent_set.all()
-#     return JsonResponse({'changeDuration': json(changeDuration), 'addEvent': json(addEvent)})
-# def revoke(request):
-#     return JsonResponse({'message': 'ok'})
