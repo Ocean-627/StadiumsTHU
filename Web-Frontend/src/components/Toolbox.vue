@@ -1,7 +1,7 @@
 <template>
     <div class="theme-config">
         <div class="theme-config-box">
-            <div class="spin-icon">
+            <div class="spin-icon" v-on:click="toggle()">
                 <i class="fa fa-cogs fa-spin"></i>
             </div>
             <div class="skin-settings">
@@ -103,21 +103,21 @@
                 <div class="title">换肤</div>
                 <div class="setings-item default-skin">
                     <span class="skin-name ">
-                        <a href="#" class="s-skin-0">
+                        <a href="#" class="s-skin-0" v-on:click="skin(0)">
                             默认
                         </a>
                     </span>
                 </div>
                 <div class="setings-item blue-skin">
                     <span class="skin-name ">
-                        <a href="#" class="s-skin-1">
+                        <a href="#" class="s-skin-1" v-on:click="skin(1)">
                             蓝色
                         </a>
                     </span>
                 </div>
                 <div class="setings-item yellow-skin">
                     <span class="skin-name ">
-                        <a href="#" class="s-skin-3">
+                        <a href="#" class="s-skin-3" v-on:click="skin(3)">
                             黄色
                         </a>
                     </span>
@@ -268,66 +268,61 @@ $('#fixedfooter').click(function () {
         }
     }
 });
-// SKIN Select
-$('.spin-icon').click(function () {
-    $(".theme-config-box").toggleClass("show");
-});
-// Default skin
-$('.s-skin-0').click(function () {
-    $("body").removeClass("skin-1");
-    $("body").removeClass("skin-2");
-    $("body").removeClass("skin-3");
-});
-// Blue skin
-$('.s-skin-1').click(function () {
-    $("body").removeClass("skin-2");
-    $("body").removeClass("skin-3");
-    $("body").addClass("skin-1");
-});
-// Inspinia ultra skin
-$('.s-skin-2').click(function () {
-    $("body").removeClass("skin-1");
-    $("body").removeClass("skin-3");
-    $("body").addClass("skin-2");
-});
-// Yellow skin
-$('.s-skin-3').click(function () {
-    $("body").removeClass("skin-1");
-    $("body").removeClass("skin-2");
-    $("body").addClass("skin-3");
-});
-if (localStorageSupport) {
-    var collapse = localStorage.getItem("collapse_menu");
-    var fixedsidebar = localStorage.getItem("fixedsidebar");
-    var fixednavbar = localStorage.getItem("fixednavbar");
-    var fixednavbar2 = localStorage.getItem("fixednavbar2");
-    var boxedlayout = localStorage.getItem("boxedlayout");
-    var fixedfooter = localStorage.getItem("fixedfooter");
-    if (collapse == 'on') {
-        $('#collapsemenu').prop('checked', 'checked')
-    }
-    if (fixedsidebar == 'on') {
-        $('#fixedsidebar').prop('checked', 'checked')
-    }
-    if (fixednavbar == 'on') {
-        $('#fixednavbar').prop('checked', 'checked')
-    }
-    if (fixednavbar2 == 'on') {
-        $('#fixednavbar2').prop('checked', 'checked')
-    }
-    if (boxedlayout == 'on') {
-        $('#boxedlayout').prop('checked', 'checked')
-    }
-    if (fixedfooter == 'on') {
-        $('#fixedfooter').prop('checked', 'checked')
-    }
-}
+
+import Common from "@/Common"
 export default {
     data() {
-        return {}
+        return {
+            colorType: Common.colorType
+        }
     },
     methods: {
-        
+        toggle() {
+            $(".theme-config-box").toggleClass("show");
+        },
+        skin(n) {
+            $("body").removeClass("skin-1")
+            $("body").removeClass("skin-2")
+            $("body").removeClass("skin-3")
+            if(n === 1){
+                $("body").addClass("skin-1")
+            }
+            else if(n === 2){
+                $("body").addClass("skin-2")
+            }
+            else if(n === 3){
+                $("body").addClass("skin-3")
+            }
+        }
+    },
+    beforeMount() {
+        skin(this.colorType)
+        if (localStorageSupport) {
+            var collapse = localStorage.getItem("collapse_menu");
+            var fixedsidebar = localStorage.getItem("fixedsidebar");
+            var fixednavbar = localStorage.getItem("fixednavbar");
+            var fixednavbar2 = localStorage.getItem("fixednavbar2");
+            var boxedlayout = localStorage.getItem("boxedlayout");
+            var fixedfooter = localStorage.getItem("fixedfooter");
+            if (collapse == 'on') {
+                $('#collapsemenu').prop('checked', 'checked')
+            }
+            if (fixedsidebar == 'on') {
+                $('#fixedsidebar').prop('checked', 'checked')
+            }
+            if (fixednavbar == 'on') {
+                $('#fixednavbar').prop('checked', 'checked')
+            }
+            if (fixednavbar2 == 'on') {
+                $('#fixednavbar2').prop('checked', 'checked')
+            }
+            if (boxedlayout == 'on') {
+                $('#boxedlayout').prop('checked', 'checked')
+            }
+            if (fixedfooter == 'on') {
+                $('#fixedfooter').prop('checked', 'checked')
+            }
+        }
     }
 }
 </script>
