@@ -42,7 +42,7 @@ closeTime    闭馆时间
 contact      联系方式            
 openstate    是否开放        
 foredays     可提前预约天数
-durations    ??
+durations    单位预定时间(比如羽毛球可能是以一小时为单位)
 // 尚未加入
 location	 位置
 ```
@@ -79,11 +79,10 @@ accessible    是否可以预订
 #### **ChangeDuration （永久）修改预约时段事件**
 
 ```js
-manager      管理员              // 外键
-stadium      场馆                // 外键           
+manager      管理员             
+stadium      场馆                   
 openingHours 开放时间段划分情况     
-// 新增
-startDate    生效日期
+date    	 生效日期
 time         操作时间
 type         操作类型            // 默认修改预约时段事件类型为1
 ```
@@ -91,8 +90,8 @@ type         操作类型            // 默认修改预约时段事件类型为1
 #### **AddEvent （临时）添加活动事件**
 
 ```js
-manager      管理员              // 外键
-court        场地                // 外键
+manager      管理员              
+court        场地                
 startTime    开始时间
 endTime      结束时间
 date         活动日期
@@ -117,12 +116,33 @@ checked      是否已使用
 leave        是否已离开
 ```
 
-#### **Comment** 评价场地信息 （可留作后续迭代）
+#### **Comment** 评价场地信息
 
 ```js
-stadiumId    场馆ID
-courtId      场地ID
-information  评价信息
+user		 评价者
+court		 被评价场地
+content  	 评价信息
+```
+
+#### CommentImage 评价对应的附图
+
+```js
+comment		 对应评价
+image		 附图
+```
+
+#### UserImage 用户图片
+
+```js
+user		 对应用户
+image		 图片
+```
+
+#### StadiumImage 场馆图片
+
+```js
+stadium		 对应场馆
+image		 图片
 ```
 
 ### **API设计**

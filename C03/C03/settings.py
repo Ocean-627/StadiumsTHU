@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app.apps.AppConfig',
-    'rest_framework'
+    'rest_framework',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
@@ -137,8 +138,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
-    'DEFAULT_THROTTLE_CLASSES': ['app.throttle.UserThrottle'],
+    'DEFAULT_THROTTLE_CLASSES': ['app.utils.throttle.UserThrottle'],
     'DEFAULT_THROTTLE_RATES': {
         'user': '10/m'
-    }
+    },
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    )
 }

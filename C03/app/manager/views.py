@@ -1,9 +1,9 @@
 from django.http import JsonResponse
 from itertools import chain
 from operator import attrgetter
-from app.utils import *
-from app.serializer import *
-from app.authtication import ManagerAuthtication
+from app.utils.utils import *
+from app.utils.serializer import *
+from app.utils.authtication import ManagerAuthtication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
