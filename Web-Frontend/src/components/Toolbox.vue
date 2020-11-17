@@ -74,21 +74,21 @@
                 <div class="title">换肤</div>
                 <div class="setings-item default-skin">
                     <span class="skin-name ">
-                        <a href="#" class="s-skin-0" v-on:click="skin(0)">
+                        <a href="#" class="s-skin-0" v-on:click="skin('0')">
                             默认
                         </a>
                     </span>
                 </div>
                 <div class="setings-item blue-skin">
                     <span class="skin-name ">
-                        <a href="#" class="s-skin-1" v-on:click="skin(1)">
+                        <a href="#" class="s-skin-1" v-on:click="skin('1')">
                             蓝色
                         </a>
                     </span>
                 </div>
                 <div class="setings-item yellow-skin">
                     <span class="skin-name ">
-                        <a href="#" class="s-skin-3" v-on:click="skin(3)">
+                        <a href="#" class="s-skin-3" v-on:click="skin('3')">
                             黄色
                         </a>
                     </span>
@@ -116,13 +116,13 @@ export default {
             $("body").removeClass("skin-1")
             $("body").removeClass("skin-2")
             $("body").removeClass("skin-3")
-            if(n === 1){
+            if(n === '1'){
                 $("body").addClass("skin-1")
             }
-            else if(n === 2){
+            else if(n === '2'){
                 $("body").addClass("skin-2")
             }
-            else if(n === 3){
+            else if(n === '3'){
                 $("body").addClass("skin-3")
             }
             if (localStorageSupport) {
@@ -230,7 +230,7 @@ export default {
             }
         }
     },
-    beforeMount() {
+    mounted() {
         if (localStorageSupport) {
             var fixednavbar = localStorage.getItem("fixednavbar")
             var fixednavbar2 = localStorage.getItem("fixednavbar2")
@@ -249,7 +249,8 @@ export default {
             if (fixedfooter == 'on') {
                 $('#fixedfooter').prop('checked', 'checked')
             }
-            skin(colortype)
+            if(!colortype) colortype = '0'
+            this.skin(colortype)
         }
     }
 }
