@@ -1,10 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.generics import ListAPIView
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.utils.timezone import now
 from app.authtication import UserAuthtication
 from app.throttle import UserThrottle
+from app.filter import *
 from app.serializer import *
 from app.utils import *
 
@@ -65,7 +67,7 @@ class StadiumView(APIView):
     """
     场馆信息
     """
-    authentication_classes = [UserAuthtication]
+    # authentication_classes = [UserAuthtication]
     throttle_classes = [UserThrottle]
 
     def get(self, request):
@@ -124,6 +126,7 @@ class ReserveView(APIView):
 
     def get(self, request):
         # 获取预订信息
+        # TODO:筛选
         user = request.user
         events = user.reserveevent_set.all()
         events = ReserveEventSerializer(events, many=True)
@@ -225,3 +228,12 @@ class CommentImageView(APIView):
         if not image:
             return Response({'error': 'Image does not exist'})
         return HttpResponse(image.image, content_type='image/jpeg')
+
+
+class BooksView(ListAPIView):
+    """
+    图书查询
+    """
+    queryset = Bookinfo.objects.all()
+    serializer_class = BookInfoSerializer
+    filter_class = BookFilter  # 过滤类

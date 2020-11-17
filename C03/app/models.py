@@ -138,3 +138,14 @@ class StadiumImage(models.Model):
     # TODO:解决如何导入场馆信息的问题
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='img/stadium')
+
+
+class Bookinfo(models.Model):
+    btitle = models.CharField(max_length=200, verbose_name='标题')
+    bpub_date = models.DateField(blank=True, null=True, verbose_name='出版日期')
+    bread = models.IntegerField(null=True, verbose_name='阅读数量')
+    bcomment = models.IntegerField(null=True, verbose_name='评论数量')
+    bimage = models.CharField(max_length=200, blank=True, null=True, verbose_name='图片')
+
+    class Meta:
+        verbose_name = "图书"
