@@ -144,5 +144,60 @@ class ReverseDurationTest(TestCase):
         event = ReserveEvent.objects.all()[0]
         self.assertEqual(event.user_id, 1)
         self.assertEqual(event.duration_id, 1)
+        self.assertEqual(event.cancel, False)
         # 取消操作
+        params = {
+            'eventId': 1
+        }
+        rsp = self.client.put('/api/user/reserve/' + "?loginToken=" + self.loginToken, params,
+                              content_type='application/json')
+        content = json.loads(rsp.content)
+        print(content)
+        self.assertEqual(rsp.status_code, 200)
+        self.assertEqual(content['message'], 'ok')
+        # 查看数据库
+        duration = Duration.objects.all()[0]
+        self.assertTrue(duration.accessible)
 
+
+class CommentTest(TestCase):
+    """
+    测试评价
+    """
+
+    def setUp(self):
+        User.objects.create(username='cbx', password='UsingNamespaceStd12', userId=2018011891, email='cbx@qq.com')
+        Stadium.objects.create(name='cbx的场馆', information='专门用来测试', openingHours='08:00-12:00, 13:00-17:00',
+                               openTime="08:00", closeTime="17:00", openState=True, foreDays=3, durations='01:00')
+        Court.objects.create(stadium_id=1, type='羽毛球', price=30, openState=True, floor=1, location='306A')
+        params = {
+            'userId': 2018011891,
+            'password': 'UsingNamespaceStd12'
+        }
+        rsp = self.client.post('/api/user/login/', params)
+        content = json.loads(rsp.content)
+        self.loginToken = content['loginToken']
+
+    def test_comment(self):
+        params = {
+            'content': '这个场馆还是不错啊',
+            'courtId': 1
+        }
+        rsp = self.client.post('/api/user/comment/' + "?loginToken=" + self.loginToken, params)
+        content = json.loads(rsp.content)
+        self.assertEqual(rsp.status_code, 200)
+        # 正确参数
+        params['content'] = '我会告诉你我是用15字来骗评论吗'
+        rsp = self.client.post('/api/user/comment/' + "?loginToken=" + self.loginToken, params)
+        content = json.loads(rsp.content)
+        self.assertEqual(content['message'], 'ok')
+        comment = Comment.objects.all()[0]
+        self.assertEqual(comment.content, params['content'])
+        # 删除这条评论
+        params = {
+            'commentId': 1
+        }
+        rsp = self.client.delete('/api/user/comment/' + "?loginToken=" + self.loginToken, params,
+                                 content_type='application/json')
+        self.assertEqual(rsp.status_code, 200)
+        self.assertEqual(len(Comment.objects.all()), 0)

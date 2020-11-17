@@ -122,7 +122,7 @@ class ReserveView(APIView):
         stadium = duration.stadium
         court = duration.court
         reserveevent = ReserveEvent(stadium=stadium, court=court, user=user, duration=duration, result='S',
-                                    startTime=duration.startTime,
+                                    startTime=duration.startTime, cancel=False,
                                     endTime=duration.endTime)
         reserveevent.save()
         duration.user = user
@@ -143,7 +143,7 @@ class ReserveView(APIView):
         # TODO:进行退款等操作
         duration = event.duration
         duration.user = None
-        duration.accessible = False
+        duration.accessible = True
         duration.save()
         return Response({'message': 'ok'})
 
