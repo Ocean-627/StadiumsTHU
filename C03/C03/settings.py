@@ -143,6 +143,6 @@ REST_FRAMEWORK = {
         'user': '10/m'
     },
     'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend'
+        'django_filters.rest_framework.DjangoFilterBackend',
     )
 }

@@ -6,4 +6,3 @@ class UserThrottle(SimpleRateThrottle):
 
     def get_cache_key(self, request, view):
         return request.user
-

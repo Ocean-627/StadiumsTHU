@@ -4,11 +4,11 @@ from rest_framework.generics import ListAPIView
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.utils.timezone import now
-from app.authtication import UserAuthtication
-from app.throttle import UserThrottle
-from app.filter import *
-from app.serializer import *
-from app.utils import *
+from app.utils.authtication import UserAuthtication
+from app.utils.throttle import UserThrottle
+from app.utils.filter import *
+from app.utils.serializer import *
+from app.utils.utils import *
 
 
 class LogonView(APIView):
@@ -63,58 +63,37 @@ class LogoutView(APIView):
         return Response({'message': 'ok'})
 
 
-class StadiumView(APIView):
+class StadiumView(ListAPIView):
     """
     场馆信息
     """
-    # authentication_classes = [UserAuthtication]
+    authentication_classes = [UserAuthtication]
     throttle_classes = [UserThrottle]
-
-    def get(self, request):
-        # TODO:支持筛选
-        stadiums = Stadium.objects.all()
-        stadiums = StadiumSerializer(stadiums, many=True)
-        return Response({'message': 'ok', 'stadiums': stadiums.data})
+    queryset = Stadium.objects.all()
+    serializer_class = StadiumSerializer
+    filter_class = StadiumFilter
 
 
-class CourtView(APIView):
+class CourtView(ListAPIView):
     """
     场地信息
     """
     authentication_classes = [UserAuthtication]
     throttle_classes = [UserThrottle]
-
-    def get(self, request):
-        req_data = request.query_params
-        # TODO:支持更多筛选条件
-        id = req_data.get('id')
-        type = req_data.get('type')
-        courts = None
-        if id:
-            courts = Court.objects.filter(stadium=id)
-        if type:
-            courts = Court.objects.filter(type=type)
-        courts = CourtSerializer(courts, many=True)
-        return Response({'message': 'ok', 'courts': courts.data})
+    queryset = Court.objects.all()
+    serializer_class = CourtSerializer
+    filter_class = CourtFilter
 
 
-class DurationView(APIView):
+class DurationView(ListAPIView):
     """
     时段信息
     """
     authentication_classes = [UserAuthtication]
     throttle_classes = [UserThrottle]
-
-    def get(self, request):
-        # TODO:支持筛选
-        req_data = request.query_params
-        id = req_data.get('courtId')
-        court = Court.objects.filter(id=id).first()
-        if not court:
-            return Response({'error': 'Court does not exist'})
-        durations = court.duration_set.all()
-        durations = DurationSerializer(durations, many=True)
-        return Response({'message': 'ok', 'durations': durations.data})
+    queryset = Duration.objects.all()
+    serializer_class = DurationSerializer
+    filter_class = DurationFilter
 
 
 class ReserveView(APIView):
@@ -228,12 +207,3 @@ class CommentImageView(APIView):
         if not image:
             return Response({'error': 'Image does not exist'})
         return HttpResponse(image.image, content_type='image/jpeg')
-
-
-class BooksView(ListAPIView):
-    """
-    图书查询
-    """
-    queryset = Bookinfo.objects.all()
-    serializer_class = BookInfoSerializer
-    filter_class = BookFilter  # 过滤类

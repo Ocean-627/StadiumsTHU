@@ -3,8 +3,8 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import JsonResponse
 from django.http import HttpResponse
-from app.serializer import *
-from app.utils import *
+from app.utils.serializer import *
+from app.utils.utils import *
 
 
 def test(request):

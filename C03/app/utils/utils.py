@@ -20,7 +20,7 @@ stadiums = [
     {'name': 'xxh的场馆',
      'information': 'xxh用来debug的场馆',
      'openingHours': '08:00-12:00,14:00-18:00',
-     'openTime': '8:00',
+     'openTime': '08:00',
      'closeTime': '18:00',
      'contact': '4008823823',
      'openState': True,

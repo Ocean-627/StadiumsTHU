@@ -64,9 +64,3 @@ class CommentImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommentImage
         fields = '__all__'
-
-
-class BookInfoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Bookinfo
-        fields = "__all__"
