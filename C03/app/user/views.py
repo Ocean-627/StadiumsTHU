@@ -126,6 +126,7 @@ class ReserveView(APIView):
                                     endTime=duration.endTime)
         reserveevent.save()
         duration.user = user
+        duration.accessible = False
         duration.save()
         return JsonResponse({'message': 'ok', 'eventId': reserveevent.id})
 
@@ -142,6 +143,7 @@ class ReserveView(APIView):
         # TODO:进行退款等操作
         duration = event.duration
         duration.user = None
+        duration.accessible = False
         duration.save()
         return Response({'message': 'ok'})
 
