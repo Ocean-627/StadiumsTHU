@@ -131,15 +131,23 @@ class ReserveView(APIView):
         reserveevent.save()
         return JsonResponse({'message': 'ok', 'eventId': reserveevent.id})
 
-    def delete(self, request):
+    def put(self, request):
         # 取消预订
         req_data = request.data
+        user = request.user
         eventId = req_data.get('eventId')
-        event = ReserveEvent.objects.filter(id=eventId).first()
+        event = ReserveEvent.objects.filter(user=user, id=eventId).first()
         if not event:
             return Response({'error': 'Reserve does not exist'})
         event.cancel = True
-        # TODO:退款等操作
+        event.save()
+        # TODO:进行退款等操作
+        duration = event.duration
+        duration.user = None
+        duration.save()
+        return Response({'message': 'ok'})
+
+    def delete(self, request):
         return Response({'message': 'ok'})
 
 
@@ -158,11 +166,14 @@ class CommentView(APIView):
         if not court:
             return Response({'error': 'Court does not exist'})
         content = req_data.get('content')
-        if not content:
-            return Response({'error': 'Empty content'})
-        comment = Comment(user=user, court=court, content=content)
-        comment.save()
-        return Response({'message': 'ok', 'commentId': comment.id})
+        try:
+            comment = Comment(user=user, court=court, content=content)
+            # check if valid
+            comment.full_clean()
+            comment.save()
+            return Response({'message': 'ok', 'commentId': comment.id})
+        except ValidationError as e:
+            return Response(e.error_dict)
 
     def get(self, request):
         user = request.user
