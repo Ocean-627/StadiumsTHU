@@ -59,7 +59,7 @@ class Duration(models.Model):
     # 预约时段
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     date = models.CharField(max_length=10)
     startTime = models.CharField(max_length=10)
     endTime = models.CharField(max_length=10)
@@ -80,15 +80,15 @@ class ReserveEvent(models.Model):
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    duration = models.ForeignKey(Duration, on_delete=models.CASCADE)
+    duration = models.ForeignKey(Duration, on_delete=models.DO_NOTHING)
     result = models.CharField(max_length=2, choices=APPLY_RESULT, default=WAITING, verbose_name='预定结果')
     # TODO:开始时间和结束时间可以处理掉
     startTime = models.CharField(max_length=50)
     endTime = models.CharField(max_length=50)
-    payment = models.BooleanField(null=True, verbose_name='Whether user has payed')
-    cancel = models.BooleanField(null=True, verbose_name='Whether this event has been canceled')
-    checked = models.BooleanField(null=True, verbose_name='Whether user has used court')
-    leave = models.BooleanField(null=True, verbose_name='Whether user has left court')
+    payment = models.BooleanField(null=True, verbose_name='是否支付')
+    cancel = models.BooleanField(null=True, verbose_name='是否取消')
+    checked = models.BooleanField(null=True, verbose_name='是否使用')
+    leave = models.BooleanField(null=True, verbose_name='是否离开')
     # TODO:完善事件信息
 
 
@@ -140,3 +140,4 @@ class StadiumImage(models.Model):
     # TODO:解决如何导入场馆信息的问题
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='img/stadium')
+

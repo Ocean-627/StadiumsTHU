@@ -8,9 +8,7 @@ from app.utils.utils import *
 
 
 def test(request):
-    A = '08:00'
-    B = '12:00'
-    return JsonResponse({'time': judgeTime(A, B)})
+    return JsonResponse({'test': 'just for test'})
 
 
 def fake(request):

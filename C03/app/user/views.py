@@ -121,14 +121,12 @@ class ReserveView(APIView):
         user = request.user
         stadium = duration.stadium
         court = duration.court
-        # 不允许重复预订
-        obj = ReserveEvent.objects.filter(id=durationId, user=user, result='W').first()
-        if obj:
-            return Response({'error': 'Same reverse has applied'})
-        reserveevent = ReserveEvent(stadium=stadium, court=court, user=user, duration=duration, result='W',
+        reserveevent = ReserveEvent(stadium=stadium, court=court, user=user, duration=duration, result='S',
                                     startTime=duration.startTime,
                                     endTime=duration.endTime)
         reserveevent.save()
+        duration.user = user
+        duration.save()
         return JsonResponse({'message': 'ok', 'eventId': reserveevent.id})
 
     def put(self, request):
