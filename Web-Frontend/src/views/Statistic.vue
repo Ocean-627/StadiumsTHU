@@ -3,10 +3,24 @@
         <Navbar></Navbar>
         <div id="page-wrapper" class="gray-bg dashbard-1">
             <Header></Header>
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <!--Breadcrum 导航-->
+                <div class="col-lg-9">
+                    <h2>场馆信息管理</h2>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="index.html">主页</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            <strong>数据统计</strong>
+                        </li>
+                    </ol>
+                </div>
+            </div>
             <div class="row  border-bottom white-bg dashboard-header">
                 <div class="col-md-3">
-                    <h2>欢迎您，马保国</h2>
-                    <small>您有42条消息和6条通知。</small>
+                    <!--主要部分-->
+                    
                 </div>
             </div>
             <Footer></Footer>
@@ -30,17 +44,6 @@ export default {
     },
     components: {
         Toolbox, Navbar, Header, Footer
-    },
-    mounted() {
-        setTimeout(function () {
-            toastr.options = {
-                closeButton: true,
-                progressBar: true,
-                showMethod: 'slideDown',
-                timeOut: 4000
-            };
-            toastr.success('清动家园管理者', '欢迎您 马保国');
-        }, 1300);
     }
 }
 
