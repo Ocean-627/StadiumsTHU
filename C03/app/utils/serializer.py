@@ -37,9 +37,9 @@ class DurationSerializer(serializers.ModelSerializer):
 
 
 class ReserveEventSerializer(serializers.ModelSerializer):
-    stadiumName = serializers.CharField(source='stadium.name')
-    courtName = serializers.CharField(source='court.name')
-    userName = serializers.CharField(source='user.username')
+    stadiumName = serializers.CharField(source='stadium.name', required=False)
+    courtName = serializers.CharField(source='court.name', required=False)
+    userName = serializers.CharField(source='user.username', required=False)
     result = serializers.SerializerMethodField()
 
     def get_result(self, obj):
@@ -48,6 +48,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReserveEvent
         fields = '__all__'
+        read_only_fields = ['stadium', 'court', 'duration', ' result', 'startTime', 'endTime']
 
 
 class CommentSerializer(serializers.ModelSerializer):
