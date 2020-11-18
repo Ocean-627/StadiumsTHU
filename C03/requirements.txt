@@ -8,3 +8,4 @@ python-dotenv
 pyyaml
 djangorestframework
 Pillow
+django_filter

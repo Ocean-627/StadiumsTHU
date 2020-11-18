@@ -160,20 +160,18 @@ class CommentView(APIView):
 
     def post(self, request):
         req_data = request.data
+        ser = CommentSerializer(data=req_data)
+        if not ser.is_valid():
+            return Response({'error': ser.errors})
         user = request.user
         courtId = req_data.get('courtId')
         court = Court.objects.filter(id=courtId).first()
         if not court:
             return Response({'error': 'Court does not exist'})
         content = req_data.get('content')
-        try:
-            comment = Comment(user=user, court=court, content=content)
-            # check if valid
-            comment.full_clean()
-            comment.save()
-            return Response({'message': 'ok', 'commentId': comment.id})
-        except ValidationError as e:
-            return Response(e.error_dict)
+        comment = Comment(user=user, court=court, content=content)
+        comment.save()
+        return Response({'message': 'ok', 'commentId': comment.id})
 
     def get(self, request):
         user = request.user

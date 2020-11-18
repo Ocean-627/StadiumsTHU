@@ -4,6 +4,10 @@ from app.models import *
 
 class UserSerializer(serializers.ModelSerializer):
     # 用来验证用户输入
+    username = serializers.CharField(label='用户名', validators=[MinLengthValidator(3), MaxLengthValidator(32)])
+    password = serializers.CharField(label='密码',
+                                     validators=[MinLengthValidator(10), MaxLengthValidator(32), SafeValidator])
+
     class Meta:
         model = User
         fields = '__all__'
@@ -47,8 +51,9 @@ class ReserveEventSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    courtName = serializers.CharField(source='court.name')
-    images = serializers.SerializerMethodField()
+    courtName = serializers.CharField(source='court.name', required=False)
+    images = serializers.SerializerMethodField(required=False)
+    content = serializers.CharField(label='评论内容', validators=[MinLengthValidator(15), MaxLengthValidator(300)])
 
     def get_images(self, obj):
         images_list = obj.commentimage_set.all()
@@ -58,6 +63,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
+        read_only_fields = ['court', 'user']
 
 
 class CommentImageSerializer(serializers.ModelSerializer):

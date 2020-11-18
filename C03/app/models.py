@@ -6,9 +6,8 @@ import django.utils.timezone as timezone
 # Create your models here.
 class User(models.Model):
     # 普通用户
-    username = models.CharField(max_length=32, validators=[MinLengthValidator(3), MaxLengthValidator(32)])
-    password = models.CharField(max_length=32,
-                                validators=[MinLengthValidator(10), MaxLengthValidator(32), SafeValidator])
+    username = models.CharField(max_length=32)
+    password = models.CharField(max_length=32)
     userId = models.IntegerField(verbose_name='学生编号', unique=True)
     email = models.EmailField()
     loginToken = models.CharField(max_length=100, null=True)
@@ -119,7 +118,7 @@ class Comment(models.Model):
     # 场地评论
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
-    content = models.CharField(max_length=300, validators=[MinLengthValidator(15), MaxLengthValidator(300)])
+    content = models.CharField(max_length=300)
 
 
 class CommentImage(models.Model):
@@ -140,4 +139,3 @@ class StadiumImage(models.Model):
     # TODO:解决如何导入场馆信息的问题
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='img/stadium')
-
