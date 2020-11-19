@@ -13,6 +13,8 @@ import BlackList from '@/views/UserManagement/BlackList'
 import OperationRecord from '@/views/OperationRecord'
 import Statistic from '@/views/Statistic'
 import SystemLog from '@/views/SystemLog'
+import NewStadium from '@/views/StadiumManagement/NewStadium'
+import EditStadium from '@/views/StadiumManagement/EditStadium'
 
 Vue.use(Router)
 
@@ -76,6 +78,16 @@ export default new Router({
       path: '/system_log',
       name: 'SystemLog',
       component: SystemLog
+    },
+    {
+      path: '/stadium_management/stadium_info/new_stadium',
+      name: 'NewStadium',
+      component: NewStadium
+    },
+    {
+      path: '/stadium_management/stadium_info/edit_stadium',
+      name: 'EditStadium',
+      component: EditStadium
     }
   ],
   mode: 'history',

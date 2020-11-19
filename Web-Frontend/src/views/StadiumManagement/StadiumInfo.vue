@@ -9,7 +9,7 @@
                     <h2>场馆信息管理</h2>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="index.html">主页</a>
+                            <a href="/home">主页</a>
                         </li>
                         <li class="breadcrumb-item">
                             场馆管理
@@ -21,14 +21,16 @@
                 </div>
             </div>
             <div class="wrapper wrapper-content animated fadeInRight">
-                <div class="row">
-                    <a href="" class="btn btn-outline btn-primary i-newstadium"><i class="fa fa-plus"></i> 添加新场馆 </a>
+                <div class="row i-row">
+                    <a href="/stadium_management/stadium_info/new_stadium" class="btn btn-outline btn-primary i-newstadium">
+                        <i class="fa fa-plus"></i> 添加新场馆 
+                    </a>
                 </div>
                 <div class="grid">
                     <div class="grid-item">
                         <div class="contact-box">
                             <!-- 主要部分 & 单个单元 -->
-                            <div class="row">
+                            <div class="row i-row">
                                 <div class="col-md-7">
                                     <img alt="image" class="rounded m-t-xs img-fluid i-img" src="/static/img/zongti.jpg">
                                 </div>
@@ -47,15 +49,21 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row i-groundinfo">
+                            <div class="row i-row i-groundinfo">
                                 <div class="col-md-12">
                                     开放场地：羽毛球场 8 个、乒乓球场 8 个
                                 </div>
                             </div>
                             <div class="contact-box-footer">
-                                <a href="" class="btn btn-outline btn-default"><i class="fa fa-edit"></i> 编辑场馆信息 </a>
-                                <a href="" class="btn btn-outline btn-default"><i class="fa fa-clock-o"></i> 修改预定时间段 </a>
-                                <a href="" class="btn btn-outline btn-danger"><i class="fa fa-trash"></i> 移除场馆 </a>
+                                <a href="/stadium_management/stadium_info/edit_stadium" class="btn btn-outline btn-default">
+                                    <i class="fa fa-edit"></i> 编辑场馆信息 
+                                </a>
+                                <a href="" class="btn btn-outline btn-default">
+                                    <i class="fa fa-clock-o"></i> 修改预定时间段 
+                                </a>
+                                <a href="" class="btn btn-outline btn-danger">
+                                    <i class="fa fa-trash"></i> 移除场馆 
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -68,10 +76,10 @@
 </template>
 
 <style scoped>
-.row [class^="col-"] {
+.i-row [class^="col-"] {
     padding: 10px;
 }
-.row {
+.i-row {
     margin: 0;
 }
 .contact-box {
