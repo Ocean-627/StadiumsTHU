@@ -9,6 +9,11 @@ export default {
   name: 'App',
   data() {
     return {}
+  },
+  watch: {
+    //'$route'(to, from) {
+    //  this.$router.go(0);
+    //}
   }
 }
 </script>

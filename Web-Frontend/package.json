@@ -19,6 +19,8 @@
     "fizzy-ui-utils": "^2.0.7",
     "get-size": "^2.0.3",
     "jquery": "^3.5.1",
+    "less": "^3.12.2",
+    "less-loader": "^7.1.0",
     "masonry": "0.0.2",
     "masonry-layout": "^4.2.2",
     "outlayer": "^2.1.1",

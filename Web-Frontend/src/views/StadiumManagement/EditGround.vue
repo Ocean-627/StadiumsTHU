@@ -42,7 +42,7 @@
                             <!-- 主要部分 & 单个单元 -->
                             <div class="panel-body">
                                 <fieldset>
-                                    <div class="form-group row"><label class="col-sm-4 col-form-label">场馆名称：</label>
+                                    <div class="form-group row"><label class="col-sm-4 col-form-label">场地类型：</label>
                                         <div class="col-sm-8"><input type="text" class="form-control"></div>
                                     </div>
                                     <div class="form-group row"><label class="col-sm-4 col-form-label">开放状态：</label>
@@ -50,6 +50,9 @@
                                             <option>开放</option>
                                             <option>未开放</option>
                                         </select></div>
+                                    </div>
+                                    <div class="form-group row"><label class="col-sm-4 col-form-label">场地数量：</label>
+                                        <div class="col-sm-5"><input class="touchspin" type="text" v-model="ground.count"></div>
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-sm-4"></div>
@@ -74,6 +77,7 @@
 @import '../../assets/css/plugins/chosen/bootstrap-chosen.css';
 @import '../../assets/css/plugins/jasny/jasny-bootstrap.min.css';
 @import '../../assets/css/plugins/clockpicker/clockpicker.css';
+@import '../../assets/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css';
 </style>
 
 <style scoped>
@@ -123,6 +127,7 @@ import 'masonry-layout'
 import '@/assets/js/plugins/clockpicker/clockpicker.js'
 import '@/assets/js/plugins/chosen/chosen.jquery.js'
 import '@/assets/js/plugins/jasny/jasny-bootstrap.min.js'
+import '@/assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js'
 export default {
     data() {
         return {
@@ -149,6 +154,7 @@ export default {
             gutter: 25
         })
         $('.chosen-select').chosen({ width: "100%" })
+        $(".touchspin").TouchSpin();
         var clocks = document.getElementsByClassName('clockpicker')
         for(var i = 0; i < clocks.length; i++){
             $(clocks[i]).clockpicker()
