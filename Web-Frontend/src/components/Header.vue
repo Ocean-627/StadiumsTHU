@@ -105,7 +105,7 @@
                     <span class="m-r-sm text-muted welcome-message">2020/11/16</span>
                 </li>
                 <li>
-                    <a href="#/login">
+                    <a href="/login">
                         <i class="fa fa-sign-out"></i> 注销
                     </a>
                 </li>

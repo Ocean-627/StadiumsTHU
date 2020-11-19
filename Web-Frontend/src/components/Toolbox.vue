@@ -113,17 +113,25 @@ export default {
             $(".theme-config-box").toggleClass("show");
         },
         skin(n) {
-            $("body").removeClass("skin-1")
-            $("body").removeClass("skin-2")
-            $("body").removeClass("skin-3")
             if(n === '1'){
+                $("body").removeClass("skin-3")
+                $("body").removeClass("skin-2")
                 $("body").addClass("skin-1")
             }
             else if(n === '2'){
+                $("body").removeClass("skin-1")
+                $("body").removeClass("skin-3")
                 $("body").addClass("skin-2")
             }
             else if(n === '3'){
+                $("body").removeClass("skin-1")
+                $("body").removeClass("skin-2")
                 $("body").addClass("skin-3")
+            }
+            else{
+                $("body").removeClass("skin-1")
+                $("body").removeClass("skin-2")
+                $("body").removeClass("skin-3")
             }
             if (localStorageSupport) {
                 localStorage.setItem("colortype", n);
