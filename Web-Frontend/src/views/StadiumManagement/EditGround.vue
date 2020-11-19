@@ -40,34 +40,33 @@
                     <div class="grid-item" v-for="(ground, index) in grounds" v-bind:key="ground.name">
                         <div class="contact-box">
                             <!-- 主要部分 & 单个单元 -->
-                            <div class="row i-row">
-                                <div class="col-md-7">
-                                    <img alt="image" class="rounded m-t-xs img-fluid i-img" src="/static/img/zongti.jpg">
-                                </div>
-                                <div class="col-md-5 i-infobox">
-                                    <h2 class="i-title"><strong>综合体育馆</strong></h2>
-                                    <i class="fa fa-comment-o i-icon"></i>1224 条评论 <br>
-                                    <i class="fa fa-clock-o i-icon"></i> 开放时间：8:00 - 18:00<br>
-                                    <i class="fa fa-location-arrow i-icon"></i> 新民路<br>
-                                    <div class="i-score">
-                                        <i class="fa fa-star i-star"></i>
-                                        <i class="fa fa-star i-star"></i>
-                                        <i class="fa fa-star i-star"></i>
-                                        <i class="fa fa-star i-star"></i>
-                                        <i class="fa fa-star i-star i-icon"></i>
-                                        5
+                            <div class="panel-body">
+                                <fieldset>
+                                    <div class="form-group row"><label class="col-sm-4 col-form-label">场馆名称：</label>
+                                        <div class="col-sm-8"><input type="text" class="form-control"></div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row i-row i-groundinfo">
-                                <div class="col-md-12">
-                                    开放场地：羽毛球场 8 个、乒乓球场 8 个
-                                </div>
-                            </div>
-                            <div class="contact-box-footer">
-                                <button type="button" class="btn btn-outline btn-danger" v-on:click="deleteGround(index)">
-                                    <i class="fa fa-trash"></i> 删除场地 
-                                </button>
+                                    <div class="form-group row"><label class="col-sm-4 col-form-label">开放状态：</label>
+                                        <div class="col-sm-8"><select data-placeholder="..." class="chosen-select" tabindex="2">
+                                            <option>开放</option>
+                                            <option>未开放</option>
+                                        </select></div>
+                                    </div>
+                                    <div class="form-group row"><label class="col-sm-2 col-form-label">联系方式：</label>
+                                        <div class="col-sm-4"><input type="text" class="form-control" placeholder="..."></div>
+                                    </div>
+                                    <div class="form-group row"><label class="col-sm-2 col-form-label">场馆说明:</label>
+                                        <div class="col-sm-10">
+                                            <textarea class="form-control" placeholder="输入场馆说明..." style="height: 100px;"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-5"></div>
+                                        <div class="col-sm-2">
+                                            <button type="button" class="btn btn-primary" v-on:click="submit()">提交</button>
+                                            <button type="button" class="btn btn-default" v-on:click="cancel()">取消</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
                             </div>
                         </div>
                     </div>
@@ -78,6 +77,12 @@
         <Toolbox></Toolbox>
     </div>
 </template>
+
+<style>
+@import '../../assets/css/plugins/chosen/bootstrap-chosen.css';
+@import '../../assets/css/plugins/jasny/jasny-bootstrap.min.css';
+@import '../../assets/css/plugins/clockpicker/clockpicker.css';
+</style>
 
 <style scoped>
 .i-row [class^="col-"] {
@@ -123,6 +128,9 @@ import Footer from "@/components/Footer"
 import Toolbox from "@/components/Toolbox"
 import 'jquery'
 import 'masonry-layout'
+import '@/assets/js/plugins/clockpicker/clockpicker.js'
+import '@/assets/js/plugins/chosen/chosen.jquery.js'
+import '@/assets/js/plugins/jasny/jasny-bootstrap.min.js'
 export default {
     data() {
         return {
@@ -147,7 +155,12 @@ export default {
             itemSelector: ".grid-item",
             columnWidth: 500,
             gutter: 25
-        });
+        })
+        $('.chosen-select').chosen({ width: "100%" })
+        var clocks = document.getElementsByClassName('clockpicker')
+        for(var i = 0; i < clocks.length; i++){
+            $(clocks[i]).clockpicker()
+        }
     },
     methods: {
         deleteGround(index) {
