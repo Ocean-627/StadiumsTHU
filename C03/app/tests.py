@@ -131,12 +131,11 @@ class ReverseDurationTest(TestCase):
 
     def test_reserve(self):
         params = {
-            'durationId': 1
+            'duration_id': 1
         }
         rsp = self.client.post('/api/user/reserve/' + "?loginToken=" + self.loginToken, params)
         content = json.loads(rsp.content)
-        self.assertEqual(rsp.status_code, 200)
-        self.assertEqual(content['message'], 'ok')
+        self.assertEqual(rsp.status_code, 201)
         # 查看数据库是否正确被更改
         duration = Duration.objects.all()[0]
         self.assertFalse(duration.accessible)
@@ -181,16 +180,15 @@ class CommentTest(TestCase):
     def test_comment(self):
         params = {
             'content': '这个场馆还是不错啊',
-            'courtId': 1
+            'court_id': 1
         }
         rsp = self.client.post('/api/user/comment/' + "?loginToken=" + self.loginToken, params)
         content = json.loads(rsp.content)
-        self.assertEqual(rsp.status_code, 200)
+        self.assertEqual(rsp.status_code, 400)
         # 正确参数
         params['content'] = '我会告诉你我是用15字来骗评论吗'
         rsp = self.client.post('/api/user/comment/' + "?loginToken=" + self.loginToken, params)
         content = json.loads(rsp.content)
-        self.assertEqual(content['message'], 'ok')
         comment = Comment.objects.all()[0]
         self.assertEqual(comment.content, params['content'])
         # 删除这条评论
