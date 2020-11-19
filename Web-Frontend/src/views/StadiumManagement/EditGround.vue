@@ -6,7 +6,7 @@
             <div class="row wrapper border-bottom white-bg page-heading">
                 <!--Breadcrum 导航-->
                 <div class="col-lg-9">
-                    <h2>场馆信息管理</h2>
+                    <h2>场地信息编辑 <small>@综合体育馆</small></h2>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="/home">主页</a>
@@ -14,20 +14,24 @@
                         <li class="breadcrumb-item">
                             场馆管理
                         </li>
+                        <li class="breadcrumb-item">
+                            <a href="/stadium_management/stadium_info">场馆信息管理</a>
+                        </li>
                         <li class="breadcrumb-item active">
-                            <strong>场馆信息管理</strong>
+                            <strong>场地信息编辑</strong>
                         </li>
                     </ol>
                 </div>
             </div>
-            <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="wrapper wrapper-content animated fadeInRight ecommerce">
+                <!-- TODO: 在路由里添加参数，控制是到哪一个场馆的编辑页面 -->
                 <div class="row i-row">
                     <a href="/stadium_management/stadium_info/new_stadium" class="btn btn-outline btn-primary i-newstadium">
                         <i class="fa fa-plus"></i> 添加新场馆 
                     </a>
                 </div>
                 <div class="grid">
-                    <div class="grid-item" v-for="(stadium, index) in stadiums" v-bind:key="stadium.name">
+                    <div class="grid-item" v-for="(ground, index) in grounds" v-bind:key="ground.name">
                         <div class="contact-box">
                             <!-- 主要部分 & 单个单元 -->
                             <div class="row i-row">
@@ -122,24 +126,14 @@ import 'masonry-layout'
 export default {
     data() {
         return {
-            stadiums: [
+            grounds: [
                 {
-                    name: '综合体育馆'
+                    name: "羽毛球场",
+                    count: 8
                 },
                 {
-                    name: '综合体育馆2'
-                },
-                {
-                    name: '综合体育馆3'
-                },
-                {
-                    name: '综合体育馆4'
-                },
-                {
-                    name: '综合体育馆5'
-                },
-                {
-                    name: '综合体育馆9'
+                    name: "乒乓球场",
+                    count: 8
                 }
             ]
         }
@@ -156,28 +150,7 @@ export default {
         });
     },
     methods: {
-        editStadium(index) {
-            this.$router.push('/stadium_management/stadium_info/edit_stadium')
-        },
-        editGround(index) {
-            this.$router.push('/stadium_management/stadium_info/edit_ground')
-        },
-        deleteStadium(index) {
-            swal({
-                title: "你确定？",
-                text: "删除场馆将删除附带的场地信息和所有的预定记录！",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确认",
-                cancelButtonText: "取消",
-                closeOnConfirm: false 
-            },
-            () => {
-                // TODO: 删除场馆
-                swal("成功", "场馆已成功删除", "success")
-            });
-        }
+
     }
 }
 
