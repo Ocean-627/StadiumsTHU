@@ -33,7 +33,7 @@ class LoginView(APIView):
 
     def post(self, request):
         req_data = request.data
-        userId = req_data.get('userId')
+        userId = req_data.get('user_id')
         password = req_data.get('password')
         obj = User.objects.filter(userId=userId, password=password).first()
         if not obj:
@@ -108,7 +108,7 @@ class ReserveView(ListAPIView, CreateAPIView):
         # 取消预订
         req_data = request.data
         user = request.user
-        eventId = req_data.get('eventId')
+        eventId = req_data.get('event_id')
         event = ReserveEvent.objects.filter(user=user, id=eventId).first()
         if not event:
             return Response({'error': 'Reserve does not exist'})
@@ -141,7 +141,7 @@ class CommentView(ListAPIView, CreateAPIView):
 
     def delete(self, request):
         req_data = request.data
-        id = req_data.get('commentId')
+        id = req_data.get('comment_id')
         user = request.user
         comment = user.comment_set.filter(user=user, id=id).first()
         if not comment:

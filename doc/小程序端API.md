@@ -13,7 +13,7 @@ Request:
    	'username': '',
    	'password': '',
    	'email': ''，
-   	'userId':''
+   	'user_id':''
 }
 Response:
 {
@@ -36,7 +36,7 @@ Method: POST
 URL: /api/user/login
 Request:
 {
-   	'userId': '',
+   	'user_id': '',
    	'password': ''
 }
 Response:
@@ -203,13 +203,9 @@ Method: POST
 URL: /api/user/reserve
 Request:
 {
-    'durationId': '',
+    'duration_id': '',
 }
-Response:
-{
-    'message': 'ok',
-    'eventId': ''
-}
+Response: 一个字典，包含models.ReserveEvent的所有字段
 ```
 
 `durationId`为想要预定的时段的 `id`。
@@ -221,9 +217,7 @@ Method: GET
 URL: /api/user/reserve
 QueryParam:
 Response:
-{
-    'message': 'ok',
-    'history':[
+    [
         {
             'stadiumName': '',
             'courtName': '',
@@ -236,10 +230,9 @@ Response:
             'leave': ''
         }
     ] 
-}
 ```
 
-其中 `history`是一个列表，每一项代表一次历史消息。
+返回值是一个列表，每一项代表一次历史消息。
 
 ##### 取消预订
 
@@ -248,7 +241,7 @@ Method: PUT
 URL: /api/user/reserve
 Request:
 {
-    'eventId': '',
+    'event_id': '',
 }
 Response:
 {
@@ -265,25 +258,35 @@ Response:
 ```js
 Method: GET
 URL: /api/user/comment
-Request:
+Request:{
+    'content': '',
+    'court_id': ''
+}
 Response:
 {
-    'message': 'ok',
-    'comments':[
+    [
         {
          	'user': '',
             'court': '',
             'courtName': '',
             'content': '',
-            'images': ''
+            'images': [
+                ''
+            ]
         }
     ]
 }
 ```
 
-其中 `comments`是一个列表，每一项代表一个评价信息。
+其中返回值是一个列表，每一项代表一个评价信息。
 
 `images`是一个图片列表，每一项代表一个图片的`URL`。
+
+请求参数都是可选的。
+
+`content`在评价内容中进行模糊匹配。
+
+`court_id`**精确**匹配场地编号。
 
 **评价场馆**
 
@@ -291,21 +294,15 @@ Response:
 Method: POST
 URL: /api/user/comment
 Request:{
-    'courtId': '',
+    'court_id': '',
     'content': '',
 }
-Response:
-{
-    'message': 'ok',
-    'commentId': ''
-}
+Response: 一个字典，包含models.Comment的所有字段
 ```
 
 请求参数分别为场地的`Id`和评价内容。
 
 `content`要求至少为$15$字，最多为$300$字。
-
-回复结果 `commentId`为该条评论的 `Id`。
 
 **撤销评价**
 
@@ -313,7 +310,7 @@ Response:
 Method: DELETE
 URL: /api/user/comment
 Request:{
-    'commentId': '',
+    'comment_id': '',
 }
 Response:
 {
