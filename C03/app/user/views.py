@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.utils.timezone import now
@@ -22,12 +22,7 @@ class LogonView(APIView):
         ser = UserSerializer(data=req_data)
         if not ser.is_valid():
             return Response({'error': ser.errors})
-        username = req_data.get('username')
-        password = req_data.get('password')
-        email = req_data.get('email')
-        userId = req_data.get('userId')
-        user = User(username=username, password=password, email=email, userId=userId)
-        user.save()
+        ser.save()
         return Response({'message': 'ok'})
 
 
@@ -38,7 +33,7 @@ class LoginView(APIView):
 
     def post(self, request):
         req_data = request.data
-        userId = req_data.get('userId')
+        userId = req_data.get('user_id')
         password = req_data.get('password')
         obj = User.objects.filter(userId=userId, password=password).first()
         if not obj:
@@ -96,45 +91,24 @@ class DurationView(ListAPIView):
     filter_class = DurationFilter
 
 
-class ReserveView(APIView):
+class ReserveView(ListAPIView, CreateAPIView):
     """
     预订信息
     """
     authentication_classes = [UserAuthtication]
     throttle_classes = [UserThrottle]
+    queryset = ReserveEvent.objects.all()
+    serializer_class = ReserveEventSerializer
+    filter_class = ReserveEventFilter
 
-    def get(self, request):
-        # 获取预订信息
-        # TODO:筛选
-        user = request.user
-        events = user.reserveevent_set.all()
-        events = ReserveEventSerializer(events, many=True)
-        return Response({'message': 'ok', 'history': events.data})
-
-    def post(self, request):
-        # 预定场地
-        req_data = request.data
-        durationId = req_data.get('durationId')
-        duration = Duration.objects.filter(id=durationId, accessible=True).first()
-        if not duration:
-            return Response({'error': 'Reserve failed'})
-        user = request.user
-        stadium = duration.stadium
-        court = duration.court
-        reserveevent = ReserveEvent(stadium=stadium, court=court, user=user, duration=duration, result='S',
-                                    startTime=duration.startTime, cancel=False,
-                                    endTime=duration.endTime)
-        reserveevent.save()
-        duration.user = user
-        duration.accessible = False
-        duration.save()
-        return JsonResponse({'message': 'ok', 'eventId': reserveevent.id})
+    def get_queryset(self):
+        return ReserveEvent.objects.filter(user=self.request.user)
 
     def put(self, request):
         # 取消预订
         req_data = request.data
         user = request.user
-        eventId = req_data.get('eventId')
+        eventId = req_data.get('event_id')
         event = ReserveEvent.objects.filter(user=user, id=eventId).first()
         if not event:
             return Response({'error': 'Reserve does not exist'})
@@ -151,37 +125,23 @@ class ReserveView(APIView):
         return Response({'message': 'ok'})
 
 
-class CommentView(APIView):
+class CommentView(ListAPIView, CreateAPIView):
     """
     评价场馆
+    可以考虑重写get_serializer方法
     """
     authentication_classes = [UserAuthtication]
     throttle_classes = [UserThrottle]
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    filter_class = CommentFilter
 
-    def post(self, request):
-        req_data = request.data
-        ser = CommentSerializer(data=req_data)
-        if not ser.is_valid():
-            return Response({'error': ser.errors})
-        user = request.user
-        courtId = req_data.get('courtId')
-        court = Court.objects.filter(id=courtId).first()
-        if not court:
-            return Response({'error': 'Court does not exist'})
-        content = req_data.get('content')
-        comment = Comment(user=user, court=court, content=content)
-        comment.save()
-        return Response({'message': 'ok', 'commentId': comment.id})
-
-    def get(self, request):
-        user = request.user
-        comments = user.comment_set.all()
-        comments = CommentSerializer(comments, many=True)
-        return Response({'message': 'ok', 'comments': comments.data})
+    def get_queryset(self):
+        return Comment.objects.filter(user=self.request.user)
 
     def delete(self, request):
         req_data = request.data
-        id = req_data.get('commentId')
+        id = req_data.get('comment_id')
         user = request.user
         comment = user.comment_set.filter(user=user, id=id).first()
         if not comment:
@@ -199,7 +159,7 @@ class CommentImageView(APIView):
 
     def post(self, request):
         req_data = request.data
-        commentId = req_data.get('commentId')
+        commentId = req_data.get('comment_id')
         image = req_data.get('image')
         user = request.data
         comment = Comment.objects.filter(user=user, id=commentId).first()
@@ -211,7 +171,7 @@ class CommentImageView(APIView):
 
     def get(self, request):
         req_data = request.query_params
-        imageId = req_data.get('imageId')
+        imageId = req_data.get('image_id')
         image = CommentImage.objects.filter(id=imageId).first()
         if not image:
             return Response({'error': 'Image does not exist'})

@@ -32,10 +32,17 @@ class DurationFilter(filters.FilterSet):
         fields = ['stadium_id', 'court_id', 'openState', 'accessible', 'startTime']
 
 
+class ReserveEventFilter(filters.FilterSet):
+    # TODO:更多筛选信息
+    class Meta:
+        model = ReserveEvent
+        fields = ['stadium_id', 'court_id', 'duration_id', 'startTime', 'endTime']
+
+
 class CommentFilter(filters.FilterSet):
     content = filters.CharFilter(field_name='content', lookup_expr='icontains')
 
     # TODO:更多筛选信息
     class Meta:
         model = Comment
-        fields = ['user_id', 'court_id']
+        fields = ['court_id']
