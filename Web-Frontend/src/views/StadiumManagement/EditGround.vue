@@ -26,14 +26,8 @@
             <div class="wrapper wrapper-content animated fadeInRight ecommerce">
                 <!-- TODO: 在路由里添加参数，控制是到哪一个场馆的编辑页面 -->
                 <div class="row i-row">
-                    <a href="/stadium_management/stadium_info/new_stadium" class="btn btn-outline btn-primary i-button">
+                    <a href="/stadium_management/stadium_info/new_stadium" class="btn btn-outline btn-primary i-newstadium">
                         <i class="fa fa-plus"></i> 添加新场馆 
-                    </a>
-                    <a href="/stadium_management/stadium_info/new_stadium" class="btn btn-outline btn-default i-button">
-                        <i class="fa fa-check"></i> 完成 
-                    </a>
-                    <a href="/stadium_management/stadium_info/new_stadium" class="btn btn-outline btn-default i-button">
-                        <i class="fa fa-mail-reply"></i> 返回 
                     </a>
                 </div>
                 <div class="grid">
@@ -45,28 +39,23 @@
                                     <div class="form-group row"><label class="col-sm-4 col-form-label">场馆名称：</label>
                                         <div class="col-sm-8"><input type="text" class="form-control"></div>
                                     </div>
-                                    <div class="form-group row"><label class="col-sm-4 col-form-label">开放状态：</label>
-                                        <div class="col-sm-8"><select data-placeholder="..." class="chosen-select" tabindex="2">
-                                            <option>开放</option>
-                                            <option>未开放</option>
-                                        </select></div>
-                                    </div>
-                                    <div class="form-group row"><label class="col-sm-2 col-form-label">联系方式：</label>
-                                        <div class="col-sm-4"><input type="text" class="form-control" placeholder="..."></div>
-                                    </div>
-                                    <div class="form-group row"><label class="col-sm-2 col-form-label">场馆说明:</label>
-                                        <div class="col-sm-10">
-                                            <textarea class="form-control" placeholder="输入场馆说明..." style="height: 100px;"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-sm-5"></div>
-                                        <div class="col-sm-2">
-                                            <button type="button" class="btn btn-primary" v-on:click="submit()">提交</button>
-                                            <button type="button" class="btn btn-default" v-on:click="cancel()">取消</button>
-                                        </div>
-                                    </div>
-                                </fieldset>
+                                </div>
+                            </div>
+                            <div class="row i-row i-groundinfo">
+                                <div class="col-md-12">
+                                    开放场地：羽毛球场 8 个、乒乓球场 8 个
+                                </div>
+                            </div>
+                            <div class="contact-box-footer">
+                                <button type="button" class="btn btn-outline btn-default" v-on:click="editStadium(index)">
+                                    <i class="fa fa-edit"></i> 编辑场馆信息 
+                                </button>
+                                <button type="button" class="btn btn-outline btn-default" v-on:click="editGround(index)">
+                                    <i class="fa fa-clock-o"></i> 修改预定时间段 
+                                </button>
+                                <button type="button" class="btn btn-outline btn-danger" v-on:click="deleteStadium(index)">
+                                    <i class="fa fa-trash"></i> 移除场馆 
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -95,9 +84,9 @@
     max-width: 500px;
     padding: 15px;
 }
-.i-button {
+.i-newstadium {
     margin-bottom: 20px;
-    margin-right: 10px;
+    float: right;
 }
 .i-title {
     margin-top: 10px;
@@ -163,22 +152,7 @@ export default {
         }
     },
     methods: {
-        deleteGround(index) {
-            swal({
-                title: "你确定？",
-                text: "删除场地将同时删除所有的该场地预定记录！",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确认",
-                cancelButtonText: "取消",
-                closeOnConfirm: false 
-            },
-            () => {
-                // TODO: 删除场地
-                swal("成功", "场地已成功删除", "success")
-            });
-        }
+
     }
 }
 

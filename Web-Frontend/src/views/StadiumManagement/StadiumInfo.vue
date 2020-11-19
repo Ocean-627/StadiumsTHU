@@ -88,6 +88,7 @@
 }
 .i-newstadium {
     margin-bottom: 20px;
+    float: right;
 }
 .i-title {
     margin-top: 10px;
