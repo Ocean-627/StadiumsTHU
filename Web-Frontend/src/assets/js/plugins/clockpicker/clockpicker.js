@@ -710,20 +710,24 @@
 	};
 
 	// Extends $.fn.clockpicker
-	$.fn.clockpicker = function(option){
-		var args = Array.prototype.slice.call(arguments, 1);
-		return this.each(function(){
-			var $this = $(this),
-				data = $this.data('clockpicker');
-			if (! data) {
-				var options = $.extend({}, ClockPicker.DEFAULTS, $this.data(), typeof option == 'object' && option);
-				$this.data('clockpicker', new ClockPicker($this, options));
-			} else {
-				// Manual operatsions. show, hide, remove, e.g.
-				if (typeof data[option] === 'function') {
-					data[option].apply(data, args);
+	$ = jQuery;
+
+	$.fn.extend({
+        clockpicker: function(option){
+			var args = Array.prototype.slice.call(arguments, 1);
+			return this.each(function(){
+				var $this = $(this),
+					data = $this.data('clockpicker');
+				if (! data) {
+					var options = $.extend({}, ClockPicker.DEFAULTS, $this.data(), typeof option == 'object' && option);
+					$this.data('clockpicker', new ClockPicker($this, options));
+				} else {
+					// Manual operatsions. show, hide, remove, e.g.
+					if (typeof data[option] === 'function') {
+						data[option].apply(data, args);
+					}
 				}
-			}
-		});
-	};
+			});
+		}
+    });
 }());

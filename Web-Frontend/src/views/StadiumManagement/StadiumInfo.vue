@@ -40,12 +40,9 @@
                                     <i class="fa fa-clock-o i-icon"></i> 开放时间：8:00 - 18:00<br>
                                     <i class="fa fa-location-arrow i-icon"></i> 新民路<br>
                                     <div class="i-score">
-                                        <i class="fa fa-star i-star"></i>
-                                        <i class="fa fa-star i-star"></i>
-                                        <i class="fa fa-star i-star"></i>
-                                        <i class="fa fa-star i-star"></i>
-                                        <i class="fa fa-star i-star i-icon"></i>
-                                        5
+                                        <i v-for="num in 5" :key="num" style="margin-right: 3px"
+                                         :class="(num<=stadium.score)?'fa fa-star i-star':((num-0.5<=stadium.score)?'fa fa-star-half-o i-star':'fa fa-star-o i-star')"></i>
+                                        {{ stadium.score }}
                                     </div>
                                 </div>
                             </div>
@@ -124,22 +121,28 @@ export default {
         return {
             stadiums: [
                 {
-                    name: '综合体育馆'
+                    name: '综合体育馆',
+                    score: 5
                 },
                 {
-                    name: '综合体育馆2'
+                    name: '综合体育馆2',
+                    score: 4.8
                 },
                 {
-                    name: '综合体育馆3'
+                    name: '综合体育馆3',
+                    score: 4.5
                 },
                 {
-                    name: '综合体育馆4'
+                    name: '综合体育馆4',
+                    score: 4.2
                 },
                 {
-                    name: '综合体育馆5'
+                    name: '综合体育馆5',
+                    score: 4
                 },
                 {
-                    name: '综合体育馆9'
+                    name: '综合体育馆9',
+                    score: 3.1
                 }
             ]
         }
