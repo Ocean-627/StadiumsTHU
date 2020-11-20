@@ -55,12 +55,12 @@
                                 </div>
                             </div>
                             <div class="contact-box-footer">
-                                <button type="button" class="btn btn-outline btn-default" v-on:click="editStadium(index)">
+                                <a type="button" class="btn btn-outline btn-default" href="/stadium_management/stadium_info/edit_stadium">
                                     <i class="fa fa-edit"></i> 编辑场馆信息 
-                                </button>
-                                <button type="button" class="btn btn-outline btn-default" v-on:click="editGround(index)">
+                                </a>
+                                <a type="button" class="btn btn-outline btn-default" href="/stadium_management/stadium_info/edit_ground">
                                     <i class="fa fa-clock-o"></i> 修改预定时间段 
-                                </button>
+                                </a>
                                 <button type="button" class="btn btn-outline btn-danger" v-on:click="deleteStadium(index)">
                                     <i class="fa fa-trash"></i> 移除场馆 
                                 </button>
@@ -156,12 +156,6 @@ export default {
         });
     },
     methods: {
-        editStadium(index) {
-            this.$router.push('/stadium_management/stadium_info/edit_stadium')
-        },
-        editGround(index) {
-            this.$router.push('/stadium_management/stadium_info/edit_ground')
-        },
         deleteStadium(index) {
             swal({
                 title: "你确定？",

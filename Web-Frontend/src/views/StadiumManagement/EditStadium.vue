@@ -162,6 +162,9 @@
 @import '../../assets/css/plugins/chosen/bootstrap-chosen.css';
 @import '../../assets/css/plugins/jasny/jasny-bootstrap.min.css';
 @import '../../assets/css/plugins/clockpicker/clockpicker.css';
+.chosen-container-single .chosen-single {
+    padding: 4px 12px;
+}
 </style>
 
 <script>
@@ -251,7 +254,7 @@ export default {
             },
             (res) => {
                 if(res){
-                    this.$router.push('/stadium_management/stadium_info')
+                    window.location.replace('/stadium_management/stadium_info')
                 }
             })
         },
@@ -268,7 +271,7 @@ export default {
                 text: "场馆信息修改成功", 
                 type: "success",
             })), 1000)
-            this.$router.push('/stadium_management/stadium_info')
+            window.location.replace('/stadium_management/stadium_info')
         }
     }
 }

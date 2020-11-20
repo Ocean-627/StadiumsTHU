@@ -54,13 +54,6 @@
                                     <div class="form-group row"><label class="col-sm-4 col-form-label">场地数量：</label>
                                         <div class="col-sm-5"><input class="touchspin" type="text" v-model="ground.count"></div>
                                     </div>
-                                    <div class="form-group row">
-                                        <div class="col-sm-4"></div>
-                                        <div class="col-sm-8">
-                                            <button type="button" class="btn btn-primary" v-on:click="submit()">提交</button>
-                                            <button type="button" class="btn btn-default" v-on:click="cancel()">取消</button>
-                                        </div>
-                                    </div>
                                 </fieldset>
                             </div>
                         </div>
@@ -78,9 +71,6 @@
 @import '../../assets/css/plugins/jasny/jasny-bootstrap.min.css';
 @import '../../assets/css/plugins/clockpicker/clockpicker.css';
 @import '../../assets/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css';
-</style>
-
-<style scoped>
 .i-row [class^="col-"] {
     padding: 10px;
 }
@@ -114,6 +104,9 @@
 .i-groundinfo {
     border-top: 1px solid #e7eaec;
     font-weight: bold;
+}
+.chosen-container-single .chosen-single {
+    padding: 4px 12px;
 }
 </style>
 

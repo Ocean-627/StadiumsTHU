@@ -4,7 +4,22 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import Common from './Common'
-import $ from 'jquery'
+
+//import '@/assets/js/jquery-3.1.1.min.js'
+//import '@/assets/js/popper.min.js'
+//import '@/assets/js/bootstrap.js'
+//import '@/assets/js/plugins/metisMenu/jquery.metisMenu.js'
+//import '@/assets/js/plugins/slimscroll/jquery.slimscroll.min.js'
+//
+//import '@/assets/js/inspinia.js'
+//import '@/assets/js/plugins/pace/pace.min.js'
+//
+//import '@/assets/js/plugins/jquery-ui/jquery-ui.min.js'
+//
+//import '@/assets/js/plugins/gritter/jquery.gritter.min.js'
+//
+//import '@/assets/js/plugins/sweetalert/sweetalert.min.js'
+
 
 Vue.config.productionTip = false
 Vue.prototype.Common = Common
