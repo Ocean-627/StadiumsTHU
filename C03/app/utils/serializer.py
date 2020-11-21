@@ -4,11 +4,6 @@ from app.models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # 用来验证用户输入
-    username = serializers.CharField(label='用户名', validators=[MinLengthValidator(3), MaxLengthValidator(32)])
-    password = serializers.CharField(label='密码',
-                                     validators=[MinLengthValidator(10), MaxLengthValidator(32), SafeValidator])
-
     class Meta:
         model = User
         fields = '__all__'

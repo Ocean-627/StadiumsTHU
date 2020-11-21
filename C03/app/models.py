@@ -6,12 +6,13 @@ import django.utils.timezone as timezone
 # Create your models here.
 class User(models.Model):
     # 普通用户
-    username = models.CharField(max_length=32)
-    password = models.CharField(max_length=32)
-    userId = models.IntegerField(verbose_name='学生编号', unique=True)
-    email = models.EmailField()
+    openId = models.CharField(max_length=50, null=True)
     loginToken = models.CharField(max_length=100, null=True)
     loginTime = models.DateTimeField(auto_now=True, null=True)
+    # TODO:通过身份验证或用户完善信息的方式获取以下fields
+    name = models.CharField(max_length=32, null=True)
+    userId = models.IntegerField(verbose_name='学生编号', null=True, unique=True)
+    email = models.EmailField(null=True)
     phone = models.CharField(max_length=20, null=True)
     # TODO:完善信息
 

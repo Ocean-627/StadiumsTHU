@@ -16,6 +16,6 @@ def login(js_code):
         'grant_type': 'authorization_code'
     }
     url = "https://api.weixin.qq.com/sns/jscode2session"
-    res = requests.get(url, params=params)
+    res = requests.get(url, params=params, verify=True)
     res.encoding = 'utf-8'
     return json.loads(res.text)

@@ -7,11 +7,11 @@ from datetime import datetime
 import datetime
 
 
-def md5(userId):
+def md5(seq):
     import hashlib
     import time
     ctime = str(time.time())
-    m = hashlib.md5(bytes(userId, encoding='utf-8'))
+    m = hashlib.md5(bytes(seq, encoding='utf-8'))
     m.update(bytes(ctime, encoding='utf-8'))
     return m.hexdigest()
 

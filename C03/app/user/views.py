@@ -4,11 +4,13 @@ from rest_framework.generics import ListAPIView, CreateAPIView
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.utils.timezone import now
+
 from app.utils.authtication import UserAuthtication
 from app.utils.throttle import UserThrottle
 from app.utils.filter import *
 from app.utils.serializer import *
 from app.utils.utils import *
+from app.user import wx
 
 
 class LogonView(APIView):
@@ -33,16 +35,16 @@ class LoginView(APIView):
 
     def post(self, request):
         req_data = request.data
-        userId = req_data.get('user_id')
-        password = req_data.get('password')
-        obj = User.objects.filter(userId=userId, password=password).first()
-        if not obj:
-            return Response({'error': 'Login failed'})
-        loginToken = md5(userId)
-        obj.loginToken = loginToken
-        obj.loginTime = now()
-        obj.save()
-        return Response({'message': 'ok', 'loginToken': loginToken})
+        code = req_data.get('code')
+        if not code:
+            return Response({'error': 'Requires code'})
+        try:
+            auth = wx.login(js_code=code)
+            openId = auth.get('openid')
+            if not openId:
+                return Response({'error': 'Invalid code'})
+        except Exception as e:
+            return Response({'error': 'Exception occurred'})
 
 
 class LogoutView(APIView):
