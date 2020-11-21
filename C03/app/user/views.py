@@ -16,6 +16,7 @@ from app.user import wx
 class LogonView(APIView):
     """
     用户注册
+    TODO:仅在创建测试用户时使用
     """
 
     def post(self, request):
@@ -43,6 +44,15 @@ class LoginView(APIView):
             openId = auth.get('openid')
             if not openId:
                 return Response({'error': 'Invalid code'})
+            user = User.objects.filter(openId=openId).first()
+            if not user:
+                user = User(openId=openId)
+                user.save()
+            loginToken = md5(openId)
+            user.loginToken = loginToken
+            user.loginTime = now()
+            user.save()
+            return Response({'message': 'ok', 'loginToken': loginToken})
         except Exception as e:
             return Response({'error': 'Exception occurred'})
 
