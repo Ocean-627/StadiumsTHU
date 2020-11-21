@@ -27,7 +27,7 @@
                     </a>
                 </div>
                 <div class="grid">
-                    <div class="grid-item">
+                    <div class="grid-item" v-for="(stadium, index) in stadiums" v-bind:key="stadium.name">
                         <div class="contact-box">
                             <!-- 主要部分 & 单个单元 -->
                             <div class="row i-row">
@@ -40,12 +40,9 @@
                                     <i class="fa fa-clock-o i-icon"></i> 开放时间：8:00 - 18:00<br>
                                     <i class="fa fa-location-arrow i-icon"></i> 新民路<br>
                                     <div class="i-score">
-                                        <i class="fa fa-star i-star"></i>
-                                        <i class="fa fa-star i-star"></i>
-                                        <i class="fa fa-star i-star"></i>
-                                        <i class="fa fa-star i-star"></i>
-                                        <i class="fa fa-star i-star i-icon"></i>
-                                        5
+                                        <i v-for="num in 5" :key="num" style="margin-right: 3px"
+                                         :class="(num<=stadium.score)?'fa fa-star i-star':((num-0.5<=stadium.score)?'fa fa-star-half-o i-star':'fa fa-star-o i-star')"></i>
+                                        {{ stadium.score }}
                                     </div>
                                 </div>
                             </div>
@@ -55,15 +52,15 @@
                                 </div>
                             </div>
                             <div class="contact-box-footer">
-                                <a href="/stadium_management/stadium_info/edit_stadium" class="btn btn-outline btn-default">
+                                <a type="button" class="btn btn-outline btn-default" href="/stadium_management/stadium_info/edit_stadium">
                                     <i class="fa fa-edit"></i> 编辑场馆信息 
                                 </a>
-                                <a href="" class="btn btn-outline btn-default">
+                                <a type="button" class="btn btn-outline btn-default" href="/stadium_management/stadium_info/edit_ground">
                                     <i class="fa fa-clock-o"></i> 修改预定时间段 
                                 </a>
-                                <a href="" class="btn btn-outline btn-danger">
+                                <button type="button" class="btn btn-outline btn-danger" v-on:click="deleteStadium(index)">
                                     <i class="fa fa-trash"></i> 移除场馆 
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -117,12 +114,67 @@ import Navbar from "@/components/Navbar"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import Toolbox from "@/components/Toolbox"
+import 'jquery'
+import 'masonry-layout'
 export default {
     data() {
-        return {}
+        return {
+            stadiums: [
+                {
+                    name: '综合体育馆',
+                    score: 5
+                },
+                {
+                    name: '综合体育馆2',
+                    score: 4.8
+                },
+                {
+                    name: '综合体育馆3',
+                    score: 4.5
+                },
+                {
+                    name: '综合体育馆4',
+                    score: 4.2
+                },
+                {
+                    name: '综合体育馆5',
+                    score: 4
+                },
+                {
+                    name: '综合体育馆9',
+                    score: 3.1
+                }
+            ]
+        }
     },
     components: {
         Toolbox, Navbar, Header, Footer
+    },
+    mounted() {
+        var msnry = new Masonry('.grid', {
+            // options...
+            itemSelector: ".grid-item",
+            columnWidth: 500,
+            gutter: 25
+        });
+    },
+    methods: {
+        deleteStadium(index) {
+            swal({
+                title: "你确定？",
+                text: "删除场馆将删除附带的场地信息和所有的预定记录！",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确认",
+                cancelButtonText: "取消",
+                closeOnConfirm: false 
+            },
+            () => {
+                // TODO: 删除场馆
+                swal("成功", "场馆已成功删除", "success")
+            });
+        }
     }
 }
 

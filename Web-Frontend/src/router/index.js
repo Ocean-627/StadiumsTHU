@@ -15,6 +15,7 @@ import Statistic from '@/views/Statistic'
 import SystemLog from '@/views/SystemLog'
 import NewStadium from '@/views/StadiumManagement/NewStadium'
 import EditStadium from '@/views/StadiumManagement/EditStadium'
+import EditGround from '@/views/StadiumManagement/EditGround'
 
 Vue.use(Router)
 
@@ -88,6 +89,11 @@ export default new Router({
       path: '/stadium_management/stadium_info/edit_stadium',
       name: 'EditStadium',
       component: EditStadium
+    },
+    {
+      path: '/stadium_management/stadium_info/edit_ground',
+      name: 'EditGround',
+      component: EditGround
     }
   ],
   mode: 'history',
