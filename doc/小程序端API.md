@@ -2,33 +2,6 @@
 
 ### 身份验证
 
-##### 注册
-
-```js
-Method: POST
-Request:
-URL: /api/user/logon
-Request:
-{
-   	'username': '',
-   	'password': '',
-   	'email': ''，
-   	'user_id':''
-}
-Response:
-{
-	'message': 'ok'
-}
-```
-
-其中：四个字段都是**必须的**。
-
-用户名：要求长度在$3-32$之间。
-
-密码：要求长度在$10-32$之间，且必须包含数字，小写字母和大写字母。
-
-学生编号：不允许重复，即一个编号只能注册一个用户。
-
 ##### 登录
 
 ```js
@@ -36,8 +9,7 @@ Method: POST
 URL: /api/user/login
 Request:
 {
-   	'user_id': '',
-   	'password': ''
+   	'code': '',
 }
 Response:
 {
@@ -46,24 +18,47 @@ Response:
 }
 ```
 
-其中`loginToken`应该被前端存储在**请求头(目前是`query_params`)**中，用于后续身份验证。
+其中`loginToken`应该被前端存储在**请求头**中，用于后续身份验证。
 
-##### 登出
+##### 获取个人信息
 
 ```js
-Method: POST
-URL: /api/user/logout/
+Method: GET
+URL: /api/user/user
+Request:
 Response:
 {
-	'message': 'ok'
+	'auth': '',
+    'name': '',
+    'userId': '',
+    'email': '',
+    'phone': ''
+    'loginToken': ''
+    'loginTime': ''
+    'openId': ''
 }
 ```
 
 ##### 更新个人信息
 
 ```js
-
+Method: GET
+URL: /api/user/user
+Request:
+{
+	'auth': '',
+    'name': '',
+    'userId': '',
+    'email': '',
+    'phone': ''
+}
+Response:
+{
+ 	'message': 'ok'   
+}
 ```
+
+参数即为用户需要完善的个人信息，其中`auth`字段代表用户是否绑定了清华身份，其他字段为具体信息。
 
 ### 场馆信息
 
@@ -319,4 +314,3 @@ Response:
 ```
 
 参数为要撤销的评价的 `Id`。
-

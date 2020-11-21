@@ -12,7 +12,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
-        read_only_fields = ['openId']
+        # 设置read_only起到了保护的作用，即用户不能修改这些字段
+        read_only_fields = ['openId', 'loginToken', 'loginTime']
 
 
 class StadiumSerializer(serializers.ModelSerializer):

@@ -11,8 +11,8 @@ class User(models.Model):
     loginTime = models.DateTimeField(auto_now=True, null=True)
     # TODO:通过身份验证或用户完善信息的方式获取以下fields
     auth = models.BooleanField(default=False)
-    name = models.CharField(max_length=32, null=True, unique=True)
-    userId = models.IntegerField(verbose_name='学生编号', null=True, unique=True)
+    name = models.CharField(max_length=32, null=True)
+    userId = models.IntegerField(verbose_name='学生编号', null=True)
     email = models.EmailField(null=True)
     phone = models.CharField(max_length=20, null=True)
     # TODO:完善信息
