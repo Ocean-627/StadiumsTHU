@@ -4,9 +4,15 @@ from app.models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(label='用户昵称', validators=[MinLengthValidator(3), MaxLengthValidator(20)],
+                                 required=False)
+    phone = serializers.CharField(label='手机号', validators=[MinLengthValidator(11), MaxLengthValidator(11)],
+                                  required=False)
+
     class Meta:
         model = User
         fields = '__all__'
+        read_only_fields = ['openId']
 
 
 class StadiumSerializer(serializers.ModelSerializer):

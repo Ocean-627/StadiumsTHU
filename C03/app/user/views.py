@@ -13,22 +13,6 @@ from app.utils.utils import *
 from app.user import wx
 
 
-class LogonView(APIView):
-    """
-    用户注册
-    TODO:仅在创建测试用户时使用
-    """
-
-    def post(self, request):
-        req_data = request.data
-        # 校验输入
-        ser = UserSerializer(data=req_data)
-        if not ser.is_valid():
-            return Response({'error': ser.errors})
-        ser.save()
-        return Response({'message': 'ok'})
-
-
 class LoginView(APIView):
     """
     用户登录
@@ -57,16 +41,24 @@ class LoginView(APIView):
             return Response({'error': 'Exception occurred'})
 
 
-class LogoutView(APIView):
+class UserView(APIView):
     """
-    用户登出
+    用户信息
     """
     authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
 
-    def post(self, request):
+    def get(self, request):
         user = request.user
-        user.loginToken = ''
-        user.save()
+        user = UserSerializer(user, many=False)
+        return Response({'info': user.data})
+
+    def put(self, request):
+        req_data = request.data
+        ser = UserSerializer(data=req_data)
+        if not ser.is_valid():
+            return Response({'error': ser.errors})
+        ser.update(request.user, ser.validated_data)
         return Response({'message': 'ok'})
 
 
