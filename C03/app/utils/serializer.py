@@ -8,6 +8,12 @@ class UserSerializer(serializers.ModelSerializer):
                                  required=False)
     phone = serializers.CharField(label='手机号', validators=[MinLengthValidator(11), MaxLengthValidator(11)],
                                   required=False)
+    images = serializers.SerializerMethodField()
+
+    def get_images(self, obj):
+        images_list = obj.userimage_set.all()
+        images_list = UserImageSerializer(images_list, many=True)
+        return images_list.data
 
     class Meta:
         model = User
@@ -17,6 +23,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class StadiumSerializer(serializers.ModelSerializer):
+    images = serializers.SerializerMethodField(required=False)
+
+    def get_images(self, obj):
+        images_list = obj.stadiumimage_set.all()
+        images_list = StadiumImageSerializer(images_list, many=True)
+        return images_list.data
+
     class Meta:
         model = Stadium
         fields = '__all__'
@@ -94,7 +107,8 @@ class CommentSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        return Comment.objects.create(user=self.context['request'].user, **validated_data)
+        comment = Comment.objects.create(user=self.context['request'].user, **validated_data)
+        return comment
 
     class Meta:
         model = Comment
@@ -103,6 +117,27 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CommentImageSerializer(serializers.ModelSerializer):
+    comment_id = serializers.IntegerField(label='评论编号', write_only=True)
+
+    def validate_comment_id(self, value):
+        comment = Comment.objects.filter(id=value, user=self.context['request'].user).first()
+        if not comment:
+            raise ValidationError('Invalid court_id')
+        return value
+
     class Meta:
         model = CommentImage
+        fields = '__all__'
+        read_only_fields = ['comment']
+
+
+class StadiumImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StadiumImage
+        fields = '__all__'
+
+
+class UserImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserImage
         fields = '__all__'

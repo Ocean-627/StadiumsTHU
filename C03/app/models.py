@@ -132,6 +132,7 @@ class CommentImage(models.Model):
 class UserImage(models.Model):
     # 用户图片
     # TODO:提供接口让用户提交图片
+    detail = models.CharField(max_length=30, verbose_name='图片描述', null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='img/user')
 
@@ -139,5 +140,6 @@ class UserImage(models.Model):
 class StadiumImage(models.Model):
     # 场馆图片
     # TODO:解决如何导入场馆信息的问题
+    detail = models.CharField(max_length=30, verbose_name='图片描述', null=True)
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='img/stadium')

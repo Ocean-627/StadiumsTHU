@@ -51,7 +51,7 @@ class UserView(APIView):
     def get(self, request):
         user = request.user
         user = UserSerializer(user, many=False)
-        return Response({'info': user.data})
+        return Response(user.data)
 
     def put(self, request):
         req_data = request.data
@@ -133,6 +133,7 @@ class CommentView(ListAPIView, CreateAPIView):
     """
     评价场馆
     可以考虑重写get_serializer方法
+    TODO:一次性批量提交图片
     """
     authentication_classes = [UserAuthtication]
     throttle_classes = [UserThrottle]
@@ -154,24 +155,14 @@ class CommentView(ListAPIView, CreateAPIView):
         return Response({'message': 'ok'})
 
 
-class CommentImageView(APIView):
+class CommentImageView(CreateAPIView):
     """
     评价对应的图片
     #TODO:只在后端开发时测试用
     """
     authentication_classes = [UserAuthtication]
-
-    def post(self, request):
-        req_data = request.data
-        commentId = req_data.get('comment_id')
-        image = req_data.get('image')
-        user = request.data
-        comment = Comment.objects.filter(user=user, id=commentId).first()
-        if not comment:
-            return Response({'error': 'Comment does not exist'})
-        item = CommentImage(comment=comment, image=image)
-        item.save()
-        return Response({'message': 'ok'})
+    queryset = CommentImage.objects.all()
+    serializer_class = CommentImageSerializer
 
     def get(self, request):
         req_data = request.query_params
