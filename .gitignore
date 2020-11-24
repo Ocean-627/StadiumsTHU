@@ -10,3 +10,5 @@ C03/app/user/__pycache__/*
 C03/app/manager/__pycache__/*
 C03/app/migrations/__pycache__/*
 C03/.idea/*
+C03/app/utils/__pycache__/*
+C03/app/migrations/*
