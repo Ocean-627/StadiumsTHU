@@ -1,5 +1,7 @@
 # 清动家园——小程序端`API`
 
+网址URL:https://thss-stadium.cn
+
 ### 身份验证
 
 ##### 登录
