@@ -22,7 +22,6 @@ class Stadium(models.Model):
     # 场馆
     name = models.CharField(max_length=32)
     information = models.CharField(max_length=300)
-    openingHours = models.CharField(max_length=50, verbose_name='开放时间')
     # TODO:开放时间和关闭时间可以设置为DateField
     openTime = models.CharField(max_length=32)
     closeTime = models.CharField(max_length=32)
@@ -44,9 +43,17 @@ class Manager(models.Model):
     # TODO:完善信息
 
 
+class CourtType(models.Model):
+    # 类型信息(某个场馆）
+    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE, null=True)
+    openingHours = models.CharField(max_length=50, verbose_name='开放时间')
+    type = models.CharField(max_length=20, verbose_name='场馆类型')
+
+
 class Court(models.Model):
     # 场地
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
+    courtType = models.ForeignKey(CourtType, on_delete=models.CASCADE, null=True)
     type = models.CharField(max_length=20, verbose_name='场馆类型')
     name = models.CharField(max_length=32, null=True)
     price = models.IntegerField()
