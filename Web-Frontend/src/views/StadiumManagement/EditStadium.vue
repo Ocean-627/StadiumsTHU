@@ -119,13 +119,13 @@
                                                 </div>
                                                 <div class="col-sm-1"><button class="btn btn-danger" v-on:click="deletePeriod(index)"><i class="fa fa-times"></i></button></div>
                                             </div>
-                                            <div class="form-group row"><label class="col-sm-2 col-form-label">开放预约时间段（小时）：</label>
+                                            <div class="form-group row"><label class="col-sm-2 col-form-label"  ref="duration">开放预约时间段（小时）：</label>
                                                 <div class="col-sm-1"><input type="text" class="form-control"></div>
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col-sm-5"></div>
                                                 <div class="col-sm-2">
-                                                    <button type="button" class="btn btn-primary" v-on:click="submit()">提交</button>
+                                                    <button type="button" class="btn btn-primary" v-on:click="submitDurationInfo()">提交</button>
                                                     <button type="button" class="btn btn-default" v-on:click="cancel()">取消</button>
                                                 </div>
                                             </div>
@@ -222,6 +222,29 @@ export default {
         deletePeriod(index) {
             this.periods.splice(index, 1)
         },
+        submitDurationInfo(){
+            
+            // swal({
+            //     title: "你确定？",
+            //     text: "确认提交现有的更改",
+            //     type: "warning",
+            //     showCancelButton: true,
+            //     confirmButtonColor: "#DD6B55",
+            //     confirmButtonText: "确认",
+            //     cancelButtonText: "取消",
+            //     closeModal: false
+            // },
+            // (res) => {
+            //     if(res){
+            //         // 检查表单合法性
+            //         if(!this.validate()) return
+            //         this.uploadDurationForm()
+            //     }
+            // })
+
+            this.uploadDurationForm()
+
+        },
         submit() {
             swal({
                 title: "你确定？",
@@ -259,10 +282,11 @@ export default {
             })
         },
         validate() {
-            if(periods.length === 0) return
+            if(this.periods.length === 0) return true
             for(var period in this.periods){
-                if(period.start >= period.end) return
+                if(period.start >= period.end) return true
             }
+            return true
         },
         uploadForm() {
             // TODO: 上传表单
@@ -272,6 +296,42 @@ export default {
                 type: "success",
             })), 1000)
             window.location.replace('/stadium_management/stadium_info')
+        },
+        uploadDurationForm() {
+            let openHours = ""
+            for(var i = 0; i < this.periods.length; i++) {
+                openHours += this.periods[i].start + "-" + this.periods[i].end + " "
+            }
+
+            let request_body = {
+                 stadiumId: this.$route.params.stadiumId,
+                 managerId: this.$route.params.managerId,
+                 startDate: "2020-11-27",
+                 duration: this.$refs.duration.value,
+                 openTime: "08:00",
+                 closeTime: "12:00",
+                 openHours: openHours
+            }
+            this.$axios.post('changeduration/', {}, request_body)
+                .then(res => {
+                    console.log(res)
+                    alert("ok")
+                    if (res.data.error) {
+                        alert("Error! Please try again.")
+                    } else {
+                        setTimeout(() => (swal({
+                            title: "成功",
+                            text: "场馆信息修改成功",
+                            type: "success",
+                        })), 1000)
+                    }
+                })
+            // setTimeout(() => (swal({
+            //     title: "成功", 
+            //     text: "场馆信息修改成功", 
+            //     type: "success",
+            // })), 1000)
+            // window.location.replace('/stadium_management/stadium_info')
         }
     }
 }

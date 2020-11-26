@@ -23,11 +23,11 @@
             <div class="wrapper wrapper-content animated fadeInRight">
                 <div class="row i-row">
                     <a href="/stadium_management/stadium_info/new_stadium" class="btn btn-outline btn-primary i-newstadium">
-                        <i class="fa fa-plus"></i> 添加新场馆 
-                    </a>
+                            <i class="fa fa-plus"></i> 添加新场馆 
+                        </a>
                 </div>
                 <div class="grid">
-                    <div class="grid-item" v-for="(stadium, index) in stadiums" v-bind:key="stadium.name">
+                    <div class="grid-item" v-for="stadium in stadiums" v-bind:key="stadium.name">
                         <div class="contact-box">
                             <!-- 主要部分 & 单个单元 -->
                             <div class="row i-row">
@@ -35,14 +35,12 @@
                                     <img alt="image" class="rounded m-t-xs img-fluid i-img" src="/static/img/zongti.jpg">
                                 </div>
                                 <div class="col-md-5 i-infobox">
-                                    <h2 class="i-title"><strong>综合体育馆</strong></h2>
-                                    <i class="fa fa-comment-o i-icon"></i>1224 条评论 <br>
-                                    <i class="fa fa-clock-o i-icon"></i> 开放时间：8:00 - 18:00<br>
-                                    <i class="fa fa-location-arrow i-icon"></i> 新民路<br>
+                                    <h2 class="i-title"><strong>{{stadium.name}}</strong></h2>
+                                    <i class="fa fa-comment-o i-icon"></i>{{stadium.comments}}条评论 <br>
+                                    <i class="fa fa-clock-o i-icon"></i> 开放时间：{{stadium.openTime}} - {{stadium.closeTime}}<br>
+                                    <i class="fa fa-location-arrow i-icon"></i>{{stadium.location}}<br>
                                     <div class="i-score">
-                                        <i v-for="num in 5" :key="num" style="margin-right: 3px"
-                                         :class="(num<=stadium.score)?'fa fa-star i-star':((num-0.5<=stadium.score)?'fa fa-star-half-o i-star':'fa fa-star-o i-star')"></i>
-                                        {{ stadium.score }}
+                                        <i v-for="num in 5" :key="num" style="margin-right: 3px" :class="(num<=stadium.score)?'fa fa-star i-star':((num-0.5<=stadium.score)?'fa fa-star-half-o i-star':'fa fa-star-o i-star')"></i> {{ stadium.score }}
                                     </div>
                                 </div>
                             </div>
@@ -52,15 +50,22 @@
                                 </div>
                             </div>
                             <div class="contact-box-footer">
-                                <a type="button" class="btn btn-outline btn-default" href="/stadium_management/stadium_info/edit_stadium">
-                                    <i class="fa fa-edit"></i> 编辑场馆信息 
-                                </a>
-                                <a type="button" class="btn btn-outline btn-default" href="/stadium_management/stadium_info/edit_ground">
-                                    <i class="fa fa-clock-o"></i> 修改预定时间段 
-                                </a>
-                                <button type="button" class="btn btn-outline btn-danger" v-on:click="deleteStadium(index)">
-                                    <i class="fa fa-trash"></i> 移除场馆 
-                                </button>
+
+                                <a type="button" class="btn btn-outline btn-default">
+                                <router-link :to="{ name: 'EditStadium', params: { managerId: 3, stadiumId: stadium.id }}">
+                                        <i class="fa fa-edit"></i> 编辑场馆信息 
+                                    </router-link>
+                                    </a>
+                              
+                                <a type="button" class="btn btn-outline btn-default">
+                                <router-link :to="{ name: 'EditGround', params: { managerId: 3, stadiumId: stadium.id }}">
+                                        <i class="fa fa-clock-o"></i> 修改预定时间段 
+                                    </router-link>
+                                    </a>
+                                    
+                                <button type="button" class="btn btn-outline btn-danger" v-on:click="deleteStadium(stadium.id)">
+                                        <i class="fa fa-trash"></i> 移除场馆 
+                                    </button>
                             </div>
                         </div>
                     </div>
@@ -76,33 +81,41 @@
 .i-row [class^="col-"] {
     padding: 10px;
 }
+
 .i-row {
     margin: 0;
 }
+
 .contact-box {
     max-width: 500px;
     padding: 15px;
 }
+
 .i-newstadium {
     margin-bottom: 20px;
     float: right;
 }
+
 .i-title {
     margin-top: 10px;
     font-weight: bolder;
     text-align: center;
 }
+
 .i-infobox {
     line-height: 30px;
     font-size: 13px;
     font-weight: bold;
 }
+
 .i-star {
     color: orange;
 }
+
 .i-icon {
     margin-right: 10px;
 }
+
 .i-groundinfo {
     border-top: 1px solid #e7eaec;
     font-weight: bold;
@@ -119,36 +132,14 @@ import 'masonry-layout'
 export default {
     data() {
         return {
-            stadiums: [
-                {
-                    name: '综合体育馆',
-                    score: 5
-                },
-                {
-                    name: '综合体育馆2',
-                    score: 4.8
-                },
-                {
-                    name: '综合体育馆3',
-                    score: 4.5
-                },
-                {
-                    name: '综合体育馆4',
-                    score: 4.2
-                },
-                {
-                    name: '综合体育馆5',
-                    score: 4
-                },
-                {
-                    name: '综合体育馆9',
-                    score: 3.1
-                }
-            ]
+            stadiums: []
         }
     },
     components: {
-        Toolbox, Navbar, Header, Footer
+        Toolbox,
+        Navbar,
+        Header,
+        Footer
     },
     mounted() {
         var msnry = new Masonry('.grid', {
@@ -157,25 +148,32 @@ export default {
             columnWidth: 500,
             gutter: 25
         });
+        this.$axios.get('stadium/', {})
+             .then(res => {
+                 if (res.data.error) {
+                     alert("Error! Please try again.")
+                 } else {
+                     this.stadiums = res.data.stadiums
+                 }
+             })
     },
     methods: {
         deleteStadium(index) {
             swal({
-                title: "你确定？",
-                text: "删除场馆将删除附带的场地信息和所有的预定记录！",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确认",
-                cancelButtonText: "取消",
-                closeOnConfirm: false 
-            },
-            () => {
-                // TODO: 删除场馆
-                swal("成功", "场馆已成功删除", "success")
-            });
+                    title: "你确定？",
+                    text: "删除场馆将删除附带的场地信息和所有的预定记录！",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确认",
+                    cancelButtonText: "取消",
+                    closeOnConfirm: false
+                },
+                () => {
+                    // TODO: 删除场馆
+                    swal("成功", "场馆已成功删除", "success")
+                });
         }
     }
 }
-
 </script>

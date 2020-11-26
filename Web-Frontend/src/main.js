@@ -5,7 +5,7 @@ import App from './App'
 import router from './router'
 import Common from './Common'
 import axios from 'axios'
-axios.defaults.baseURL = 'http://127.0.0.1:8000/manager'
+axios.defaults.baseURL = 'http://127.0.0.1:8000/api/manager'
 
 //import '@/assets/js/jquery-3.1.1.min.js'
 //import '@/assets/js/popper.min.js'

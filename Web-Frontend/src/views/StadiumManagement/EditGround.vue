@@ -361,27 +361,6 @@ export default {
         },
         uploadForm() {
             // TODO: 上传表单
-            // let request_body = {
-            //     stadiumId: ,
-            //     managerId: ,
-            //     startDate: ,
-            //     duration: ,
-            //     openTime: ,
-            //     closeTime: ,
-            //     openHours: 
-            // }
-            // this.$axios.post('changeduration/', request_body, {})
-            //     .then(res => {
-            //         if (res.data.error) {
-            //             alert("Error! Please try again.")
-            //         } else {
-            //             setTimeout(() => (swal({
-            //                 title: "成功",
-            //                 text: "场馆信息修改成功",
-            //                 type: "success",
-            //             })), 1000)
-            //         }
-            //     })
             window.location.replace('/stadium_management/stadium_info')
         }
     }

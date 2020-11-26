@@ -28,6 +28,9 @@ class Stadium(models.Model):
     openState = models.BooleanField()
     foreDays = models.IntegerField()
     durations = models.CharField(max_length=32, null=True)
+    score = models.FloatField(verbose_name='评分', default=4.9)
+    comments = models.IntegerField(default=0)
+    location = models.CharField(max_length=10, null=True, default="学堂路")
     # TODO:完善信息
 
 
@@ -37,7 +40,6 @@ class Manager(models.Model):
     password = models.CharField(max_length=32)
     userId = models.IntegerField(verbose_name='管理员编号', unique=True)
     email = models.EmailField()
-    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     loginToken = models.CharField(max_length=100, null=True)
     # TODO:完善信息
 
