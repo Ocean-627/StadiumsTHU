@@ -37,9 +37,12 @@ services:
     restart: always
     image: nginx:latest
     ports:
-      - "8001:8000"
+      - "80:80"
+      - "443:443"
     volumes:
       - ./config/nginx:/etc/nginx/conf.d
+      - /etc/ssl:/etc/ssl
+      - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
       - app
     networks:

@@ -39,26 +39,26 @@
                                     <div class="panel-body">
                                         <fieldset>
                                             <div class="form-group row"><label class="col-sm-2 col-form-label">场馆名称：</label>
-                                                <div class="col-sm-2"><input type="text" class="form-control"></div>
+                                                <div class="col-sm-2"><input type="text" class="form-control" ref="name"></div>
                                             </div>
                                             <div class="form-group row"><label class="col-sm-2 col-form-label">开放状态：</label>
-                                                <div class="col-sm-2"><select data-placeholder="..." class="chosen-select" tabindex="2">
-                                                    <option>开放</option>
-                                                    <option>未开放</option>
-                                                </select></div>
+                                                <div class="col-sm-2"><select data-placeholder="..." class="chosen-select" tabindex="2" ref="openState">
+                                                                    <option>开放</option>
+                                                                    <option>未开放</option>
+                                                                </select></div>
                                             </div>
                                             <div class="form-group row"><label class="col-sm-2 col-form-label">联系方式：</label>
-                                                <div class="col-sm-4"><input type="text" class="form-control" placeholder="..."></div>
+                                                <div class="col-sm-4"><input type="text" class="form-control" placeholder="..." ref="contact"></div>
                                             </div>
                                             <div class="form-group row"><label class="col-sm-2 col-form-label">场馆说明:</label>
                                                 <div class="col-sm-10">
-                                                    <textarea class="form-control" placeholder="输入场馆说明..." style="height: 100px;"></textarea>
+                                                    <textarea class="form-control" placeholder="输入场馆说明..." style="height: 100px;" ref="information"></textarea>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col-sm-5"></div>
                                                 <div class="col-sm-2">
-                                                    <button type="button" class="btn btn-primary" v-on:click="submit()">提交</button>
+                                                    <button type="button" class="btn btn-primary" v-on:click="submit(1)">提交</button>
                                                     <button type="button" class="btn btn-default" v-on:click="cancel()">取消</button>
                                                 </div>
                                             </div>
@@ -102,7 +102,7 @@
                                                     <div class="input-group clockpicker" data-autoclose="true">
                                                         <input type="text" class="form-control" v-model="period.start">
                                                         <span class="input-group-addon">
-                                                            <span class="fa fa-clock-o"></span>
+                                                                            <span class="fa fa-clock-o"></span>
                                                         </span>
                                                     </div>
                                                 </div>
@@ -113,19 +113,19 @@
                                                     <div class="input-group clockpicker" data-autoclose="true">
                                                         <input type="text" class="form-control" v-model="period.end">
                                                         <span class="input-group-addon">
-                                                            <span class="fa fa-clock-o"></span>
+                                                                            <span class="fa fa-clock-o"></span>
                                                         </span>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-1"><button class="btn btn-danger" v-on:click="deletePeriod(index)"><i class="fa fa-times"></i></button></div>
                                             </div>
-                                            <div class="form-group row"><label class="col-sm-2 col-form-label"  ref="duration">开放预约时间段（小时）：</label>
+                                            <div class="form-group row"><label class="col-sm-2 col-form-label" ref="duration">开放预约时间段（小时）：</label>
                                                 <div class="col-sm-1"><input type="text" class="form-control"></div>
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col-sm-5"></div>
                                                 <div class="col-sm-2">
-                                                    <button type="button" class="btn btn-primary" v-on:click="submitDurationInfo()">提交</button>
+                                                    <button type="button" class="btn btn-primary" v-on:click="submit(3)">提交</button>
                                                     <button type="button" class="btn btn-default" v-on:click="cancel()">取消</button>
                                                 </div>
                                             </div>
@@ -179,8 +179,7 @@ import '@/assets/js/plugins/jasny/jasny-bootstrap.min.js'
 export default {
     data() {
         return {
-            periods: [
-                {
+            periods: [{
                     start: '08:00',
                     end: '12:00'
                 },
@@ -192,12 +191,15 @@ export default {
         }
     },
     components: {
-        Toolbox, Navbar, Header, Footer
+        Toolbox,
+        Navbar,
+        Header,
+        Footer
     },
     mounted() {
         $('.chosen-select').chosen({ width: "100%" })
         var clocks = document.getElementsByClassName('clockpicker')
-        for(var i = 0; i < clocks.length; i++){
+        for (var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker()
         }
     },
@@ -214,7 +216,7 @@ export default {
             this.periods.push(period)
             this.$nextTick(function() {
                 var clocks = document.getElementsByClassName('clockpicker')
-                for(var i = 0; i < clocks.length; i++){
+                for (var i = 0; i < clocks.length; i++) {
                     $(clocks[i]).clockpicker()
                 }
             })
@@ -222,100 +224,88 @@ export default {
         deletePeriod(index) {
             this.periods.splice(index, 1)
         },
-        submitDurationInfo(){
-            
-            // swal({
-            //     title: "你确定？",
-            //     text: "确认提交现有的更改",
-            //     type: "warning",
-            //     showCancelButton: true,
-            //     confirmButtonColor: "#DD6B55",
-            //     confirmButtonText: "确认",
-            //     cancelButtonText: "取消",
-            //     closeModal: false
-            // },
-            // (res) => {
-            //     if(res){
-            //         // 检查表单合法性
-            //         if(!this.validate()) return
-            //         this.uploadDurationForm()
-            //     }
-            // })
-
-            this.uploadDurationForm()
-
-        },
-        submit() {
+        submit(index) {
             swal({
-                title: "你确定？",
-                text: "确认提交现有的更改",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确认",
-                cancelButtonText: "取消",
-                closeModal: false
-            },
-            (res) => {
-                if(res){
-                    // 检查表单合法性
-                    if(!validate()) return
-                    this.uploadForm()
-                }
-            })
+                    title: "你确定？",
+                    text: "确认提交现有的更改",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确认",
+                    cancelButtonText: "取消",
+                    closeModal: false
+                },
+                (res) => {
+                    if (res) {
+                        // 检查表单合法性
+                        if (!this.validate()) return
+                        this.uploadForm(index)
+                    }
+                })
         },
         cancel() {
             swal({
-                title: "你确定？",
-                text: "取消将返回上一页，你将失去在此处的所有更改",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确认",
-                cancelButtonText: "取消",
-                closeModal: false
-            },
-            (res) => {
-                if(res){
-                    window.location.replace('/stadium_management/stadium_info')
-                }
-            })
+                    title: "你确定？",
+                    text: "取消将返回上一页，你将失去在此处的所有更改",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确认",
+                    cancelButtonText: "取消",
+                    closeModal: false
+                },
+                (res) => {
+                    if (res) {
+                        window.location.replace('/stadium_management/stadium_info')
+                    }
+                })
         },
         validate() {
-            if(this.periods.length === 0) return true
-            for(var period in this.periods){
-                if(period.start >= period.end) return true
+            if (this.periods.length === 0) return true
+            for (var period in this.periods) {
+                if (period.start >= period.end) return true
             }
             return true
         },
-        uploadForm() {
-            // TODO: 上传表单
-            setTimeout(() => (swal({
-                title: "成功", 
-                text: "场馆信息修改成功", 
-                type: "success",
-            })), 1000)
-            window.location.replace('/stadium_management/stadium_info')
-        },
-        uploadDurationForm() {
-            let openHours = ""
-            for(var i = 0; i < this.periods.length; i++) {
-                openHours += this.periods[i].start + "-" + this.periods[i].end + " "
-            }
 
-            let request_body = {
-                 stadiumId: this.$route.params.stadiumId,
-                 managerId: this.$route.params.managerId,
-                 startDate: "2020-11-27",
-                 duration: this.$refs.duration.value,
-                 openTime: "08:00",
-                 closeTime: "12:00",
-                 openHours: openHours
+        uploadForm(index) {
+            let request_body = {}
+            switch (index) {
+
+                // 修改场馆基本信息
+                case 1:
+                    request_body = {
+                        stadiumId: this.$route.params.stadiumId,
+                        managerId: this.$route.params.managerId,
+                        name: this.$refs.name.value,
+                        openState: this.$refs.openState.value === "开放",
+                        information: this.$refs.information.value,
+                        contact: this.$refs.contact.value,
+                    }
+                    break;
+                case 2:
+                    break;
+
+                // 修改场馆开放关闭时间
+                case 3:
+                    let openHours = ""
+                    for (var i = 0; i < this.periods.length; i++) {
+                        openHours += this.periods[i].start + "-" + this.periods[i].end + " "
+                    }
+                    request_body = {
+                        stadiumId: this.$route.params.stadiumId,
+                        managerId: this.$route.params.managerId,
+                        startDate: "2020-11-27",
+                        openTime: "08:00",
+                        closeTime: "12:00",
+                    }
+                    break;
+                default:
+                    break;
             }
-            this.$axios.post('changeduration/', {}, request_body)
+            this.$axios.post('stadium/', request_body)
                 .then(res => {
                     console.log(res)
-                    alert("ok")
                     if (res.data.error) {
                         alert("Error! Please try again.")
                     } else {
@@ -324,16 +314,10 @@ export default {
                             text: "场馆信息修改成功",
                             type: "success",
                         })), 1000)
+                        window.location.replace('/stadium_management/stadium_info')
                     }
                 })
-            // setTimeout(() => (swal({
-            //     title: "成功", 
-            //     text: "场馆信息修改成功", 
-            //     type: "success",
-            // })), 1000)
-            // window.location.replace('/stadium_management/stadium_info')
         }
     }
 }
-
 </script>

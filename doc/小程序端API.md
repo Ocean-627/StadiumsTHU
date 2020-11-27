@@ -1,33 +1,8 @@
 # 清动家园——小程序端`API`
 
+网址URL:https://cbx.iterator-traits.com
+
 ### 身份验证
-
-##### 注册
-
-```js
-Method: POST
-Request:
-URL: /api/user/logon
-Request:
-{
-   	'username': '',
-   	'password': '',
-   	'email': ''，
-   	'user_id':''
-}
-Response:
-{
-	'message': 'ok'
-}
-```
-
-其中：四个字段都是**必须的**。
-
-用户名：要求长度在$3-32$之间。
-
-密码：要求长度在$10-32$之间，且必须包含数字，小写字母和大写字母。
-
-学生编号：不允许重复，即一个编号只能注册一个用户。
 
 ##### 登录
 
@@ -36,8 +11,7 @@ Method: POST
 URL: /api/user/login
 Request:
 {
-   	'user_id': '',
-   	'password': ''
+   	'code': '',
 }
 Response:
 {
@@ -46,24 +20,57 @@ Response:
 }
 ```
 
-其中`loginToken`应该被前端存储在**请求头(目前是`query_params`)**中，用于后续身份验证。
+其中`loginToken`应该被前端存储在**请求头**中，用于后续身份验证。
 
-##### 登出
+##### 获取个人信息
 
 ```js
-Method: POST
-URL: /api/user/logout/
+Method: GET
+URL: /api/user/user
+Request:
 Response:
 {
-	'message': 'ok'
+	'auth': '',
+    'name': '',
+    'userId': '',
+    'email': '',
+    'phone': ''
+    'loginToken': ''
+    'loginTime': ''
+    'openId': ''
 }
 ```
 
 ##### 更新个人信息
 
 ```js
-
+Method: GET
+URL: /api/user/user
+Request:
+{
+	'auth': '',
+    'name': '',
+    'userId': '',
+    'email': '',
+    'phone': ''
+}
+Response:
+{
+ 	'message': 'ok'   
+}
 ```
+
+参数即为用户需要完善的个人信息，其中`auth`字段代表用户是否绑定了清华身份，其他字段为具体信息。
+
+###### 需求：
+
+ 1. ~~个人信息添加nickname字段，代表昵称，name代表真实姓名，在评论显示的时候使用昵称。~~
+
+    加上了
+
+ 2. ~~为什么更新信息用的是GET指令？~~
+
+    应该用POST
 
 ### 场馆信息
 
@@ -78,6 +85,7 @@ QueryParam:{
     'foreGt': '',
     'openState': ''，
     'foreDays':''
+    ‘id’:''
 }
 Response:
     [
@@ -92,6 +100,11 @@ Response:
             'openState': '',
             'foreDays': '',
            	'durations': '',
+            // 新增
+            'courtType': ['', ],
+            'comments': '',
+            'score':'',
+            'location':'',
         },
     ]
 ```
@@ -107,6 +120,23 @@ Response:
 `openState`代表是否开放，布尔值。
 
 `foreDays`是一个整数，代表可提前预约时间。
+
+`id`是一个整数，代表场馆的编号。
+
+###### 需求
+
+	1. 添加场馆地理位置（描述信息(xx路)和经纬度）
+​		目前返回在`location`中
+
+  1. ~~添加场馆运动项目信息~~
+
+     返回在`courtType`中。
+
+  2. ~~添加场馆评分和评论数信息~~
+
+     分别返回在`score`和`location`中
+
+  3. 添加/api/user/stadium/{stadium-id}接口来获取某个场馆具体信息，包括场馆简介，场馆须知，评论
 
 ##### 获取场地信息
 
@@ -193,6 +223,8 @@ Response:
 `accessible`代表是否已经被预约。
 
 其余四个参数见字面含义。
+
+
 
 ### 预订场馆
 
@@ -319,4 +351,3 @@ Response:
 ```
 
 参数为要撤销的评价的 `Id`。
-

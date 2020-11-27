@@ -7,11 +7,11 @@ from datetime import datetime
 import datetime
 
 
-def md5(userId):
+def md5(seq):
     import hashlib
     import time
     ctime = str(time.time())
-    m = hashlib.md5(bytes(userId, encoding='utf-8'))
+    m = hashlib.md5(bytes(seq, encoding='utf-8'))
     m.update(bytes(ctime, encoding='utf-8'))
     return m.hexdigest()
 
@@ -19,17 +19,15 @@ def md5(userId):
 stadiums = [
     {'name': 'xxh的场馆',
      'information': 'xxh用来debug的场馆',
-     'openingHours': '08:00-12:00,14:00-18:00',
      'openTime': '08:00',
      'closeTime': '18:00',
      'contact': '4008823823',
      'openState': True,
      'foreDays': 3
-     ,'durations': '01:00'
+        , 'durations': '01:00'
      },
     {'name': 'cbx的场馆',
      'information': 'cbx用来写bug的场馆',
-     'openingHours': '07:00-11:00,15:00-18:00',
      'openTime': '07:00',
      'closeTime': '18:00',
      'contact': '18801225328',
@@ -44,15 +42,26 @@ def initStadium(info):
     # 创建场馆
     Stadium.objects.create(**info)
     stadium = Stadium.objects.get(name=info['name'])
+    # 创建场地类型
+    type1 = CourtType(stadium=stadium, type='羽毛球', openingHours="8:00-10:00,13:00-17:00")
+    type1.save()
+    type2 = CourtType(stadium=stadium, type='篮球', openingHours='8:00-10:00,13:00-17:00')
+    type2.save()
     # 创建场地
     courtNum = 5
     for i in range(courtNum):
-        court = Court(stadium=stadium, type='羽毛球', name='场地' + str(i), price=30,
-                      openState=stadium.openState, floor=1, location='110B')
-        court.save()
+        court1 = Court(stadium=stadium, courtType=type1, type=type1.type, name='场地' + str(i), price=30,
+                       openState=stadium.openState, floor=1, location='110B')
+        court1.save()
+        court2 = Court(stadium=stadium, courtType=type2, type=type2.type, name='场地' + str(i), price=30,
+                       openState=stadium.openState, floor=2, location='304B')
+        court2.save()
         # 创建时段
         for t in range(10, 18):
-            duration = Duration(stadium=stadium, court=court, date='11.16', startTime=str(t) + ':00',
+            duration = Duration(stadium=stadium, court=court1, date='11.16', startTime=str(t) + ':00',
+                                endTime=str(t + 1) + ':00', openState=True, accessible=True)
+            duration.save()
+            duration = Duration(stadium=stadium, court=court2, date='11.16', startTime=str(t) + ':00',
                                 endTime=str(t + 1) + ':00', openState=True, accessible=True)
             duration.save()
 

@@ -13,8 +13,7 @@ class UserAuthtication(BaseAuthentication):
     """
 
     def authenticate(self, request):
-        # TODO:目前将身份验证放在头部，实际上小程序端应该通过request.META.get()来获取
-        loginToken = request.GET.get('loginToken')
+        loginToken = request.headers.get('loginToken')
         if not loginToken:
             raise AuthenticationFailed({'error': 'Requires loginToken'})
         obj = User.objects.filter(loginToken=loginToken).first()

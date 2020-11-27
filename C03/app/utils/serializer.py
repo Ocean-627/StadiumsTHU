@@ -4,17 +4,62 @@ from app.models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # 用来验证用户输入
-    username = serializers.CharField(label='用户名', validators=[MinLengthValidator(3), MaxLengthValidator(32)])
-    password = serializers.CharField(label='密码',
-                                     validators=[MinLengthValidator(10), MaxLengthValidator(32), SafeValidator])
+    nickname = serializers.CharField(label='用户昵称', validators=[MinLengthValidator(3), MaxLengthValidator(20)],
+                                     required=False)
+    phone = serializers.CharField(label='手机号', validators=[MinLengthValidator(11), MaxLengthValidator(11)],
+                                  required=False)
+    images = serializers.SerializerMethodField()
+
+    def get_images(self, obj):
+        images_list = obj.userimage_set.all()
+        images_list = UserImageSerializer(images_list, many=True)
+        return images_list.data
 
     class Meta:
         model = User
         fields = '__all__'
+        # 设置read_only起到了保护的作用，即用户不能修改这些字段
+        read_only_fields = ['openId', 'loginToken', 'loginTime']
 
 
 class StadiumSerializer(serializers.ModelSerializer):
+    images = serializers.SerializerMethodField(required=False)
+    comments = serializers.SerializerMethodField(required=False)
+    score = serializers.SerializerMethodField(required=False)
+    courtType = serializers.SerializerMethodField(required=False)
+
+    def get_images(self, obj):
+        images_list = obj.stadiumimage_set.all()
+        images_list = StadiumImageSerializer(images_list, many=True)
+        return images_list.data
+
+    def get_comments(self, obj):
+        court_list = obj.court_set.all()
+        tot = 0
+        for court in court_list:
+            tot += len(court.comment_set.all())
+        return tot
+
+    def get_score(self, obj):
+        court_list = obj.court_set.all()
+        tot_score = 0
+        tot_num = 0
+        for court in court_list:
+            tot_num += len(court.comment_set.all())
+            for comment in court.comment_set.all():
+                tot_score += comment.score
+        if tot_num == 0:
+            return 3
+        else:
+            return tot_score / tot_num
+
+    def get_courtType(self, obj):
+        type_list = obj.courttype_set.all()
+        types = []
+        for courtType in type_list:
+            types.append(courtType.type)
+        return types
+
     class Meta:
         model = Stadium
         fields = '__all__'
@@ -92,7 +137,8 @@ class CommentSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        return Comment.objects.create(user=self.context['request'].user, **validated_data)
+        comment = Comment.objects.create(user=self.context['request'].user, **validated_data)
+        return comment
 
     class Meta:
         model = Comment
@@ -101,6 +147,27 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CommentImageSerializer(serializers.ModelSerializer):
+    comment_id = serializers.IntegerField(label='评论编号', write_only=True)
+
+    def validate_comment_id(self, value):
+        comment = Comment.objects.filter(id=value, user=self.context['request'].user).first()
+        if not comment:
+            raise ValidationError('Invalid comment_id')
+        return value
+
     class Meta:
         model = CommentImage
+        fields = '__all__'
+        read_only_fields = ['comment']
+
+
+class StadiumImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StadiumImage
+        fields = '__all__'
+
+
+class UserImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserImage
         fields = '__all__'
