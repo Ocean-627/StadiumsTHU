@@ -93,16 +93,13 @@
                                 <div id="tab-3" class="tab-pane">
                                     <div class="panel-body">
                                         <fieldset>
-                                            <div class="form-group row"><label class="col-sm-2 col-form-label">开放时间：</label>
-                                                <div class="col-sm-10"><button type="button" class="btn btn-sm btn-primary" style="height: 100%;" v-on:click="newPeriod()">添加时间段</button></div>
-                                            </div>
-                                            <div class="form-group row" v-for="(period, index) in periods" v-bind:key="period.start">
-                                                <label class="col-sm-2 col-form-label"></label>
+                                            <div class="form-group row">
+                                                <label class="col-sm-2 col-form-label">开放时间：</label>
                                                 <div class="col-sm-2">
                                                     <div class="input-group clockpicker" data-autoclose="true">
                                                         <input type="text" class="form-control" v-model="period.start">
                                                         <span class="input-group-addon">
-                                                                            <span class="fa fa-clock-o"></span>
+                                                            <span class="fa fa-clock-o"></span>
                                                         </span>
                                                     </div>
                                                 </div>
@@ -113,14 +110,24 @@
                                                     <div class="input-group clockpicker" data-autoclose="true">
                                                         <input type="text" class="form-control" v-model="period.end">
                                                         <span class="input-group-addon">
-                                                                            <span class="fa fa-clock-o"></span>
+                                                            <span class="fa fa-clock-o"></span>
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-1"><button class="btn btn-danger" v-on:click="deletePeriod(index)"><i class="fa fa-times"></i></button></div>
                                             </div>
                                             <div class="form-group row"><label class="col-sm-2 col-form-label" ref="duration">开放预约时间段（小时）：</label>
                                                 <div class="col-sm-1"><input type="text" class="form-control"></div>
+                                            </div>
+                                            <div class="form-group row" id="data_1"><label class="col-sm-2 col-form-label">修改生效时间：</label>
+                                                <div class="col-sm-2 input-group date">
+                                                    <span class="input-group-addon"
+                                                        ><i class="fa fa-calendar"></i></span
+                                                    ><input
+                                                        type="text"
+                                                        class="form-control"
+                                                        v-model="active_time"
+                                                    />
+                                                </div>
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col-sm-5"></div>
@@ -140,7 +147,7 @@
                                             <div class="form-group row">
                                                 <div class="col-sm-5"></div>
                                                 <div class="col-sm-2">
-                                                    <button type="button" class="btn btn-primary" v-on:click="submit()">提交</button>
+                                                    <button type="button" class="btn btn-primary" v-on:click="submit(3)">提交</button>
                                                     <button type="button" class="btn btn-default" v-on:click="cancel()">取消</button>
                                                 </div>
                                             </div>
@@ -162,6 +169,7 @@
 @import '../../assets/css/plugins/chosen/bootstrap-chosen.css';
 @import '../../assets/css/plugins/jasny/jasny-bootstrap.min.css';
 @import '../../assets/css/plugins/clockpicker/clockpicker.css';
+@import "../../assets/css/plugins/datapicker/datepicker3.css";
 .chosen-container-single .chosen-single {
     padding: 4px 12px;
 }
@@ -176,18 +184,15 @@ import 'jquery'
 import '@/assets/js/plugins/clockpicker/clockpicker.js'
 import '@/assets/js/plugins/chosen/chosen.jquery.js'
 import '@/assets/js/plugins/jasny/jasny-bootstrap.min.js'
+import "@/assets/js/plugins/datapicker/bootstrap-datepicker.js";
 export default {
     data() {
         return {
-            periods: [{
-                    start: '08:00',
-                    end: '12:00'
-                },
-                {
-                    start: '13:00',
-                    end: '20:00'
-                }
-            ]
+            period: {
+                start: '08:00',
+                end: '12:00'
+            },
+            active_time: ''
         }
     },
     components: {
@@ -202,27 +207,30 @@ export default {
         for (var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker()
         }
+        $("#data_1 .input-group.date").datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            autoclose: true,
+            format: "yyyy-mm-dd"
+        });
+    },
+    updated() {
+        $('.chosen-select').chosen({ width: "100%" })
+        var clocks = document.getElementsByClassName('clockpicker')
+        for (var i = 0; i < clocks.length; i++) {
+            $(clocks[i]).clockpicker()
+        }
+        $("#data_1 .input-group.date").datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            autoclose: true,
+            format: "yyyy-mm-dd"
+        });
     },
     methods: {
         fileSelected(e) {
             var filename = e.target.files
             $(this).next('.custom-file-label').addClass("selected").html(fileName)
-        },
-        newPeriod() {
-            var period = {
-                start: '12:00',
-                end: '13:00'
-            }
-            this.periods.push(period)
-            this.$nextTick(function() {
-                var clocks = document.getElementsByClassName('clockpicker')
-                for (var i = 0; i < clocks.length; i++) {
-                    $(clocks[i]).clockpicker()
-                }
-            })
-        },
-        deletePeriod(index) {
-            this.periods.splice(index, 1)
         },
         submit(index) {
             swal({

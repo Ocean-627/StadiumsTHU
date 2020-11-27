@@ -35,13 +35,13 @@
                                 <div class="modal-body">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <h3 class="m-t-none m-b">添加新场馆</h3>
+                                            <h3 class="m-t-none m-b">添加新场地</h3>
                                             <form role="form">
-                                                <div class="form-group"><label>场馆类型</label>
+                                                <div class="form-group"><label>场地类型</label>
                                                     <input type="text" class="form-control" v-model="newGroundType"></div>
                                             </form>
                                             <div>
-                                                <button class="btn btn-ontline btn-primary float-right" v-on:click="newGround()">添加</button>
+                                                <button class="btn btn-ontline btn-primary float-right" v-on:click="newGround()" data-dismiss="modal">添加</button>
                                             </div>
                                         </div>
                                     </div>

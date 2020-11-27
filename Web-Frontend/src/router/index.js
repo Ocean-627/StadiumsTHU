@@ -80,17 +80,17 @@ export default new Router({
             component: SystemLog
         },
         {
-            path: '/stadium_management/:managerId/stadium_info/new_stadium',
+            path: '/stadium_management/stadium_info/new_stadium',
             name: 'NewStadium',
             component: NewStadium
         },
         {
-            path: '/stadium_management/:managerId/stadium_info/edit_stadium/:stadiumId/',
+            path: '/stadium_management/stadium_info/edit_stadium',
             name: 'EditStadium',
             component: EditStadium
         },
         {
-            path: '/stadium_management/:managerId/stadium_info/edit_ground/:stadiumId/',
+            path: '/stadium_management/stadium_info/edit_ground',
             name: 'EditGround',
             component: EditGround
         }
