@@ -33,6 +33,8 @@ class Stadium(models.Model):
     score = models.FloatField(verbose_name='评分', default=4.9)
     comments = models.IntegerField(default=0)
     location = models.CharField(max_length=10, null=True, default="学堂路")
+    longitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, verbose_name='经度')
+    latitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, verbose_name='纬度')
     # TODO:完善信息
 
 
