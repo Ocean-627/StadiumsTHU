@@ -70,10 +70,18 @@ class StadiumView(APIView):
     """
     场馆信息
     """
+
     # authentication_classes = [ManagerAuthtication]
     def get(self, request):
-        stadium = Stadium.objects.all()
-        return JsonResponse({"stadiums": json(stadium)})
+        myStadium = Stadium.objects.all()
+        stadiums = json(myStadium)
+        for i in range(len(stadiums)):
+            stadiums[i]["courtTypes"] = []
+            for courtType in list(myStadium[i].courttype_set.all()):
+                stadiums[i]["courtTypes"].append({"name": courtType.type,
+                                                  "openHours": courtType.openingHours,
+                                                  "amount": len(courtType.court_set.all())})
+        return JsonResponse({"stadiums": stadiums})
 
 
 class CourtView(APIView):
@@ -130,6 +138,7 @@ class ChangeDurationView(APIView):
     """
     修改预约时段信息
     """
+
     # authentication_classes = [ManagerAuthtication]
 
     def post(self, request):
@@ -274,4 +283,3 @@ class HistoryView(APIView):
         myOperations = sorted(chain(changeDuration, addEvent), key=attrgetter('time'), reverse=True)
         operations = [model_to_dict(myOperation, fields=['time', 'type', 'id']) for myOperation in myOperations]
         return JsonResponse({'operations': operations})
-

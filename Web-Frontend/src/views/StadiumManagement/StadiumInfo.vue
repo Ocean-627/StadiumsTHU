@@ -46,7 +46,10 @@
                             </div>
                             <div class="row i-row i-groundinfo">
                                 <div class="col-md-12">
-                                    开放场地：羽毛球场 8 个、乒乓球场 8 个
+                                    开放场地：
+                                    <a v-for="courtType in stadium.courtTypes" v-bind:key="courtType.name">
+                                        {{courtType.name}}场 {{courtType.amount}} 个&emsp;
+                                    </a>
                                 </div>
                             </div>
                             <div class="contact-box-footer">
@@ -156,6 +159,14 @@ export default {
                      this.stadiums = res.data.stadiums
                  }
              })
+    },
+    updated(){
+        var msnry = new Masonry('.grid', {
+            // options...
+            itemSelector: ".grid-item",
+            columnWidth: 500,
+            gutter: 25
+        });
     },
     methods: {
         deleteStadium(index) {
