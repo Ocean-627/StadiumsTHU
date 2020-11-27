@@ -35,7 +35,7 @@
         </div>
         <div
           class="row"
-          v-for="(ground, ground_index) in grounds"
+          v-for="ground in grounds"
           :key="ground.name"
         >
           <div class="col-lg-12">
@@ -158,7 +158,13 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <label class="font-normal">使用者</label>
+                        <label class="font-normal">使用者</label><br>
+                        <div><small>请在下方输入使用者的学号/工号（或留空）。预约信息将通过站内消息通知他们。</small></div>
+                        <input class="tagsinput form-control" type="text" />
+                      </div>
+                      <div class="form-group">
+                        <label class="font-normal">备注</label>
+                        <input class="form-control" type="text" />
                       </div>
                     </div>
                     <div class="modal-footer">
@@ -167,10 +173,10 @@
                         class="btn btn-white"
                         data-dismiss="modal"
                       >
-                        关闭
+                        取消
                       </button>
-                      <button type="button" class="btn btn-primary">
-                        保存更改
+                      <button type="button" class="btn btn-primary" v-on:click="submit(ground)">
+                        确认
                       </button>
                     </div>
                   </div>
@@ -192,6 +198,7 @@
 @import "../../assets/css/plugins/clockpicker/clockpicker.css";
 @import "../../assets/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css";
 @import "../../assets/css/plugins/datapicker/datepicker3.css";
+@import "../../assets/css/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css";
 .i-row [class^="col-"] {
   padding: 10px;
 }
@@ -250,6 +257,14 @@
 .popover {
   z-index: 10000;
 }
+
+.bootstrap-tagsinput {
+  border: 1px solid #e5e6e7;
+  border-radius: 1px;
+  margin-top: 10px;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
 </style>
 
 <script>
@@ -265,6 +280,7 @@ import "@/assets/js/plugins/chosen/chosen.jquery.js";
 import "@/assets/js/plugins/jasny/jasny-bootstrap.min.js";
 import "@/assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js";
 import "@/assets/js/plugins/datapicker/bootstrap-datepicker.js";
+import "@/assets/js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"
 
 export default {
   data() {
@@ -294,8 +310,14 @@ export default {
     Footer
   },
   methods: {
-    reserve(ground) {
-      // TODO: 弹出窗口填写表单
+    submit(ground) {
+      // 为了节省局部变量，所有场地的预留的模态窗口共享表单变量，所以需要传入ground参数进行区分
+      // TODO: 上传表单
+      swal({
+        title: "成功", 
+        text: "场地预留成功", 
+        type: "success",
+      })
     },
     manage(ground) {
       // TODO: 跳转到相应的预约信息管理界面就行
@@ -348,6 +370,9 @@ export default {
       autoclose: true,
       format: "yyyy-mm-dd"
     });
+    $('.tagsinput').tagsinput({
+        tagClass: 'label label-primary'
+    });
   },
   mounted() {
     $(".chosen-select").chosen({ width: "100%" });
@@ -360,6 +385,9 @@ export default {
       keyboardNavigation: false,
       autoclose: true,
       format: "yyyy-mm-dd"
+    });
+    $('.tagsinput').tagsinput({
+        tagClass: 'label label-primary'
     });
 
     let grounds = [
