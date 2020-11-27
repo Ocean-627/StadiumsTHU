@@ -45,7 +45,7 @@ class Manager(models.Model):
 
 class CourtType(models.Model):
     # 类型信息(某个场馆）
-    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE, null=True)
+    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     openingHours = models.CharField(max_length=50, verbose_name='开放时间')
     type = models.CharField(max_length=20, verbose_name='场馆类型')
 
@@ -53,7 +53,7 @@ class CourtType(models.Model):
 class Court(models.Model):
     # 场地
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
-    courtType = models.ForeignKey(CourtType, on_delete=models.CASCADE, null=True)
+    courtType = models.ForeignKey(CourtType, on_delete=models.CASCADE)
     type = models.CharField(max_length=20, verbose_name='场馆类型')
     name = models.CharField(max_length=32, null=True)
     price = models.IntegerField()
