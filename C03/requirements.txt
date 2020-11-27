@@ -9,3 +9,4 @@ pyyaml
 djangorestframework
 Pillow
 django_filter
+corsheaders
