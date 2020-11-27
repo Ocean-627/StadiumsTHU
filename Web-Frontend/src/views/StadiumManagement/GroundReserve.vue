@@ -175,7 +175,8 @@
                       >
                         取消
                       </button>
-                      <button type="button" class="btn btn-primary" v-on:click="submit(ground)">
+                      <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        v-on:click="submit(ground)">
                         确认
                       </button>
                     </div>
