@@ -53,7 +53,7 @@ def initStadium(info):
         court1 = Court(stadium=stadium, courtType=type1, type=type1.type, name='场地' + str(i), price=30,
                        openState=stadium.openState, floor=1, location='110B')
         court1.save()
-        court2 = Court(stadium=stadium, courtType=type1, type=type2.type, name='场地' + str(i), price=30,
+        court2 = Court(stadium=stadium, courtType=type2, type=type2.type, name='场地' + str(i), price=30,
                        openState=stadium.openState, floor=2, location='304B')
         court2.save()
         # 创建时段

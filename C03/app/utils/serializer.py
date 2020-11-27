@@ -24,11 +24,33 @@ class UserSerializer(serializers.ModelSerializer):
 
 class StadiumSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField(required=False)
+    comments = serializers.SerializerMethodField(required=False)
+    score = serializers.SerializerMethodField(required=False)
 
     def get_images(self, obj):
         images_list = obj.stadiumimage_set.all()
         images_list = StadiumImageSerializer(images_list, many=True)
         return images_list.data
+
+    def get_comments(self, obj):
+        court_list = obj.court_set.all()
+        tot = 0
+        for court in court_list:
+            tot += len(court.comment_set.all())
+        return tot
+
+    def get_score(self, obj):
+        court_list = obj.court_set.all()
+        tot_score = 0
+        tot_num = 0
+        for court in court_list:
+            tot_num += len(court.comment_set.all())
+            for comment in court.comment_set.all():
+                tot_score += comment.score
+        if tot_num == 0:
+            return 3
+        else:
+            return tot_score / tot_num
 
     class Meta:
         model = Stadium
@@ -122,7 +144,7 @@ class CommentImageSerializer(serializers.ModelSerializer):
     def validate_comment_id(self, value):
         comment = Comment.objects.filter(id=value, user=self.context['request'].user).first()
         if not comment:
-            raise ValidationError('Invalid court_id')
+            raise ValidationError('Invalid comment_id')
         return value
 
     class Meta:
