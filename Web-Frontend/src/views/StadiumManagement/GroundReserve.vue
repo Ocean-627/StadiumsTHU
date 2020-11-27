@@ -11,9 +11,7 @@
             <li class="breadcrumb-item">
               <a href="/home">主页</a>
             </li>
-            <li class="breadcrumb-item">
-              场馆管理
-            </li>
+            <li class="breadcrumb-item">场馆管理</li>
             <li class="breadcrumb-item active">
               <strong>场地预留</strong>
             </li>
@@ -29,27 +27,31 @@
               v-model="current_date"
               @changed="changeDate()"
             >
-              <option
-                v-for="(date, index) in dates"
-                :key="date"
-                :value="index"
-                >{{ date }}</option
-              >
+              <option v-for="(date, index) in dates" :key="date" :value="index">
+                {{ date }}
+              </option>
             </select>
           </div>
         </div>
-        <div class="row" v-for="ground in grounds" :key="ground.name">
+        <div
+          class="row"
+          v-for="(ground, ground_index) in grounds"
+          :key="ground.name"
+        >
           <div class="col-lg-12">
-            <div class="ibox ">
+            <div class="ibox">
               <div class="ibox-title">
                 <h5>{{ ground.name }}</h5>
                 <div class="ibox-tools">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="fa fa-wrench" style="color: green;"></i>
+                    <i class="fa fa-wrench" style="color: green"></i>
                   </a>
                   <ul class="dropdown-menu dropdown-user">
                     <li>
-                      <a class="dropdown-item" v-on:click="reserve(ground)"
+                      <a
+                        class="dropdown-item"
+                        data-toggle="modal"
+                        data-target="#myModal"
                         >场地预留</a
                       >
                     </li>
@@ -82,6 +84,98 @@
                   <br />
                 </div>
               </div>
+              <div
+                class="modal inmodal"
+                id="myModal"
+                tabindex="-1"
+                role="dialog"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content animated fadeIn">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span
+                        ><span class="sr-only">关闭</span></button
+                      ><br />
+                      <h4 class="modal-title">场地预留</h4>
+                    </div>
+                    <div class="modal-body">
+                      <p>
+                        场地类型：<strong>{{ ground.name }}</strong>
+                      </p>
+                      <div class="form-group" id="data_1">
+                        <label class="font-normal">使用日期</label>
+                        <div class="input-group date">
+                          <span class="input-group-addon"
+                            ><i class="fa fa-calendar"></i></span
+                          ><input
+                            type="text"
+                            class="form-control"
+                            v-model="form_time"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="font-normal">使用时段</label>
+                        <div class="form-group row">
+                          <div class="col-sm-5">
+                            <div
+                              class="input-group clockpicker"
+                              data-autoclose="true"
+                            >
+                              <input
+                                type="text"
+                                class="form-control"
+                                v-model="form_start"
+                              />
+                              <span class="input-group-addon">
+                                <span class="fa fa-clock-o"></span>
+                              </span>
+                            </div>
+                          </div>
+                          <div
+                            class="col-sm-1 text-center"
+                            style="line-height: 35.5px"
+                          >
+                            至
+                          </div>
+                          <div class="col-sm-5">
+                            <div
+                              class="input-group clockpicker"
+                              data-autoclose="true"
+                            >
+                              <input
+                                type="text"
+                                class="form-control"
+                                v-model="form_end"
+                              />
+                              <span class="input-group-addon">
+                                <span class="fa fa-clock-o"></span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="font-normal">使用者</label>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-white"
+                        data-dismiss="modal"
+                      >
+                        关闭
+                      </button>
+                      <button type="button" class="btn btn-primary">
+                        保存更改
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -97,6 +191,7 @@
 @import "../../assets/css/plugins/jasny/jasny-bootstrap.min.css";
 @import "../../assets/css/plugins/clockpicker/clockpicker.css";
 @import "../../assets/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css";
+@import "../../assets/css/plugins/datapicker/datepicker3.css";
 .i-row [class^="col-"] {
   padding: 10px;
 }
@@ -151,6 +246,10 @@
 .progress-bar-disabled {
   background-color: #9ca8b3;
 }
+
+.popover {
+  z-index: 10000;
+}
 </style>
 
 <script>
@@ -165,6 +264,7 @@ import "@/assets/js/plugins/clockpicker/clockpicker.js";
 import "@/assets/js/plugins/chosen/chosen.jquery.js";
 import "@/assets/js/plugins/jasny/jasny-bootstrap.min.js";
 import "@/assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js";
+import "@/assets/js/plugins/datapicker/bootstrap-datepicker.js";
 
 export default {
   data() {
@@ -178,7 +278,11 @@ export default {
         "2020-11-27",
         "2020-11-28"
       ],
-      current_date: 0
+      current_date: 0,
+      form_date: "",
+      form_time: "",
+      form_start: "",
+      form_end: ""
     };
 
     return res;
@@ -232,8 +336,32 @@ export default {
       }
     }
   },
+  updated() {
+    $(".chosen-select").chosen({ width: "100%" });
+    var clocks = document.getElementsByClassName("clockpicker");
+    for (var i = 0; i < clocks.length; i++) {
+      $(clocks[i]).clockpicker();
+    }
+    $("#data_1 .input-group.date").datepicker({
+      todayBtn: "linked",
+      keyboardNavigation: false,
+      autoclose: true,
+      format: "yyyy-mm-dd"
+    });
+  },
   mounted() {
     $(".chosen-select").chosen({ width: "100%" });
+    var clocks = document.getElementsByClassName("clockpicker");
+    for (var i = 0; i < clocks.length; i++) {
+      $(clocks[i]).clockpicker();
+    }
+    $("#data_1 .input-group.date").datepicker({
+      todayBtn: "linked",
+      keyboardNavigation: false,
+      autoclose: true,
+      format: "yyyy-mm-dd"
+    });
+
     let grounds = [
       {
         name: "羽毛球场",
@@ -294,7 +422,7 @@ export default {
         name: "乒乓球场",
         open_times: [
           {
-            start: "08:00",
+            start: "06:00",
             end: "13:00"
           },
           {
