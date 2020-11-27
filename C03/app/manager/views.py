@@ -83,6 +83,39 @@ class StadiumView(APIView):
                                                   "amount": len(courtType.court_set.all())})
         return JsonResponse({"stadiums": stadiums})
 
+    def post(self, request):
+        req_data = request.data
+        name = req_data.get('name', '')
+        information = req_data.get('information', '')
+        openState = req_data.get('openState', '')
+        contact = req_data.get('contact', '')
+        stadiumId = req_data.get('stadiumId', '')
+        managerId = req_data.get('managerId', '')
+        startDate = req_data.get('startDate', '')
+        openTime = req_data.get('openTime', '')
+        closeTime = req_data.get('closeTime', '')
+
+        staticChange = stadiumId and managerId and name and information and openState and contact
+        dynamicChange = stadiumId and managerId and startDate and openTime and closeTime
+        if not staticChange and not dynamicChange:
+            return JsonResponse({'error': 'Incomplete information'})
+        if dynamicChange:
+            changeSchedule = ChangeSchedule(stadium=Stadium.objects.all().filter(id=int(stadiumId))[0],
+                                            manager=Manager.objects.all().filter(id=int(managerId))[0],
+                                            startDate=startDate,
+                                            openTime=openTime,
+                                            closeTime=closeTime)
+            changeSchedule.save()
+            return JsonResponse({"message": "ok"})
+        else:
+            stadium = Stadium.objects.all().filter(id=int(stadiumId))[0]
+            stadium.contact = contact
+            stadium.information = information
+            stadium.openState = openState
+            stadium.name = name
+            stadium.save()
+            return JsonResponse({"message": "ok"})
+
 
 class CourtView(APIView):
     """
@@ -144,7 +177,6 @@ class ChangeDurationView(APIView):
     def post(self, request):
         req_data = request.data
         stadiumId = req_data.get('stadiumId', '')
-        print(request)
         managerId = req_data.get('managerId', '')
         startDate = req_data.get('startDate', '')
         duration = req_data.get('duration', '')
@@ -159,42 +191,7 @@ class ChangeDurationView(APIView):
         changeDuration.save()
 
         # TODO: 立刻处理更改时段操作
-        myStadium = stadium
-        myStadium.openingHours = openHours
-        myStadium.openTime = openTime
-        myStadium.closeTime = closeTime
-        myStadium.duration = duration
-        myCourts = myStadium.court_set.all()
-        myDurations = myStadium.duration_set.all()
 
-        # 删除更改时间段后的不合法时间段，该时间段的date属性应不早于startDate
-        for myDuration in myDurations:
-            if judgeDate(str(myDuration.date), str(startDate)) >= 0:
-                myDuration.delete()
-        startDate = str(datetime.datetime.strptime(startDate, '%Y-%m-%d')).split()[0]
-        foreDays = judgeDate(str(calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), myStadium.foreDays)),
-                             startDate)
-        if foreDays < 0:
-            return JsonResponse({'message': 'ok'})
-        openHours = openHours.split()
-
-        for openHour in openHours:
-            startTime, endTime = openHour.split('-')
-            totalSeconds = judgeTime(endTime, startTime)
-            seconds = judgeTime(duration, "00:00")
-            if totalSeconds % seconds != 0:
-                return JsonResponse({'error': 'can not make durations according to temp information'})
-            else:
-                for k in range(int(totalSeconds // seconds)):
-                    endTime = (datetime.datetime.strptime(str(startTime), "%H:%M") + datetime.timedelta(
-                        seconds=seconds)).strftime('%H:%M')
-                    for i in range(foreDays + 1):
-                        date = calculateDate(startDate, i)
-                        for j in range(len(myCourts)):
-                            myDuration = Duration(stadium=stadium, court=myCourts[j], startTime=startTime,
-                                                  endTime=endTime, date=date, openState=1, accessible=1)
-                            myDuration.save()
-                    startTime = endTime
         return JsonResponse({'message': 'ok'})
 
     def get(self, request):
@@ -283,3 +280,43 @@ class HistoryView(APIView):
         myOperations = sorted(chain(changeDuration, addEvent), key=attrgetter('time'), reverse=True)
         operations = [model_to_dict(myOperation, fields=['time', 'type', 'id']) for myOperation in myOperations]
         return JsonResponse({'operations': operations})
+
+
+def refresh():
+    print("ok")
+    # myStadium = stadium
+    # myStadium.openingHours = openHours
+    # myStadium.openTime = openTime
+    # myStadium.closeTime = closeTime
+    # myStadium.duration = duration
+    # myCourts = myStadium.court_set.all()
+    # myDurations = myStadium.duration_set.all()
+    #
+    # # 删除更改时间段后的不合法时间段，该时间段的date属性应不早于startDate
+    # for myDuration in myDurations:
+    #     if judgeDate(str(myDuration.date), str(startDate)) >= 0:
+    #         myDuration.delete()
+    # startDate = str(datetime.datetime.strptime(startDate, '%Y-%m-%d')).split()[0]
+    # foreDays = judgeDate(str(calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), myStadium.foreDays)),
+    #                      startDate)
+    # if foreDays < 0:
+    #     return JsonResponse({'message': 'ok'})
+    # openHours = openHours.split()
+    #
+    # for openHour in openHours:
+    #     startTime, endTime = openHour.split('-')
+    #     totalSeconds = judgeTime(endTime, startTime)
+    #     seconds = judgeTime(duration, "00:00")
+    #     if totalSeconds % seconds != 0:
+    #         return JsonResponse({'error': 'can not make durations according to temp information'})
+    #     else:
+    #         for k in range(int(totalSeconds // seconds)):
+    #             endTime = (datetime.datetime.strptime(str(startTime), "%H:%M") + datetime.timedelta(
+    #                 seconds=seconds)).strftime('%H:%M')
+    #             for i in range(foreDays + 1):
+    #                 date = calculateDate(startDate, i)
+    #                 for j in range(len(myCourts)):
+    #                     myDuration = Duration(stadium=stadium, court=myCourts[j], startTime=startTime,
+    #                                           endTime=endTime, date=date, openState=1, accessible=1)
+    #                     myDuration.save()
+    #             startTime = endTime
