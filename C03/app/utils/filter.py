@@ -10,7 +10,7 @@ class StadiumFilter(filters.FilterSet):
 
     class Meta:
         model = Stadium
-        fields = ['openState', 'foreDays']
+        fields = ['id', 'openState', 'foreDays']
 
 
 class CourtFilter(filters.FilterSet):

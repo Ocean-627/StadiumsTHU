@@ -53,7 +53,7 @@ class UserView(APIView):
         user = UserSerializer(user, many=False)
         return Response(user.data)
 
-    def put(self, request):
+    def post(self, request):
         req_data = request.data
         ser = UserSerializer(data=req_data)
         if not ser.is_valid():

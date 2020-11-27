@@ -64,9 +64,13 @@ Response:
 
 ###### 需求：
 
-​	1. 个人信息添加nickname字段，代表昵称，name代表真实姓名，在评论显示的时候使用昵称。
+ 1. ~~个人信息添加nickname字段，代表昵称，name代表真实姓名，在评论显示的时候使用昵称。~~
 
-​	2. 为什么更新信息用的是GET指令？
+    加上了
+
+ 2. ~~为什么更新信息用的是GET指令？~~
+
+    应该用POST
 
 ### 场馆信息
 
@@ -81,6 +85,7 @@ QueryParam:{
     'foreGt': '',
     'openState': ''，
     'foreDays':''
+    ‘id’:''
 }
 Response:
     [
@@ -95,6 +100,11 @@ Response:
             'openState': '',
             'foreDays': '',
            	'durations': '',
+            // 新增
+            'courtType': ['', ],
+            'comments': '',
+            'score':'',
+            'location':'',
         },
     ]
 ```
@@ -111,12 +121,22 @@ Response:
 
 `foreDays`是一个整数，代表可提前预约时间。
 
+`id`是一个整数，代表场馆的编号。
+
 ###### 需求
 
 	1. 添加场馆地理位置（描述信息(xx路)和经纬度）
- 	2. 添加场馆运动项目信息
- 	3. 添加场馆评分和评论数信息
- 	4. 添加/api/user/stadium/{stadium-id}接口来获取某个场馆具体信息，包括场馆简介，场馆须知，评论
+​		目前返回在`location`中
+
+  1. ~~添加场馆运动项目信息~~
+
+     返回在`courtType`中。
+
+  2. ~~添加场馆评分和评论数信息~~
+
+     分别返回在`score`和`location`中
+
+  3. 添加/api/user/stadium/{stadium-id}接口来获取某个场馆具体信息，包括场馆简介，场馆须知，评论
 
 ##### 获取场地信息
 

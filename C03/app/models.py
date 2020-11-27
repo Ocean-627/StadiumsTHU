@@ -12,6 +12,7 @@ class User(models.Model):
     # TODO:通过身份验证或用户完善信息的方式获取以下fields
     auth = models.BooleanField(default=False)
     name = models.CharField(max_length=32, null=True)
+    nickName = models.CharField(max_length=32, null=True)
     userId = models.IntegerField(verbose_name='学生编号', null=True)
     email = models.EmailField(null=True)
     phone = models.CharField(max_length=20, null=True)

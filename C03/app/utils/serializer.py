@@ -4,8 +4,8 @@ from app.models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(label='用户昵称', validators=[MinLengthValidator(3), MaxLengthValidator(20)],
-                                 required=False)
+    nickname = serializers.CharField(label='用户昵称', validators=[MinLengthValidator(3), MaxLengthValidator(20)],
+                                     required=False)
     phone = serializers.CharField(label='手机号', validators=[MinLengthValidator(11), MaxLengthValidator(11)],
                                   required=False)
     images = serializers.SerializerMethodField()
@@ -26,6 +26,7 @@ class StadiumSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField(required=False)
     comments = serializers.SerializerMethodField(required=False)
     score = serializers.SerializerMethodField(required=False)
+    courtType = serializers.SerializerMethodField(required=False)
 
     def get_images(self, obj):
         images_list = obj.stadiumimage_set.all()
@@ -51,6 +52,13 @@ class StadiumSerializer(serializers.ModelSerializer):
             return 3
         else:
             return tot_score / tot_num
+
+    def get_courtType(self, obj):
+        type_list = obj.courttype_set.all()
+        types = []
+        for courtType in type_list:
+            types.append(courtType.type)
+        return types
 
     class Meta:
         model = Stadium
