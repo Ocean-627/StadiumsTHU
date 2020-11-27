@@ -4,6 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import Common from './Common'
+import axios from 'axios'
+axios.defaults.baseURL = 'http://127.0.0.1:8000/api/manager'
 
 //import '@/assets/js/jquery-3.1.1.min.js'
 //import '@/assets/js/popper.min.js'
@@ -20,14 +22,14 @@ import Common from './Common'
 //
 //import '@/assets/js/plugins/sweetalert/sweetalert.min.js'
 
-
 Vue.config.productionTip = false
 Vue.prototype.Common = Common
+Vue.prototype.$axios = axios
 
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
-  router,
-  components: { App },
-  template: '<App/>'
+    el: '#app',
+    router,
+    components: { App },
+    template: '<App/>'
 })

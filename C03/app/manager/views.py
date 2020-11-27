@@ -66,6 +66,16 @@ class LogoutView(APIView):
         return ret
 
 
+class StadiumView(APIView):
+    """
+    场馆信息
+    """
+    # authentication_classes = [ManagerAuthtication]
+    def get(self, request):
+        stadium = Stadium.objects.all()
+        return JsonResponse({"stadiums": json(stadium)})
+
+
 class CourtView(APIView):
     """
     场地信息
@@ -120,11 +130,12 @@ class ChangeDurationView(APIView):
     """
     修改预约时段信息
     """
-    authentication_classes = [ManagerAuthtication]
+    # authentication_classes = [ManagerAuthtication]
 
     def post(self, request):
         req_data = request.data
         stadiumId = req_data.get('stadiumId', '')
+        print(request)
         managerId = req_data.get('managerId', '')
         startDate = req_data.get('startDate', '')
         duration = req_data.get('duration', '')

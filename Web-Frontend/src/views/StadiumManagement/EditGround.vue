@@ -27,17 +27,18 @@
                 <!-- TODO: 在路由里添加参数，控制是到哪一个场馆的编辑页面 -->
                 <div class="row i-row">
                     <a href="#modal-form" class="btn btn-outline btn-primary i-button" data-toggle="modal">
-                        <i class="fa fa-plus"></i> 添加新场地 
-                    </a>
+                            <i class="fa fa-plus"></i> 添加新场地 
+                        </a>
                     <div id="modal-form" class="modal fade">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-body">
                                     <div class="row">
-                                        <div class="col-sm-12"><h3 class="m-t-none m-b">添加新场馆</h3>
+                                        <div class="col-sm-12">
+                                            <h3 class="m-t-none m-b">添加新场馆</h3>
                                             <form role="form">
                                                 <div class="form-group"><label>场馆类型</label>
-                                                <input type="text" class="form-control" v-model="newGroundType"></div>
+                                                    <input type="text" class="form-control" v-model="newGroundType"></div>
                                             </form>
                                             <div>
                                                 <button class="btn btn-ontline btn-primary float-right" v-on:click="newGround()">添加</button>
@@ -49,11 +50,11 @@
                         </div>
                     </div>
                     <a class="btn btn-outline btn-default i-button" v-on:click="submit()">
-                        <i class="fa fa-check"></i> 完成 
-                    </a>
+                            <i class="fa fa-check"></i> 完成 
+                        </a>
                     <a class="btn btn-outline btn-default i-button" v-on:click="cancel()">
-                        <i class="fa fa-mail-reply"></i> 返回 
-                    </a>
+                            <i class="fa fa-mail-reply"></i> 返回 
+                        </a>
                 </div>
                 <div class="grid">
                     <div class="grid-item" v-for="(ground, _index) in grounds" v-bind:key="ground.name">
@@ -66,9 +67,9 @@
                                     </div>
                                     <div class="form-group row"><label class="col-sm-4 col-form-label">开放状态：</label>
                                         <div class="col-sm-4"><select data-placeholder="..." class="chosen-select" tabindex="2">
-                                            <option>开放</option>
-                                            <option>未开放</option>
-                                        </select></div>
+                                                <option>开放</option>
+                                                <option>未开放</option>
+                                            </select></div>
                                     </div>
                                     <div class="form-group row"><label class="col-sm-4 col-form-label">场地数量：</label>
                                         <div class="col-sm-4"><input class="touchspin" type="text" v-model="ground.count"></div>
@@ -97,7 +98,7 @@
                                             <div class="input-group clockpicker" data-autoclose="true">
                                                 <input type="text" class="form-control" v-model="period.start">
                                                 <span class="input-group-addon">
-                                                    <span class="fa fa-clock-o"></span>
+                                                        <span class="fa fa-clock-o"></span>
                                                 </span>
                                             </div>
                                         </div>
@@ -108,7 +109,7 @@
                                             <div class="input-group clockpicker" data-autoclose="true">
                                                 <input type="text" class="form-control" v-model="period.end">
                                                 <span class="input-group-addon">
-                                                    <span class="fa fa-clock-o"></span>
+                                                        <span class="fa fa-clock-o"></span>
                                                 </span>
                                             </div>
                                         </div>
@@ -138,37 +139,46 @@
 .i-row [class^="col-"] {
     padding: 10px;
 }
+
 .i-row {
     margin: 0;
 }
+
 .contact-box {
     max-width: 450px;
     padding: 10px;
 }
+
 .i-button {
     margin-bottom: 20px;
     margin-right: 10px;
 }
+
 .i-title {
     margin-top: 10px;
     font-weight: bolder;
     text-align: center;
 }
+
 .i-infobox {
     line-height: 30px;
     font-size: 13px;
     font-weight: bold;
 }
+
 .i-star {
     color: orange;
 }
+
 .i-icon {
     margin-right: 10px;
 }
+
 .i-groundinfo {
     border-top: 1px solid #e7eaec;
     font-weight: bold;
 }
+
 .chosen-container-single .chosen-single {
     padding: 4px 12px;
 }
@@ -188,12 +198,10 @@ import '@/assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js'
 export default {
     data() {
         return {
-            grounds: [
-                {
+            grounds: [{
                     name: "羽毛球场",
                     count: 8,
-                    periods: [
-                        {
+                    periods: [{
                             start: '08:00',
                             end: '12:00'
                         },
@@ -206,19 +214,20 @@ export default {
                 {
                     name: "乒乓球场",
                     count: 6,
-                    periods: [
-                        {
-                            start: '08:00',
-                            end: '22:00'
-                        }
-                    ]
+                    periods: [{
+                        start: '08:00',
+                        end: '22:00'
+                    }]
                 }
             ],
             newGroundType: ''
         }
     },
     components: {
-        Toolbox, Navbar, Header, Footer
+        Toolbox,
+        Navbar,
+        Header,
+        Footer
     },
     mounted() {
         var msnry = new Masonry('.grid', {
@@ -233,7 +242,7 @@ export default {
             buttonup_class: 'btn btn-white'
         });
         var clocks = document.getElementsByClassName('clockpicker')
-        for(var i = 0; i < clocks.length; i++){
+        for (var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker()
         }
     },
@@ -250,12 +259,12 @@ export default {
             buttonup_class: 'btn btn-white'
         });
         var clocks = document.getElementsByClassName('clockpicker')
-        for(var i = 0; i < clocks.length; i++){
+        for (var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker()
         }
     },
     methods: {
-        newGround(){
+        newGround() {
             this.grounds.push({
                 name: this.newGroundType,
                 count: 1,
@@ -287,7 +296,7 @@ export default {
             this.grounds[_index].periods.push(period)
             this.$nextTick(function() {
                 var clocks = document.getElementsByClassName('clockpicker')
-                for(var i = 0; i < clocks.length; i++){
+                for (var i = 0; i < clocks.length; i++) {
                     $(clocks[i]).clockpicker()
                 }
             })
@@ -297,69 +306,63 @@ export default {
         },
         deleteGround(index) {
             swal({
-                title: "你确定？",
-                text: "删除场地将同时删除所有的该场地预定记录！",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确认",
-                cancelButtonText: "取消",
-                closeOnConfirm: false 
-            },
-            () => {
-                // TODO: 删除场地
-                swal("成功", "场地已成功删除", "success")
-            });
+                    title: "你确定？",
+                    text: "删除场地将同时删除所有的该场地预定记录！",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确认",
+                    cancelButtonText: "取消",
+                    closeOnConfirm: false
+                },
+                () => {
+                    // TODO: 删除场地
+                    swal("成功", "场地已成功删除", "success")
+                });
         },
         submit() {
             swal({
-                title: "你确定？",
-                text: "确认提交现有的更改",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确认",
-                cancelButtonText: "取消",
-                closeModal: false
-            },
-            (res) => {
-                if(res){
-                    // 检查表单合法性
-                    if(!validate()) return
-                    this.uploadForm()
-                }
-            })
+                    title: "你确定？",
+                    text: "确认提交现有的更改",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确认",
+                    cancelButtonText: "取消",
+                    closeModal: false
+                },
+                (res) => {
+                    if (res) {
+                        // 检查表单合法性
+                        if (!this.validate()) return
+                        this.uploadForm()
+                    }
+                })
         },
         cancel() {
             swal({
-                title: "你确定？",
-                text: "取消将返回上一页，你将失去在此处的所有更改",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确认",
-                cancelButtonText: "取消",
-                closeModal: false
-            },
-            (res) => {
-                if(res){
-                    window.location.replace('/stadium_management/stadium_info')
-                }
-            })
+                    title: "你确定？",
+                    text: "取消将返回上一页，你将失去在此处的所有更改",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确认",
+                    cancelButtonText: "取消",
+                    closeModal: false
+                },
+                (res) => {
+                    if (res) {
+                        window.location.replace('/stadium_management/stadium_info')
+                    }
+                })
         },
         validate() {
             return true
         },
         uploadForm() {
             // TODO: 上传表单
-            setTimeout(() => (swal({
-                title: "成功", 
-                text: "场馆信息修改成功", 
-                type: "success",
-            })), 1000)
             window.location.replace('/stadium_management/stadium_info')
         }
     }
 }
-
 </script>
