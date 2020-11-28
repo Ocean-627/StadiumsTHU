@@ -1,49 +1,23 @@
 <template>
-  <div id="wrapper">
-    <Navbar></Navbar>
-    <div id="page-wrapper" class="gray-bg dashbard-1">
-      <Header></Header>
-      <div class="row wrapper border-bottom white-bg page-heading">
-        <!--Breadcrum 导航-->
-        <div class="col-lg-9">
-          <h2>场馆信息管理</h2>
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-              <a href="/home">主页</a>
-            </li>
-            <li class="breadcrumb-item">
-              场馆管理
-            </li>
-            <li class="breadcrumb-item active">
-              <strong>场馆信息管理</strong>
-            </li>
-          </ol>
-        </div>
-      </div>
-      <div class="wrapper wrapper-content animated fadeInRight">
-        <div class="row i-row">
-          <a
-            href="/stadium_management/stadium_info/new_stadium"
-            class="btn btn-outline btn-primary i-newstadium"
-          >
-            <i class="fa fa-plus"></i> 添加新场馆
-          </a>
-        </div>
-        <div class="grid">
-          <div
-            class="grid-item"
-            v-for="stadium in stadiums"
-            v-bind:key="stadium.name"
-          >
-            <div class="contact-box">
-              <!-- 主要部分 & 单个单元 -->
-              <div class="row i-row">
-                <div class="col-md-7">
-                  <img
-                    alt="image"
-                    class="rounded m-t-xs img-fluid i-img"
-                    src="/static/img/zongti.jpg"
-                  />
+    <div id="wrapper">
+        <Navbar></Navbar>
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <Header></Header>
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <!--Breadcrum 导航-->
+                <div class="col-lg-9">
+                    <h2>场馆信息管理</h2>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/home">主页</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            场馆管理
+                        </li>
+                        <li class="breadcrumb-item active">
+                            <strong>场馆信息管理</strong>
+                        </li>
+                    </ol>
                 </div>
             </div>
             <div class="wrapper wrapper-content animated fadeInRight">
@@ -98,124 +72,71 @@
                             </div>
                         </div>
                     </div>
-                
+                </div>
+            </div>
+            <Footer></Footer>
         </div>
-      </div>
-      <Footer></Footer>
+        <Toolbox></Toolbox>
     </div>
-    <Toolbox></Toolbox>
-  </div>
 </template>
 
 <style scoped>
 .i-row [class^="col-"] {
-  padding: 10px;
+    padding: 10px;
 }
 
 .i-row {
-  margin: 0;
+    margin: 0;
 }
 
 .contact-box {
-  max-width: 500px;
-  padding: 15px;
+    max-width: 500px;
+    padding: 15px;
 }
 
 .i-newstadium {
-  margin-bottom: 20px;
-  float: right;
+    margin-bottom: 20px;
+    float: right;
 }
 
 .i-title {
-  margin-top: 10px;
-  font-weight: bolder;
-  text-align: center;
+    margin-top: 10px;
+    font-weight: bolder;
+    text-align: center;
 }
 
 .i-infobox {
-  line-height: 30px;
-  font-size: 13px;
-  font-weight: bold;
+    line-height: 30px;
+    font-size: 13px;
+    font-weight: bold;
 }
 
 .i-star {
-  color: orange;
+    color: orange;
 }
 
 .i-icon {
-  margin-right: 10px;
+    margin-right: 10px;
 }
 
 .i-groundinfo {
-  border-top: 1px solid #e7eaec;
-  font-weight: bold;
-}
-
-.btn > a {
-  color: inherit;
+    border-top: 1px solid #e7eaec;
+    font-weight: bold;
 }
 </style>
 
 <script>
-import Navbar from "@/components/Navbar";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import Toolbox from "@/components/Toolbox";
-import "jquery";
-import "masonry-layout";
+import Navbar from "@/components/Navbar"
+import Header from "@/components/Header"
+import Footer from "@/components/Footer"
+import Toolbox from "@/components/Toolbox"
+import 'jquery'
+import 'masonry-layout'
 export default {
-  data() {
-    return {
-      stadiums: []
-    };
-  },
-  components: {
-    Toolbox,
-    Navbar,
-    Header,
-    Footer
-  },
-  mounted() {
-    var msnry = new Masonry(".grid", {
-      // options...
-      itemSelector: ".grid-item",
-      columnWidth: 500,
-      gutter: 25
-    });
-    this.$axios.get("stadium/", {}).then(res => {
-      if (res.data.error) {
-        alert("Error! Please try again.");
-      } else {
-        this.stadiums = res.data.stadiums;
-      }
-    });
-  },
-  updated() {
-    var msnry = new Masonry(".grid", {
-      // options...
-      itemSelector: ".grid-item",
-      columnWidth: 500,
-      gutter: 25
-    });
-  },
-  methods: {
-    deleteStadium(index) {
-      swal(
-        {
-          title: "你确定？",
-          text: "删除场馆将删除附带的场地信息和所有的预定记录！",
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#DD6B55",
-          confirmButtonText: "确认",
-          cancelButtonText: "取消",
-          closeOnConfirm: false
-        },
-        () => {
-          // TODO: 删除场馆
-          swal("成功", "场馆已成功删除", "success");
+    data() {
+        return {
+            stadiums: []
         }
-      );
     },
     components: {
         Toolbox,
@@ -265,6 +186,5 @@ export default {
                 });
         }
     }
-  }
-};
+}
 </script>
