@@ -158,12 +158,23 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <label class="font-normal">使用者</label><br>
+                        <label class="font-normal">使用者（选填）</label><br>
                         <div><small>请在下方输入使用者的学号/工号（或留空）。预约信息将通过站内消息通知他们。</small></div>
                         <input class="tagsinput form-control" type="text" />
                       </div>
                       <div class="form-group">
-                        <label class="font-normal">备注</label>
+                        <label class="font-normal">预留场地数</label>
+                        <div class="row">
+                          <div class="col-sm-4"><input class="touchspin" type="text"></div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="font-normal">预留场地序号（选填）</label><br>
+                        <div><small>如果指定了预留的场地序号，那么将预留指定的场地，即使场地上原本有预约（该预约将被取消并通过站内信通知用户）。如果未指定序号，那么后台将会自动选择空闲的场地进行预留。若空闲场地不足，则必须手动指定序号。</small></div>
+                        <input class="tagsinput form-control" type="text" />
+                      </div>
+                      <div class="form-group">
+                        <label class="font-normal">备注（选填）</label>
                         <input class="form-control" type="text" />
                       </div>
                     </div>
@@ -313,7 +324,7 @@ export default {
   methods: {
     submit(ground) {
       // 为了节省局部变量，所有场地的预留的模态窗口共享表单变量，所以需要传入ground参数进行区分
-      // TODO: 上传表单
+      // TODO: 上传表单，检查合法性，比如输入的场地号码数=预约场地数
       swal({
         title: "成功", 
         text: "场地预留成功", 
@@ -374,6 +385,11 @@ export default {
     $('.tagsinput').tagsinput({
         tagClass: 'label label-primary'
     });
+    $(".touchspin").TouchSpin({
+      min: 1,
+      buttondown_class: 'btn btn-white',
+      buttonup_class: 'btn btn-white'
+    });
   },
   mounted() {
     $(".chosen-select").chosen({ width: "100%" });
@@ -389,6 +405,11 @@ export default {
     });
     $('.tagsinput').tagsinput({
         tagClass: 'label label-primary'
+    });
+    $(".touchspin").TouchSpin({
+      min: 1,
+      buttondown_class: 'btn btn-white',
+      buttonup_class: 'btn btn-white'
     });
 
     let grounds = [

@@ -49,9 +49,6 @@
                             </div>
                         </div>
                     </div>
-                    <a class="btn btn-outline btn-default i-button" v-on:click="submit()">
-                            <i class="fa fa-check"></i> 完成 
-                        </a>
                     <a class="btn btn-outline btn-default i-button" v-on:click="cancel()">
                             <i class="fa fa-mail-reply"></i> 返回 
                         </a>
@@ -115,8 +112,21 @@
                                         </div>
                                         <div class="col-sm-2"><button class="btn btn-danger" v-on:click="deletePeriod(_index, index)"><i class="fa fa-times"></i></button></div>
                                     </div>
+                                    <div class="form-group row" style="border-top: 1px solid #e7eaec; padding-top: 10px" id="data_1">
+                                        <label class="col-sm-4 col-form-label">修改生效日期：</label>
+                                        <div class="col-sm-6 input-group date">
+                                          <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input
+                                            type="text"
+                                            class="form-control"
+                                            v-model="active_time"
+                                            ref="startDate"/>
+                                        </div>
+                                    </div>
                                     <div class="form-group row" style="border-top: 1px solid #e7eaec; padding-top: 10px">
-                                        <label class="col-sm-9 col-form-label"></label>
+                                        <label class="col-sm-3 col-form-label"></label>
+                                        <div class="col-sm-2 btn btn-outline btn-info" v-on:click="submit(ground)">提交</div>
+                                        <label class="col-sm-2 col-form-label"></label>
                                         <div class="col-sm-2 btn btn-outline btn-danger">删除</div>
                                     </div>
                                 </fieldset>
@@ -136,6 +146,7 @@
 @import '../../assets/css/plugins/jasny/jasny-bootstrap.min.css';
 @import '../../assets/css/plugins/clockpicker/clockpicker.css';
 @import '../../assets/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css';
+@import "../../assets/css/plugins/datapicker/datepicker3.css";
 .i-row [class^="col-"] {
     padding: 10px;
 }
@@ -195,6 +206,7 @@ import '@/assets/js/plugins/clockpicker/clockpicker.js'
 import '@/assets/js/plugins/chosen/chosen.jquery.js'
 import '@/assets/js/plugins/jasny/jasny-bootstrap.min.js'
 import '@/assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js'
+import "@/assets/js/plugins/datapicker/bootstrap-datepicker.js";
 export default {
     data() {
         return {
@@ -242,6 +254,13 @@ export default {
             buttondown_class: 'btn btn-white',
             buttonup_class: 'btn btn-white'
         });
+        $("#data_1 .input-group.date").datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            autoclose: true,
+            format: "yyyy-mm-dd",
+            startDate: new Date()
+        })
         var clocks = document.getElementsByClassName('clockpicker')
         for (var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker()
@@ -279,6 +298,13 @@ export default {
             buttondown_class: 'btn btn-white',
             buttonup_class: 'btn btn-white'
         });
+        $("#data_1 .input-group.date").datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            autoclose: true,
+            format: "yyyy-mm-dd",
+            startDate: new Date()
+        })
         var clocks = document.getElementsByClassName('clockpicker')
         for (var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker()
@@ -341,7 +367,7 @@ export default {
                     swal("成功", "场地已成功删除", "success")
                 });
         },
-        submit() {
+        submit(ground) {
             swal({
                     title: "你确定？",
                     text: "确认提交现有的更改",
