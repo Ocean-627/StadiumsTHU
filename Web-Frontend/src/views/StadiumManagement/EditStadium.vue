@@ -29,50 +29,25 @@
           <div class="col-lg-12">
             <div class="tabs-container">
               <ul class="nav nav-tabs">
-                <li>
-                  <a class="nav-link active" data-toggle="tab" href="#tab-1">
-                    基本信息</a
-                  >
-                </li>
-                <li>
-                  <a class="nav-link" data-toggle="tab" href="#tab-2">
-                    场馆图片</a
-                  >
-                </li>
-                <li>
-                  <a class="nav-link" data-toggle="tab" href="#tab-3">
-                    预约选项</a
-                  >
-                </li>
-                <li>
-                  <a class="nav-link" data-toggle="tab" href="#tab-4">
-                    地理位置</a
-                  >
-                </li>
+                <li><a class="nav-link active" data-toggle="tab" href="#tab-1">基本信息</a></li>
+                <li><a class="nav-link" data-toggle="tab" href="#tab-2">场馆图片</a></li>
+                <li><a class="nav-link" data-toggle="tab" href="#tab-3">预约选项</a></li>
+                <li><a class="nav-link" data-toggle="tab" href="#tab-4">地理位置</a></li>
               </ul>
               <div class="tab-content">
                 <div id="tab-1" class="tab-pane active">
                   <div class="panel-body">
                     <fieldset>
                       <div class="form-group row">
-                        <label class="col-sm-2 col-form-label"
-                          >场馆名称：</label
-                        >
+                        <label class="col-sm-2 col-form-label">场馆名称：</label>
                         <div class="col-sm-2">
                           <input type="text" class="form-control" ref="name" />
                         </div>
                       </div>
                       <div class="form-group row">
-                        <label class="col-sm-2 col-form-label"
-                          >开放状态：</label
-                        >
+                        <label class="col-sm-2 col-form-label">开放状态：</label>
                         <div class="col-sm-2">
-                          <select
-                            data-placeholder="..."
-                            class="chosen-select"
-                            tabindex="2"
-                            ref="openState"
-                          >
+                          <select data-placeholder="..." class="chosen-select" tabindex="2" ref="openState">
                             <option>开放</option>
                             <option>未开放</option>
                           </select>
@@ -358,7 +333,19 @@ export default {
       autoclose: true,
       format: "yyyy-mm-dd",
       startDate: new Date()
-    });
+    })
+    let request = {
+        params: {
+            stadiumId: this.$route.params.stadiumId,
+        }
+    }
+    this.$axios.get('stadium/', request)
+        .then(res => {
+                this.$refs.name.value = res.data.stadiums[0].name
+                // TODO:根据res.data.stadiums[0].openState 设置默认option
+                this.$refs.contact.value = res.data.stadiums[0].contact
+                this.$refs.information.value = res.data.stadiums[0].information
+        })
   },
   updated() {
     $(".chosen-select").chosen({ width: "100%" });
@@ -372,7 +359,7 @@ export default {
       autoclose: true,
       format: "yyyy-mm-dd",
       startDate: new Date()
-    });
+    })
   },
   methods: {
     fileSelected(e) {
@@ -397,7 +384,7 @@ export default {
         res => {
           if (res) {
             // 检查表单合法性
-            if (!this.validate()) return;
+            // if (!this.validate()) return;
             this.uploadForm(index);
           }
         }
