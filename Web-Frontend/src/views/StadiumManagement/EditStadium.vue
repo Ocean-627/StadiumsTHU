@@ -175,6 +175,7 @@
                               type="text"
                               class="form-control"
                               v-model="period.start"
+                              ref="openTime"
                             />
                             <span class="input-group-addon">
                               <span class="fa fa-clock-o"></span>
@@ -196,6 +197,7 @@
                               type="text"
                               class="form-control"
                               v-model="period.end"
+                              ref="closeTime"
                             />
                             <span class="input-group-addon">
                               <span class="fa fa-clock-o"></span>
@@ -213,7 +215,7 @@
                       </div>
                       <div class="form-group row" id="data_1">
                         <label class="col-sm-2 col-form-label"
-                          >修改生效时间：</label
+                          >修改生效日期：</label
                         >
                         <div class="col-sm-2 input-group date">
                           <span class="input-group-addon"
@@ -222,7 +224,7 @@
                             type="text"
                             class="form-control"
                             v-model="active_time"
-                          />
+                          ref="startDate"/>
                         </div>
                       </div>
                       <div class="form-group row">
@@ -436,17 +438,12 @@ export default {
 
         // 修改场馆开放关闭时间
         case 3:
-          let openHours = "";
-          for (var i = 0; i < this.periods.length; i++) {
-            openHours +=
-              this.periods[i].start + "-" + this.periods[i].end + " ";
-          }
           request_body = {
             stadiumId: this.$route.params.stadiumId,
             managerId: this.$route.params.managerId,
-            startDate: "2020-11-27",
-            openTime: "08:00",
-            closeTime: "12:00"
+            startDate: this.$refs.startDate.value,
+            openTime: this.$refs.openTime.value,
+            closeTime: this.$refs.closeTime.value
           };
           break;
         default:

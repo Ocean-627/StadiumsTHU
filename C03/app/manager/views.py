@@ -12,7 +12,6 @@ class LogonView(APIView):
     """
     管理员注册
     """
-
     def post(self, request):
         req_data = request.data
         username = req_data.get('username')
@@ -115,7 +114,6 @@ class StadiumView(APIView):
                                             manager=Manager.objects.all().filter(id=int(managerId))[0],
                                             startDate=startDate,
                                             openTime=openTime,
-                                            openState=openState,
                                             closeTime=closeTime)
             changeSchedule.save()
             return JsonResponse({"message": "ok"})
