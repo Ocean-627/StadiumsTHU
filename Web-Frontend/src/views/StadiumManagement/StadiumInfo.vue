@@ -54,21 +54,17 @@
                             </div>
                             <div class="contact-box-footer">
     
-                                <a type="button" class="btn btn-outline btn-default">
-                                    <router-link :to="{ name: 'EditStadium', params: { managerId: 3, stadiumId: stadium.id }}">
-                                        <i class="fa fa-edit"></i> 编辑场馆信息
-                                    </router-link>
+                                <a type="button" class="btn btn-outline btn-default" v-on:click="editStadium(stadium.id)">
+                                    <i class="fa fa-edit"></i> 编辑场馆信息
                                 </a>
     
-                                <a type="button" class="btn btn-outline btn-default">
-                                    <router-link :to="{ name: 'EditGround', params: { managerId: 3, stadiumId: stadium.id }}">
-                                        <i class="fa fa-clock-o"></i> 修改预定时间段
-                                    </router-link>
+                                <a type="button" class="btn btn-outline btn-default" v-on:click="editGround(stadium.id)">  
+                                    <i class="fa fa-clock-o"></i> 修改预定时间段
                                 </a>
     
                                 <button type="button" class="btn btn-outline btn-danger" v-on:click="deleteStadium(stadium.id)">
-                                            <i class="fa fa-trash"></i> 移除场馆 
-                                        </button>
+                                    <i class="fa fa-trash"></i> 移除场馆 
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -169,6 +165,12 @@ export default {
         });
     },
     methods: {
+        editStadium(index){
+            window.location.replace("/stadium_management/3/stadium_info/edit_stadium/"+index+"/");
+        },
+        editGround(index){
+            window.location.replace("/stadium_management/3/stadium_info/edit_ground/"+index+"/");
+        },
         deleteStadium(index) {
             swal({
                     title: "你确定？",
