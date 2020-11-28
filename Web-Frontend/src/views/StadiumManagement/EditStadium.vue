@@ -42,9 +42,9 @@
                                                 <div class="col-sm-2"><input type="text" class="form-control" ref="name"></div>
                                             </div>
                                             <div class="form-group row"><label class="col-sm-2 col-form-label">开放状态：</label>
-                                                <div class="col-sm-2"><select data-placeholder="..." class="chosen-select" tabindex="2" ref="openState">
-                                                                    <option>开放</option>
-                                                                    <option>未开放</option>
+                                                <div class="col-sm-2"><select data-placeholder="..." class="chosen-select" tabindex="2" id="openState">
+                                                                    <option id="open">开放</option>
+                                                                    <option id="close">未开放</option>
                                                                 </select></div>
                                             </div>
                                             <div class="form-group row"><label class="col-sm-2 col-form-label">联系方式：</label>
@@ -187,7 +187,11 @@ export default {
                     start: '13:00',
                     end: '20:00'
                 }
-            ]
+            ],
+            name:"",
+            openState:"",
+            contact:"",
+            information:""
         }
     },
     components: {
@@ -202,6 +206,19 @@ export default {
         for (var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker()
         }
+        // alert(this.$route.params.name)
+        let request = {
+                params: {
+                    stadiumId: this.$route.params.stadiumId,
+                }
+            }
+            this.$axios.get('stadium/', request)
+            .then(res => {
+                    this.$refs.name.value = res.data.stadiums[0].name
+                    // TODO:根据res.data.stadiums[0].openState 设置默认option
+                    this.$refs.contact.value = res.data.stadiums[0].contact
+                    this.$refs.information.value = res.data.stadiums[0].information
+                })
     },
     methods: {
         fileSelected(e) {

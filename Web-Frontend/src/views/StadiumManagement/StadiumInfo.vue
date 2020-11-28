@@ -23,8 +23,8 @@
             <div class="wrapper wrapper-content animated fadeInRight">
                 <div class="row i-row">
                     <a href="/stadium_management/stadium_info/new_stadium" class="btn btn-outline btn-primary i-newstadium">
-                            <i class="fa fa-plus"></i> 添加新场馆 
-                        </a>
+                                <i class="fa fa-plus"></i> 添加新场馆 
+                            </a>
                 </div>
                 <div class="grid">
                     <div class="grid-item" v-for="stadium in stadiums" v-bind:key="stadium.name">
@@ -48,27 +48,27 @@
                                 <div class="col-md-12">
                                     开放场地：
                                     <a v-for="courtType in stadium.courtTypes" v-bind:key="courtType.name">
-                                        {{courtType.name}}场 {{courtType.amount}} 个&emsp;
-                                    </a>
+                                            {{courtType.name}}场 {{courtType.amount}} 个&emsp;
+                                        </a>
                                 </div>
                             </div>
                             <div class="contact-box-footer">
-
+    
                                 <a type="button" class="btn btn-outline btn-default">
-                                <router-link :to="{ name: 'EditStadium', params: { managerId: 3, stadiumId: stadium.id }}">
-                                        <i class="fa fa-edit"></i> 编辑场馆信息 
+                                    <router-link :to="{ name: 'EditStadium', params: { managerId: 3, stadiumId: stadium.id }}">
+                                        <i class="fa fa-edit"></i> 编辑场馆信息
                                     </router-link>
-                                    </a>
-                              
+                                </a>
+    
                                 <a type="button" class="btn btn-outline btn-default">
-                                <router-link :to="{ name: 'EditGround', params: { managerId: 3, stadiumId: stadium.id }}">
-                                        <i class="fa fa-clock-o"></i> 修改预定时间段 
+                                    <router-link :to="{ name: 'EditGround', params: { managerId: 3, stadiumId: stadium.id }}">
+                                        <i class="fa fa-clock-o"></i> 修改预定时间段
                                     </router-link>
-                                    </a>
-                                    
+                                </a>
+    
                                 <button type="button" class="btn btn-outline btn-danger" v-on:click="deleteStadium(stadium.id)">
-                                        <i class="fa fa-trash"></i> 移除场馆 
-                                    </button>
+                                            <i class="fa fa-trash"></i> 移除场馆 
+                                        </button>
                             </div>
                         </div>
                     </div>
@@ -152,15 +152,15 @@ export default {
             gutter: 25
         });
         this.$axios.get('stadium/', {})
-             .then(res => {
-                 if (res.data.error) {
-                     alert("Error! Please try again.")
-                 } else {
-                     this.stadiums = res.data.stadiums
-                 }
-             })
+            .then(res => {
+                if (res.data.error) {
+                    alert("Error! Please try again.")
+                } else {
+                    this.stadiums = res.data.stadiums
+                }
+            })
     },
-    updated(){
+    updated() {
         var msnry = new Masonry('.grid', {
             // options...
             itemSelector: ".grid-item",
