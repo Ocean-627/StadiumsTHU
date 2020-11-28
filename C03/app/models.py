@@ -112,7 +112,7 @@ class ReserveEvent(models.Model):
 class ChangeDuration(models.Model):
     # （永久）修改预约时段事件
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
-    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
+    courtType = models.ForeignKey(CourtType, on_delete=models.CASCADE)
     openingHours = models.CharField(max_length=300)
     date = models.CharField(max_length=32)
     time = models.DateTimeField(default=timezone.now)

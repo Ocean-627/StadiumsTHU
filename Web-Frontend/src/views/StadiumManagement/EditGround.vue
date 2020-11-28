@@ -116,11 +116,7 @@
                                         <label class="col-sm-4 col-form-label">修改生效日期：</label>
                                         <div class="col-sm-6 input-group date">
                                           <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                            <input
-                                            type="text"
-                                            class="form-control"
-                                            v-model="active_time"
-                                            ref="startDate"/>
+                                          <input type="text" class="form-control" v-model="ground.startDate"/>
                                         </div>
                                     </div>
                                     <div class="form-group row" style="border-top: 1px solid #e7eaec; padding-top: 10px">
@@ -233,8 +229,7 @@ export default {
                 }
             ],
             newGroundType: '',
-            name:'',
-            active_time:''
+            name:''
         }
     },
     components: {
@@ -336,6 +331,7 @@ export default {
             }
             toastr.success('接下来你可以在页面中补充场地的信息。', '添加场地成功');
         },
+        // TODO: newPeriod好像无法添加了？可能是初始化了period的原因
         newPeriod(_index) {
             var period = {
                 start: '12:00',
@@ -382,8 +378,8 @@ export default {
                 (res) => {
                     if (res) {
                         // 检查表单合法性
-                        if (!this.validate()) return
-                        this.uploadForm()
+                        // if (!this.validate()) return
+                        this.uploadForm(ground)
                     }
                 })
         },
@@ -407,10 +403,44 @@ export default {
         validate() {
             return true
         },
-        uploadForm() {
-            // TODO: 上传表单
-            window.location.replace('/stadium_management/stadium_info')
+        uploadForm(ground) {
+            let duration = (Array(2).join("0") + ground.duration / 60).slice(-2) + ":" + (Array(2).join("0") + ground.duration % 60).slice(-2);
+            let openingHours=""
+            for (var i = 0 ; i < ground.periods.length;i++){
+                openingHours+=ground.periods[i].start+"-"+ground.periods[i].end+" "
+            }
+            console.log(ground)
+            let request_body = {
+                courtTypeId: ground.id,
+                managerId: 3,
+                // TODO: 这里如何获取date中的数据？
+                startDate: "2020-12-06",
+                duration: duration,
+                openHours: openingHours
+            };
+            this.$axios.post("changeduration/", request_body).then(res => {
+                console.log(res);
+                if (res.data.error) {
+                    swal({
+                        title: "错误", 
+                        text: "出现了未知错误，请刷新重试！", 
+                        type: "error",
+                    })
+
+                } else {
+                setTimeout(
+                    () =>
+                    swal({
+                        title: "成功",
+                        text: "场馆信息修改成功",
+                        type: "success"
+                    }),
+                    1000
+                );
+                window.location.replace("/stadium_management/stadium_info");
+    }})
         }
     }
+      
 }
 </script>
