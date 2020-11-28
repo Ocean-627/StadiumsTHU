@@ -75,6 +75,17 @@ class StadiumView(APIView):
     def get(self, request):
         myStadium = Stadium.objects.all()
         stadiums = json(myStadium)
+        req_data = request.query_params
+        stadiumId = req_data.get('stadiumId', '')
+        if stadiumId:
+            stadiums = json(myStadium.filter(id=stadiumId))
+            stadiums[0]["courtTypes"] = []
+            for courtType in list(myStadium[0].courttype_set.all()):
+                stadiums[0]["courtTypes"].append({"name": courtType.type,
+                                                  "openHours": courtType.openingHours,
+                                                  "amount": len(courtType.court_set.all())})
+            return JsonResponse({"stadiums": stadiums})
+
         for i in range(len(stadiums)):
             stadiums[i]["courtTypes"] = []
             for courtType in list(myStadium[i].courttype_set.all()):
