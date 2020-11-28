@@ -222,9 +222,7 @@
                             ><i class="fa fa-calendar"></i></span
                           ><input
                             type="text"
-                            class="form-control"
-                            v-model="active_time"
-                          ref="startDate"/>
+                            class="form-control"/>
                         </div>
                       </div>
                       <div class="form-group row">

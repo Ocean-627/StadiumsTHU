@@ -51,7 +51,14 @@
                     </div>
                     <a class="btn btn-outline btn-default i-button" v-on:click="cancel()">
                             <i class="fa fa-mail-reply"></i> 返回 
-                        </a>
+                    </a>
+                </div>
+                <div class="row" style="text-align: center; margin-bottom: 10px;">
+                    <label class="col-sm-2 col-form-label">修改生效日期：</label>
+                    <div class="col-sm-3 input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input type="text" class="form-control"/>
+                    </div>
                 </div>
                 <div class="grid">
                     <div class="grid-item" v-for="(ground, _index) in grounds" v-bind:key="ground.name">
@@ -89,7 +96,7 @@
                                             <button type="button" class="btn btn-primary" v-on:click="newPeriod(_index)"><i class="fa fa-plus"></i></button>
                                         </div>
                                     </div>
-                                    <div class="form-group row" v-for="(period, index) in ground.periods" v-bind:key="period.start">
+                                    <div class="form-group row" v-for="(period, index) in ground.periods" :key="period.start">
                                         <label class="col-sm-1 col-form-label"></label>
                                         <div class="col-sm-4">
                                             <div class="input-group clockpicker" data-autoclose="true">
@@ -112,18 +119,11 @@
                                         </div>
                                         <div class="col-sm-2"><button class="btn btn-danger" v-on:click="deletePeriod(_index, index)"><i class="fa fa-times"></i></button></div>
                                     </div>
-                                    <div class="form-group row" style="border-top: 1px solid #e7eaec; padding-top: 10px" id="data_1">
-                                        <label class="col-sm-4 col-form-label">修改生效日期：</label>
-                                        <div class="col-sm-6 input-group date">
-                                          <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                          <input type="text" class="form-control" v-model="ground.startDate"/>
-                                        </div>
-                                    </div>
                                     <div class="form-group row" style="border-top: 1px solid #e7eaec; padding-top: 10px">
                                         <label class="col-sm-3 col-form-label"></label>
                                         <div class="col-sm-2 btn btn-outline btn-info" v-on:click="submit(ground)">提交</div>
                                         <label class="col-sm-2 col-form-label"></label>
-                                        <div class="col-sm-2 btn btn-outline btn-danger">删除</div>
+                                        <div class="col-sm-2 btn btn-outline btn-danger" v-on:click="deleteGround(_index)">删除</div>
                                     </div>
                                 </fieldset>
                             </div>
@@ -229,7 +229,7 @@ export default {
                 }
             ],
             newGroundType: '',
-            name:''
+            name:'',
         }
     },
     components: {
@@ -250,15 +250,16 @@ export default {
             buttondown_class: 'btn btn-white',
             buttonup_class: 'btn btn-white'
         });
-        $("#data_1 .input-group.date").datepicker({
+        $(".input-group.date").datepicker({
             todayBtn: "linked",
             keyboardNavigation: false,
             autoclose: true,
             format: "yyyy-mm-dd",
             startDate: new Date()
         })
+        
         var clocks = document.getElementsByClassName('clockpicker')
-        for (var i = 0; i < clocks.length; i++) {
+        for(var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker()
         }
         let request = {
@@ -294,13 +295,6 @@ export default {
             buttondown_class: 'btn btn-white',
             buttonup_class: 'btn btn-white'
         });
-        $("#data_1 .input-group.date").datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            autoclose: true,
-            format: "yyyy-mm-dd",
-            startDate: new Date()
-        })
         var clocks = document.getElementsByClassName('clockpicker')
         for (var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker()
@@ -331,7 +325,6 @@ export default {
             }
             toastr.success('接下来你可以在页面中补充场地的信息。', '添加场地成功');
         },
-        // TODO: newPeriod好像无法添加了？可能是初始化了period的原因
         newPeriod(_index) {
             var period = {
                 start: '12:00',
@@ -344,9 +337,11 @@ export default {
                     $(clocks[i]).clockpicker()
                 }
             })
+            this.$forceUpdate()
         },
         deletePeriod(_index, index) {
             this.grounds[_index].periods.splice(index, 1)
+            this.$forceUpdate()
         },
         deleteGround(index) {
             swal({
@@ -409,7 +404,7 @@ export default {
             for (var i = 0 ; i < ground.periods.length;i++){
                 openingHours+=ground.periods[i].start+"-"+ground.periods[i].end+" "
             }
-            console.log(ground)
+            //console.log($(".input-group.date").datepicker('getDate'))
             let request_body = {
                 courtTypeId: ground.id,
                 managerId: 3,
@@ -437,8 +432,8 @@ export default {
                     }),
                     1000
                 );
-                window.location.replace("/stadium_management/stadium_info");
-    }})
+                    window.location.replace("/stadium_management/stadium_info");
+                }})
         }
     }
       

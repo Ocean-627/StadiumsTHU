@@ -115,7 +115,6 @@
                           ><input
                             type="text"
                             class="form-control"
-                            v-model="form_time"
                           />
                         </div>
                       </div>
