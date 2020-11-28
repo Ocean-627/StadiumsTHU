@@ -339,21 +339,21 @@ export default {
     })
     let request = {
         params: {
-            stadiumId: this.$route.query.id,
+            id: this.$route.query.id,
         }
     }
     this.$axios.get('stadium/', request)
         .then(res => {
-                this.name = res.data.stadiums[0].name
-                this.openTime = res.data.stadiums[0].openTime
-                this.closeTime = res.data.stadiums[0].closeTime
-                this.$refs.name.value = res.data.stadiums[0].name
+                this.name = res.data[0].name
+                this.openTime = res.data[0].openTime
+                this.closeTime = res.data[0].closeTime
+                this.$refs.name.value = res.data[0].name
                 // TODO:根据res.data.stadiums[0].openState 设置默认option
-                this.$refs.contact.value = res.data.stadiums[0].contact
-                this.$refs.information.value = res.data.stadiums[0].information
-                this.$refs.foreDays.value = res.data.stadiums[0].foreDays
-                this.$refs.openTime.value = res.data.stadiums[0].openTime
-                this.$refs.closeTime.value = res.data.stadiums[0].closeTime
+                this.$refs.contact.value = res.data[0].contact
+                this.$refs.information.value = res.data[0].information
+                this.$refs.foreDays.value = res.data[0].foreDays
+                this.$refs.openTime.value = res.data[0].openTime
+                this.$refs.closeTime.value = res.data[0].closeTime
         })
   },
   updated() {
