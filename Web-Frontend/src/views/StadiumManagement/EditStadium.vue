@@ -222,9 +222,7 @@
                             ><i class="fa fa-calendar"></i></span
                           ><input
                             type="text"
-                            class="form-control"
-                            v-model="active_time"
-                          ref="startDate"/>
+                            class="form-control"/>
                         </div>
                       </div>
                       <div class="form-group row">
@@ -341,7 +339,7 @@ export default {
     })
     let request = {
         params: {
-            stadiumId: this.$route.params.stadiumId,
+            stadiumId: this.$route.query.id,
         }
     }
     this.$axios.get('stadium/', request)
@@ -353,6 +351,7 @@ export default {
                 // TODO:根据res.data.stadiums[0].openState 设置默认option
                 this.$refs.contact.value = res.data.stadiums[0].contact
                 this.$refs.information.value = res.data.stadiums[0].information
+                this.$refs.foreDays.value = res.data.stadiums[0].foreDays
                 this.$refs.openTime.value = res.data.stadiums[0].openTime
                 this.$refs.closeTime.value = res.data.stadiums[0].closeTime
         })
@@ -435,8 +434,8 @@ export default {
         // 修改场馆基本信息
         case 1:
           request_body = {
-            stadiumId: this.$route.params.stadiumId,
-            managerId: this.$route.params.managerId,
+            stadiumId: this.$route.query.id,
+            managerId: 3,
             name: this.$refs.name.value,
             openState: this.$refs.openState.value === "开放",
             information: this.$refs.information.value,
@@ -449,8 +448,8 @@ export default {
         // 修改场馆开放关闭时间
         case 3:
           request_body = {
-            stadiumId: this.$route.params.stadiumId,
-            managerId: this.$route.params.managerId,
+            stadiumId: this.$route.query.id,
+            managerId: 3,
             startDate: this.$refs.startDate.value,
             openTime: this.$refs.openTime.value,
             closeTime: this.$refs.closeTime.value,

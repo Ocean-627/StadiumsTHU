@@ -90,8 +90,7 @@ class StadiumView(ListAPIView):
         openTime = req_data.get('openTime', '')
         closeTime = req_data.get('closeTime', '')
         foreDays = req_data.get('foreDays', '')
-
-        staticChange = stadiumId and managerId and name and information and openState != "" and contact and foreDays
+        staticChange = stadiumId and managerId and name and information and openState != "" and contact
         dynamicChange = stadiumId and managerId and startDate and openTime and closeTime
         if not staticChange and not dynamicChange:
             return JsonResponse({'error': 'Incomplete information'})
@@ -173,18 +172,16 @@ class ChangeDurationView(APIView):
 
     def post(self, request):
         req_data = request.data
-        stadiumId = req_data.get('stadiumId', '')
+        courtTypeId = req_data.get('courtTypeId', '')
         managerId = req_data.get('managerId', '')
         startDate = req_data.get('startDate', '')
         duration = req_data.get('duration', '')
-        openTime = req_data.get('openTime', '')
-        closeTime = req_data.get('closeTime', '')
         openHours = req_data.get('openHours', '')
-        if not stadiumId or not managerId or not startDate or not duration or not openTime or not closeTime or not openHours:
+        if not courtTypeId or not managerId or not startDate or not duration or not openHours:
             return JsonResponse({'error': 'Incomplete information'})
         manager = Manager.objects.all().filter(id=int(managerId))[0]
-        stadium = Stadium.objects.all().filter(id=int(stadiumId))[0]
-        changeDuration = ChangeDuration(stadium=stadium, manager=manager, openingHours=openHours, date=startDate)
+        courtType = CourtType.objects.all().filter(id=int(courtTypeId))[0]
+        changeDuration = ChangeDuration(courtType=courtType, manager=manager, openingHours=openHours, date=startDate)
         changeDuration.save()
 
         # TODO: 立刻处理更改时段操作

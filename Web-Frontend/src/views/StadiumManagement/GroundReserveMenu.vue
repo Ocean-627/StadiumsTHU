@@ -15,19 +15,15 @@
                             场馆管理
                         </li>
                         <li class="breadcrumb-item active">
-                            <strong>场馆信息管理</strong>
+                            <strong>场地预留</strong>
                         </li>
                     </ol>
                 </div>
             </div>
             <div class="wrapper wrapper-content animated fadeInRight">
-                <div class="row i-row">
-                    <a href="/stadium_management/stadium_info/new_stadium" class="btn btn-outline btn-primary i-newstadium">
-                                <i class="fa fa-plus"></i> 添加新场馆 
-                            </a>
-                </div>
                 <div class="grid">
-                    <div class="grid-item" v-for="stadium in stadiums" v-bind:key="stadium.name">
+                    <div class="grid-item"
+                        v-for="stadium in stadiums" v-bind:key="stadium.name" v-on:click="enter(stadium)">
                         <div class="contact-box">
                             <!-- 主要部分 & 单个单元 -->
                             <div class="row i-row">
@@ -51,20 +47,6 @@
                                             {{courtType.name}}场 {{courtType.amount}} 个&emsp;
                                         </a>
                                 </div>
-                            </div>
-                            <div class="contact-box-footer">
-    
-                                <a type="button" class="btn btn-outline btn-default" v-on:click="editStadium(stadium.id)">
-                                    <i class="fa fa-edit"></i> 编辑场馆信息
-                                </a>
-    
-                                <a type="button" class="btn btn-outline btn-default" v-on:click="editGround(stadium.id)">  
-                                    <i class="fa fa-clock-o"></i> 修改预定时间段
-                                </a>
-    
-                                <button type="button" class="btn btn-outline btn-danger" v-on:click="deleteStadium(stadium.id)">
-                                    <i class="fa fa-trash"></i> 移除场馆 
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -169,27 +151,8 @@ export default {
         });
     },
     methods: {
-        editStadium(index){
-            window.location.replace("/stadium_management/stadium_info/edit_stadium?id="+index.toString());
-        },
-        editGround(index){
-            window.location.replace("/stadium_management/stadium_info/edit_ground?id="+index.toString());
-        },
-        deleteStadium(index) {
-            swal({
-                    title: "你确定？",
-                    text: "删除场馆将删除附带的场地信息和所有的预定记录！",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "确认",
-                    cancelButtonText: "取消",
-                    closeOnConfirm: false
-                },
-                () => {
-                    // TODO: 删除场馆
-                    swal("成功", "场馆已成功删除", "success")
-                });
+        enter(stadium) {
+            window.location.replace('/stadium_management/ground_reserve/detail?id='+stadium.id.toString())
         }
     }
 }

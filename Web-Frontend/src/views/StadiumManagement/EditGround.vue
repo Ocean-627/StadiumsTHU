@@ -49,12 +49,16 @@
                             </div>
                         </div>
                     </div>
-                    <a class="btn btn-outline btn-default i-button" v-on:click="submit()">
-                            <i class="fa fa-check"></i> 完成 
-                        </a>
                     <a class="btn btn-outline btn-default i-button" v-on:click="cancel()">
                             <i class="fa fa-mail-reply"></i> 返回 
-                        </a>
+                    </a>
+                </div>
+                <div class="row" style="text-align: center; margin-bottom: 10px;">
+                    <label class="col-sm-2 col-form-label">修改生效日期：</label>
+                    <div class="col-sm-3 input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input type="text" class="form-control"/>
+                    </div>
                 </div>
                 <div class="grid">
                     <div class="grid-item" v-for="(ground, _index) in grounds" v-bind:key="ground.name">
@@ -92,7 +96,7 @@
                                             <button type="button" class="btn btn-primary" v-on:click="newPeriod(_index)"><i class="fa fa-plus"></i></button>
                                         </div>
                                     </div>
-                                    <div class="form-group row" v-for="(period, index) in ground.periods" v-bind:key="period.start">
+                                    <div class="form-group row" v-for="(period, index) in ground.periods" :key="period.start">
                                         <label class="col-sm-1 col-form-label"></label>
                                         <div class="col-sm-4">
                                             <div class="input-group clockpicker" data-autoclose="true">
@@ -116,8 +120,10 @@
                                         <div class="col-sm-2"><button class="btn btn-danger" v-on:click="deletePeriod(_index, index)"><i class="fa fa-times"></i></button></div>
                                     </div>
                                     <div class="form-group row" style="border-top: 1px solid #e7eaec; padding-top: 10px">
-                                        <label class="col-sm-9 col-form-label"></label>
-                                        <div class="col-sm-2 btn btn-outline btn-danger">删除</div>
+                                        <label class="col-sm-3 col-form-label"></label>
+                                        <div class="col-sm-2 btn btn-outline btn-info" v-on:click="submit(ground)">提交</div>
+                                        <label class="col-sm-2 col-form-label"></label>
+                                        <div class="col-sm-2 btn btn-outline btn-danger" v-on:click="deleteGround(_index)">删除</div>
                                     </div>
                                 </fieldset>
                             </div>
@@ -136,6 +142,7 @@
 @import '../../assets/css/plugins/jasny/jasny-bootstrap.min.css';
 @import '../../assets/css/plugins/clockpicker/clockpicker.css';
 @import '../../assets/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css';
+@import "../../assets/css/plugins/datapicker/datepicker3.css";
 .i-row [class^="col-"] {
     padding: 10px;
 }
@@ -195,6 +202,7 @@ import '@/assets/js/plugins/clockpicker/clockpicker.js'
 import '@/assets/js/plugins/chosen/chosen.jquery.js'
 import '@/assets/js/plugins/jasny/jasny-bootstrap.min.js'
 import '@/assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js'
+import "@/assets/js/plugins/datapicker/bootstrap-datepicker.js";
 export default {
     data() {
         return {
@@ -221,7 +229,7 @@ export default {
                 }
             ],
             newGroundType: '',
-            name:''
+            name:'',
         }
     },
     components: {
@@ -242,13 +250,21 @@ export default {
             buttondown_class: 'btn btn-white',
             buttonup_class: 'btn btn-white'
         });
+        $(".input-group.date").datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            autoclose: true,
+            format: "yyyy-mm-dd",
+            startDate: new Date()
+        })
+        
         var clocks = document.getElementsByClassName('clockpicker')
-        for (var i = 0; i < clocks.length; i++) {
+        for(var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker()
         }
         let request = {
             params: {
-                stadiumId: this.$route.params.stadiumId,
+                stadiumId: this.$route.query.id,
             }
         }
         this.$axios.get('stadium/', request)
@@ -321,9 +337,11 @@ export default {
                     $(clocks[i]).clockpicker()
                 }
             })
+            this.$forceUpdate()
         },
         deletePeriod(_index, index) {
             this.grounds[_index].periods.splice(index, 1)
+            this.$forceUpdate()
         },
         deleteGround(index) {
             swal({
@@ -341,7 +359,7 @@ export default {
                     swal("成功", "场地已成功删除", "success")
                 });
         },
-        submit() {
+        submit(ground) {
             swal({
                     title: "你确定？",
                     text: "确认提交现有的更改",
@@ -355,8 +373,8 @@ export default {
                 (res) => {
                     if (res) {
                         // 检查表单合法性
-                        if (!this.validate()) return
-                        this.uploadForm()
+                        // if (!this.validate()) return
+                        this.uploadForm(ground)
                     }
                 })
         },
@@ -380,10 +398,44 @@ export default {
         validate() {
             return true
         },
-        uploadForm() {
-            // TODO: 上传表单
-            window.location.replace('/stadium_management/stadium_info')
+        uploadForm(ground) {
+            let duration = (Array(2).join("0") + ground.duration / 60).slice(-2) + ":" + (Array(2).join("0") + ground.duration % 60).slice(-2);
+            let openingHours=""
+            for (var i = 0 ; i < ground.periods.length;i++){
+                openingHours+=ground.periods[i].start+"-"+ground.periods[i].end+" "
+            }
+            //console.log($(".input-group.date").datepicker('getDate'))
+            let request_body = {
+                courtTypeId: ground.id,
+                managerId: 3,
+                // TODO: 这里如何获取date中的数据？
+                startDate: "2020-12-06",
+                duration: duration,
+                openHours: openingHours
+            };
+            this.$axios.post("changeduration/", request_body).then(res => {
+                console.log(res);
+                if (res.data.error) {
+                    swal({
+                        title: "错误", 
+                        text: "出现了未知错误，请刷新重试！", 
+                        type: "error",
+                    })
+
+                } else {
+                setTimeout(
+                    () =>
+                    swal({
+                        title: "成功",
+                        text: "场馆信息修改成功",
+                        type: "success"
+                    }),
+                    1000
+                );
+                    window.location.replace("/stadium_management/stadium_info");
+                }})
         }
     }
+      
 }
 </script>

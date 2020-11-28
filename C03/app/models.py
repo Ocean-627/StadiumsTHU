@@ -54,7 +54,7 @@ class CourtType(models.Model):
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     openingHours = models.CharField(max_length=50, verbose_name='开放时间')
     type = models.CharField(max_length=20, verbose_name='场馆类型')
-    duration = models.CharField(max_length=30, verbose_name='单次预约限定时长')
+    duration = models.CharField(max_length=30, verbose_name='单次预约限定时长', default="01:00")
     price = models.IntegerField(verbose_name='预约费用', default=30)
     membership = models.IntegerField(verbose_name='同行人数', default=3)
 
@@ -112,7 +112,7 @@ class ReserveEvent(models.Model):
 class ChangeDuration(models.Model):
     # （永久）修改预约时段事件
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
-    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
+    courtType = models.ForeignKey(CourtType, on_delete=models.CASCADE)
     openingHours = models.CharField(max_length=300)
     date = models.CharField(max_length=32)
     time = models.DateTimeField(default=timezone.now)
