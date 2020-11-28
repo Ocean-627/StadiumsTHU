@@ -108,8 +108,7 @@ class StadiumView(APIView):
         openTime = req_data.get('openTime', '')
         closeTime = req_data.get('closeTime', '')
         foreDays = req_data.get('foreDays', '')
-
-        staticChange = stadiumId and managerId and name and information and openState != "" and contact and foreDays
+        staticChange = stadiumId and managerId and name and information and openState != "" and contact
         dynamicChange = stadiumId and managerId and startDate and openTime and closeTime
         if not staticChange and not dynamicChange:
             return JsonResponse({'error': 'Incomplete information'})

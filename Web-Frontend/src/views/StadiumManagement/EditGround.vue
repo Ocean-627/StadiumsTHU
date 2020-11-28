@@ -233,7 +233,8 @@ export default {
                 }
             ],
             newGroundType: '',
-            name:''
+            name:'',
+            active_time:''
         }
     },
     components: {
