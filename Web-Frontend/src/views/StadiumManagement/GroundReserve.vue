@@ -81,7 +81,7 @@
                       role="progressbar"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      :title="reserve.type | progress_title"
+                      :title="reserve | progress_title"
                     ></div>
                   </div>
                   <br />
@@ -361,16 +361,20 @@ export default {
       var delta = (end_time - start_time) / 14.4;
       return "width: " + delta.toString() + "%";
     },
-    progress_title: function(type) {
+    progress_title: function(reserve) {
+      let type = reserve.type
+      let title = ""
       if (type === 0) {
-        return "空闲时段";
+        title += "空闲时段（"
       } else if (type === 1) {
-        return "已预订时段";
+        title += "已预订时段（"
       } else if (type === 2) {
-        return "预留时段";
+        title += "预留时段（"
       } else if (type === -1) {
-        return "不可用时段";
+        title += "不可用时段（"
       }
+      title += reserve.start + "-" + reserve.end + "）"
+      return title
     }
   },
   updated() {
