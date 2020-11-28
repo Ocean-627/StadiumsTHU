@@ -106,7 +106,7 @@ class StadiumView(APIView):
         openTime = req_data.get('openTime', '')
         closeTime = req_data.get('closeTime', '')
 
-        staticChange = stadiumId and managerId and name and information and openState and contact
+        staticChange = stadiumId and managerId and name and information and openState != "" and contact
         dynamicChange = stadiumId and managerId and startDate and openTime and closeTime
         if not staticChange and not dynamicChange:
             return JsonResponse({'error': 'Incomplete information'})
@@ -115,6 +115,7 @@ class StadiumView(APIView):
                                             manager=Manager.objects.all().filter(id=int(managerId))[0],
                                             startDate=startDate,
                                             openTime=openTime,
+                                            openState=openState,
                                             closeTime=closeTime)
             changeSchedule.save()
             return JsonResponse({"message": "ok"})
