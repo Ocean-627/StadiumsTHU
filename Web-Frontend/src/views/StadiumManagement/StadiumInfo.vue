@@ -37,7 +37,7 @@
                                 <div class="col-md-5 i-infobox">
                                     <h2 class="i-title"><strong>{{stadium.name}}</strong></h2>
                                     <i class="fa fa-comment-o i-icon"></i>{{stadium.comments}}条评论 <br>
-                                    <i class="fa fa-clock-o i-icon"></i> 开放时间：{{stadium.openTime}} - {{stadium.closeTime}}<br>
+                                    <i class="fa fa-clock-o i-icon"></i>开放时间：{{stadium.openTime}} - {{stadium.closeTime}}<br>
                                     <i class="fa fa-location-arrow i-icon"></i>{{stadium.location}}<br>
                                     <div class="i-score">
                                         <i v-for="num in 5" :key="num" style="margin-right: 3px" :class="(num<=stadium.score)?'fa fa-star i-star':((num-0.5<=stadium.score)?'fa fa-star-half-o i-star':'fa fa-star-o i-star')"></i> {{ stadium.score }}

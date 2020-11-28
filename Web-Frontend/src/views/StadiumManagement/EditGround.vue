@@ -256,6 +256,8 @@ export default {
                     this.name = res.data.stadiums[0].name
                     this.grounds = res.data.stadiums[0].courtTypes
                     for (var i=0;i<this.grounds.length;i++){
+                        let duration = this.grounds[i].duration.split(":")
+                        this.grounds[i].duration=Number(duration[0])*60 + Number(duration[1])
                         let openHours = this.grounds[i].openHours.split(" ")
                         this.grounds[i].periods=[]
                         for (var j=0;j<openHours.length;j++){
