@@ -267,7 +267,7 @@ export default {
         }
         let request = {
             params: {
-                stadiumId: this.$route.params.stadiumId,
+                stadiumId: this.$route.query.id,
             }
         }
         this.$axios.get('stadium/', request)
