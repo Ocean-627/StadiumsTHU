@@ -124,6 +124,7 @@ class ChangeSchedule(models.Model):
     openTime = models.CharField(max_length=30)
     closeTime = models.CharField(max_length=30)
     startDate = models.CharField(max_length=30)
+    foreDays = models.IntegerField()
 
 
 class AddEvent(models.Model):

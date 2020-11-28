@@ -6,7 +6,7 @@
       <div class="row wrapper border-bottom white-bg page-heading">
         <!--Breadcrum 导航-->
         <div class="col-lg-9">
-          <h2>场馆信息编辑 <small>@综合体育馆</small></h2>
+          <h2>场馆信息编辑 <small>@{{this.name}}</small></h2>
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
               <a href="/home">主页</a>
@@ -207,10 +207,10 @@
                       </div>
                       <div class="form-group row">
                         <label class="col-sm-2 col-form-label" ref="duration"
-                          >开放预约时间段（小时）：</label
+                          >最长提前预约天数：</label
                         >
                         <div class="col-sm-1">
-                          <input type="text" class="form-control" />
+                          <input type="text" class="form-control" ref="foreDays"/>
                         </div>
                       </div>
                       <div class="form-group row" id="data_1">
@@ -314,7 +314,10 @@ export default {
         start: "08:00",
         end: "12:00"
       },
-      active_time: ""
+      active_time: "",
+      name:"",
+      openTime:"",
+      closeTime:""
     };
   },
   components: {
@@ -343,13 +346,20 @@ export default {
     }
     this.$axios.get('stadium/', request)
         .then(res => {
+                this.name = res.data.stadiums[0].name
+                this.openTime = res.data.stadiums[0].openTime
+                this.closeTime = res.data.stadiums[0].closeTime
                 this.$refs.name.value = res.data.stadiums[0].name
                 // TODO:根据res.data.stadiums[0].openState 设置默认option
                 this.$refs.contact.value = res.data.stadiums[0].contact
                 this.$refs.information.value = res.data.stadiums[0].information
+                this.$refs.openTime.value = res.data.stadiums[0].openTime
+                this.$refs.closeTime.value = res.data.stadiums[0].closeTime
         })
   },
   updated() {
+    this.$refs.openTime.value = this.openTime
+    this.$refs.closeTime.value = this.closeTime
     $(".chosen-select").chosen({ width: "100%" });
     var clocks = document.getElementsByClassName("clockpicker");
     for (var i = 0; i < clocks.length; i++) {
@@ -443,7 +453,8 @@ export default {
             managerId: this.$route.params.managerId,
             startDate: this.$refs.startDate.value,
             openTime: this.$refs.openTime.value,
-            closeTime: this.$refs.closeTime.value
+            closeTime: this.$refs.closeTime.value,
+            foreDays: this.$refs.foreDays.value
           };
           break;
         default:
