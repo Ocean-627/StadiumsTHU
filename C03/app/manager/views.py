@@ -3,8 +3,10 @@ from itertools import chain
 from operator import attrgetter
 from app.utils.utils import *
 from app.utils.serializer import *
+from app.utils.filter import *
 from app.utils.authtication import ManagerAuthtication
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
 
 
@@ -12,6 +14,7 @@ class LogonView(APIView):
     """
     管理员注册
     """
+
     def post(self, request):
         req_data = request.data
         username = req_data.get('username')
@@ -65,36 +68,15 @@ class LogoutView(APIView):
         return ret
 
 
-class StadiumView(APIView):
+class StadiumView(ListAPIView):
     """
     场馆信息
     """
+    queryset = Stadium.objects.all()
+    serializer_class = StadiumSerializerForManager
+    filter_class = StadiumFilter
 
     # authentication_classes = [ManagerAuthtication]
-    def get(self, request):
-        myStadium = Stadium.objects.all()
-        stadiums = json(myStadium)
-        req_data = request.query_params
-        stadiumId = req_data.get('stadiumId', '')
-        if stadiumId:
-            stadiums = json(myStadium.filter(id=stadiumId))
-            stadiums[0]["courtTypes"] = []
-            for courtType in list(myStadium[0].courttype_set.all()):
-                stadiums[0]["courtTypes"].append({"name": courtType.type,
-                                                  "openHours": courtType.openingHours,
-                                                  "amount": len(courtType.court_set.all()),
-                                                  "duration": courtType.duration,
-                                                  "price": courtType.price,
-                                                  "membership": courtType.membership})
-            return JsonResponse({"stadiums": stadiums})
-
-        for i in range(len(stadiums)):
-            stadiums[i]["courtTypes"] = []
-            for courtType in list(myStadium[i].courttype_set.all()):
-                stadiums[i]["courtTypes"].append({"name": courtType.type,
-                                                  "openHours": courtType.openingHours,
-                                                  "amount": len(courtType.court_set.all())})
-        return JsonResponse({"stadiums": stadiums})
 
     def post(self, request):
         req_data = request.data
