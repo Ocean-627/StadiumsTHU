@@ -22,6 +22,7 @@ class User(models.Model):
 class Stadium(models.Model):
     # 场馆
     name = models.CharField(max_length=32)
+    pinyin = models.CharField(max_length=100)
     information = models.CharField(max_length=300)
     # TODO:开放时间和关闭时间可以设置为DateField
     openTime = models.CharField(max_length=32)
