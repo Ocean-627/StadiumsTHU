@@ -82,7 +82,10 @@ class StadiumView(APIView):
             for courtType in list(myStadium[0].courttype_set.all()):
                 stadiums[0]["courtTypes"].append({"name": courtType.type,
                                                   "openHours": courtType.openingHours,
-                                                  "amount": len(courtType.court_set.all())})
+                                                  "amount": len(courtType.court_set.all()),
+                                                  "duration": courtType.duration,
+                                                  "price": courtType.price,
+                                                  "membership": courtType.membership})
             return JsonResponse({"stadiums": stadiums})
 
         for i in range(len(stadiums)):

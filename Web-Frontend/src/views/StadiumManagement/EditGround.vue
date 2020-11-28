@@ -6,7 +6,7 @@
             <div class="row wrapper border-bottom white-bg page-heading">
                 <!--Breadcrum 导航-->
                 <div class="col-lg-9">
-                    <h2>场地信息编辑 <small>@综合体育馆</small></h2>
+                    <h2>场地信息编辑 <small>@{{this.name}}</small></h2>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="/home">主页</a>
@@ -72,18 +72,18 @@
                                             </select></div>
                                     </div>
                                     <div class="form-group row"><label class="col-sm-4 col-form-label">场地数量：</label>
-                                        <div class="col-sm-4"><input class="touchspin" type="text" v-model="ground.count"></div>
+                                        <div class="col-sm-4"><input class="touchspin" type="text" v-model="ground.amount"></div>
                                     </div>
                                     <div class="form-group row"><label class="col-sm-4 col-form-label">最短预约时间：</label>
-                                        <div class="col-sm-3"><input type="text" class="form-control"></div>
+                                        <div class="col-sm-3"><input type="text" class="form-control" v-model="ground.duration"></div>
                                         <label class="col-sm-2 col-form-label">分钟</label>
                                     </div>
                                     <div class="form-group row"><label class="col-sm-4 col-form-label">预约费用：</label>
-                                        <div class="col-sm-3"><input type="text" class="form-control"></div>
+                                        <div class="col-sm-3"><input type="text" class="form-control" v-model="ground.price"></div>
                                         <label class="col-sm-4 col-form-label">元/小时</label>
                                     </div>
                                     <div class="form-group row"><label class="col-sm-4 col-form-label">场地人数限制：</label>
-                                        <div class="col-sm-3"><input type="text" class="form-control"></div>
+                                        <div class="col-sm-3"><input type="text" class="form-control" v-model="ground.membership"></div>
                                         <label class="col-sm-4 col-form-label">人</label>
                                     </div>
                                     <div class="form-group row" style="border-top: 1px solid #e7eaec; padding-top: 10px">
@@ -220,7 +220,8 @@ export default {
                     }]
                 }
             ],
-            newGroundType: ''
+            newGroundType: '',
+            name:''
         }
     },
     components: {
@@ -245,7 +246,25 @@ export default {
         for (var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker()
         }
-    },
+        let request = {
+            params: {
+                stadiumId: this.$route.params.stadiumId,
+            }
+        }
+        this.$axios.get('stadium/', request)
+            .then(res => {
+                    this.name = res.data.stadiums[0].name
+                    this.grounds = res.data.stadiums[0].courtTypes
+                    for (var i=0;i<this.grounds.length;i++){
+                        let openHours = this.grounds[i].openHours.split(" ")
+                        this.grounds[i].periods=[]
+                        for (var j=0;j<openHours.length;j++){
+                            let time = openHours[j].split("-")
+                            this.grounds[i].periods.push({start:time[0],end:time[1]})
+                        }
+                    }   
+            })
+        },
     updated() {
         var msnry = new Masonry('.grid', {
             // options...

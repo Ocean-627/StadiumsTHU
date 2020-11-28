@@ -54,6 +54,9 @@ class CourtType(models.Model):
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     openingHours = models.CharField(max_length=50, verbose_name='开放时间')
     type = models.CharField(max_length=20, verbose_name='场馆类型')
+    duration = models.CharField(max_length=30, verbose_name='单次预约限定时长')
+    price = models.IntegerField(verbose_name='预约费用', default=30)
+    membership = models.IntegerField(verbose_name='同行人数', default=3)
 
 
 class Court(models.Model):
