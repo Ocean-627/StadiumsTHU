@@ -54,8 +54,8 @@
                     </a>
                 </div>
                 <div class="row" style="text-align: center; margin-bottom: 10px;">
-                    <label class="col-sm-2 col-form-label">修改生效日期：</label>
-                    <div class="col-sm-3 input-group date">
+                    <label class="col-lg-2 col-form-label">修改生效日期：</label>
+                    <div class="col-lg-3 input-group date">
                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                         <input type="text" class="form-control"/>
                     </div>
