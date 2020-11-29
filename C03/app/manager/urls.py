@@ -14,7 +14,7 @@ urlpatterns = [
     path('reserveevent/', views.ReserveEventView.as_view()),
     path('changeduration/', views.ChangeDurationView.as_view()),
     path('addevent/', views.AddEventView.as_view()),
-    path('users/', views.UsersView.as_view()),
+    path('user/', views.UserView.as_view()),
     path('history/', views.HistoryView.as_view()),
     # path('revoke/', views.revoke)
 ]

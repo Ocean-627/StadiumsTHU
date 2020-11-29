@@ -9,6 +9,7 @@ from app.utils.authtication import UserAuthtication
 from app.utils.throttle import UserThrottle
 from app.utils.filter import *
 from app.utils.serializer import *
+from app.utils.pagination import *
 from app.utils.utils import *
 from app.user import wx
 

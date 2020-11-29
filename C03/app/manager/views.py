@@ -1,11 +1,16 @@
-from django.http import JsonResponse
 from itertools import chain
 from operator import attrgetter
+
+from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.response import Response
+from django.http import JsonResponse
+
 from app.utils.utils import *
 from app.utils.serializer import *
+from app.utils.filter import *
+from app.utils.pagination import *
 from app.utils.authtication import ManagerAuthtication
-from rest_framework.views import APIView
-from rest_framework.response import Response
 
 
 class LogonView(APIView):
@@ -66,33 +71,15 @@ class LogoutView(APIView):
         return ret
 
 
-class StadiumView(APIView):
+class StadiumView(ListAPIView):
     """
     场馆信息
     """
+    queryset = Stadium.objects.all()
+    serializer_class = StadiumSerializerForManager
+    filter_class = StadiumFilter
 
     # authentication_classes = [ManagerAuthtication]
-    def get(self, request):
-        myStadium = Stadium.objects.all()
-        stadiums = json(myStadium)
-        req_data = request.query_params
-        stadiumId = req_data.get('stadiumId', '')
-        if stadiumId:
-            stadiums = json(myStadium.filter(id=stadiumId))
-            stadiums[0]["courtTypes"] = []
-            for courtType in list(myStadium[0].courttype_set.all()):
-                stadiums[0]["courtTypes"].append({"name": courtType.type,
-                                                  "openHours": courtType.openingHours,
-                                                  "amount": len(courtType.court_set.all())})
-            return JsonResponse({"stadiums": stadiums})
-
-        for i in range(len(stadiums)):
-            stadiums[i]["courtTypes"] = []
-            for courtType in list(myStadium[i].courttype_set.all()):
-                stadiums[i]["courtTypes"].append({"name": courtType.type,
-                                                  "openHours": courtType.openingHours,
-                                                  "amount": len(courtType.court_set.all())})
-        return JsonResponse({"stadiums": stadiums})
 
     def post(self, request):
         req_data = request.data
@@ -105,7 +92,7 @@ class StadiumView(APIView):
         startDate = req_data.get('startDate', '')
         openTime = req_data.get('openTime', '')
         closeTime = req_data.get('closeTime', '')
-
+        foreDays = req_data.get('foreDays', '')
         staticChange = stadiumId and managerId and name and information and openState != "" and contact
         dynamicChange = stadiumId and managerId and startDate and openTime and closeTime
         if not staticChange and not dynamicChange:
@@ -115,7 +102,7 @@ class StadiumView(APIView):
                                             manager=Manager.objects.all().filter(id=int(managerId))[0],
                                             startDate=startDate,
                                             openTime=openTime,
-                                            openState=openState,
+                                            foreDays=foreDays,
                                             closeTime=closeTime)
             changeSchedule.save()
             return JsonResponse({"message": "ok"})
@@ -188,18 +175,16 @@ class ChangeDurationView(APIView):
 
     def post(self, request):
         req_data = request.data
-        stadiumId = req_data.get('stadiumId', '')
+        courtTypeId = req_data.get('courtTypeId', '')
         managerId = req_data.get('managerId', '')
         startDate = req_data.get('startDate', '')
         duration = req_data.get('duration', '')
-        openTime = req_data.get('openTime', '')
-        closeTime = req_data.get('closeTime', '')
         openHours = req_data.get('openHours', '')
-        if not stadiumId or not managerId or not startDate or not duration or not openTime or not closeTime or not openHours:
+        if not courtTypeId or not managerId or not startDate or not duration or not openHours:
             return JsonResponse({'error': 'Incomplete information'})
         manager = Manager.objects.all().filter(id=int(managerId))[0]
-        stadium = Stadium.objects.all().filter(id=int(stadiumId))[0]
-        changeDuration = ChangeDuration(stadium=stadium, manager=manager, openingHours=openHours, date=startDate)
+        courtType = CourtType.objects.all().filter(id=int(courtTypeId))[0]
+        changeDuration = ChangeDuration(courtType=courtType, manager=manager, openingHours=openHours, date=startDate)
         changeDuration.save()
 
         # TODO: 立刻处理更改时段操作
@@ -260,19 +245,14 @@ class AddEventView(APIView):
         return JsonResponse(model_to_dict(addEvent))
 
 
-class UsersView(APIView):
+class UserView(ListAPIView):
     """
     用户信息
     """
-    authentication_classes = [ManagerAuthtication]
-
-    def get(self, request):
-        req_data = request.query_params
-        managerId = req_data.get('managerId', '')
-        if not managerId:
-            return JsonResponse({'error': 'Incomplete information'})
-        users = User.objects.all()
-        return JsonResponse({'users': json(users)})
+    # authentication_classes = [ManagerAuthtication]
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    pagination_class = UserPagination
 
 
 class HistoryView(APIView):

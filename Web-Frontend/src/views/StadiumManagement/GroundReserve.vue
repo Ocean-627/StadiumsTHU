@@ -11,11 +11,12 @@
             <li class="breadcrumb-item">
               <a href="/home">主页</a>
             </li>
+            <li class="breadcrumb-item">场馆管理</li>
             <li class="breadcrumb-item">
-              场馆管理
+              <a href="/stadium_management/ground_reserve">场地预留</a>
             </li>
             <li class="breadcrumb-item active">
-              <strong>场地预留</strong>
+              <strong>详细信息</strong>
             </li>
           </ol>
         </div>
@@ -29,27 +30,31 @@
               v-model="current_date"
               @changed="changeDate()"
             >
-              <option
-                v-for="(date, index) in dates"
-                :key="date"
-                :value="index"
-                >{{ date }}</option
-              >
+              <option v-for="(date, index) in dates" :key="date" :value="index">
+                {{ date }}
+              </option>
             </select>
           </div>
         </div>
-        <div class="row" v-for="ground in grounds" :key="ground.name">
+        <div
+          class="row"
+          v-for="ground in grounds"
+          :key="ground.name"
+        >
           <div class="col-lg-12">
-            <div class="ibox ">
+            <div class="ibox">
               <div class="ibox-title">
                 <h5>{{ ground.name }}</h5>
                 <div class="ibox-tools">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="fa fa-wrench" style="color: green;"></i>
+                    <i class="fa fa-wrench" style="color: green"></i>
                   </a>
                   <ul class="dropdown-menu dropdown-user">
                     <li>
-                      <a class="dropdown-item" v-on:click="reserve(ground)"
+                      <a
+                        class="dropdown-item"
+                        data-toggle="modal"
+                        data-target="#myModal"
                         >场地预留</a
                       >
                     </li>
@@ -76,10 +81,119 @@
                       role="progressbar"
                       aria-valuemin="0"
                       aria-valuemax="100"
-                      :title="reserve.type | progress_title"
+                      :title="reserve | progress_title"
                     ></div>
                   </div>
                   <br />
+                </div>
+              </div>
+              <div
+                class="modal inmodal"
+                id="myModal"
+                tabindex="-1"
+                role="dialog"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content animated fadeIn">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span
+                        ><span class="sr-only">关闭</span></button
+                      ><br />
+                      <h4 class="modal-title">场地预留</h4>
+                    </div>
+                    <div class="modal-body">
+                      <p>
+                        场地类型：<strong>{{ ground.name }}</strong>
+                      </p>
+                      <div class="form-group" id="data_1">
+                        <label class="font-normal">使用日期</label>
+                        <div class="input-group date">
+                          <span class="input-group-addon"
+                            ><i class="fa fa-calendar"></i></span
+                          ><input
+                            type="text"
+                            class="form-control"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="font-normal">使用时段</label>
+                        <div class="form-group row">
+                          <div class="col-sm-5">
+                            <div
+                              class="input-group clockpicker"
+                              data-autoclose="true"
+                            >
+                              <input
+                                type="text"
+                                class="form-control"
+                                v-model="form_start"
+                              />
+                              <span class="input-group-addon">
+                                <span class="fa fa-clock-o"></span>
+                              </span>
+                            </div>
+                          </div>
+                          <div
+                            class="col-sm-1 text-center"
+                            style="line-height: 35.5px"
+                          >
+                            至
+                          </div>
+                          <div class="col-sm-5">
+                            <div
+                              class="input-group clockpicker"
+                              data-autoclose="true"
+                            >
+                              <input
+                                type="text"
+                                class="form-control"
+                                v-model="form_end"
+                              />
+                              <span class="input-group-addon">
+                                <span class="fa fa-clock-o"></span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="font-normal">使用者（选填）</label><br>
+                        <div><small>请在下方输入使用者的学号/工号（或留空）。预约信息将通过站内消息通知他们。</small></div>
+                        <input class="tagsinput form-control" type="text" />
+                      </div>
+                      <div class="form-group">
+                        <label class="font-normal">预留场地数</label>
+                        <div class="row">
+                          <div class="col-sm-4"><input class="touchspin" type="text"></div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="font-normal">预留场地序号（选填）</label><br>
+                        <div><small>如果指定了预留的场地序号，那么将预留指定的场地，即使场地上原本有预约（该预约将被取消并通过站内信通知用户）。如果未指定序号，那么后台将会自动选择空闲的场地进行预留。若空闲场地不足，则必须手动指定序号。</small></div>
+                        <input class="tagsinput form-control" type="text" />
+                      </div>
+                      <div class="form-group">
+                        <label class="font-normal">备注（选填）</label>
+                        <input class="form-control" type="text" />
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-white"
+                        data-dismiss="modal"
+                      >
+                        取消
+                      </button>
+                      <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        v-on:click="submit(ground)">
+                        确认
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -97,6 +211,8 @@
 @import "../../assets/css/plugins/jasny/jasny-bootstrap.min.css";
 @import "../../assets/css/plugins/clockpicker/clockpicker.css";
 @import "../../assets/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css";
+@import "../../assets/css/plugins/datapicker/datepicker3.css";
+@import "../../assets/css/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css";
 .i-row [class^="col-"] {
   padding: 10px;
 }
@@ -151,6 +267,18 @@
 .progress-bar-disabled {
   background-color: #9ca8b3;
 }
+
+.popover {
+  z-index: 10000;
+}
+
+.bootstrap-tagsinput {
+  border: 1px solid #e5e6e7;
+  border-radius: 1px;
+  margin-top: 10px;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
 </style>
 
 <script>
@@ -165,6 +293,8 @@ import "@/assets/js/plugins/clockpicker/clockpicker.js";
 import "@/assets/js/plugins/chosen/chosen.jquery.js";
 import "@/assets/js/plugins/jasny/jasny-bootstrap.min.js";
 import "@/assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js";
+import "@/assets/js/plugins/datapicker/bootstrap-datepicker.js";
+import "@/assets/js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"
 
 export default {
   data() {
@@ -178,7 +308,11 @@ export default {
         "2020-11-27",
         "2020-11-28"
       ],
-      current_date: 0
+      current_date: 0,
+      form_date: "",
+      form_time: "",
+      form_start: "",
+      form_end: ""
     };
 
     return res;
@@ -190,8 +324,14 @@ export default {
     Footer
   },
   methods: {
-    reserve(ground) {
-      // TODO: 弹出窗口填写表单
+    submit(ground) {
+      // 为了节省局部变量，所有场地的预留的模态窗口共享表单变量，所以需要传入ground参数进行区分
+      // TODO: 上传表单，检查合法性，比如输入的场地号码数=预约场地数
+      swal({
+        title: "成功", 
+        text: "场地预留成功", 
+        type: "success",
+      })
     },
     manage(ground) {
       // TODO: 跳转到相应的预约信息管理界面就行
@@ -220,20 +360,64 @@ export default {
       var delta = (end_time - start_time) / 14.4;
       return "width: " + delta.toString() + "%";
     },
-    progress_title: function(type) {
+    progress_title: function(reserve) {
+      let type = reserve.type
+      let title = ""
       if (type === 0) {
-        return "空闲时段";
+        title += "空闲时段（"
       } else if (type === 1) {
-        return "已预订时段";
+        title += "已预订时段（"
       } else if (type === 2) {
-        return "预留时段";
+        title += "预留时段（"
       } else if (type === -1) {
-        return "不可用时段";
+        title += "不可用时段（"
       }
+      title += reserve.start + "-" + reserve.end + "）"
+      return title
     }
+  },
+  updated() {
+    $(".chosen-select").chosen({ width: "100%" });
+    var clocks = document.getElementsByClassName("clockpicker");
+    for (var i = 0; i < clocks.length; i++) {
+      $(clocks[i]).clockpicker();
+    }
+    $("#data_1 .input-group.date").datepicker({
+      todayBtn: "linked",
+      keyboardNavigation: false,
+      autoclose: true,
+      format: "yyyy-mm-dd"
+    });
+    $('.tagsinput').tagsinput({
+        tagClass: 'label label-primary'
+    });
+    $(".touchspin").TouchSpin({
+      min: 1,
+      buttondown_class: 'btn btn-white',
+      buttonup_class: 'btn btn-white'
+    });
   },
   mounted() {
     $(".chosen-select").chosen({ width: "100%" });
+    var clocks = document.getElementsByClassName("clockpicker");
+    for (var i = 0; i < clocks.length; i++) {
+      $(clocks[i]).clockpicker();
+    }
+    $("#data_1 .input-group.date").datepicker({
+      todayBtn: "linked",
+      keyboardNavigation: false,
+      autoclose: true,
+      format: "yyyy-mm-dd"
+    });
+    $('.tagsinput').tagsinput({
+        tagClass: 'label label-primary'
+    });
+    $(".touchspin").TouchSpin({
+      min: 1,
+      buttondown_class: 'btn btn-white',
+      buttonup_class: 'btn btn-white'
+    });
+
     let grounds = [
       {
         name: "羽毛球场",
@@ -294,7 +478,7 @@ export default {
         name: "乒乓球场",
         open_times: [
           {
-            start: "08:00",
+            start: "06:00",
             end: "13:00"
           },
           {

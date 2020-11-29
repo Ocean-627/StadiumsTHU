@@ -26,7 +26,7 @@ class StadiumSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField(required=False)
     comments = serializers.SerializerMethodField(required=False)
     score = serializers.SerializerMethodField(required=False)
-    courtType = serializers.SerializerMethodField(required=False)
+    courtTypes = serializers.SerializerMethodField(required=False)
 
     def get_images(self, obj):
         images_list = obj.stadiumimage_set.all()
@@ -53,16 +53,36 @@ class StadiumSerializer(serializers.ModelSerializer):
         else:
             return tot_score / tot_num
 
-    def get_courtType(self, obj):
-        type_list = obj.courttype_set.all()
-        types = []
-        for courtType in type_list:
-            types.append(courtType.type)
-        return types
+    def get_courtTypes(self, obj):
+        types = obj.courttype_set.all()
+        types = CourtTypeSerializer(types, many=True)
+        return types.data
 
     class Meta:
         model = Stadium
         fields = '__all__'
+
+
+class StadiumSerializerForManager(StadiumSerializer):
+    courtTypes = serializers.SerializerMethodField(required=False)
+
+    def get_courtTypes(self, obj):
+        types = obj.courttype_set.all()
+        types = CourtTypeSerializerForManager(types, many=True)
+        return types.data
+
+
+class CourtTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourtType
+        exclude = ['id', 'stadium']
+
+
+class CourtTypeSerializerForManager(CourtTypeSerializer):
+    amount = serializers.SerializerMethodField(required=False)
+
+    def get_amount(self, obj):
+        return len(obj.court_set.all())
 
 
 class CourtSerializer(serializers.ModelSerializer):
