@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 
 from app.utils.utils import *
-from app.utils.serializer import *
+from app.utils.manager_serializer import *
 from app.utils.filter import *
 from app.utils.pagination import *
 from app.utils.authtication import ManagerAuthtication

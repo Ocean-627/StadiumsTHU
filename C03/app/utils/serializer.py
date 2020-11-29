@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
+
 from app.models import *
 
 
@@ -63,26 +64,10 @@ class StadiumSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class StadiumSerializerForManager(StadiumSerializer):
-    courtTypes = serializers.SerializerMethodField(required=False)
-
-    def get_courtTypes(self, obj):
-        types = obj.courttype_set.all()
-        types = CourtTypeSerializerForManager(types, many=True)
-        return types.data
-
-
 class CourtTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourtType
         exclude = ['id', 'stadium']
-
-
-class CourtTypeSerializerForManager(CourtTypeSerializer):
-    amount = serializers.SerializerMethodField(required=False)
-
-    def get_amount(self, obj):
-        return len(obj.court_set.all())
 
 
 class CourtSerializer(serializers.ModelSerializer):
