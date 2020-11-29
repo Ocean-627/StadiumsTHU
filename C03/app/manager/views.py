@@ -1,13 +1,16 @@
-from django.http import JsonResponse
 from itertools import chain
 from operator import attrgetter
-from app.utils.utils import *
-from app.utils.serializer import *
-from app.utils.filter import *
-from app.utils.authtication import ManagerAuthtication
+
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
+from django.http import JsonResponse
+
+from app.utils.utils import *
+from app.utils.serializer import *
+from app.utils.filter import *
+from app.utils.pagination import *
+from app.utils.authtication import ManagerAuthtication
 
 
 class LogonView(APIView):
@@ -242,19 +245,14 @@ class AddEventView(APIView):
         return JsonResponse(model_to_dict(addEvent))
 
 
-class UsersView(APIView):
+class UserView(ListAPIView):
     """
     用户信息
     """
-    authentication_classes = [ManagerAuthtication]
-
-    def get(self, request):
-        req_data = request.query_params
-        managerId = req_data.get('managerId', '')
-        if not managerId:
-            return JsonResponse({'error': 'Incomplete information'})
-        users = User.objects.all()
-        return JsonResponse({'users': json(users)})
+    # authentication_classes = [ManagerAuthtication]
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    pagination_class = UserPagination
 
 
 class HistoryView(APIView):
