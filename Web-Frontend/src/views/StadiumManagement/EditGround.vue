@@ -54,8 +54,8 @@
                     </a>
                 </div>
                 <div class="row" style="text-align: center; margin-bottom: 10px;">
-                    <label class="col-sm-2 col-form-label">修改生效日期：</label>
-                    <div class="col-sm-3 input-group date">
+                    <label class="col-lg-2 col-form-label">修改生效日期：</label>
+                    <div class="col-lg-3 input-group date">
                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                         <input type="text" class="form-control"/>
                     </div>
@@ -67,7 +67,7 @@
                             <div class="panel-body">
                                 <fieldset>
                                     <div class="form-group row"><label class="col-sm-4 col-form-label">场地类型：</label>
-                                        <label class="col-sm-6 col-form-label"><strong>{{ ground.name }}</strong></label>
+                                        <label class="col-sm-6 col-form-label"><strong>{{ ground.type }}</strong></label>
                                     </div>
                                     <div class="form-group row"><label class="col-sm-4 col-form-label">开放状态：</label>
                                         <div class="col-sm-4"><select data-placeholder="..." class="chosen-select" tabindex="2">
@@ -264,13 +264,13 @@ export default {
         }
         let request = {
             params: {
-                stadiumId: this.$route.query.id,
+                id: this.$route.query.id,
             }
         }
         this.$axios.get('stadium/', request)
             .then(res => {
-                    this.name = res.data.stadiums[0].name
-                    this.grounds = res.data.stadiums[0].courtTypes
+                    this.name = res.data[0].name
+                    this.grounds = res.data[0].courtTypes
                     for (var i=0;i<this.grounds.length;i++){
                         let duration = this.grounds[i].duration.split(":")
                         this.grounds[i].duration=Number(duration[0])*60 + Number(duration[1])
