@@ -156,11 +156,10 @@ class CommentView(ListAPIView, CreateAPIView):
         return Response({'message': 'ok'})
 
 
-class CommentImageView(ListAPIView, CreateAPIView):
+class CommentImageView(CreateAPIView):
     """
     评价对应的图片
     """
     authentication_classes = [UserAuthtication]
     queryset = CommentImage.objects.all()
     serializer_class = CommentImageSerializer
-    filter_class = CommentImageFilter

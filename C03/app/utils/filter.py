@@ -46,10 +46,3 @@ class CommentFilter(filters.FilterSet):
     class Meta:
         model = Comment
         fields = ['court_id']
-
-
-class CommentImageFilter(filters.FilterSet):
-    class Meta:
-        model = CommentImage
-        fields = ['comment_id']
-

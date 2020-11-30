@@ -6,7 +6,7 @@
       <div class="row wrapper border-bottom white-bg page-heading">
         <!--Breadcrum 导航-->
         <div class="col-lg-9">
-          <h2>场地预留 <small>@综合体育馆</small></h2>
+          <h2>场地预留 <small>@{{stadiumName}}</small></h2>
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
               <a href="/home">主页</a>
@@ -28,6 +28,7 @@
             <select
               class="chosen-select"
               v-model="current_date"
+              id="date"
               @changed="changeDate()"
             >
               <option v-for="(date, index) in dates" :key="date" :value="index">
@@ -130,6 +131,7 @@
                                 type="text"
                                 class="form-control"
                                 v-model="form_start"
+                                ref="startTime"
                               />
                               <span class="input-group-addon">
                                 <span class="fa fa-clock-o"></span>
@@ -150,7 +152,7 @@
                               <input
                                 type="text"
                                 class="form-control"
-                                v-model="form_end"
+                                v-model="form_end" ref="endTime"
                               />
                               <span class="input-group-addon">
                                 <span class="fa fa-clock-o"></span>
@@ -162,18 +164,18 @@
                       <div class="form-group">
                         <label class="font-normal">使用者（选填）</label><br>
                         <div><small>请在下方输入使用者的学号/工号（或留空）。预约信息将通过站内消息通知他们。</small></div>
-                        <input class="tagsinput form-control" type="text" />
+                        <input class="tagsinput form-control" type="text" ref="user_id"/>
                       </div>
                       <div class="form-group">
                         <label class="font-normal">预留场地数</label>
                         <div class="row">
-                          <div class="col-sm-4"><input class="touchspin" type="text"></div>
+                          <div class="col-sm-4"><input class="touchspin" type="text" ref="number"></div>
                         </div>
                       </div>
                       <div class="form-group">
                         <label class="font-normal">预留场地序号（选填）</label><br>
                         <div><small>如果指定了预留的场地序号，那么将预留指定的场地，即使场地上原本有预约（该预约将被取消并通过站内信通知用户）。如果未指定序号，那么后台将会自动选择空闲的场地进行预留。若空闲场地不足，则必须手动指定序号。</small></div>
-                        <input class="tagsinput form-control" type="text" />
+                        <input class="tagsinput form-control" type="text" ref="court_id"/>
                       </div>
                       <div class="form-group">
                         <label class="font-normal">备注（选填）</label>
@@ -312,7 +314,8 @@ export default {
       form_date: "",
       form_time: "",
       form_start: "",
-      form_end: ""
+      form_end: "",
+      stadiumName:"测试"
     };
 
     return res;
@@ -538,7 +541,35 @@ export default {
         );
       }
     }
+    let request = {
+        params: {
+            stadium_id: this.$route.query.id,
+            date:$('#date option:selected').text().toString().replace(/(^\s*)|(\s*$)/g, ""),
+            floor:1
+        }
+    }
     this.grounds = grounds;
-  }
+    this.$axios.get('court/', request)
+            .then(res => {
+              this.stadiumName = res.data.name
+              this.grounds = res.data.reserveInfo
+              console.log(res.data)
+                    // this.name = res.data[0].name
+                    // this.grounds = res.data[0].courtTypes
+                    // for (var i=0;i<this.grounds.length;i++){
+                    //     let duration = this.grounds[i].duration.split(":")
+                    //     this.grounds[i].duration=Number(duration[0])*60 + Number(duration[1])
+                    //     let openHours = this.grounds[i].openHours.split(" ")
+                    //     this.grounds[i].periods=[]
+                    //     for (var j=0;j<openHours.length;j++){
+                    //         let time = openHours[j].split("-")
+                    //         this.grounds[i].periods.push({start:time[0],end:time[1]})
+                    //     }
+                    // }   
+            })
+  },
+  // methods(){
+
+  // }
 };
 </script>

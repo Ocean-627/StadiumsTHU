@@ -16,7 +16,7 @@ class User(models.Model):
     userId = models.IntegerField(verbose_name='学生编号', null=True)
     email = models.EmailField(null=True)
     phone = models.CharField(max_length=20, null=True)
-    image = models.ImageField(verbose_name='头像', null=True)
+    image = models.ImageField(upload_to='user', verbose_name='头像', null=True)
     # TODO:完善信息
 
 
@@ -156,7 +156,7 @@ class Comment(models.Model):
 class CommentImage(models.Model):
     # 评论图片
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='img/%Y/%m/%d')
+    image = models.ImageField(upload_to='comment')
 
 
 class StadiumImage(models.Model):
@@ -164,4 +164,4 @@ class StadiumImage(models.Model):
     # TODO:解决如何导入场馆信息的问题
     detail = models.CharField(max_length=30, verbose_name='图片描述', null=True)
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='img/stadium')
+    image = models.ImageField(upload_to='stadium')
