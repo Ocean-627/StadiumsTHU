@@ -127,13 +127,14 @@ class CourtView(APIView):
 
     def get(self, request):
         req_data = request.query_params
-        workplace = req_data.get('stadiumId', '')
+        workplace = req_data.get('stadium_id', '')
         floor = req_data.get('floor', '')
         date = req_data.get('date', '')
         if not workplace or not floor or not date:
             return JsonResponse({'error': 'Incomplete information'})
         stadium = Stadium.objects.all().filter(id=int(workplace))[0]
         response = []
+        myResponse = {"name": stadium.name}
         for courtType in stadium.courttype_set.all():
             myCourtType = model_to_dict(courtType)
             myCourts = []
@@ -152,7 +153,8 @@ class CourtView(APIView):
                 myCourts.append(myCourt)
             myCourtType["courts"] = myCourts
             response.append(myCourtType)
-        return JsonResponse(response,safe=False)
+        myResponse['reserveInfo']=response
+        return JsonResponse(myResponse)
 
 
 class ReserveEventView(APIView):
