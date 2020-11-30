@@ -186,11 +186,21 @@ class ChangeDurationView(APIView):
         startDate = req_data.get('startDate', '')
         duration = req_data.get('duration', '')
         openHours = req_data.get('openHours', '')
-        if not courtTypeId or not managerId or not startDate or not duration or not openHours:
+        price = req_data.get('price', '')
+        membership = req_data.get('membership', '')
+        if not courtTypeId\
+                or not managerId or not startDate \
+                or not duration or not openHours\
+                or not membership or not price:
             return JsonResponse({'error': 'Incomplete information'})
         manager = Manager.objects.all().filter(id=int(managerId))[0]
         courtType = CourtType.objects.all().filter(id=int(courtTypeId))[0]
-        changeDuration = ChangeDuration(courtType=courtType, manager=manager, openingHours=openHours, date=startDate)
+        changeDuration = ChangeDuration(courtType=courtType,
+                                        manager=manager,
+                                        openingHours=openHours,
+                                        date=startDate,
+                                        membership=membership,
+                                        price=price)
         changeDuration.save()
 
         # TODO: 立刻处理更改时段操作

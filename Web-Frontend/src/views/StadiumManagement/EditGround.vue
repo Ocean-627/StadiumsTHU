@@ -409,9 +409,11 @@ export default {
             let request_body = {
                 courtTypeId: ground.id,
                 managerId: 3,
-                // TODO: 这里如何获取date中的数据？
+                // TODO: 日期格式获取结果为如下格式
                 startDate: "2020-12-06",
                 duration: duration,
+                price:ground.price,
+                membership:ground.membership,
                 openHours: openingHours
             };
             this.$axios.post("changeduration/", request_body).then(res => {
