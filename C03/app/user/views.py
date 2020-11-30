@@ -159,10 +159,8 @@ class CommentView(ListAPIView, CreateAPIView):
 class CommentImageView(ListAPIView, CreateAPIView):
     """
     评价对应的图片
-    #TODO:只在后端开发时测试用
     """
     authentication_classes = [UserAuthtication]
     queryset = CommentImage.objects.all()
     serializer_class = CommentImageSerializer
-
-
+    filter_class = CommentImageFilter
