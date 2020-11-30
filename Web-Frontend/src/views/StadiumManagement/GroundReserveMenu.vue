@@ -44,7 +44,7 @@
                                 <div class="col-md-12">
                                     开放场地：
                                     <a v-for="courtType in stadium.courtTypes" v-bind:key="courtType.name">
-                                            {{courtType.name}}场 {{courtType.amount}} 个&emsp;
+                                            {{courtType.type}}场 {{courtType.amount}} 个&emsp;
                                         </a>
                                 </div>
                             </div>
@@ -138,7 +138,8 @@ export default {
                         type: "error",
                     })
                 } else {
-                    this.stadiums = res.data.stadiums
+                    console.log(res.data)
+                    this.stadiums = res.data
                 }
             })
     },
