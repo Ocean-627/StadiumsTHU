@@ -155,12 +155,3 @@ class CommentView(ListAPIView, CreateAPIView):
         comment.delete()
         return Response({'message': 'ok'})
 
-
-class CommentImageView(ListAPIView, CreateAPIView):
-    """
-    评价对应的图片
-    """
-    authentication_classes = [UserAuthtication]
-    queryset = CommentImage.objects.all()
-    serializer_class = CommentImageSerializer
-    filter_class = CommentImageFilter

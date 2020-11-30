@@ -22,10 +22,3 @@ def fake(request):
     for info in stadiums:
         initStadium(info)
     return JsonResponse({'message': 'ok'})
-
-
-def image(request, type, filename):
-    if request.method != 'GET':
-        return JsonResponse({'error': 'Requires GET'})
-    file = open('media/' + type + '/' + filename, 'rb').read()
-    return HttpResponse(file, content_type='image/jpg')
