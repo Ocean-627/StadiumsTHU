@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="wrapper wrapper-content animated fadeInRight ecommerce">
-                <vxe-grid v-bind="gridOptions"></vxe-grid>
+                <vxe-grid v-bind="gridOptions" class="white-bg" style="padding: 15px;"></vxe-grid>
             </div>
             <Footer></Footer>
         </div>

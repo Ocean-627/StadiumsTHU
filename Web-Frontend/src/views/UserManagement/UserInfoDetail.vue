@@ -1,59 +1,324 @@
 <template>
-    <div id="wrapper">
-        <Navbar></Navbar>
-        <div id="page-wrapper" class="gray-bg dashbard-1">
-            <Header></Header>
-            <div class="row wrapper border-bottom white-bg page-heading">
-                <!--Breadcrum 导航-->
-                <div class="col-lg-9">
-                    <h2>用户信息 </h2>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="/home">主页</a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            用户管理
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a href="/user_management/user_info">用户信息</a>
-                        </li>
-                        <li class="breadcrumb-item active">
-                            <strong>详细信息</strong>
-                        </li>
-                    </ol>
-                </div>
-            </div>
-            <div class="wrapper wrapper-content animated fadeInRight ecommerce">
-                <h1><strong>Hasta</strong></h1>
-            </div>
-            <Footer></Footer>
+  <div id="wrapper">
+    <Navbar></Navbar>
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+      <Header></Header>
+      <div class="row wrapper border-bottom white-bg page-heading">
+        <!--Breadcrum 导航-->
+        <div class="col-lg-9">
+          <h2>用户信息</h2>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="/home">主页</a>
+            </li>
+            <li class="breadcrumb-item">
+              用户管理
+            </li>
+            <li class="breadcrumb-item">
+              <a href="/user_management/user_info">用户信息</a>
+            </li>
+            <li class="breadcrumb-item active">
+              <strong>详细信息</strong>
+            </li>
+          </ol>
         </div>
-        <Toolbox></Toolbox>
+      </div>
+      <div
+        class="wrapper wrapper-content animated fadeInRight ecommerce white-bg"
+        style="text-align: center;"
+      >
+        <div class="row dashboard-header">
+          <div class="col-md-3">
+            <img
+              alt="image"
+              class="img-circle img-responsive"
+              src="/static/img/head.jpg"
+              style="height: 150px; width:150px;"
+            />
+          </div>
+          <div class="col-md-2">
+            <h1 style="padding-top: 30px"><strong>Hasta</strong></h1>
+          </div>
+          <div class="col-md-3"></div>
+          <div class="col-md-1">
+            <i
+              class="fa fa-envelope fa-3x"
+              style="margin-top: 40px; color: #FFBF00;"
+            ></i
+            ><br />
+            <strong style="color: #FFBF00;">发送私信</strong>
+          </div>
+          <div class="col-md-1">
+            <i
+              class="fa fa-trash fa-3x"
+              style="margin-top: 40px; color: red;"
+            ></i
+            ><br />
+            <strong style="color: red;">注销用户</strong>
+          </div>
+        </div>
+        <div class="row i-row">
+          <div class="col-md-3">
+            <strong>姓名</strong>
+          </div>
+          <div class="col-md-2">
+            后端人
+          </div>
+          <div class="col-md-1 border-right"></div>
+          <div class="col-md-3">
+            <strong>邮箱</strong>
+          </div>
+          <div class="col-md-2">
+            juele@163.com
+          </div>
+        </div>
+        <div class="row i-row">
+          <div class="col-md-3">
+            <strong>学号/工号</strong>
+          </div>
+          <div class="col-md-2">
+            2018011904
+          </div>
+          <div class="col-md-1 border-right"></div>
+          <div class="col-md-3">
+            <strong>手机</strong>
+          </div>
+          <div class="col-md-2">
+            18686868686
+          </div>
+        </div>
+        <div class="row i-row">
+          <div class="col-md-3">
+            <strong>用户类别</strong>
+          </div>
+          <div class="col-md-2">
+            在校学生
+          </div>
+          <div class="col-md-1 border-right"></div>
+          <div class="col-md-3">
+            <strong>认证状态</strong>
+          </div>
+          <div class="col-md-2">
+            {{ auth ? "已认证" : "未认证" }}
+            <i class="fa fa-check" style="color: green" v-show="auth"></i>
+            <i class="fa fa-times" style="color: red" v-show="!auth"></i>
+          </div>
+        </div>
+        <div class="row i-row">
+          <div class="col-md-3">
+            <strong>预约记录</strong>
+          </div>
+          <div class="col-md-8">
+            <table class="table">
+              <thead>
+                <th>#</th>
+                <th>地点</th>
+                <th>使用时间</th>
+                <th>预约时间</th>
+                <th>生效状态</th>
+                <th>操作</th>
+              </thead>
+              <tbody
+                v-for="reserve_record in reserve_records"
+                :key="reserve_record.id"
+              >
+                <tr>
+                  <td>{{ reserve_record.id }}</td>
+                  <td>{{ reserve_record | reserve_place }}</td>
+                  <td>{{ reserve_record.use_time }}</td>
+                  <td>{{ reserve_record.reserve_time }}</td>
+                  <td :style="reserve_record.status | reserve_status">
+                    {{ reserve_record.status }}
+                  </td>
+                  <td style="padding: 5px;">
+                    <button
+                      class="btn btn-xs btn-danger btn-outline"
+                      v-show="reserve_record.status === '未生效'"
+                    >
+                      取消
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row i-row">
+          <div class="col-md-3">
+            <strong>信用记录</strong>
+          </div>
+          <div class="col-md-8">
+            <table class="table">
+              <thead>
+                <th>#</th>
+                <th>内容</th>
+                <th>时间</th>
+                <th>生效状态</th>
+                <th>操作</th>
+              </thead>
+              <tbody
+                v-for="credit_record in credit_records"
+                :key="credit_record.id"
+              >
+                <tr>
+                  <td>{{ credit_record.id }}</td>
+                  <td>{{ credit_record.content }}</td>
+                  <td>{{ credit_record.time }}</td>
+                  <td :style="credit_record.status | credit_status">
+                    {{ credit_record.status }}
+                  </td>
+                  <td style="padding: 5px;">
+                    <button
+                      class="btn btn-xs btn-danger btn-outline"
+                      v-show="credit_record.status === '生效中'"
+                    >
+                      撤销
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row i-row">
+          <div class="col-md-3">
+            <strong>黑名单记录</strong>
+          </div>
+          <div class="col-md-8">
+            <table class="table">
+              <thead>
+                <th>#</th>
+                <th>内容</th>
+                <th>时间</th>
+                <th>生效状态</th>
+                <th>操作</th>
+              </thead>
+              <tbody
+                v-for="blacklist_record in blacklist_records"
+                :key="blacklist_record.id"
+              >
+                <tr>
+                  <td>{{ blacklist_record.id }}</td>
+                  <td>{{ blacklist_record.content }}</td>
+                  <td>{{ blacklist_record.time }}</td>
+                  <td :style="blacklist_record.status | credit_status">
+                    {{ blacklist_record.status }}
+                  </td>
+                  <td style="padding: 5px;">
+                    <button
+                      class="btn btn-xs btn-danger btn-outline"
+                      v-show="blacklist_record.status === '生效中'"
+                    >
+                      撤销
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <Footer></Footer>
     </div>
+    <Toolbox></Toolbox>
+  </div>
 </template>
 
 <style scoped>
-
+.i-row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
 </style>
 
 <script>
-import Navbar from "@/components/Navbar"
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
-import Toolbox from "@/components/Toolbox"
+import Navbar from "@/components/Navbar";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import Toolbox from "@/components/Toolbox";
 
 export default {
-    data() {
-        return {
-            
+  data() {
+    return {
+      reserve_records: [
+        {
+          id: 1,
+          stadium: "紫荆气膜馆",
+          court_type: "羽毛球场",
+          court_name: "1",
+          use_time: "2020-11-10 08:00-12:00",
+          reserve_time: "2020-11-8 09:02",
+          status: "已结束"
+        },
+        {
+          id: 2,
+          stadium: "紫荆气膜馆",
+          court_type: "羽毛球场",
+          court_name: "1",
+          use_time: "2020-11-10 08:00-12:00",
+          reserve_time: "2020-11-8 09:02",
+          status: "已取消"
+        },
+        {
+          id: 3,
+          stadium: "紫荆气膜馆",
+          court_type: "羽毛球场",
+          court_name: "1",
+          use_time: "2020-11-10 08:00-12:00",
+          reserve_time: "2020-11-8 09:02",
+          status: "未生效"
         }
+      ],
+      credit_records: [
+        {
+          id: 1,
+          content: "不讲武德",
+          time: "2020-11-10 08:00-12:00",
+          status: "生效中"
+        },
+        {
+          id: 2,
+          content: "不讲武德",
+          time: "2020-11-10 08:00-12:00",
+          status: "已撤销"
+        },
+        {
+          id: 3,
+          content: "不讲武德",
+          time: "2020-11-10 08:00-12:00",
+          status: "已过期"
+        }
+      ],
+      blacklist_records: [],
+      auth: true
+    };
+  },
+  components: {
+    Toolbox,
+    Navbar,
+    Header,
+    Footer
+  },
+  filters: {
+    reserve_place: function(reserve_record) {
+      return (
+        reserve_record.stadium +
+        "(" +
+        reserve_record.court_type +
+        "-" +
+        reserve_record.court_name +
+        ")"
+      );
     },
-    components: {
-        Toolbox, Navbar, Header, Footer
+    reserve_status: function(status) {
+      if (status === "已取消") return "color: orange;";
+      if (status === "未生效") return "color: #23c6c8;";
     },
-    methods: {
-
+    credit_status: function(status) {
+      if (status === "生效中") return "color: #23c6c8;";
+      if (status === "已撤销") return "color: orange;";
     }
-}
-
+  },
+  methods: {}
+};
 </script>

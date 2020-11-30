@@ -3,7 +3,7 @@
         <Navbar></Navbar>
         <div id="page-wrapper" class="gray-bg dashbard-1">
             <Header></Header>
-            <div class="row  border-bottom white-bg dashboard-header">
+            <div class="row border-bottom white-bg dashboard-header">
                 <div class="col-md-3">
                     <h2>欢迎您，马保国</h2>
                     <small>您有42条消息和6条通知。</small>
