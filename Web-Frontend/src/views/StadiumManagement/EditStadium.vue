@@ -222,7 +222,7 @@
                             ><i class="fa fa-calendar"></i></span
                           ><input
                             type="text"
-                            class="form-control"/>
+                            class="form-control" ref="startDate"/>
                         </div>
                       </div>
                       <div class="form-group row">

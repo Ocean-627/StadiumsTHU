@@ -140,15 +140,14 @@ class CourtView(APIView):
             for court in courtType.court_set.all():
                 myCourt = {"id": court.id,
                            "location": court.location,
-                           'accessibleDuration': court.courtType.openingHours,
                            'reservedDuration': [], 'notReservedDuration': []}
                 reservedDurations = court.duration_set.all().filter(accessible=False, date=date)
+
                 for duration in reservedDurations:
-                    myCourt['reservedDuration'].append(
-                        (duration.id, duration.startTime, duration.endTime, duration.user.username))
+                    myCourt['reservedDuration'].append(model_to_dict(duration))
                 notReservedDurations = court.duration_set.all().filter(accessible=True, date=date)
                 for duration in notReservedDurations:
-                    myCourt['notReservedDuration'].append((duration.id, duration.startTime, duration.endTime))
+                    myCourt['notReservedDuration'].append(model_to_dict(duration))
                 myCourt["comment"] = []
                 myCourts.append(myCourt)
             myCourtType["courts"] = myCourts
