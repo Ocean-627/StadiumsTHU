@@ -405,12 +405,11 @@ export default {
             for (var i = 0 ; i < ground.periods.length;i++){
                 openingHours+=ground.periods[i].start+"-"+ground.periods[i].end+" "
             }
-            // console.log($(".input-group.date").datepicker('getDate'))
+            let date = $(".input-group.date").datepicker('getDate')
             let request_body = {
                 courtTypeId: ground.id,
                 managerId: 3,
-                // TODO: 日期格式获取结果为如下格式
-                startDate: "2020-12-06",
+                startDate: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(),
                 duration: duration,
                 price:ground.price,
                 membership:ground.membership,
