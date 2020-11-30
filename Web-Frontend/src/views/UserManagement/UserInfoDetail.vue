@@ -24,7 +24,7 @@
                 </div>
             </div>
             <div class="wrapper wrapper-content animated fadeInRight ecommerce">
-                
+                <h1><strong>Hasta</strong></h1>
             </div>
             <Footer></Footer>
         </div>

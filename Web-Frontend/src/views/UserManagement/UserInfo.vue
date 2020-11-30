@@ -21,17 +21,7 @@
                 </div>
             </div>
             <div class="wrapper wrapper-content animated fadeInRight ecommerce">
-                <vxe-grid
-                    border
-                    resizable
-                    height="700"
-                    row-id="id"
-                    :export-config="{}"
-                    :pager-config="{pageSize: 10}"
-                    :proxy-config="tableProxy"
-                    :toolbar-config="tableToolbar"
-                    :columns="tableColumn">
-                </vxe-grid>
+                <vxe-grid v-bind="gridOptions"></vxe-grid>
             </div>
             <Footer></Footer>
         </div>
@@ -52,56 +42,161 @@ import Toolbox from "@/components/Toolbox"
 export default {
     data() {
         return {
-            tableProxy: {
-                seq: true,
-                props: {
-                    result: 'results',
-                    total: 'count'
+            gridOptions: {
+                border: true,
+                resizable: true,
+                showHeaderOverflow: true,
+                showOverflow: true,
+                highlightHoverRow: true,
+                keepSource: true,
+                height: 850,
+                rowId: 'id',
+                sortConfig: {
+                    trigger: 'cell'
                 },
-                ajax: {
-                    query: ({ page }) => this.$axios.get(`/user/?page=${page.currentPage}&size=${page.pageSize}`).then(res => res.data)
-                }
-            },
-            tableColumn: [
-                { type: 'checkbox', width: 50 },
-                { type: 'seq', width: 60 },
-                { 
-                    field: 'name', 
-                    title: '姓名',
-                    slots: {
-                        default: ({row}, h) => {
-                            return [
-                                h('span', {
-                                    style: {
-                                        color: 'blue'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            window.location.replace('/user_management/user_info/detail/' + row.userId.toString())
-                                        }
-                                    }
-                                }, row.name)
-                            ]
+                filterConfig: {
+                    remote: true
+                },
+                pagerConfig: {
+                    pageSize: 10,
+                    pageSizes: [5, 10, 15, 20, 50, 100, 200, 500]
+                },
+                sortConfig: {
+                    remote: true
+                },
+                formConfig: {
+                    titleWidth: 100,
+                    titleAlign: 'right',
+                    items: [
+                        { 
+                            field: 'name',
+                            title: '姓名', 
+                            span: 6, 
+                            itemRender: { name: '$input', props: { placeholder: '请输入姓名' } } 
+                        },
+                        { 
+                            field: 'nickName', 
+                            title: '昵称', 
+                            span: 6, 
+                            itemRender: { name: '$input', props: { placeholder: '请输入昵称' } } 
+                        },
+                        { 
+                            field: 'userId',
+                            title: '姓名', 
+                            span: 6, 
+                            itemRender: { name: '$input', props: { placeholder: '请输入学号/工号' } } 
+                        },
+                        { 
+                            field: 'email', 
+                            title: '邮箱', 
+                            span: 6, 
+                            itemRender: { name: '$input', props: { placeholder: '请输入邮箱' } } 
+                        },
+                        { 
+                            field: 'phone', 
+                            title: '手机', 
+                            span: 6, 
+                            folding: true,
+                            itemRender: { name: '$input', props: { placeholder: '请输入手机号' } } 
+                        },
+                        { 
+                            span: 24, 
+                            align: 'center', 
+                            collapseNode: true, 
+                            itemRender: { 
+                                name: '$buttons', 
+                                children: [
+                                    { props: { type: 'submit', content: '查询', status: 'primary' } }, 
+                                    { props: { type: 'reset', content: '重置' } }
+                                ] 
+                            } 
+                        }
+                    ]
+                },
+                toolbarConfig: {
+                    buttons: [
+                        { code: 'delete', name: '删除', icon: 'fa fa-trash-o', status: 'danger' },
+                    ],
+                    refresh: true,
+                    export: true,
+                    print: true,
+                    custom: true
+                },
+                proxyConfig: {
+                    seq: true,
+                    sort: true, // 启用排序代理
+                    filter: true, // 启用筛选代理
+                    form: true, // 启用表单代理
+                    props: {
+                        result: 'results',
+                        total: 'count'
+                    },
+                    ajax: {
+                        query: ({ page, sort, filters, form  }) => {
+                            const queryParams = Object.assign({
+                                sort: sort.property,
+                                order: sort.order
+                            }, form)
+                            filters.forEach(({ property, values }) => {
+                                queryParams[property] = values.join(',')
+                            })
+                            console.log(queryParams)
+                            return this.$axios.get(`/user/?page=${page.currentPage}&size=${page.pageSize}`, queryParams).then(res => res.data)
+                        },
+                        delete: ({ body }) => {
+                            
                         }
                     }
                 },
-                { field: 'nickName', title: '昵称' },
-                { field: 'userId', title: '学号/工号' },
-                { field: 'email', title: '邮箱'},
-                { field: 'phone', title: '手机'},
-                { 
-                    field: 'auth', 
-                    title: '是否认证', 
-                    formatter: function(value){
-                        if(value) return "已认证"
-                        return "未认证"
+                columns: [
+                    { type: 'checkbox', width: 50 },
+                    { type: 'seq', width: 60 },
+                    { 
+                        field: 'name', 
+                        title: '姓名',
+                        sortable: true,
+                        slots: {
+                            default: ({row}, h) => {
+                                return [
+                                    h('u', {
+                                        style: {
+                                            color: 'blue'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                window.location.replace('/user_management/user_info/detail/' + row.userId.toString())
+                                            }
+                                        }
+                                    }, row.name)
+                                ]
+                            }
+                        }
+                    },
+                    { field: 'nickName', sortable: true, title: '昵称' },
+                    { field: 'userId', sortable: true, title: '学号/工号' },
+                    { field: 'email', sortable: true, title: '邮箱'},
+                    { field: 'phone', sortable: true, title: '手机'},
+                    { 
+                        field: 'auth', 
+                        title: '是否认证', 
+                        filters: [
+                            { label: '已认证', value: true },
+                            { label: '未认证', value: false}
+                        ],
+                        formatter: function(value){
+                            if(value) return "已认证"
+                            return "未认证"
+                        }
                     }
-                }
-            ],
-            tableToolbar: {
-                export: true,
-                custom: true
-            },
+                ],
+                exportConfig: {},
+                printConfig: {},
+                checkboxConfig: {
+                    reserve: true,
+                    highlight: true,
+                    range: true
+                },
+            }
         }
     },
     components: {

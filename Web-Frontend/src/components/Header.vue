@@ -102,7 +102,7 @@
                     </ul>
                 </li>
                 <li style="padding: 20px">
-                    <span class="m-r-sm text-muted welcome-message">2020/11/16</span>
+                    <span class="m-r-sm text-muted welcome-message">{{ time }}</span>
                 </li>
                 <li>
                     <a href="/login">
@@ -117,7 +117,12 @@
 <script>
 export default {
     data() {
-        return {}
+        return {
+            time: ""
+        }
+    },
+    created() {
+        this.time += new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate()
     }
 }
 </script>
