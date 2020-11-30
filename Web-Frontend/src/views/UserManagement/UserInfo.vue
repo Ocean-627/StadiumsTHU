@@ -24,13 +24,15 @@
                 <vxe-grid
                     border
                     resizable
-                    height="530"
+                    height="700"
                     row-id="id"
+                    :export-config="{}"
                     :pager-config="{pageSize: 10}"
                     :proxy-config="tableProxy"
-                    :checkbox-config="{reserve: true}"
-                    :columns="tableColumn"></vxe-grid>
-                </div>
+                    :toolbar-config="tableToolbar"
+                    :columns="tableColumn">
+                </vxe-grid>
+            </div>
             <Footer></Footer>
         </div>
         <Toolbox></Toolbox>
@@ -46,34 +48,66 @@ import Navbar from "@/components/Navbar"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import Toolbox from "@/components/Toolbox"
+
 export default {
     data() {
         return {
             tableProxy: {
-                seq: true, // 启用动态序号代理
+                seq: true,
                 props: {
-                  result: 'result',
-                  total: 'page.total'
+                    result: 'results',
+                    total: 'count'
                 },
                 ajax: {
-                  // 任何支持 Promise API 的库都可以对接（fetch、jquery、axios、xe-ajax）
-                  query: ({ page }) => this.$axios.get(`https://xuliangzhan_admin.gitee.io/api/user/page/list/${page.pageSize}/${page.currentPage}`)
+                    query: ({ page }) => this.$axios.get(`/user/?page=${page.currentPage}&size=${page.pageSize}`).then(res => res.data)
                 }
             },
             tableColumn: [
                 { type: 'checkbox', width: 50 },
                 { type: 'seq', width: 60 },
-                { field: 'name', title: 'Name' },
-                { field: 'nickname', title: 'Nickname' },
-                { field: 'role', title: 'Role' },
-                { field: 'describe', title: 'Describe', showOverflow: true }
-            ]
+                { 
+                    field: 'name', 
+                    title: '姓名',
+                    slots: {
+                        default: ({row}, h) => {
+                            return [
+                                h('span', {
+                                    style: {
+                                        color: 'blue'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            window.location.replace('/user_management/user_info/detail/' + row.userId.toString())
+                                        }
+                                    }
+                                }, row.name)
+                            ]
+                        }
+                    }
+                },
+                { field: 'nickName', title: '昵称' },
+                { field: 'userId', title: '学号/工号' },
+                { field: 'email', title: '邮箱'},
+                { field: 'phone', title: '手机'},
+                { 
+                    field: 'auth', 
+                    title: '是否认证', 
+                    formatter: function(value){
+                        if(value) return "已认证"
+                        return "未认证"
+                    }
+                }
+            ],
+            tableToolbar: {
+                export: true,
+                custom: true
+            },
         }
     },
     components: {
         Toolbox, Navbar, Header, Footer
     },
-    mounted() {
+    methods: {
 
     }
 }
