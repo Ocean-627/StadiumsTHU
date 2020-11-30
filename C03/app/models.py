@@ -117,6 +117,8 @@ class ChangeDuration(models.Model):
     date = models.CharField(max_length=32)
     time = models.DateTimeField(default=timezone.now)
     type = models.IntegerField(default=1)
+    price = models.IntegerField(default=1)
+    membership = models.IntegerField(default=1)
     # TODO:完善事件信息
 
 

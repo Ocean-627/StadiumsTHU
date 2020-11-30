@@ -412,6 +412,8 @@ export default {
                 // TODO: 这里如何获取date中的数据？
                 startDate: "2020-12-06",
                 duration: duration,
+                price:ground.price,
+                membership:ground.membership,
                 openHours: openingHours
             };
             this.$axios.post("changeduration/", request_body).then(res => {
