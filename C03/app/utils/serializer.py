@@ -67,7 +67,7 @@ class StadiumSerializer(serializers.ModelSerializer):
 class CourtTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourtType
-        exclude = ['id', 'stadium']
+        exclude = ['stadium']
 
 
 class CourtSerializer(serializers.ModelSerializer):

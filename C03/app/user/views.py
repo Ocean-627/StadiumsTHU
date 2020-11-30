@@ -156,7 +156,7 @@ class CommentView(ListAPIView, CreateAPIView):
         return Response({'message': 'ok'})
 
 
-class CommentImageView(CreateAPIView):
+class CommentImageView(ListAPIView, CreateAPIView):
     """
     评价对应的图片
     #TODO:只在后端开发时测试用
@@ -165,10 +165,4 @@ class CommentImageView(CreateAPIView):
     queryset = CommentImage.objects.all()
     serializer_class = CommentImageSerializer
 
-    def get(self, request):
-        req_data = request.query_params
-        imageId = req_data.get('image_id')
-        image = CommentImage.objects.filter(id=imageId).first()
-        if not image:
-            return Response({'error': 'Image does not exist'})
-        return HttpResponse(image.image, content_type='image/jpeg')
+
