@@ -16,6 +16,7 @@ class User(models.Model):
     userId = models.IntegerField(verbose_name='学生编号', null=True)
     email = models.EmailField(null=True)
     phone = models.CharField(max_length=20, null=True)
+    image = models.ImageField(verbose_name='头像', null=True)
     # TODO:完善信息
 
 
@@ -117,6 +118,8 @@ class ChangeDuration(models.Model):
     date = models.CharField(max_length=32)
     time = models.DateTimeField(default=timezone.now)
     type = models.IntegerField(default=1)
+    price = models.IntegerField(default=1)
+    membership = models.IntegerField(default=1)
     # TODO:完善事件信息
 
 
@@ -154,14 +157,6 @@ class CommentImage(models.Model):
     # 评论图片
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='img/%Y/%m/%d')
-
-
-class UserImage(models.Model):
-    # 用户图片
-    # TODO:提供接口让用户提交图片
-    detail = models.CharField(max_length=30, verbose_name='图片描述', null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='img/user')
 
 
 class StadiumImage(models.Model):

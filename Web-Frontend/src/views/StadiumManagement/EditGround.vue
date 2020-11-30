@@ -274,7 +274,7 @@ export default {
                     for (var i=0;i<this.grounds.length;i++){
                         let duration = this.grounds[i].duration.split(":")
                         this.grounds[i].duration=Number(duration[0])*60 + Number(duration[1])
-                        let openHours = this.grounds[i].openHours.split(" ")
+                        let openHours = this.grounds[i].openingHours.split(" ")
                         this.grounds[i].periods=[]
                         for (var j=0;j<openHours.length;j++){
                             let time = openHours[j].split("-")
@@ -399,18 +399,20 @@ export default {
             return true
         },
         uploadForm(ground) {
+            console.log(ground)
             let duration = (Array(2).join("0") + ground.duration / 60).slice(-2) + ":" + (Array(2).join("0") + ground.duration % 60).slice(-2);
             let openingHours=""
             for (var i = 0 ; i < ground.periods.length;i++){
                 openingHours+=ground.periods[i].start+"-"+ground.periods[i].end+" "
             }
-            //console.log($(".input-group.date").datepicker('getDate'))
+            let date = $(".input-group.date").datepicker('getDate')
             let request_body = {
                 courtTypeId: ground.id,
                 managerId: 3,
-                // TODO: 这里如何获取date中的数据？
-                startDate: "2020-12-06",
+                startDate: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(),
                 duration: duration,
+                price:ground.price,
+                membership:ground.membership,
                 openHours: openingHours
             };
             this.$axios.post("changeduration/", request_body).then(res => {

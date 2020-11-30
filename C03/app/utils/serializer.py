@@ -9,12 +9,6 @@ class UserSerializer(serializers.ModelSerializer):
                                      required=False)
     phone = serializers.CharField(label='手机号', validators=[MinLengthValidator(11), MaxLengthValidator(11)],
                                   required=False)
-    images = serializers.SerializerMethodField()
-
-    def get_images(self, obj):
-        images_list = obj.userimage_set.all()
-        images_list = UserImageSerializer(images_list, many=True)
-        return images_list.data
 
     class Meta:
         model = User
@@ -67,7 +61,7 @@ class StadiumSerializer(serializers.ModelSerializer):
 class CourtTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourtType
-        exclude = ['id', 'stadium']
+        exclude = ['stadium']
 
 
 class CourtSerializer(serializers.ModelSerializer):
@@ -171,8 +165,3 @@ class StadiumImageSerializer(serializers.ModelSerializer):
         model = StadiumImage
         fields = '__all__'
 
-
-class UserImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserImage
-        fields = '__all__'

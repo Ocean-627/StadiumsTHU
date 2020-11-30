@@ -5,6 +5,9 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
 from django.http import JsonResponse
+from django.http import HttpResponse
+import json
+
 
 from app.utils.utils import *
 from app.utils.manager_serializer import *
@@ -120,7 +123,7 @@ class CourtView(APIView):
     """
     场地信息
     """
-    authentication_classes = [ManagerAuthtication]
+    # authentication_classes = [ManagerAuthtication]
 
     def get(self, request):
         req_data = request.query_params
@@ -130,23 +133,26 @@ class CourtView(APIView):
         if not workplace or not floor or not date:
             return JsonResponse({'error': 'Incomplete information'})
         stadium = Stadium.objects.all().filter(id=int(workplace))[0]
-        courts = stadium.court_set.all()
-        courts = courts.filter(floor=floor)
-        myCourts = []
-        response = {"floor": floor, "number": len(courts), "duration": stadium.durations, "court": myCourts}
-        for court in courts:
-            myCourt = {"id": court.id, "location": court.location, 'accessibleDuration': court.stadium.openingHours,
-                       'reservedDuration': [], 'notReservedDuration': []}
-            reservedDurations = court.duration_set.all().filter(accessible=False, date=date)
-            for duration in reservedDurations:
-                myCourt['reservedDuration'].append(
-                    (duration.id, duration.startTime, duration.endTime, duration.user.username))
-            notReservedDurations = court.duration_set.all().filter(accessible=True, date=date)
-            for duration in notReservedDurations:
-                myCourt['notReservedDuration'].append((duration.id, duration.startTime, duration.endTime))
-            myCourt["comment"] = []
-            myCourts.append(myCourt)
-        return JsonResponse(response)
+        response = []
+        for courtType in stadium.courttype_set.all():
+            myCourtType = model_to_dict(courtType)
+            myCourts = []
+            for court in courtType.court_set.all():
+                myCourt = {"id": court.id,
+                           "location": court.location,
+                           'reservedDuration': [], 'notReservedDuration': []}
+                reservedDurations = court.duration_set.all().filter(accessible=False, date=date)
+
+                for duration in reservedDurations:
+                    myCourt['reservedDuration'].append(model_to_dict(duration))
+                notReservedDurations = court.duration_set.all().filter(accessible=True, date=date)
+                for duration in notReservedDurations:
+                    myCourt['notReservedDuration'].append(model_to_dict(duration))
+                myCourt["comment"] = []
+                myCourts.append(myCourt)
+            myCourtType["courts"] = myCourts
+            response.append(myCourtType)
+        return JsonResponse(response,safe=False)
 
 
 class ReserveEventView(APIView):
@@ -180,11 +186,21 @@ class ChangeDurationView(APIView):
         startDate = req_data.get('startDate', '')
         duration = req_data.get('duration', '')
         openHours = req_data.get('openHours', '')
-        if not courtTypeId or not managerId or not startDate or not duration or not openHours:
+        price = req_data.get('price', '')
+        membership = req_data.get('membership', '')
+        if not courtTypeId\
+                or not managerId or not startDate \
+                or not duration or not openHours\
+                or not membership or not price:
             return JsonResponse({'error': 'Incomplete information'})
         manager = Manager.objects.all().filter(id=int(managerId))[0]
         courtType = CourtType.objects.all().filter(id=int(courtTypeId))[0]
-        changeDuration = ChangeDuration(courtType=courtType, manager=manager, openingHours=openHours, date=startDate)
+        changeDuration = ChangeDuration(courtType=courtType,
+                                        manager=manager,
+                                        openingHours=openHours,
+                                        date=startDate,
+                                        membership=membership,
+                                        price=price)
         changeDuration.save()
 
         # TODO: 立刻处理更改时段操作
