@@ -109,9 +109,8 @@
                       <div class="form-group" id="data_1">
                         <label class="font-normal">使用日期</label>
                         <div class="input-group date">
-                          <span class="input-group-addon"
-                            ><i class="fa fa-calendar"></i></span
-                          ><inputtype="text" class="form-control" />
+                          <span class="input-group-addon"><i class="fa fa-calendar"></i></span
+                          ><input type="text" class="form-control" />
                         </div>
                       </div>
                       <div class="form-group">
