@@ -5,6 +5,7 @@ var colorType = 0
 export default {
     colorType,
     fix_reserves: function(reserves, open_times) {
+        let k = 0
         let res = []
         let close_times = []
         let i = 0, j = 0
@@ -28,7 +29,7 @@ export default {
         i = j = 0
         let tmp = []
         while(i < close_times.length && j < reserves.length){
-            if(close_times[i].start < reserves[j].start){
+            if(close_times[i].start < reserves[j].startTime){
                 tmp.push(close_times[i++])
             }
             else{

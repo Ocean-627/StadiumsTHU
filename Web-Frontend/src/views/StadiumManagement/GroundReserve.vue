@@ -6,6 +6,7 @@
       <div class="row wrapper border-bottom white-bg page-heading">
         <!--Breadcrum 导航-->
         <div class="col-lg-9">
+        
           <h2>场地预留 <small>@{{stadiumName}}</small></h2>
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -25,12 +26,7 @@
         <!-- TODO: 在路由里添加参数，控制是到哪一个场馆的编辑页面 -->
         <div class="row" style="margin-bottom: 20px">
           <div class="col-lg-3">
-            <select
-              class="chosen-select"
-              v-model="current_date"
-              id="date"
-              @changed="changeDate()"
-            >
+            <select class="chosen-select" v-model="current_date" id="date" @changed="changeDate()">
               <option v-for="(date, index) in dates" :key="date" :value="index">
                 {{ date }}
               </option>
@@ -40,29 +36,23 @@
         <div
           class="row"
           v-for="ground in grounds"
-          :key="ground.name"
+          :key="ground.type"
         >
           <div class="col-lg-12">
             <div class="ibox">
               <div class="ibox-title">
-                <h5>{{ ground.name }}</h5>
+                <h5>{{ ground.type }}</h5>
                 <div class="ibox-tools">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     <i class="fa fa-wrench" style="color: green"></i>
                   </a>
                   <ul class="dropdown-menu dropdown-user">
                     <li>
-                      <a
-                        class="dropdown-item"
-                        data-toggle="modal"
-                        data-target="#myModal"
-                        >场地预留</a
-                      >
+                      <a class="dropdown-item" data-toggle="modal" data-target="#myModal">场地预留</a>
                     </li>
                     <li>
                       <a class="dropdown-item" v-on:click="manage(ground)"
-                        >预约管理</a
-                      >
+                        >预约管理</a>
                     </li>
                   </ul>
                   <a class="collapse-link">
@@ -71,12 +61,12 @@
                 </div>
               </div>
               <div class="ibox-content">
-                <div v-for="data in ground.datas" :key="data.id">
+                <div v-for="data in ground.courts" :key="data.id">
                   <h5>{{ data.id }}</h5>
                   <div class="progress">
                     <div
-                      v-for="reserve in data.reserves"
-                      :key="reserve.start"
+                      v-for="reserve in data.reservedDuration"
+                      :key="reserve.startTime"
                       :class="reserve.type | progress_type"
                       :style="reserve | progress_length"
                       role="progressbar"
@@ -88,13 +78,7 @@
                   <br />
                 </div>
               </div>
-              <div
-                class="modal inmodal"
-                id="myModal"
-                tabindex="-1"
-                role="dialog"
-                aria-hidden="true"
-              >
+              <div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content animated fadeIn">
                     <div class="modal-header">
@@ -111,10 +95,7 @@
                       <div class="form-group" id="data_1">
                         <label class="font-normal">使用日期</label>
                         <div class="input-group date">
-                          <span class="input-group-addon"
-                            ><i class="fa fa-calendar"></i></span
-                          ><input
-                            type="text"
+                          <span class="input-group-addon"><i class="fa fa-calendar"></i></span><inputtype="text"
                             class="form-control"
                           />
                         </div>
@@ -296,7 +277,7 @@ import "@/assets/js/plugins/chosen/chosen.jquery.js";
 import "@/assets/js/plugins/jasny/jasny-bootstrap.min.js";
 import "@/assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js";
 import "@/assets/js/plugins/datapicker/bootstrap-datepicker.js";
-import "@/assets/js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"
+import "@/assets/js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js";
 
 export default {
   data() {
@@ -315,10 +296,11 @@ export default {
       form_time: "",
       form_start: "",
       form_end: "",
-      stadiumName:"测试"
-    };
+      stadiumName: "测试"
+    }
+    
 
-    return res;
+    return res
   },
   components: {
     Toolbox,
@@ -331,10 +313,10 @@ export default {
       // 为了节省局部变量，所有场地的预留的模态窗口共享表单变量，所以需要传入ground参数进行区分
       // TODO: 上传表单，检查合法性，比如输入的场地号码数=预约场地数
       swal({
-        title: "成功", 
-        text: "场地预留成功", 
-        type: "success",
-      })
+        title: "成功",
+        text: "场地预留成功",
+        type: "success"
+      });
     },
     manage(ground) {
       // TODO: 跳转到相应的预约信息管理界面就行
@@ -364,19 +346,19 @@ export default {
       return "width: " + delta.toString() + "%";
     },
     progress_title: function(reserve) {
-      let type = reserve.type
-      let title = ""
+      let type = reserve.type;
+      let title = "";
       if (type === 0) {
-        title += "空闲时段（"
+        title += "空闲时段（";
       } else if (type === 1) {
-        title += "已预订时段（"
+        title += "已预订时段（";
       } else if (type === 2) {
-        title += "预留时段（"
+        title += "预留时段（";
       } else if (type === -1) {
-        title += "不可用时段（"
+        title += "不可用时段（";
       }
-      title += reserve.start + "-" + reserve.end + "）"
-      return title
+      title += reserve.start + "-" + reserve.end + "）";
+      return title;
     }
   },
   updated() {
@@ -391,13 +373,13 @@ export default {
       autoclose: true,
       format: "yyyy-mm-dd"
     });
-    $('.tagsinput').tagsinput({
-        tagClass: 'label label-primary'
+    $(".tagsinput").tagsinput({
+      tagClass: "label label-primary"
     });
     $(".touchspin").TouchSpin({
       min: 1,
-      buttondown_class: 'btn btn-white',
-      buttonup_class: 'btn btn-white'
+      buttondown_class: "btn btn-white",
+      buttonup_class: "btn btn-white"
     });
   },
   mounted() {
@@ -412,164 +394,43 @@ export default {
       autoclose: true,
       format: "yyyy-mm-dd"
     });
-    $('.tagsinput').tagsinput({
-        tagClass: 'label label-primary'
+    $(".tagsinput").tagsinput({
+      tagClass: "label label-primary"
     });
     $(".touchspin").TouchSpin({
       min: 1,
-      buttondown_class: 'btn btn-white',
-      buttonup_class: 'btn btn-white'
+      buttondown_class: "btn btn-white",
+      buttonup_class: "btn btn-white"
     });
-
-    let grounds = [
-      {
-        name: "羽毛球场",
-        open_times: [
-          {
-            start: "08:00",
-            end: "13:00"
-          },
-          {
-            start: "14:00",
-            end: "22:00"
-          }
-        ],
-        datas: [
-          {
-            id: 0,
-            reserves: [
-              {
-                type: 1,
-                start: "08:00",
-                end: "10:00"
-              },
-              {
-                type: 1,
-                start: "12:00",
-                end: "13:00"
-              },
-              {
-                type: 2,
-                start: "14:00",
-                end: "17:30"
-              }
-            ]
-          },
-          {
-            id: 1,
-            reserves: [
-              {
-                type: 1,
-                start: "09:00",
-                end: "10:30"
-              },
-              {
-                type: 1,
-                start: "14:30",
-                end: "16:00"
-              },
-              {
-                type: 1,
-                start: "20:00",
-                end: "21:30"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        name: "乒乓球场",
-        open_times: [
-          {
-            start: "06:00",
-            end: "13:00"
-          },
-          {
-            start: "14:00",
-            end: "22:00"
-          }
-        ],
-        datas: [
-          {
-            id: 0,
-            reserves: [
-              {
-                type: 1,
-                start: "08:00",
-                end: "10:00"
-              },
-              {
-                type: 1,
-                start: "12:00",
-                end: "13:00"
-              },
-              {
-                type: 1,
-                start: "15:00",
-                end: "18:30"
-              }
-            ]
-          },
-          {
-            id: 1,
-            reserves: [
-              {
-                type: 1,
-                start: "09:00",
-                end: "10:30"
-              },
-              {
-                type: 1,
-                start: "14:00",
-                end: "16:00"
-              },
-              {
-                type: 1,
-                start: "19:50",
-                end: "22:00"
-              }
-            ]
-          }
-        ]
-      }
-    ];
-    for (let i = 0; i < grounds.length; i++) {
-      for (let j = 0; j < grounds[i].datas.length; j++) {
-        grounds[i].datas[j].reserves = Common.fix_reserves(
-          grounds[i].datas[j].reserves,
-          grounds[i].open_times
-        );
-      }
-    }
     let request = {
-        params: {
-            stadium_id: this.$route.query.id,
-            date:$('#date option:selected').text().toString().replace(/(^\s*)|(\s*$)/g, ""),
-            floor:1
-        }
-    }
-    this.grounds = grounds;
-    this.$axios.get('court/', request)
-            .then(res => {
-              this.stadiumName = res.data.name
-              this.grounds = res.data.reserveInfo
-              console.log(res.data)
-                    // this.name = res.data[0].name
-                    // this.grounds = res.data[0].courtTypes
-                    // for (var i=0;i<this.grounds.length;i++){
-                    //     let duration = this.grounds[i].duration.split(":")
-                    //     this.grounds[i].duration=Number(duration[0])*60 + Number(duration[1])
-                    //     let openHours = this.grounds[i].openHours.split(" ")
-                    //     this.grounds[i].periods=[]
-                    //     for (var j=0;j<openHours.length;j++){
-                    //         let time = openHours[j].split("-")
-                    //         this.grounds[i].periods.push({start:time[0],end:time[1]})
-                    //     }
-                    // }   
-            })
-  },
-  // methods(){
+      params: {
+        stadium_id: this.$route.query.id,
+        date: $("#date option:selected")
+          .text()
+          .toString()
+          .replace(/(^\s*)|(\s*$)/g, ""),
+        floor: 1
+      }
+    };
 
-  // }
+    this.$axios.get("court/", request).then(res => {
+      this.stadiumName = res.data.name;
+      this.grounds = res.data.reserveInfo;
+      for (let i = 0; i < this.grounds.length; i++) {
+        let openTimes = this.grounds[i].openingHours.split(" ")
+        this.grounds[i].open_times = []
+        for (let k = 0; k < openTimes.length; k++){
+          var openTime = {"start":openTimes[k].split("-")[0].toString(),"end":openTimes[k].split("-")[1].toString()}
+          this.grounds[i].open_times.push(openTime)
+        }
+        for (let j = 0; j < this.grounds[i].courts.length; j++) {
+            this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
+            this.grounds[i].courts[j].reservedDuration,
+            this.grounds[i].open_times
+          );
+        }
+      }
+    });
+  }
 };
 </script>
