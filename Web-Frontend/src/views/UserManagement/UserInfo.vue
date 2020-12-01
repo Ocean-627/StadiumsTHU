@@ -62,7 +62,8 @@ export default {
                     pageSizes: [5, 10, 15, 20, 50, 100, 200, 500]
                 },
                 sortConfig: {
-                    remote: true
+                    remote: true,
+                    trigger: 'cell'
                 },
                 formConfig: {
                     titleWidth: 100,
@@ -98,6 +99,19 @@ export default {
                             span: 6, 
                             folding: true,
                             itemRender: { name: '$input', props: { placeholder: '请输入手机号' } } 
+                        },
+                        { 
+                            field: 'auth', 
+                            title: '是否认证', 
+                            span: 6, 
+                            folding: true, 
+                            itemRender: { 
+                                name: '$select', 
+                                options: [
+                                    { label: '已认证', value: true },
+                                    { label: '未认证', value: false }
+                                ]
+                            } 
                         },
                         { 
                             span: 24, 
@@ -140,7 +154,7 @@ export default {
                                 queryParams[property] = values.join(',')
                             })
                             console.log(queryParams)
-                            let tmp = this.$axios.get(`/user/?page=${page.currentPage}&size=${page.pageSize}`, queryParams).then(res => res.data)
+                            let tmp = this.$axios.get(`/user/?page=${page.currentPage}&size=${page.pageSize}`, {params: queryParams}).then(res => res.data)
                             console.log(tmp)
                             return tmp
                         },
@@ -183,10 +197,10 @@ export default {
                         title: '是否认证', 
                         filters: [
                             { label: '已认证', value: true },
-                            { label: '未认证', value: false}
+                            { label: '未认证', value: false }
                         ],
                         formatter: function(value){
-                            if(value) return "已认证"
+                            if(value === "true") return "已认证"
                             return "未认证"
                         }
                     }
