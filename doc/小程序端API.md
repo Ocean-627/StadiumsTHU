@@ -120,6 +120,7 @@ Response:
                 "membership": 3
             }
         ],
+        “collect”: true,
         "name": "西区体育馆",
         "pinyin": "xiqutiyuguan",
         "information": "cbx用来写bug的场馆",
@@ -469,6 +470,62 @@ Response:
 ```
 
 返回值中`image`为图片的`URL`，可以直接访问。
+
+#### 收藏体育馆
+
+**收藏体育馆**
+
+```js
+Method: POST
+URL: /api/user/collect
+Request:{
+    'stadium_id': '',
+    'detail': ''
+}
+Response:
+{
+    "id": 3,
+    "stadium_name": "西区体育馆",
+    "detail": "明天打算去",
+    "user": 2,
+    "stadium": 11
+}
+```
+
+其中`detail`是收藏的备注。
+
+**查看收藏的体育馆**
+
+```js
+Method: GET
+URL: /api/user/collect
+Request:{
+    'detail': '',
+    'id': '',
+    'stadium_id'
+}
+Response:
+[
+    {
+        "id": 2,
+        "stadium_name": "综合体育馆",
+        "detail": "明天打算去",
+        "user": 2,
+        "stadium": 10
+    },
+    {
+        "id": 3,
+        "stadium_name": "西区体育馆",
+        "detail": "明天打算去",
+        "user": 2,
+        "stadium": 11
+    }
+]
+```
+
+请求参数分别是收藏备注`detail`的模糊匹配，该条收藏信息的精确匹配和场馆`stadium_id`的精确匹配。
+
+结果是一个列表。
 
 ## 需求：
 
