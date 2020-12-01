@@ -29,7 +29,7 @@ class DurationFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:
         model = Duration
-        fields = ['stadium_id', 'court_id', 'openState', 'accessible', 'startTime']
+        fields = ['stadium_id', 'court_id', 'openState', 'accessible', 'startTime', 'date']
 
 
 class ReserveEventFilter(filters.FilterSet):

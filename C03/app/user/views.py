@@ -161,5 +161,4 @@ class CommentImageView(CreateAPIView):
     评价对应的图片
     """
     authentication_classes = [UserAuthtication]
-    queryset = CommentImage.objects.all()
     serializer_class = CommentImageSerializer

@@ -100,7 +100,6 @@ class ReserveEvent(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     duration = models.ForeignKey(Duration, on_delete=models.DO_NOTHING)
     result = models.CharField(max_length=2, choices=APPLY_RESULT, default=WAITING, verbose_name='预定结果')
-    # TODO:开始时间和结束时间可以处理掉
     startTime = models.CharField(max_length=50)
     endTime = models.CharField(max_length=50)
     payment = models.BooleanField(null=True, verbose_name='是否支付')
@@ -149,6 +148,7 @@ class Comment(models.Model):
     # 场地评论
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
+    reserve = models.ForeignKey(ReserveEvent, on_delete=models.DO_NOTHING)
     score = models.IntegerField(default=3)
     content = models.CharField(max_length=300)
 

@@ -66,6 +66,7 @@ class CourtTypeSerializer(serializers.ModelSerializer):
 
 class CourtSerializer(serializers.ModelSerializer):
     stadiumName = serializers.CharField(source='stadium.name')
+    foreDays = serializers.IntegerField(source='stadium.foreDays')
 
     class Meta:
         model = Court
@@ -85,19 +86,29 @@ class ReserveEventSerializer(serializers.ModelSerializer):
     stadiumName = serializers.CharField(source='stadium.name', required=False)
     courtName = serializers.CharField(source='court.name', required=False)
     userName = serializers.CharField(source='user.username', required=False)
+    result = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField(required=False)
+    has_comments = serializers.SerializerMethodField(required=False)
+
+    def get_result(self, obj):
+        return obj.get_result_display()
+
+    def get_comments(self, obj):
+        comments = obj.comment_set.all()
+        comments = CommentSerializer(comments, many=True)
+        return comments.data
+
+    def get_has_comments(self, obj):
+        size = len(obj.comment_set.all())
+        return size > 0
 
     duration_id = serializers.IntegerField(label='时段编号', write_only=True)
-
-    result = serializers.SerializerMethodField()
 
     def validate_duration_id(self, value):
         duration = Duration.objects.filter(id=value, accessible=True).first()
         if not duration:
             raise ValidationError('Invalid duration_id')
         return value
-
-    def get_result(self, obj):
-        return obj.get_result_display()
 
     def create(self, validated_data):
         duration = Duration.objects.filter(id=validated_data.get('duration_id')).first()
@@ -121,7 +132,7 @@ class CommentSerializer(serializers.ModelSerializer):
     courtName = serializers.CharField(source='court.name', required=False)
     images = serializers.SerializerMethodField(required=False)
 
-    court_id = serializers.IntegerField(label='场馆编号', write_only=True)
+    reserve_id = serializers.IntegerField(label='场馆编号', write_only=True)
     content = serializers.CharField(label='评论内容', validators=[MinLengthValidator(15), MaxLengthValidator(300)])
 
     def get_images(self, obj):
@@ -129,20 +140,21 @@ class CommentSerializer(serializers.ModelSerializer):
         images_list = CommentImageSerializer(images_list, many=True)
         return images_list.data
 
-    def validate_court_id(self, value):
-        court = Court.objects.filter(id=value).first()
-        if not court:
-            raise ValidationError('Invalid court_id')
+    def validate_reserve_id(self, value):
+        event = ReserveEvent.objects.filter(id=value, user=self.context['request'].user).first()
+        if not event:
+            raise ValidationError('Invalid reserve_id')
         return value
 
     def create(self, validated_data):
-        comment = Comment.objects.create(user=self.context['request'].user, **validated_data)
+        event = ReserveEvent.objects.filter(id=validated_data.get('reserve_id')).first()
+        comment = Comment.objects.create(user=event.user, court=event.court, **validated_data)
         return comment
 
     class Meta:
         model = Comment
         fields = '__all__'
-        read_only_fields = ['user', 'court']
+        read_only_fields = ['user', 'court', 'reserve']
 
 
 class CommentImageSerializer(serializers.ModelSerializer):
@@ -161,7 +173,15 @@ class CommentImageSerializer(serializers.ModelSerializer):
 
 
 class StadiumImageSerializer(serializers.ModelSerializer):
+    stadium_id = serializers.IntegerField(label='场馆编号', write_only=True)
+
+    def validate_stadium_id(self, value):
+        stadium = Stadium.objects.filter(id=value).first()
+        if not stadium:
+            raise ValidationError('Invalid stadium_id')
+        return value
+
     class Meta:
         model = StadiumImage
         fields = '__all__'
-
+        read_only_fields = ['stadium']

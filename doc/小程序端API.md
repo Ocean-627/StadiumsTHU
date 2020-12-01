@@ -30,14 +30,17 @@ URL: /api/user/user
 Request:
 Response:
 {
-	'auth': '',
-    'name': '',
-    'userId': '',
-    'email': '',
-    'phone': ''
-    'loginToken': ''
-    'loginTime': ''
-    'openId': ''
+    "id": 2,
+    "phone": "18801225328",
+    "openId": "yyh",
+    "loginToken": "3",
+    "loginTime": "2020-11-30T15:56:07.143532Z",
+    "auth": false,
+    "name": "cbx",
+    "nickName": "战神",
+    "userId": 2018011894,
+    "email": "cbx@qq.com",
+    "image": "/media/user/timg_VCjkG6O.jpg"
 }
 ```
 
@@ -53,6 +56,7 @@ Request:
     'userId': '',
     'email': '',
     'phone': ''
+    'image': ''
 }
 Response:
 {
@@ -72,7 +76,9 @@ Response:
 
     应该用POST
 
- 3. 头像，以及修改头像
+ 3. ~~头像，以及修改头像~~
+
+    增加了image字段，在body中传入image即可
 
 ### 场馆信息
 
@@ -82,38 +88,59 @@ Response:
 Method: GET
 URL: /api/user/stadium
 QueryParam:{
+    'id': ''
     'info': '',
     'name': '',
     'foreGt': '',
     'openState': ''，
     'foreDays':''
-    ‘id’:''
 }
 Response:
-    [
-        {
-            'id': '',
-            'name': '',
-            'information': '',
-            'openingHours': '',
-            'openTime': '',
-            'closeTime': '',
-            'contact': '',
-            'openState': '',
-            'foreDays': '',
-           	'durations': '',
-            // 新增
-            'courtType': ['', ],
-            'comments': '',
-            'score':'',
-            'location':'',
-        },
-    ]
+[
+    {
+        "id": 11,
+        "images": [],
+        "comments": 0,
+        "score": 3,
+        "courtTypes": [
+            {
+                "id": 7,
+                "openingHours": "8:00-10:00 13:00-17:00",
+                "type": "羽毛球",
+                "duration": "01:00",
+                "price": 30,
+                "membership": 3
+            },
+            {
+                "id": 8,
+                "openingHours": "8:00-10:00 13:00-17:00",
+                "type": "篮球",
+                "duration": "01:00",
+                "price": 30,
+                "membership": 3
+            }
+        ],
+        "name": "西区体育馆",
+        "pinyin": "xiqutiyuguan",
+        "information": "cbx用来写bug的场馆",
+        "openTime": "07:00",
+        "closeTime": "18:00",
+        "contact": "18801225328",
+        "openState": true,
+        "foreDays": 2,
+        "durations": "02:00",
+        "location": "至善路",
+        "longitude": "106.332390",
+        "latitude": "40.004239"
+    }
+]
 ```
 
 其中，返回值是一个`Json`格式的列表，每一项包含了一个**场馆**的信息。
 
-四个请求参数都是可选的。
+六个请求参数都是可选的。
+
+`id`是一个整数，代表场馆的编号。
 
 `info`和`name`分别在场馆的信息和名字中进行**模糊匹配**。
 
@@ -123,12 +150,11 @@ Response:
 
 `foreDays`是一个整数，代表可提前预约时间。
 
-`id`是一个整数，代表场馆的编号。
-
 ###### 需求
 
-	1. 添加场馆地理位置（描述信息(xx路)和经纬度）
-​		目前返回在`location`中
+1. ~~添加场馆地理位置（描述信息(xx路)和经纬度）~~
+
+​		目前返回在`location`,`latitude`和`longtitude`中
 
   1. ~~添加场馆运动项目信息~~
 
@@ -138,9 +164,13 @@ Response:
 
      分别返回在`score`和`location`中
 
-  3. 添加/api/user/stadium/{stadium-id}接口来获取某个场馆具体信息，包括场馆简介，场馆须知，评论
+  3. ~~添加/api/user/stadium/{stadium-id}接口来获取某个场馆具体信息，包括场馆简介，场馆须知，评论~~
 
-  4. 场馆图片(1张)
+     请求参数中增加id=要查询场馆参数即可
+
+  4. ~~场馆图片(1张)~~
+
+     返回在images列表中，列表中每一项是图片的URL，可以直接访问。
 
 ##### 获取场地信息
 
@@ -159,19 +189,21 @@ QueryParam:
     'location'
 }
 Response:
-    [
-        {
-            'id': '',
-            'stadium_id': '',
-            'stadiumName': '',
-            'type': '',
-            'name': '',
-            'price': '',
-            'openState': '',
-            'floor': '',
-            'location': ''
-        }
-    ]
+[
+    {
+        "id": 32,
+        "stadiumName": "综合体育馆",
+        "foreDays": 3,
+        "type": "羽毛球",
+        "name": "场地0",
+        "price": 30,
+        "openState": true,
+        "floor": 1,
+        "location": "110B",
+        "stadium": 10,
+        "courtType": 5
+    }
+]
 ```
 
 其中，返回值是一个`Json`格式的列表，每一项包含了一个**场地**的信息。
@@ -194,7 +226,9 @@ Response:
 
 ###### 需求：
 
-1. 场地能够提前多少天预约
+1. ~~场地能够提前多少天预约~~
+
+   返回在`foreDays`中
 
 ##### 获取时段信息
 
@@ -207,21 +241,25 @@ QueryParam:
       'court_id': '',
       'openState': '',
       'accessible': '',
-      'startTime': ''
+      'startTime': '',
+      'data': ''
 }
 Response:
-    [
-        {
-            'stadiumName': '',
-            'courtName': '',
-            'id': '',
-            'date': '',
-            'startTime': '',
-            'endTime': '',
-            'accessible': '',
-            'openState': ''
-        }
-    ]
+[
+    {
+        "id": 241,
+        "stadiumName": "综合体育馆",
+        "courtName": "场地0",
+        "date": "11.16",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "openState": true,
+        "accessible": false,
+        "stadium": 10,
+        "court": 32,
+        "user": 2
+    },
+]
 ```
 
 其中，返回值是一个`Json`格式的列表，每一项包含了一个**时段**的信息。
@@ -230,13 +268,11 @@ Response:
 
 `accessible`代表是否已经被预约。
 
-其余四个参数见字面含义。
-
 ###### 需求：
 
-​	1. queryParam里面加一个date，用于获取某一天内的所有时段
+​	1. ~~`queryParam`里面加一个date，用于获取某一天内的所有时段~~
 
-
+​		增加了date，是一个字符串，要求**精确**匹配
 
 ### 预订场馆
 
@@ -249,7 +285,25 @@ Request:
 {
     'duration_id': '',
 }
-Response: 一个字典，包含models.ReserveEvent的所有字段
+Response:
+{
+    "id": 9,
+    "stadiumName": "综合体育馆",
+    "courtName": "场地0",
+    "result": "success",
+    "comments": [],
+    "has_comments": false,
+    "startTime": "11:00",
+    "endTime": "12:00",
+    "payment": false,
+    "cancel": false,
+    "checked": false,
+    "leave": false,
+    "stadium": 10,
+    "court": 32,
+    "user": 2,
+    "duration": 243
+}
 ```
 
 `durationId`为想要预定的时段的 `id`。
@@ -261,27 +315,35 @@ Method: GET
 URL: /api/user/reserve
 QueryParam:
 Response:
-    [
-        {
-            'stadiumName': '',
-            'courtName': '',
-            'result': '',
-            'payment': '',
-            'cancle': '',
-            'startTime': '',
-            'endTime': '',
-            'checked': '',
-            'leave': ''
-        }
-    ] 
+[
+    {
+        "id": 7,
+        "stadiumName": "综合体育馆",
+        "courtName": "场地0",
+        "result": "success",
+        "comments": [],
+        "has_comments": false,
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "payment": false,
+        "cancel": false,
+        "checked": false,
+        "leave": false,
+        "stadium": 10,
+        "court": 32,
+        "user": 2,
+        "duration": 241
+    },
+]
 ```
 
 返回值是一个列表，每一项代表一次历史消息。
 
 ###### 需求：
 
-	1. cancel打错了，查看一下数据库里面是cancle还是cancel
- 	2. 
+1. ~~cancel打错了，查看一下数据库里面是`cancle`还是cancel~~
+
+   问题不大，只是文档手滑写错了。
 
 ##### 取消预订
 
@@ -302,8 +364,13 @@ Response:
 
 ###### 需求：
 
-	1. 查看预定历史中添加一个字段表示用户是否已经评价，如果有评价需要评价的id
- 	2. 查看预定里面没给预定时段id
+1. ~~查看预定历史中添加一个字段表示用户是否已经评价，如果有评价需要评价的id~~
+
+   增加了comments和has_comments返回值，前者返回一个comments列表，后者返回一个布尔值，如果为True代表已经评论过，否则为没有评论过。
+
+  2. ~~查看预定里面没给预定时段id~~
+
+     返回在`duration`中
 
 ### 评价场馆
 
@@ -317,19 +384,18 @@ Request:{
     'court_id': ''
 }
 Response:
-{
-    [
-        {
-         	'user': '',
-            'court': '',
-            'courtName': '',
-            'content': '',
-            'images': [
-                ''
-            ]
-        }
-    ]
-}
+[
+    {
+        "id": 22,
+        "courtName": "场地0",
+        "images": [],
+        "content": "#includ<iostream>",
+        "score": 3,
+        "user": 2,
+        "court": 33,
+        "reserve": 8
+    }
+]
 ```
 
 其中返回值是一个列表，每一项代表一个评价信息。
@@ -348,13 +414,25 @@ Response:
 Method: POST
 URL: /api/user/comment
 Request:{
-    'court_id': '',
+    'reserve_id': '',
     'content': '',
 }
-Response: 一个字典，包含models.Comment的所有字段
+Response:
+{
+    "id": 23,
+    "courtName": "场地0",
+    "images": [],
+    "content": "虽然不是同一个时间，但是是同一个厕所",
+    "score": 3,
+    "user": 2,
+    "court": 33,
+    "reserve": 8
+}
 ```
 
-请求参数分别为场地的`Id`和评价内容。
+这里的评价是基于`ReserveEvent`的，并且绑定到一个预订事件中。
+
+请求参数分别为事件的`Id`和评价内容。
 
 `content`要求至少为$15$字，最多为$300$字。
 
@@ -374,10 +452,47 @@ Response:
 
 参数为要撤销的评价的 `Id`。
 
+**上传评价图片**
 
+```js
+Method: POST
+URL: /api/user/commentimage
+Request:{
+    'comment_id': ''
+}
+Response:
+{
+    "id": 12,
+    "image": "http://127.0.0.1:8000/media/comment/timg_Pi3DKKT.jpg",
+    "comment": 23
+}
+```
 
-
+返回值中`image`为图片的`URL`，可以直接访问。
 
 ## 需求：
 
-​	请求失败会返回什么？
+请求失败会返回什么？
+
+如果是请求方式不正确，会返回类似如下的提示。
+
+```python
+{
+    "detail": "Method \"POST\" not allowed."
+}
+```
+
+如果`POST`或者`GET`请求字段出现了非法值，会返回如下错误和解释
+
+```python
+{
+    "court_id": [
+        "Invalid court_id"
+    ],
+    "content": [
+        "Ensure this value has at least 15 characters (it has 7)."
+    ]
+}
+```
+
+**正在考虑如何加入一个统一的成功或者失败标识符**。

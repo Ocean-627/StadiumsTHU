@@ -8,7 +8,6 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 import json
 
-
 from app.utils.utils import *
 from app.utils.manager_serializer import *
 from app.utils.filter import *
@@ -123,6 +122,7 @@ class CourtView(APIView):
     """
     场地信息
     """
+
     # authentication_classes = [ManagerAuthtication]
 
     def get(self, request):
@@ -153,7 +153,7 @@ class CourtView(APIView):
                 myCourts.append(myCourt)
             myCourtType["courts"] = myCourts
             response.append(myCourtType)
-        myResponse['reserveInfo']=response
+        myResponse['reserveInfo'] = response
         return JsonResponse(myResponse)
 
 
@@ -190,9 +190,9 @@ class ChangeDurationView(APIView):
         openHours = req_data.get('openHours', '')
         price = req_data.get('price', '')
         membership = req_data.get('membership', '')
-        if not courtTypeId\
+        if not courtTypeId \
                 or not managerId or not startDate \
-                or not duration or not openHours\
+                or not duration or not openHours \
                 or not membership or not price:
             return JsonResponse({'error': 'Incomplete information'})
         manager = Manager.objects.all().filter(id=int(managerId))[0]
@@ -330,3 +330,11 @@ def refresh():
     #                                           endTime=endTime, date=date, openState=1, accessible=1)
     #                     myDuration.save()
     #             startTime = endTime
+
+
+class StadiumImageView(CreateAPIView):
+    """
+    场馆图片信息
+    """
+    # authentication_classes = [ManagerAuthtication]
+    serializer_class = StadiumImageSerializer
