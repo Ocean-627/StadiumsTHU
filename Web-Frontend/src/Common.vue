@@ -11,25 +11,25 @@ export default {
         let i = 0, j = 0
         let e = "00:00"
         for(; i < open_times.length; i++){
-            if(e != open_times[i].start){
+            if(e != open_times[i].startTime){
                 close_times.push({
                     type: -1,
-                    start: e,
-                    end: open_times[i].start
+                    startTime: e,
+                    endTime: open_times[i].startTime
                 })
             }
-            e = open_times[i].end
+            e = open_times[i].endTime
         }
         close_times.push({
             type: -1,
-            start: e,
-            end: "24:00"
+            startTime: e,
+            endTime: "24:00"
         })
 
         i = j = 0
         let tmp = []
         while(i < close_times.length && j < reserves.length){
-            if(close_times[i].start < reserves[j].startTime){
+            if(close_times[i].startTime < reserves[j].startTime){
                 tmp.push(close_times[i++])
             }
             else{
@@ -46,15 +46,15 @@ export default {
         e = "00:00"
         i = 0
         for(; i < tmp.length; i++){
-            if(e != tmp[i].start){
+            if(e != tmp[i].startTime){
                 res.push({
                     type: 0,
-                    start: e,
-                    end: tmp[i].start
+                    startTime: e,
+                    endTime: tmp[i].startTime
                 })
             }
             res.push(tmp[i])
-            e = tmp[i].end
+            e = tmp[i].endTime
         }
 
         return res
