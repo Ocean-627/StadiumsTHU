@@ -483,7 +483,14 @@ export default {
               Number(this.grounds[i].courts[j].reservedDuration[p].openState);
           }
 
-          this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
+            // 遍历特定时段，设定type字段
+            for (let p = 0; p < this.grounds[i].courts[j].reservedDuration.length;p++){
+              
+              // openstate为0表示是管理员预留的场地，为1表示是用户自己预订的场地
+              this.grounds[i].courts[j].reservedDuration[p].type = 2 - this.grounds[i].courts[j].reservedDuration[p].openState
+            }
+
+            this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
             this.grounds[i].courts[j].reservedDuration,
             this.grounds[i].open_times
           );
