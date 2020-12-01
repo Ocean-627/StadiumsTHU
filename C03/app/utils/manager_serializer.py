@@ -9,6 +9,9 @@ class StadiumSerializerForManager(StadiumSerializer):
         types = CourtTypeSerializerForManager(types, many=True)
         return types.data
 
+    def get_collect(self, obj):
+        return None
+
 
 class CourtTypeSerializerForManager(CourtTypeSerializer):
     amount = serializers.SerializerMethodField(required=False)

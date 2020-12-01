@@ -1,18 +1,19 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue'
-import App from './App'
-import router from './router'
-import Common from './Common'
-import axios from 'axios'
+import Vue from "vue";
+import App from "./App";
+import router from "./router";
+import Common from "./Common";
+import axios from "axios";
 
-import 'xe-utils'
-import VXETable from 'vxe-table'
-import 'vxe-table/lib/style.css'
-import VXETablePluginExportXLSX from 'vxe-table-plugin-export-xlsx'
+import "xe-utils";
+import VXETable from "vxe-table";
+import "vxe-table/lib/style.css";
+import VXETablePluginExportXLSX from "vxe-table-plugin-export-xlsx";
+import moment from "moment";
 
-Vue.use(VXETable)
-VXETable.use(VXETablePluginExportXLSX)
+Vue.use(VXETable);
+VXETable.use(VXETablePluginExportXLSX);
 
 //import '@/assets/js/jquery-3.1.1.min.js'
 //import '@/assets/js/popper.min.js'
@@ -28,15 +29,19 @@ VXETable.use(VXETablePluginExportXLSX)
 //import '@/assets/js/plugins/gritter/jquery.gritter.min.js'
 //
 //import '@/assets/js/plugins/sweetalert/sweetalert.min.js'
-axios.defaults.baseURL = 'http://127.0.0.1:8000/api/manager'
-Vue.config.productionTip = false
-Vue.prototype.Common = Common
-Vue.prototype.$axios = axios
+axios.defaults.baseURL = "http://127.0.0.1:8000/api/manager";
+Vue.config.productionTip = false;
+Vue.prototype.Common = Common;
+Vue.prototype.$axios = axios;
 
 /* eslint-disable no-new */
 new Vue({
-    el: '#app',
-    router,
-    components: { App },
-    template: '<App/>'
-})
+  el: "#app",
+  router,
+  components: { App },
+  template: "<App/>"
+});
+
+Vue.filter("datetime_format", function(str, pattern = "YYYY-MM-DD HH:mm:ss") {
+  return moment(str).format(pattern);
+});

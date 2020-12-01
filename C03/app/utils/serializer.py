@@ -57,9 +57,8 @@ class StadiumSerializer(serializers.ModelSerializer):
     def get_collect(self, obj):
         res = obj.collectevent_set.filter(user=self.context['request'].user).first()
         if not res:
-            return False
-        else:
-            return True
+            return None
+        return res.id
 
     class Meta:
         model = Stadium
@@ -198,7 +197,6 @@ class StadiumImageSerializer(serializers.ModelSerializer):
 class CollectEventSerializer(serializers.ModelSerializer):
     stadium_name = serializers.CharField(source='stadium.name', required=False)
     stadium_id = serializers.IntegerField(label='场馆编号', write_only=True)
-    detail = serializers.CharField(label='备注', validators=[MaxLengthValidator(30)])
 
     def validate_stadium_id(self, value):
         stadium = Stadium.objects.filter(id=value).first()

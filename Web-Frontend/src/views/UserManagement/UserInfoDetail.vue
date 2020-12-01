@@ -32,12 +32,12 @@
             <img
               alt="image"
               class="img-circle img-responsive"
-              src="/static/img/head.jpg"
+              :src="user.image"
               style="height: 150px; width:150px;"
             />
           </div>
           <div class="col-md-2">
-            <h1 style="padding-top: 30px"><strong>Hasta</strong></h1>
+            <h1 style="padding-top: 30px"><strong>{{ user.nickName }}</strong></h1>
           </div>
           <div class="col-md-3"></div>
           <div
@@ -70,14 +70,14 @@
             <strong>姓名</strong>
           </div>
           <div class="col-md-2">
-            后端人
+            {{ user.name }}
           </div>
           <div class="col-md-1 border-right"></div>
           <div class="col-md-3">
             <strong>邮箱</strong>
           </div>
           <div class="col-md-2">
-            juele@163.com
+            {{ user.email }}
           </div>
         </div>
         <div class="row i-row">
@@ -85,14 +85,14 @@
             <strong>学号/工号</strong>
           </div>
           <div class="col-md-2">
-            2018011904
+            {{ user.userId }}
           </div>
           <div class="col-md-1 border-right"></div>
           <div class="col-md-3">
             <strong>手机</strong>
           </div>
           <div class="col-md-2">
-            18686868686
+            {{ user.phone }}
           </div>
         </div>
         <div class="row i-row">
@@ -100,17 +100,26 @@
             <strong>用户类别</strong>
           </div>
           <div class="col-md-2">
-            在校学生
+            {{ user.type }}
           </div>
           <div class="col-md-1 border-right"></div>
           <div class="col-md-3">
             <strong>认证状态</strong>
           </div>
           <div class="col-md-2">
-            {{ auth ? "已认证" : "未认证" }}
-            <i class="fa fa-check" style="color: green" v-show="auth"></i>
-            <i class="fa fa-times" style="color: red" v-show="!auth"></i>
+            {{ user.auth ? "已认证" : "未认证" }}
+            <i class="fa fa-check" style="color: green" v-show="user.auth"></i>
+            <i class="fa fa-times" style="color: red" v-show="!user.auth"></i>
           </div>
+        </div>
+        <div class="row i-row">
+          <div class="col-md-3">
+            <strong>最近登录时间</strong>
+          </div>
+          <div class="col-md-2">
+            {{ user.loginTime | datetime_format }}
+          </div>
+          <div class="col-md-1 border-right"></div>
         </div>
         <div class="row i-row">
           <div class="col-md-3">
@@ -248,6 +257,7 @@ import Toolbox from "@/components/Toolbox";
 export default {
   data() {
     return {
+      user: {},
       reserve_records: [
         {
           id: 1,
@@ -298,7 +308,6 @@ export default {
         }
       ],
       blacklist_records: [],
-      auth: true
     };
   },
   components: {
@@ -330,6 +339,15 @@ export default {
   methods: {
     sendMessage() {},
     deleteUser() {}
+  },
+  mounted() {
+    this.$axios
+      .get(`/user/`, { params: { userId: this.$route.params.userId } })
+      .then(res => {
+          console.log(res)
+        this.user = res.data.results[0];
+        console.log(this.user);
+      });
   }
 };
 </script>

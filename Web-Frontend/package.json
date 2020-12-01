@@ -24,6 +24,7 @@
     "less-loader": "^7.1.0",
     "masonry": "0.0.2",
     "masonry-layout": "^4.2.2",
+    "moment": "^2.29.1",
     "outlayer": "^2.1.1",
     "popper.js": "^1.16.1",
     "vue": "^2.5.2",

@@ -38,6 +38,7 @@ import Navbar from "@/components/Navbar"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import Toolbox from "@/components/Toolbox"
+import moment from "moment"
 
 export default {
     data() {
@@ -83,14 +84,27 @@ export default {
                         },
                         { 
                             field: 'userId',
-                            title: '姓名', 
+                            title: '学号/工号', 
                             span: 6, 
                             itemRender: { name: '$input', props: { placeholder: '请输入学号/工号' } } 
+                        },
+                        {
+                            field: 'type',
+                            title: '用户类型', 
+                            span: 6, 
+                            itemRender: { 
+                                name: '$select', 
+                                options: [
+                                    { label: '在校学生', value: '在校学生' },
+                                    { label: '教工', value: '教工' }
+                                ]
+                            } 
                         },
                         { 
                             field: 'email', 
                             title: '邮箱', 
                             span: 6, 
+                            folding: true,
                             itemRender: { name: '$input', props: { placeholder: '请输入邮箱' } } 
                         },
                         { 
@@ -149,17 +163,16 @@ export default {
                         query: ({ page, sort, filters, form  }) => {
                             const queryParams = Object.assign({
                                 sort: (sort.order === "desc") ? ("-" + sort.property) : sort.property,
+                                page: page.currentPage,
+                                size: page.pageSize
                             }, form)
                             filters.forEach(({ property, values }) => {
                                 queryParams[property] = values.join(',')
                             })
-                            console.log(queryParams)
-                            let tmp = this.$axios.get(`/user/?page=${page.currentPage}&size=${page.pageSize}`, {params: queryParams}).then(res => res.data)
-                            console.log(tmp)
-                            return tmp
+                            return this.$axios.get(`/user/`, {params: queryParams}).then(res => res.data)
                         },
                         delete: ({ body }) => {
-                            
+                            console.log(body)
                         }
                     }
                 },
@@ -190,7 +203,8 @@ export default {
                     },
                     { field: 'nickName', sortable: true, title: '昵称' },
                     { field: 'userId', sortable: true, title: '学号/工号' },
-                    { field: 'email', sortable: true, title: '邮箱'},
+                    { field: 'type', sortable: true, title: '用户类型' },
+                    { field: 'email', sortable: true, title: '邮箱', visible: false },
                     { field: 'phone', sortable: true, title: '手机'},
                     { 
                         field: 'auth', 
@@ -202,6 +216,15 @@ export default {
                         formatter: function(value){
                             if(value === "true") return "已认证"
                             return "未认证"
+                        }
+                    },
+                    { 
+                        field: 'loginTime', 
+                        sortable: true, 
+                        title: '最近登陆时间', 
+                        visible: false,
+                        formatter: function(value) {
+                            return moment(value).format("YYYY-MM-DD HH:mm:ss");
                         }
                     }
                 ],
