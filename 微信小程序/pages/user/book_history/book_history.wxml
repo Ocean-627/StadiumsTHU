@@ -1,4 +1,4 @@
-<!--pages/user/book/book.wxml-->
+<!--pages/user/book_histroy/book_hisory.wxml-->
 <view class="container">
   <!--预定信息-->
   <view class="booking-list">
@@ -17,8 +17,9 @@
       </view>
       <text id="price">价格￥{{item.price}}</text>
       <view class="btns">
-        <button id="cancel">取消预约</button>
-        <button id="modify">修改时间</button>
+        <button id="delete">删除记录</button>
+        <button id="review" wx:if="{{!item.hasReview}}" bindtap="jmpReview">评价</button>
+        <button id="checkreview" wx:if="{{item.hasReview}}" bindtap="jmpMyReview">查看评论</button>
       </view>
     </view>
   </view>

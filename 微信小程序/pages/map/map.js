@@ -35,6 +35,7 @@ Page({
     })
   },
 
+  // 回到自己的定位点
   back_to_mypos:function() {
     var _this = this;
     wx.getLocation({

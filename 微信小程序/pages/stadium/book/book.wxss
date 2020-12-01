@@ -1,0 +1,148 @@
+/* pages/stadium/book.wxss */
+page {
+  background-color: #F2F2F2;
+  height:100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width:100%;
+  height:100%;
+  padding:0;
+}
+
+/* 步骤图 */
+.container van-steps {
+  width:100%;
+}
+
+/* 项目选择 */
+.info-wrapper {
+  box-sizing: border-box;
+  width:96%;
+  padding-left: 4%;
+  padding-right: 4%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top:1%;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2);
+}
+
+.info-wrapper #stadium-name {
+  font-size:30rpx;
+  font-weight: 700;
+  color:rgba(0,0,0,0.6)
+}
+
+.info-wrapper .info-divider {
+  width:100%;
+}
+
+.info-wrapper .info-divider .van-divider {
+  margin:0;
+}
+
+.info-wrapper .court-list {
+  white-space: nowrap;
+  margin-top:20rpx;
+  margin-bottom: 10rpx;
+}
+
+.info-wrapper .court-list image {
+  width:100rpx;
+  height:100rpx;
+  margin-right: 20rpx;
+}
+
+.book-operation {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width:96%;
+  height:60%;
+  padding-left: 4%;
+  padding-right: 4%;
+  border-radius: 15px;
+  box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2);
+  background-color: white;
+  margin-top: 30rpx;
+}
+
+.book-operation .time-wrapper {
+  white-space: nowrap;
+  height:100%;
+}
+
+.time-wrapper .time-table {
+  display: flex;
+  flex-direction: row;
+}
+
+.time-table .stamp, .court-time {
+  display: flex;
+  flex-direction: column;
+  margin-left:10px;
+}
+
+.court-time .status {
+  width:50px;
+  height:20px;
+  background-color: red;
+  margin-top:5px;
+  border-radius: 4px;
+}
+
+/* 场地选择 */
+.book-wrapper {
+  box-sizing: border-box;
+  width:100%;
+  height:60%;
+  display: flex;
+  flex-direction: row;
+
+  margin-top:1%;
+  background-color: white;
+  box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2);
+}
+
+.book-wrapper #date-choose {
+  width:20%;
+}
+.book-wrapper #court-choose {
+  width:80%;
+}
+
+.book-wrapper .date-choice {
+  width:100%;
+  font-size: 25rpx;
+}
+
+.book-wrapper .van-sidebar-item--selected{
+  border-color: #ff8300;
+}
+
+.book-wrapper .time-choose .check {
+  margin-bottom: 15rpx;
+}
+
+/*确认预定按钮*/
+.jmp-verify {
+  width:100%;
+  height:40px;
+  margin-top:10%;
+  margin-bottom: 10%;
+}
+
+.jmp-verify #jmpverify-btn {
+  width:80%;
+  background-color: #A300B2;
+  color:white;
+  border-radius: 50rpx;
+}
+
+

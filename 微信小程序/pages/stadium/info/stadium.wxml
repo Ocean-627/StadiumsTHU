@@ -79,6 +79,6 @@
     </view>
   </view>
   <view class="jmp-book">
-    <button id="jmpbook-btn">我要预约</button>
+    <button id="jmpbook-btn" bindtap="jmpBooking">我要预约</button>
   </view>
 </view>

@@ -1,4 +1,4 @@
-/* pages/user/book/book.wxss */
+/* pages/user/book_histroy/book_hisory.wxss */
 page {
   background-color: #F2F2F2;
 }
@@ -96,7 +96,7 @@ page {
   margin-bottom: 20rpx;
 }
 
-.btns #cancel {
+.btns #delete {
   color:white;
   background-color: #E72343;
   width:200rpx;
@@ -104,12 +104,12 @@ page {
   font-size: 30rpx;
   font-weight: 500;
   padding:0;
-  padding-top:10rpx;
   margin:0;
   border-radius: 30rpx;
+  text-align: center;
 }
 
-.btns #modify {
+.btns #review {
   color:black;
   background-color: white;
   width:200rpx;
@@ -119,7 +119,6 @@ page {
   font-size: 30rpx;
   font-weight: 500;
   padding:0;
-  padding-top:10rpx;
   border-radius: 30rpx;
   border: solid 1px rgba(0,0,0,0.2);
 }

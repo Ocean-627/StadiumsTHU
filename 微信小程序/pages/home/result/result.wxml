@@ -1,2 +1,46 @@
 <!--pages/home/result/result.wxml-->
-<text>pages/home/result/result.wxml</text>
+<view class="container">
+  <view class="search-wrapper">
+      <view class="searchbar">
+        <image src="/res/imgs/home_search.png"></image>
+        <input id="search-input"
+          type="text"
+          placeholder="输入场馆名称或运动项目"
+          placeholder-class="ph-class"
+          focus="{{true}}"
+          confirm-type="search"
+          bindconfirm="startSearch"
+        />
+      </view>
+  </view>
+  <!--场馆信息-->
+  <view class="stadium-list">
+    <view class="stadium-item" wx:for="{{filtered_list}}" wx:key="id">
+      <view class="pic-wrapper">
+        <image src="{{item.imgpath}}" bindtap="jmpInfo" data-stadiumId="{{index}}"></image>
+      </view>
+      <view class="info-wrapper">
+        <text id="name" bindtap="jmpInfo" data-stadiumId="{{index}}">{{item.name}}</text>
+        <view class="comment-wrapper">
+          <image src="/res/imgs/info_star.png"></image>
+          <text id="star">{{item.star}}分</text>
+          <text id="comment">  |  {{item.comment_num}}条评论</text>
+        </view>
+        <view class="pos-wrapper">
+          <view class="pos">
+            <text id="position">{{item.pos}}</text>
+          </view>
+          <view class="dis">
+            <text id="distance">距离我{{item.dis}}m</text>
+          </view>
+        </view>
+        <text id="opentime">开放时间:{{item.opentime}}</text>
+        <text id="sports">运动项目:{{item.sports}}</text>
+      </view>
+      <view class="favor-wrapper">
+        <image src="/res/imgs/info_isfavor.png" wx:if="{{item.favor}}" bindtap="addFavor"></image>
+        <image src="/res/imgs/info_notfavor.png" wx:else bindtap="removeFavor"></image>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,11 +1,9 @@
 <!--pages/home/home.wxml-->
-<mp-navigation-bar show="{{true}}" back="{{false}}" color="#000" background="#f8f8f8">
-  <text slot="left">主页</text>
-</mp-navigation-bar>
+<!--提示框-->
 <view class="container">
   <!--搜索框-->
   <view class="menu-wrapper">
-      <view class="searchbar">
+      <view class="searchbar" bindtap="jmpSearch">
         <image src="/res/imgs/home_search.png"></image>
         <text>搜索</text>
       </view>
@@ -38,7 +36,7 @@
   </view>
   <!--场馆信息-->
   <view class="stadium-list">
-    <view class="stadium-item" wx:for="{{stadium_list}}">
+    <view class="stadium-item" wx:for="{{stadium_list}}" wx:key="id">
       <view class="pic-wrapper">
         <image src="{{item.imgpath}}" bindtap="jmpInfo" data-stadiumId="{{index}}"></image>
       </view>
@@ -61,8 +59,8 @@
         <text id="sports">运动项目:{{item.sports}}</text>
       </view>
       <view class="favor-wrapper">
-        <image src="/res/imgs/info_isfavor.png" wx:if="{{item.favor}}" bindtap="addFavor"></image>
-        <image src="/res/imgs/info_notfavor.png" wx:else bindtap="removeFavor"></image>
+        <image src="/res/imgs/info_isfavor.png" wx:if="{{item.favor}}" bindtap="removeFavor" data-stadiumid="{{item.id}}"></image>
+        <image src="/res/imgs/info_notfavor.png" wx:else bindtap="addFavor" data-stadiumid="{{item.id}}"></image>
       </view>
     </view>
   </view>

@@ -17,15 +17,15 @@ page {
   position: absolute;
   background-color:#44454A;
   width:100%;
-  height:40%;
+  height:35%;
 }
 
 .rect2 {
   position: absolute;
-  top:40%;
+  top:35%;
   background-color:white;
   width:100%;
-  height:30%;
+  height:32%;
 }
 
 .info-menu {
@@ -48,9 +48,12 @@ page {
 .info-wrapper .pic-wrapper {
   width:120rpx;
   height:120rpx;
-  background-color: white;
   border-radius: 50%;
+  background-color: white;
   margin-left:10%;
+}
+.info-wrapper .pic-wrapper image {
+  border-radius: 50%;
 }
 
 .info-wrapper .text_wrapper {

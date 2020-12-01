@@ -1,19 +1,16 @@
 <!--pages/user/user.wxml-->
-<mp-navigation-bar show="{{true}}" back="{{false}}" color="#000" background="#f8f8f8">
-  <text slot="left">我的</text>
-</mp-navigation-bar>
 <view class="container">
-  <view class="rect1"></view>
   <view class="rect2"></view>
+  <view class="rect1"></view>
   <!--信息栏-->
   <view class="info-menu">
     <view class="info-wrapper">
       <view class="pic-wrapper">
-        <image src="/res/imgs/menu_my.png"></image>
+        <image src="{{user_img}}"></image>
       </view>
       <view class="text_wrapper">
-        <text id="nickname">昵称</text>
-        <text id="userId">学号</text>
+        <text id="nickname">{{nickname}}</text>
+        <text id="userId">{{userId}}</text>
       </view>
     </view>
     <view class="menu-wrapper">
@@ -29,7 +26,7 @@
         <image src="/res/imgs/menu_history.png"></image>
         <text>浏览历史</text>
       </view>
-      <view class="choice-wrapper">
+      <view class="choice-wrapper" bindtap="jmpBookHis">
         <image src="/res/imgs/menu_calindar.png"></image>
         <text>预约记录</text>
       </view>

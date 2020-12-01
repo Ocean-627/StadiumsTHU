@@ -1,7 +1,9 @@
 {
   "pages": [
     "pages/home/index/home",
+    "pages/stadium/book/book",
     "pages/user/book/book",
+    "pages/home/result/result",
     "pages/message/message",
     "pages/stadium/comment/comment",
     "pages/stadium/info/stadium",
@@ -10,20 +12,20 @@
     "pages/user/index/user",
     "pages/user/info/info",
     "pages/logs/logs",
-    "pages/home/result/result"
+    "pages/user/book_history/book_history"
   ],
   "window": {
-    "backgroundTextStyle": "light",
+    "backgroundTextStyle": "dark",
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "清动家园",
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "black",
+    "enablePullDownRefresh": true
   },
   "permission": {
     "scope.userLocation": {
       "desc": "您的位置信息将用于确认场馆与您的距离"
     }
   },
-  "style": "v2",
   "sitemapLocation": "sitemap.json",
   "useExtendedLib": {
     "weui": true

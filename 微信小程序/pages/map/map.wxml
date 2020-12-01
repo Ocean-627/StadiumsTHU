@@ -1,7 +1,4 @@
 <!--pages/map/map.wxml-->
-<mp-navigation-bar back="{{false}}">
-  <text slot="left">地图</text>
-</mp-navigation-bar>
 
 <view class="container">
   <view class="search-wrapper">

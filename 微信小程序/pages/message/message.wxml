@@ -1,8 +1,4 @@
 <!--pages/message/message.wxml-->
-<mp-navigation-bar show="{{true}}" back="{{false}}" color="#000" background="#f8f8f8">
-  <text slot="left">我的消息</text>
-</mp-navigation-bar>
-
 <view class="container">
   <view class="notice">
     <text id="count">您有{{not_read_num}}条未读消息</text>

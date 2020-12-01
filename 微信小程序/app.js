@@ -34,6 +34,7 @@ App({
     })
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    reqUrl:'https://cbx.iterator-traits.com',
   }
 })

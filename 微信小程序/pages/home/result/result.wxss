@@ -1,1 +1,138 @@
 /* pages/home/result/result.wxss */
+.container {
+  width:100%;
+  padding:0;
+  height:100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-wrapper {
+  width:100%;
+  height:100rpx;
+  background-color: #760280;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+/*搜索框*/
+.searchbar {
+  width:90%;
+  height:70%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #996699;
+  border-radius: 40rpx;
+}
+
+.search-wrapper .searchbar image {
+  margin-left:5%;
+  margin-right: 2%;
+  width:40rpx;
+  height:40rpx;
+}
+
+.search-wrapper .searchbar text {
+  margin-left:5%;
+  color:rgba(200,200,200,0.7);
+  font-size: medium;
+}
+
+.search-wrapper input {
+  width:80%;
+}
+
+.ph-class {
+  color:rgba(200, 200, 200, 0.8)
+}
+
+/*场馆列表*/
+.stadium-list {
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stadium-item {
+  width:95%;
+  margin-top: 10rpx;
+  margin-bottom: 10rpx;
+  background-color: white;
+  border-radius: 20rpx;
+  box-shadow: 1px 1px 6px 0 rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.stadium-item .pic-wrapper {
+  width:30%;
+}
+
+.stadium-item .pic-wrapper image {
+  width: 200rpx;
+  height: 150rpx;
+  border-radius: 20rpx;
+  margin-top:10rpx;
+  margin-left:10rpx;
+}
+
+.stadium-item .info-wrapper {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.stadium-item .info-wrapper #name {
+  font-weight: 800;
+  font-size:30rpx;
+}
+
+.stadium-item .info-wrapper #star {
+  color:#FF8300;
+  font-size: 20rpx;
+}
+
+.stadium-item .info-wrapper #comment, #position, #distance {
+  color:rgba(0,0,0,0.4);
+  font-size: 20rpx;
+}
+
+.stadium-item .info-wrapper #opentime {
+  color:#FF8300;
+  font-size: 25rpx;
+}
+
+.stadium-item .info-wrapper #sports {
+  color:rgba(0,0,0,0.4);
+  font-size: 25rpx;
+}
+
+.stadium-item .comment-wrapper {
+  margin-top: -10rpx;
+}
+
+.stadium-item .pos-wrapper {
+  margin-top:-10rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.stadium-item .comment-wrapper image {
+  width:20rpx;
+  height:20rpx;
+}
+
+.stadium-item .favor-wrapper {
+  width:10%;
+}
+
+.stadium-item .favor-wrapper image {
+  width:60rpx;
+  height: 60rpx;
+}

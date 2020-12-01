@@ -1,0 +1,14 @@
+{
+  "usingComponents": {
+    "van-steps": "/miniprogram/miniprogram_npm/@vant/weapp/steps/index",
+    "van-button":"/miniprogram/miniprogram_npm/@vant/weapp/button/index",
+    "van-divider":"/miniprogram/miniprogram_npm/@vant/weapp/divider/index",
+    "van-sidebar": "/miniprogram/miniprogram_npm/@vant/weapp/sidebar/index",
+    "van-sidebar-item": "/miniprogram/miniprogram_npm/@vant/weapp/sidebar-item/index",
+    "van-collapse": "/miniprogram/miniprogram_npm/@vant/weapp/collapse/index",
+    "van-collapse-item": "/miniprogram/miniprogram_npm/@vant/weapp/collapse-item/index",
+    "van-checkbox": "/miniprogram/miniprogram_npm/@vant/weapp/checkbox/index",
+    "van-checkbox-group": "/miniprogram/miniprogram_npm/@vant/weapp/checkbox-group/index"
+  },
+  "navigationBarTitleText": "预约"
+}

@@ -1,5 +1,6 @@
 <!--pages/user/info/info.wxml-->
-<mp-navigation-bar show="{{true}}" color="#000" background="#f8f8f8" title="个人资料" back="{{true}}"></mp-navigation-bar>
+<!--弹窗-->
+<mp-toptips msg="{{tip}}" type="{{tip_type}}" show="{{tip_show}}"></mp-toptips>
 <view class="container">
   <!--头像栏-->
   <view class="info-menu">
@@ -10,14 +11,14 @@
       <view class="btn-wrapper" bindtap="choosePic">
         <image src="/res/imgs/camera.png"></image>
       </view>
-      <text id="nickname">一个大萝卜</text>
+      <text id="nickname">{{usr_nickname}}</text>
     </view>
   </view>
   <!--信息栏-->
   <view class="hmenu">
     <mp-cells>
-      <mp-cell value="姓名" footer="胡浩宇"></mp-cell>
-      <mp-cell value="学号(工号)" footer="2017013594"></mp-cell>
+      <mp-cell value="姓名" footer="{{usr_name}}"></mp-cell>
+      <mp-cell value="学号(工号)" footer="{{usr_id}}"></mp-cell>
       <mp-cell link value="昵称" footer="{{usr_nickname}}" bindtap="showNicDialog"></mp-cell>
       <mp-cell link value="手机号" footer="{{usr_phone}}" bindtap="showPhDialog"></mp-cell>
       <mp-cell link value="邮箱" footer="{{usr_mail}}" bindtap="showMailDialog"></mp-cell>

@@ -1,0 +1,63 @@
+<!--pages/stadium/book.wxml-->
+<view class="container">
+  <van-steps steps="{{ steps }}" active="{{ active }}" type="main" active-color="#760280"/>
+  <view class="info-wrapper">
+    <van-divider contentPosition="center" class="info-divider"
+    customStyle="color: #760280; border-color: #760280; font-size: 14px;">
+    运动项目</van-divider>
+    <text id="stadium-name">{{stadium_name}}</text>
+    <scroll-view class="court-list" scroll-x="true" scroll-left="{{scrollTop}}">
+      <image class="court-icon" wx:for="{{court_iconlist}}" src="{{item}}"></image>
+    </scroll-view>
+  </view>
+  
+  <view class="book-wrapper">
+
+    <van-sidebar active-key="{{ activeKey }}" id="date-chooser">
+      <van-sidebar-item title="12月20日" custom-class="date-choice"/>
+      <van-sidebar-item title="12月21日" custom-class="date-choice"/>
+      <van-sidebar-item title="12月22日" custom-class="date-choice"/>
+      <van-sidebar-item title="12月23日" custom-class="date-choice"/>
+      <van-sidebar-item title="12月24日" custom-class="date-choice"/>
+      <van-sidebar-item title="12月25日" custom-class="date-choice"/>
+    </van-sidebar>
+
+    <van-collapse accordion value="{{ activeName }}" bind:change="onChangeCourt" id="court-choose">
+      <van-collapse-item title="场地1" name="1">
+        <view class="time-choose">
+          <van-checkbox custom-class="check" value="{{ court_time_choose[0] }}" bind:change="onChangeTime" checked-color="#A300B2"
+          data-date="0" data-court="0" data-time="0"
+          >8:00-9:00</van-checkbox>
+          <van-checkbox custom-class="check" disabled value="{{ court_time_choose[1] }}" bind:change="onChangeTime" checked-color="#A300B2"
+          data-date="0" data-court="0" data-time="1"
+          >9:00-10:00</van-checkbox>
+          <van-checkbox custom-class="check" value="{{ court_time_choose[2] }}" bind:change="onChangeTime" checked-color="#A300B2"
+          data-date="0" data-court="0" data-time="2"
+          >10:00-11:00</van-checkbox>
+          <van-checkbox custom-class="check" value="{{ court_time_choose[3] }}" bind:change="onChangeTime" checked-color="#A300B2"
+          data-date="0" data-court="0" data-time="3"
+          >11:00-12:00</van-checkbox>
+        </view>
+      </van-collapse-item>
+      <van-collapse-item title="场地2" name="2">
+        <view class="time-choose">
+
+        </view>
+      </van-collapse-item>
+      <van-collapse-item title="场地3" name="3">
+        
+      </van-collapse-item>
+      <van-collapse-item title="场地4" name="4">
+        
+      </van-collapse-item>
+      <van-collapse-item title="场地5" name="5">
+        
+      </van-collapse-item>
+    </van-collapse>
+  </view>
+
+  <view class="jmp-verify">
+    <button id="jmpverify-btn" bindtap="jmpBooking">确认预定</button>
+  </view>
+
+</view>
