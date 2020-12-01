@@ -527,6 +527,20 @@ Response:
 
 结果是一个列表。
 
+**取消收藏**
+
+```python
+Method: DELETE
+URL: /api/user/collect
+Request:{
+    'collect_id': ''
+}
+Response:
+{
+    'message': 'ok'
+}
+```
+
 ## 需求：
 
 请求失败会返回什么？
