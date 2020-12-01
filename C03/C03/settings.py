@@ -91,7 +91,11 @@ DATABASES = {
         'NAME': 'platform',
         'USER': 'root',
         'PASSWORD': '1234567890',
+<<<<<<< Updated upstream
         'HOST': '140.143.163.227',
+=======
+        'HOST': 'cbx.iterator-traits.com',
+>>>>>>> Stashed changes
         'PORT': '3306',
     }
 }

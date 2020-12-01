@@ -134,14 +134,15 @@ export default {
                     ajax: {
                         query: ({ page, sort, filters, form  }) => {
                             const queryParams = Object.assign({
-                                sort: sort.property,
-                                order: sort.order
+                                sort: (sort.order === "desc") ? ("-" + sort.property) : sort.property,
                             }, form)
                             filters.forEach(({ property, values }) => {
                                 queryParams[property] = values.join(',')
                             })
                             console.log(queryParams)
-                            return this.$axios.get(`/user/?page=${page.currentPage}&size=${page.pageSize}`, queryParams).then(res => res.data)
+                            let tmp = this.$axios.get(`/user/?page=${page.currentPage}&size=${page.pageSize}`, queryParams).then(res => res.data)
+                            console.log(tmp)
+                            return tmp
                         },
                         delete: ({ body }) => {
                             
@@ -160,7 +161,8 @@ export default {
                                 return [
                                     h('u', {
                                         style: {
-                                            color: 'blue'
+                                            color: 'blue',
+                                            cursor: 'pointer'
                                         },
                                         on: {
                                             click: () => {

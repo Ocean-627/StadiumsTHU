@@ -40,15 +40,23 @@
             <h1 style="padding-top: 30px"><strong>Hasta</strong></h1>
           </div>
           <div class="col-md-3"></div>
-          <div class="col-md-1">
+          <div
+            class="col-md-1"
+            style="cursor: pointer;"
+            v-on:click="sendMessage()"
+          >
             <i
               class="fa fa-envelope fa-3x"
-              style="margin-top: 40px; color: #FFBF00;"
+              style="margin-top: 40px; color: #FFBF00; cursor: pointer;"
             ></i
             ><br />
             <strong style="color: #FFBF00;">发送私信</strong>
           </div>
-          <div class="col-md-1">
+          <div
+            class="col-md-1"
+            style="cursor: pointer;"
+            v-on:click="deleteUser()"
+          >
             <i
               class="fa fa-trash fa-3x"
               style="margin-top: 40px; color: red;"
@@ -319,6 +327,9 @@ export default {
       if (status === "已撤销") return "color: orange;";
     }
   },
-  methods: {}
+  methods: {
+    sendMessage() {},
+    deleteUser() {}
+  }
 };
 </script>
