@@ -480,7 +480,7 @@ export default {
             // openstate为0表示是管理员预留的场地，为1表示是用户自己预订的场地
             this.grounds[i].courts[j].reservedDuration[p].type =
               2 -
-              Number(this.grounds[i].courts[i].reservedDuration[p].openState);
+              Number(this.grounds[i].courts[j].reservedDuration[p].openState);
           }
 
           this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
