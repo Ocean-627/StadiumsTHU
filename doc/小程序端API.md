@@ -545,25 +545,16 @@ Response:
 
 请求失败会返回什么？
 
-如果是请求方式不正确，会返回类似如下的提示。
+所有异常都会返回类似下方的结果。
 
 ```python
 {
-    "detail": "Method \"POST\" not allowed."
+    "error": {
+        "detail": "Method \"POST\" not allowed."
+    }
 }
 ```
 
-如果`POST`或者`GET`请求字段出现了非法值，会返回如下错误和解释
+其中必定包含`error`字段，其内部是具体的错误信息。
 
-```python
-{
-    "court_id": [
-        "Invalid court_id"
-    ],
-    "content": [
-        "Ensure this value has at least 15 characters (it has 7)."
-    ]
-}
-```
-
-**正在考虑如何加入一个统一的成功或者失败标识符**。
+需要注意的是，使用`GET`请求进行筛选时，如果没有得到数据可能是筛选结果是一个空列表，这个时候是不会有`error`字段的。
