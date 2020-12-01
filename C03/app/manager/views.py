@@ -26,11 +26,10 @@ class LogonView(APIView):
         password = req_data.get('password')
         email = req_data.get('email')
         userId = req_data.get('userId')
-        stadiumId = req_data.get('stadiumId')
         # TODO:检查stadium是否存在
-        if not username or not password or not email or not userId or not stadiumId:
+        if not username or not password or not email or not userId:
             return Response({'error': 'Incomplete information'})
-        manager = Manager(username=username, password=password, email=email, userId=userId, stadium_id=stadiumId)
+        manager = Manager(username=username, password=password, email=email, userId=userId)
         manager.save()
         return Response({'message': 'ok'})
 
@@ -52,8 +51,7 @@ class LoginView(APIView):
         print(loginToken)
         obj.save()
         ret = Response(
-            {'message': 'ok', 'username': obj.username, 'stadium': obj.stadium.name,
-             'stadiumId': obj.stadium.id})
+            {'message': 'ok', 'username': obj.username})
         ret.set_cookie('loginToken', loginToken)
         return ret
 
