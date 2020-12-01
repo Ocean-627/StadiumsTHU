@@ -62,8 +62,6 @@ class CommentFilter(filters.FilterSet):
 
 
 class CollectEventFilter(filters.FilterSet):
-    detail = filters.CharFilter(field_name='detail', lookup_expr='icontains')
-
     class Meta:
         model = CollectEvent
         fields = ['id', 'stadium_id']

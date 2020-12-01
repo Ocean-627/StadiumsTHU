@@ -10,7 +10,7 @@ class StadiumSerializerForManager(StadiumSerializer):
         return types.data
 
     def get_collect(self, obj):
-        return False
+        return None
 
 
 class CourtTypeSerializerForManager(CourtTypeSerializer):
