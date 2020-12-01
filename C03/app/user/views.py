@@ -162,3 +162,24 @@ class CommentImageView(CreateAPIView):
     """
     authentication_classes = [UserAuthtication]
     serializer_class = CommentImageSerializer
+
+
+class CollectView(ListAPIView, CreateAPIView):
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+    queryset = CollectEvent.objects.all()
+    serializer_class = CollectEventSerializer
+    filter_class = CollectEventFilter
+
+    def get_queryset(self):
+        return CollectEvent.objects.filter(user=self.request.user)
+
+    def delete(self, request):
+        req_data = request.data
+        id = req_data.get('collect_id')
+        user = request.user
+        collect = CollectEvent.objects.filter(user=user, id=id).first()
+        if not collect:
+            return Response({'error': 'Invalid collect_id'})
+        collect.delete()
+        return Response({'message': 'ok'})

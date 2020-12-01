@@ -22,6 +22,7 @@ class StadiumSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField(required=False)
     score = serializers.SerializerMethodField(required=False)
     courtTypes = serializers.SerializerMethodField(required=False)
+    collect = serializers.SerializerMethodField(required=False)
 
     def get_images(self, obj):
         images_list = obj.stadiumimage_set.all()
@@ -52,6 +53,13 @@ class StadiumSerializer(serializers.ModelSerializer):
         types = obj.courttype_set.all()
         types = CourtTypeSerializer(types, many=True)
         return types.data
+
+    def get_collect(self, obj):
+        res = obj.collectevent_set.filter(user=self.context['request'].user).first()
+        if not res:
+            return False
+        else:
+            return True
 
     class Meta:
         model = Stadium
@@ -185,3 +193,26 @@ class StadiumImageSerializer(serializers.ModelSerializer):
         model = StadiumImage
         fields = '__all__'
         read_only_fields = ['stadium']
+
+
+class CollectEventSerializer(serializers.ModelSerializer):
+    stadium_name = serializers.CharField(source='stadium.name', required=False)
+    stadium_id = serializers.IntegerField(label='场馆编号', write_only=True)
+    detail = serializers.CharField(label='备注', validators=[MaxLengthValidator(30)])
+
+    def validate_stadium_id(self, value):
+        stadium = Stadium.objects.filter(id=value).first()
+        if not stadium:
+            raise ValidationError('Invalid stadium_id')
+        collect = stadium.collectevent_set.filter(user=self.context['request'].user).first()
+        if collect:
+            raise ValidationError('You have collect that stadium')
+        return value
+
+    def create(self, validated_data):
+        return CollectEvent.objects.create(user=self.context['request'].user, **validated_data)
+
+    class Meta:
+        model = CollectEvent
+        fields = '__all__'
+        read_only_fields = ['stadium', 'user']

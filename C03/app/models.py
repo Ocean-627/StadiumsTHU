@@ -11,6 +11,7 @@ class User(models.Model):
     loginTime = models.DateTimeField(auto_now=True, null=True)
     # TODO:通过身份验证或用户完善信息的方式获取以下fields
     auth = models.BooleanField(default=False)
+    type = models.CharField(max_length=10, default='在校学生')
     name = models.CharField(max_length=32, null=True)
     nickName = models.CharField(max_length=32, null=True)
     userId = models.IntegerField(verbose_name='学生编号', null=True)
@@ -165,3 +166,10 @@ class StadiumImage(models.Model):
     detail = models.CharField(max_length=30, verbose_name='图片描述', null=True)
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='stadium')
+
+
+class CollectEvent(models.Model):
+    # 收藏信息
+    detail = models.CharField(max_length=30, default='收藏场馆')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)

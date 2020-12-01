@@ -91,7 +91,7 @@ DATABASES = {
         'NAME': 'platform',
         'USER': 'root',
         'PASSWORD': '1234567890',
-        'HOST': 'cbx.iterator-traits.com',
+        'HOST': '140.143.163.227',
         'PORT': '3306',
     }
 }
