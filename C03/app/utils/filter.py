@@ -6,7 +6,9 @@ class UserFilter(filters.FilterSet):
     phone = filters.CharFilter(field_name='phone', lookup_expr='icontains')
     name = filters.CharFilter(field_name='name', lookup_expr='icontains')
     nickName = filters.CharFilter(field_name='nickName', lookup_expr='icontains')
-    sort = filters.OrderingFilter(fields=('phone', 'name', 'nickName', 'userId'))
+    userId = filters.CharFilter(field_name='userId', lookup_expr='icontains')
+    email = filters.CharFilter(field_name='email', lookup_expr='icontains')
+    sort = filters.OrderingFilter(fields=('phone', 'name', 'nickName', 'userId', 'email'))
 
     class Meta:
         model = User

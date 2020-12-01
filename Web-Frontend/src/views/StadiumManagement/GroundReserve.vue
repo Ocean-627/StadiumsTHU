@@ -66,7 +66,7 @@
                   <div class="progress">
                     <div
                       v-for="reserve in data.reservedDuration"
-                      :key="reserve.startTime"
+                      :key="reserve.id"
                       :class="reserve.type | progress_type"
                       :style="reserve | progress_length"
                       role="progressbar"
@@ -336,11 +336,11 @@ export default {
     },
     progress_length: function(reserve) {
       var h, m;
-      h = parseInt(reserve.start.split(":")[0]);
-      m = parseInt(reserve.start.split(":")[1]);
+      h = parseInt(reserve.startTime.split(":")[0]);
+      m = parseInt(reserve.startTime.split(":")[1]);
       var start_time = h * 60 + m;
-      h = parseInt(reserve.end.split(":")[0]);
-      m = parseInt(reserve.end.split(":")[1]);
+      h = parseInt(reserve.endTime.split(":")[0]);
+      m = parseInt(reserve.endTime.split(":")[1]);
       var end_time = h * 60 + m;
       var delta = (end_time - start_time) / 14.4;
       return "width: " + delta.toString() + "%";
@@ -357,7 +357,7 @@ export default {
       } else if (type === -1) {
         title += "不可用时段（";
       }
-      title += reserve.start + "-" + reserve.end + "）";
+      title += reserve.startTime + "-" + reserve.endTime + "）";
       return title;
     }
   },
@@ -413,20 +413,36 @@ export default {
       }
     };
 
+    // TODO：解决显示bug
     this.$axios.get("court/", request).then(res => {
       this.stadiumName = res.data.name;
       this.grounds = res.data.reserveInfo;
+
+      // 遍历场地类型
       for (let i = 0; i < this.grounds.length; i++) {
         let openTimes = this.grounds[i].openingHours.split(" ")
         this.grounds[i].open_times = []
+
+        // 构造某个场地类型的open_times
         for (let k = 0; k < openTimes.length; k++){
-          var openTime = {"start":openTimes[k].split("-")[0].toString(),"end":openTimes[k].split("-")[1].toString()}
+          var openTime = {"startTime": openTimes[k].split("-")[0].toString(),
+                          "endTime": openTimes[k].split("-")[1].toString()}
           this.grounds[i].open_times.push(openTime)
         }
+
+        // 遍历特定场地
         for (let j = 0; j < this.grounds[i].courts.length; j++) {
+
+            // 遍历特定时段，设定type字段
+            for (let p = 0; p < this.grounds[i].courts[i].reservedDuration.length;p++){
+              
+              // openstate为0表示是管理员预留的场地，为1表示是用户自己预订的场地
+              this.grounds[i].courts[i].reservedDuration[p].type = 2 - this.grounds[i].courts[i].reservedDuration[p].openState
+            }
+
             this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
-            this.grounds[i].courts[j].reservedDuration,
-            this.grounds[i].open_times
+              this.grounds[i].courts[j].reservedDuration,
+              this.grounds[i].open_times
           );
         }
       }
