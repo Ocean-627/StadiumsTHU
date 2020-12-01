@@ -271,6 +271,7 @@ class UserView(ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = UserPagination
+    filter_class = UserFilter
 
 
 class HistoryView(APIView):

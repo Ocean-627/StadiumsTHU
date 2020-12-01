@@ -2,6 +2,17 @@ from django_filters import rest_framework as filters
 from app.models import *
 
 
+class UserFilter(filters.FilterSet):
+    phone = filters.CharFilter(field_name='phone', lookup_expr='icontains')
+    name = filters.CharFilter(field_name='name', lookup_expr='icontains')
+    nickName = filters.CharFilter(field_name='nickName', lookup_expr='icontains')
+    sort = filters.OrderingFilter(fields=('phone', 'name', 'nickName', 'userId'))
+
+    class Meta:
+        model = User
+        fields = ['auth']
+
+
 class StadiumFilter(filters.FilterSet):
     # TODO:更多筛选信息
     info = filters.CharFilter(field_name='information', lookup_expr='icontains')
