@@ -170,6 +170,5 @@ class StadiumImage(models.Model):
 
 class CollectEvent(models.Model):
     # 收藏信息
-    detail = models.CharField(max_length=30, default='收藏场馆')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
