@@ -320,8 +320,6 @@ import { duration } from "moment";
 
 export default {
   data() {
-    // TODO: 在获取到信息之后，要对每种场地的每个场地的预定列表做预处理 fix_reserves()
-    //          如果要改对应的属性名称的话，Common.vue里的预处理函数也需要改一点点
     let res = {
       grounds: [],
       dates: [
@@ -460,12 +458,15 @@ export default {
 
     let p = Promise.all([
       this.$axios.get("court/", request1),
-      this.$axios.get("duration/", request2)
+      this.$axios.get("duration/", request2),
+      this.$axios.get("courttype/", request1)
     ]);
     p.then(res => {
       this.stadiumName = res[0].data[0].stadiumName;
       let courts = res[0].data;
       let durations = res[1].data;
+      let courttypes = res[2].data
+      console.log(courttypes)
       let map_id_to_court = {};
       for (let i = 0; i < courts.length; i++) {
         map_id_to_court[courts[i].id] = i;
@@ -482,12 +483,18 @@ export default {
         );
       }
 
+      let map_id_to_time = {};
+      for(let i = 0; i < courttypes.length; i++){
+          map_id_to_time[courttypes[i].id] = courttypes[i].openingHours;
+      }
+
       let map_type_to_index = {};
       for (let i = 0; i < courts.length; i++) {
         if (map_type_to_index[courts[i].type] === undefined) {
           this.grounds.push({
             type: courts[i].type,
-            courts: []
+            courts: [],
+            openingHours: map_id_to_time[courts[i].courtType]
           });
           map_type_to_index[courts[i].type] = this.grounds.length - 1;
         }
