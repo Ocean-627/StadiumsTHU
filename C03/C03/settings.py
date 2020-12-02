@@ -138,7 +138,7 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'app.utils.exception.handler',
     'DEFAULT_THROTTLE_CLASSES': ['app.utils.throttle.UserThrottle'],
     'DEFAULT_THROTTLE_RATES': {
-        'user': '10/m'
+        'user': '100/m'
     },
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
