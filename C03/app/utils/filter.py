@@ -12,7 +12,7 @@ class UserFilter(filters.FilterSet):
 
     class Meta:
         model = User
-        fields = ['auth']
+        fields = ['id', 'auth']
 
 
 class StadiumFilter(filters.FilterSet):
@@ -35,21 +35,21 @@ class CourtFilter(filters.FilterSet):
 
     class Meta:
         model = Court
-        fields = ['stadium_id', 'openState', 'floor', 'location']
+        fields = ['id', 'stadium_id', 'openState', 'floor', 'location']
 
 
 class DurationFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:
         model = Duration
-        fields = ['stadium_id', 'court_id', 'openState', 'accessible', 'startTime', 'date']
+        fields = ['id', 'stadium_id', 'court_id', 'openState', 'accessible', 'startTime', 'date']
 
 
 class ReserveEventFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:
         model = ReserveEvent
-        fields = ['stadium_id', 'court_id', 'duration_id', 'startTime', 'endTime']
+        fields = ['id', 'stadium_id', 'court_id', 'duration_id', 'startTime', 'endTime']
 
 
 class CommentFilter(filters.FilterSet):
@@ -58,7 +58,7 @@ class CommentFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:
         model = Comment
-        fields = ['court_id']
+        fields = ['id', 'court_id']
 
 
 class CollectEventFilter(filters.FilterSet):
