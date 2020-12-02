@@ -127,6 +127,15 @@ class CourtView(ListAPIView):
     filter_class = CourtFilter
 
 
+class CourtTypeView(ListAPIView):
+    """
+    场地类型信息
+    """
+    queryset = CourtType.objects.all()
+    serializer_class = CourtTypeSerializer
+    filter_class = CourtTypeFilter
+
+
 class DurationView(ListAPIView):
     """
     时段信息

@@ -38,6 +38,12 @@ class CourtFilter(filters.FilterSet):
         fields = ['id', 'stadium_id', 'openState', 'floor', 'location']
 
 
+class CourtTypeFilter(filters.FilterSet):
+    class Meta:
+        model = CourtType
+        fields = ['stadium_id']
+
+
 class DurationFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:

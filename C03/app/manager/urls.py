@@ -12,6 +12,7 @@ urlpatterns = [
     path('stadium/', views.StadiumView.as_view()),
     path('stadiumimage/', views.StadiumImageView.as_view()),
     path('court/', views.CourtView.as_view()),
+    path('courttype/', views.CourtTypeView.as_view()),
     path('duration/', views.DurationView.as_view()),
     path('reserveevent/', views.ReserveEventView.as_view()),
     path('changeduration/', views.ChangeDurationView.as_view()),
