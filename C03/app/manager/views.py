@@ -116,43 +116,25 @@ class StadiumView(ListAPIView):
             return JsonResponse({"message": "ok"})
 
 
-class CourtView(APIView):
+class CourtView(ListAPIView):
     """
     场地信息
     """
 
     # authentication_classes = [ManagerAuthtication]
+    queryset = Court.objects.all()
+    serializer_class = CourtSerializer
+    filter_class = CourtFilter
 
-    def get(self, request):
-        req_data = request.query_params
-        workplace = req_data.get('stadium_id', '')
-        floor = req_data.get('floor', '')
-        date = req_data.get('date', '')
-        if not workplace or not floor or not date:
-            return JsonResponse({'error': 'Incomplete information'})
-        stadium = Stadium.objects.all().filter(id=int(workplace))[0]
-        response = []
-        myResponse = {"name": stadium.name}
-        for courtType in stadium.courttype_set.all():
-            myCourtType = model_to_dict(courtType)
-            myCourts = []
-            for court in courtType.court_set.all():
-                myCourt = {"id": court.id,
-                           "location": court.location,
-                           'reservedDuration': [], 'notReservedDuration': []}
-                reservedDurations = court.duration_set.all().filter(accessible=False, date=date)
 
-                for duration in reservedDurations:
-                    myCourt['reservedDuration'].append(model_to_dict(duration))
-                notReservedDurations = court.duration_set.all().filter(accessible=True, date=date)
-                for duration in notReservedDurations:
-                    myCourt['notReservedDuration'].append(model_to_dict(duration))
-                myCourt["comment"] = []
-                myCourts.append(myCourt)
-            myCourtType["courts"] = myCourts
-            response.append(myCourtType)
-        myResponse['reserveInfo'] = response
-        return JsonResponse(myResponse)
+class DurationView(ListAPIView):
+    """
+    时段信息
+    """
+    # authentication_classes = [ManagerAuthtication]
+    queryset = Duration.objects.all()
+    serializer_class = DurationSerializer
+    filter_class = DurationFilter
 
 
 class ReserveEventView(APIView):
