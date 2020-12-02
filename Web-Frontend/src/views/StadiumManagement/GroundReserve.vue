@@ -456,17 +456,23 @@ export default {
       }
     };
 
+    let request3 = {
+      params: {
+        id: this.$route.query.id
+      }
+    };
+
     let p = Promise.all([
       this.$axios.get("court/", request1),
       this.$axios.get("duration/", request2),
-      this.$axios.get("courttype/", request1)
+      this.$axios.get("courttype/", request1),
+      this.$axios.get("stadium/", request3)
     ]);
     p.then(res => {
-      this.stadiumName = res[0].data[0].stadiumName;
+      this.stadiumName = res[3].data[0].name;
       let courts = res[0].data;
       let durations = res[1].data;
-      let courttypes = res[2].data
-      console.log(courttypes)
+      let courttypes = res[2].data;
       let map_id_to_court = {};
       for (let i = 0; i < courts.length; i++) {
         map_id_to_court[courts[i].id] = i;
@@ -484,8 +490,8 @@ export default {
       }
 
       let map_id_to_time = {};
-      for(let i = 0; i < courttypes.length; i++){
-          map_id_to_time[courttypes[i].id] = courttypes[i].openingHours;
+      for (let i = 0; i < courttypes.length; i++) {
+        map_id_to_time[courttypes[i].id] = courttypes[i].openingHours;
       }
 
       let map_type_to_index = {};
@@ -517,6 +523,9 @@ export default {
         // 遍历特定场地
         for (let j = 0; j < this.grounds[i].courts.length; j++) {
           // 遍历特定时段，设定type字段
+          if (this.grounds[i].courts[j].reservedDuration === undefined) {
+            this.grounds[i].courts[j].reservedDuration = [];
+          }
           for (
             let p = 0;
             p < this.grounds[i].courts[j].reservedDuration.length;
@@ -528,14 +537,18 @@ export default {
               Number(this.grounds[i].courts[j].reservedDuration[p].openState);
           }
 
-            // 遍历特定时段，设定type字段
-            for (let p = 0; p < this.grounds[i].courts[j].reservedDuration.length;p++){
+          // 遍历特定时段，设定type字段
+          for (
+            let p = 0;
+            p < this.grounds[i].courts[j].reservedDuration.length;
+            p++
+          ) {
+            // openstate为0表示是管理员预留的场地，为1表示是用户自己预订的场地
+            this.grounds[i].courts[j].reservedDuration[p].type =
+              2 - this.grounds[i].courts[j].reservedDuration[p].openState;
+          }
 
-              // openstate为0表示是管理员预留的场地，为1表示是用户自己预订的场地
-              this.grounds[i].courts[j].reservedDuration[p].type = 2 - this.grounds[i].courts[j].reservedDuration[p].openState
-            }
-
-            this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
+          this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
             this.grounds[i].courts[j].reservedDuration,
             this.grounds[i].open_times
           );
