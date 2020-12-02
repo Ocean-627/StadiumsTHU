@@ -70,7 +70,7 @@
               </div>
               <div class="ibox-content">
                 <div v-for="data in ground.courts" :key="data.id">
-                  <h5>{{ data.id }}</h5>
+                  <h5>{{ data.name }}</h5>
                   <div class="progress">
                     <div
                       v-for="reserve in data.reservedDuration"
@@ -104,12 +104,13 @@
                     </div>
                     <div class="modal-body">
                       <p>
-                        场地类型：<strong>{{ ground.name }}</strong>
+                        场地类型：<strong>{{ ground.type }}</strong>
                       </p>
                       <div class="form-group" id="data_1">
                         <label class="font-normal">使用日期</label>
                         <div class="input-group date">
-                          <span class="input-group-addon"><i class="fa fa-calendar"></i></span
+                          <span class="input-group-addon"
+                            ><i class="fa fa-calendar"></i></span
                           ><input type="text" class="form-control" />
                         </div>
                       </div>
@@ -315,6 +316,7 @@ import "@/assets/js/plugins/jasny/jasny-bootstrap.min.js";
 import "@/assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js";
 import "@/assets/js/plugins/datapicker/bootstrap-datepicker.js";
 import "@/assets/js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js";
+import { duration } from "moment";
 
 export default {
   data() {
@@ -333,7 +335,7 @@ export default {
       form_time: "",
       form_start: "",
       form_end: "",
-      stadiumName: "测试"
+      stadiumName: ""
     };
 
     return res;
@@ -438,7 +440,14 @@ export default {
       buttondown_class: "btn btn-white",
       buttonup_class: "btn btn-white"
     });
-    let request = {
+
+    let request1 = {
+      params: {
+        stadium_id: this.$route.query.id
+      }
+    };
+
+    let request2 = {
       params: {
         stadium_id: this.$route.query.id,
         date: $("#date option:selected")
@@ -449,12 +458,42 @@ export default {
       }
     };
 
-    // TODO：解决显示bug
-    this.$axios.get("court/", request).then(res => {
-      this.stadiumName = res.data.name;
-      this.grounds = res.data.reserveInfo;
+    let p = Promise.all([
+      this.$axios.get("court/", request1),
+      this.$axios.get("duration/", request2)
+    ]);
+    p.then(res => {
+      this.stadiumName = res[0].data[0].stadiumName;
+      let courts = res[0].data;
+      let durations = res[1].data;
+      let map_id_to_court = {};
+      for (let i = 0; i < courts.length; i++) {
+        map_id_to_court[courts[i].id] = i;
+      }
+      for (let i = 0; i < durations.length; i++) {
+        if (
+          courts[map_id_to_court[durations[i].court]].reservedDuration ===
+          undefined
+        ) {
+          courts[map_id_to_court[durations[i].court]].reservedDuration = [];
+        }
+        courts[map_id_to_court[durations[i].court]].reservedDuration.push(
+          durations[i]
+        );
+      }
 
-      // 遍历场地类型
+      let map_type_to_index = {};
+      for (let i = 0; i < courts.length; i++) {
+        if (map_type_to_index[courts[i].type] === undefined) {
+          this.grounds.push({
+            type: courts[i].type,
+            courts: []
+          });
+          map_type_to_index[courts[i].type] = this.grounds.length - 1;
+        }
+        this.grounds[map_type_to_index[courts[i].type]].courts.push(courts[i]);
+      }
+
       for (let i = 0; i < this.grounds.length; i++) {
         let openTimes = this.grounds[i].openingHours.split(" ");
         this.grounds[i].open_times = [];
@@ -484,7 +523,7 @@ export default {
 
             // 遍历特定时段，设定type字段
             for (let p = 0; p < this.grounds[i].courts[j].reservedDuration.length;p++){
-              
+
               // openstate为0表示是管理员预留的场地，为1表示是用户自己预订的场地
               this.grounds[i].courts[j].reservedDuration[p].type = 2 - this.grounds[i].courts[j].reservedDuration[p].openState
             }
