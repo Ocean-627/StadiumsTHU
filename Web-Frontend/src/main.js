@@ -11,9 +11,12 @@ import VXETable from "vxe-table";
 import "vxe-table/lib/style.css";
 import VXETablePluginExportXLSX from "vxe-table-plugin-export-xlsx";
 import moment from "moment";
+import { VueMasonryPlugin } from "vue-masonry";
 
 Vue.use(VXETable);
 VXETable.use(VXETablePluginExportXLSX);
+
+Vue.use(VueMasonryPlugin);
 
 //import '@/assets/js/jquery-3.1.1.min.js'
 //import '@/assets/js/popper.min.js'
