@@ -75,45 +75,19 @@ class StadiumView(ListAPIView):
     """
     场馆信息
     """
+    # authentication_classes = [ManagerAuthtication]
     queryset = Stadium.objects.all()
     serializer_class = StadiumSerializerForManager
     filter_class = StadiumFilter
 
-    # authentication_classes = [ManagerAuthtication]
-
     def post(self, request):
         req_data = request.data
-        name = req_data.get('name', '')
-        information = req_data.get('information', '')
-        openState = req_data.get('openState', '')
-        contact = req_data.get('contact', '')
-        stadiumId = req_data.get('stadiumId', '')
-        managerId = req_data.get('managerId', '')
-        startDate = req_data.get('startDate', '')
-        openTime = req_data.get('openTime', '')
-        closeTime = req_data.get('closeTime', '')
-        foreDays = req_data.get('foreDays', '')
-        staticChange = stadiumId and managerId and name and information and openState != "" and contact
-        dynamicChange = stadiumId and managerId and startDate and openTime and closeTime
-        if not staticChange and not dynamicChange:
-            return JsonResponse({'error': 'Incomplete information'})
-        if dynamicChange:
-            changeSchedule = ChangeSchedule(stadium=Stadium.objects.all().filter(id=int(stadiumId))[0],
-                                            manager=Manager.objects.all().filter(id=int(managerId))[0],
-                                            startDate=startDate,
-                                            openTime=openTime,
-                                            foreDays=foreDays,
-                                            closeTime=closeTime)
-            changeSchedule.save()
-            return JsonResponse({"message": "ok"})
-        else:
-            stadium = Stadium.objects.all().filter(id=int(stadiumId))[0]
-            stadium.contact = contact
-            stadium.information = information
-            stadium.openState = openState
-            stadium.name = name
-            stadium.save()
-            return JsonResponse({"message": "ok"})
+        ser = StadiumSerializerForManager(data=req_data)
+        if not ser.is_valid():
+            return Response({'error': ser.errors})
+        stadium = Stadium.objects.filter(id=ser.validated_data.get('stadium_id')).first()
+        ser.update(stadium, ser.validated_data)
+        return Response({'message': 'ok'})
 
 
 class CourtView(ListAPIView):
