@@ -77,3 +77,9 @@ class ChangeDurationFilter(filters.FilterSet):
     class Meta:
         model = ChangeDuration
         fields = ['id']
+
+
+class AddEventFilter(filters.FilterSet):
+    class Meta:
+        model = AddEvent
+        fields = ['id']

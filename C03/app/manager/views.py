@@ -149,27 +149,24 @@ class ChangeDurationView(ListAPIView, CreateAPIView):
     filter_class = ChangeDurationFilter
 
 
-class AddEventView(APIView):
+class AddEventView(ListAPIView):
     """
     添加场地占用事件信息
     """
     authentication_classes = [ManagerAuthtication]
+    queryset = AddEvent.objects.all()
+    serializer_class = AddEventSerializer
+    filter_class = AddEventFilter
 
     def post(self, request):
         req_data = request.data
-        managerId = req_data.get('managerId', '')
-        courtId = req_data.get('courtId', '')
-        date = req_data.get('date', '')
-        startTime = req_data.get('startTime', '')
-        endTime = req_data.get('endTime', '')
-        if not managerId or not courtId or not date or not startTime or not endTime:
-            return JsonResponse({'error': 'Incomplete information'})
-        manager = Manager.objects.all().filter(id=int(managerId))[0]
-        court = Court.objects.all().filter(id=int(courtId))[0]
-        addEvent = AddEvent(manager=manager, court=court, startTime=startTime, endTime=endTime, date=date)
-        addEvent.save()
-
-        myDurations = court.duration_set.all().filter(date=date)
+        ser = AddEventSerializer(data=req_data)
+        if not ser.is_valid():
+            return Response({'error': ser.errors})
+        addEvent = ser.save()
+        startTime = addEvent.startTime
+        endTime = addEvent.endTime
+        myDurations = addEvent.court.duration_set.all().filter(date=addEvent.date)
         for myDuration in myDurations:
             cp1 = judgeTime(myDuration.endTime, startTime)
             cp2 = judgeTime(startTime, myDuration.startTime)
@@ -183,15 +180,7 @@ class AddEventView(APIView):
             if flag > 0:
                 myDuration.openState = 0
                 myDuration.save()
-        return JsonResponse({'message': 'ok'})
-
-    def get(self, request):
-        req_data = request.query_params
-        eventId = req_data.get('eventId', '')
-        if not eventId:
-            return JsonResponse({'error': 'Incomplete information'})
-        addEvent = AddEvent.objects.all().filter(id=int(eventId))[0]
-        return JsonResponse(model_to_dict(addEvent))
+        return Response({'message': 'ok'})
 
 
 class UserView(ListAPIView):
@@ -212,11 +201,7 @@ class HistoryView(APIView):
     authentication_classes = [ManagerAuthtication]
 
     def get(self, request):
-        req_data = request.query_params
-        managerId = req_data.get('managerId', '')
-        manager = Manager.objects.all().filter(id=int(managerId))[0]
-        if not managerId:
-            return JsonResponse({'error': 'Incomplete information'})
+        manager = request.user
         changeDuration = manager.changeduration_set.all()
         addEvent = manager.addevent_set.all()
         myOperations = sorted(chain(changeDuration, addEvent), key=attrgetter('time'), reverse=True)

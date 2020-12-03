@@ -66,3 +66,21 @@ class ChangeDurationSerializer(serializers.ModelSerializer):
         model = ChangeDuration
         fields = '__all__'
         read_only_fields = ['manager', 'courtType']
+
+
+class AddEventSerializer(serializers.ModelSerializer):
+    court_id = serializers.IntegerField(label='场地编号', write_only=True)
+
+    def validate_court_id(self, value):
+        court = Court.objects.filter(id=value).first()
+        if not court:
+            raise ValidationError('Invalid court_id')
+        return value
+
+    def create(self, validated_data):
+        return AddEvent.objects.create(manager=self.context['request'].user, **validated_data)
+
+    class Meta:
+        model = AddEvent
+        fields = '__all__'
+        read_only_fields = ['manager', 'court']
