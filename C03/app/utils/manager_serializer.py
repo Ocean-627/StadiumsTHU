@@ -30,3 +30,21 @@ class CourtTypeSerializerForManager(CourtTypeSerializer):
 
     def get_amount(self, obj):
         return len(obj.court_set.all())
+
+
+class ChangeScheduleSerializer(serializers.ModelSerializer):
+    stadium_id = serializers.IntegerField(label='场馆编号', write_only=True)
+
+    def validate_stadium_id(self, value):
+        stadium = Stadium.objects.filter(id=value).first()
+        if not stadium:
+            raise ValidationError('Invalid stadium_id')
+        return value
+
+    def create(self, validated_data):
+        return ChangeSchedule.objects.create(manager=self.context['request'].user, **validated_data)
+
+    class Meta:
+        model = ChangeSchedule
+        fields = '__all__'
+        read_only_fields = ['manager', 'stadium']

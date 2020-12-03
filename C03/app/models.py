@@ -125,6 +125,7 @@ class ChangeSchedule(models.Model):
     # 修改场馆开放和关闭时间点
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
+    openState = models.BooleanField()
     openTime = models.CharField(max_length=30)
     closeTime = models.CharField(max_length=30)
     startDate = models.CharField(max_length=30)

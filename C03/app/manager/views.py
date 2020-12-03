@@ -90,6 +90,14 @@ class StadiumView(ListAPIView):
         return Response({'message': 'ok'})
 
 
+class ChangeScheduleView(CreateAPIView):
+    """
+    修改场馆开放时间相关
+    """
+    authentication_classes = [ManagerAuthtication]
+    serializer_class = ChangeScheduleSerializer
+
+
 class CourtView(ListAPIView):
     """
     场地信息
