@@ -169,7 +169,7 @@ export default {
                             filters.forEach(({ property, values }) => {
                                 queryParams[property] = values.join(',')
                             })
-                            return this.$axios.get(`/user/`, {params: queryParams}).then(res => res.data)
+                            return this.$axios.get(`user/`, {params: queryParams}).then(res => res.data)
                         },
                         delete: ({ body }) => {
                             console.log(body)

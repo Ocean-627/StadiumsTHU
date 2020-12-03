@@ -15,7 +15,7 @@
                             场馆管理
                         </li>
                         <li class="breadcrumb-item active">
-                            <strong>场地预留</strong>
+                            <strong>预约记录管理</strong>
                         </li>
                     </ol>
                 </div>
@@ -23,7 +23,7 @@
             <div class="wrapper wrapper-content animated fadeInRight">
                 <div class="grid" v-masonry transition-duration="0.3s" item-selector=".grid-item" horizontal-order="true" gutter="25">
                     <div class="grid-item" v-masonry-tile
-                        v-for="stadium in stadiums" v-bind:key="stadium.name" v-on:click="enter(stadium)">
+                        v-for="stadium in stadiums" v-bind:key="stadium.name">
                         <div class="contact-box">
                             <!-- 主要部分 & 单个单元 -->
                             <div class="row i-row">
@@ -47,6 +47,14 @@
                                             {{courtType.type}}场 {{courtType.amount}} 个&emsp;
                                         </a>
                                 </div>
+                            </div>
+                            <div class="contact-box-footer">
+                                <a type="button" class="btn btn-outline btn-default" v-on:click="enter(stadium)">  
+                                    <i class="fa fa-clock-o"></i> 场地预留
+                                </a>
+                                <a type="button" class="btn btn-outline btn-default" v-on:click="checkReserve(stadium)">  
+                                    <i class="fa fa-clock-o"></i> 查看预约
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -135,6 +143,9 @@ export default {
     methods: {
         enter(stadium) {
             window.location.replace('/stadium_management/ground_reserve/detail?id='+stadium.id.toString())
+        },
+        checkReserve(stadium) {
+            window.location.replace('/stadium_management/ground_reserve/record?id='+stadium.id.toString())
         }
     }
 }

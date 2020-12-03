@@ -57,7 +57,7 @@ export default new Router({
             component: GroundReserve
         },
         {
-            path: '/stadium_management/reserve_record',
+            path: '/stadium_management/ground_reserve/record',
             name: 'ReserveRecord',
             component: ReserveRecord
         },
