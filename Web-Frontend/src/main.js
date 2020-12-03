@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from "vue";
 import App from "./App";
+import cookie from 'vue-cookie'
 import router from "./router";
 import Common from "./Common";
 import axios from "axios";
@@ -32,19 +33,24 @@ Vue.use(VueMasonryPlugin);
 //import '@/assets/js/plugins/gritter/jquery.gritter.min.js'
 //
 //import '@/assets/js/plugins/sweetalert/sweetalert.min.js'
+
+axios.defaults.withCredentials = true;
+Vue.prototype.$http = axios
 axios.defaults.baseURL = "http://127.0.0.1:8000/api/manager";
 Vue.config.productionTip = false;
 Vue.prototype.Common = Common;
 Vue.prototype.$axios = axios;
+Vue.prototype.$cookie = cookie;
+
 
 /* eslint-disable no-new */
 new Vue({
-  el: "#app",
-  router,
-  components: { App },
-  template: "<App/>"
+    el: "#app",
+    router,
+    components: { App },
+    template: "<App/>"
 });
 
 Vue.filter("datetime_format", function(str, pattern = "YYYY-MM-DD HH:mm:ss") {
-  return moment(str).format(pattern);
+    return moment(str).format(pattern);
 });

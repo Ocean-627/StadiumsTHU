@@ -59,7 +59,14 @@ export default {
   methods: {
     submit() {
       this.$axios.post("login/", { userId: this.id, password: this.pwd }).then(res => {
-        this.$router.push("/home")
+        if (res.data.error){
+          alert("Error! Please try again.");
+        }
+        else{
+          alert(res.data.loginToken)
+          this.$cookie.set('loginToken',res.data.loginToken);
+          this.$router.push("/home");
+        }
       });
     }
   }
