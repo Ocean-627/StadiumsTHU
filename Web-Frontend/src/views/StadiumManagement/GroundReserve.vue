@@ -451,8 +451,7 @@ export default {
         date: $("#date option:selected")
           .text()
           .toString()
-          .replace(/(^\s*)|(\s*$)/g, ""),
-        floor: 1
+          .replace(/(^\s*)|(\s*$)/g, "")
       }
     };
 

@@ -26,13 +26,13 @@
                                 <i class="fa fa-plus"></i> 添加新场馆 
                             </a>
                 </div>
-                <div class="grid">
-                    <div class="grid-item" v-for="stadium in stadiums" v-bind:key="stadium.name">
+                <div class="grid" v-masonry transition-duration="0.3s" item-selector=".grid-item" horizontal-order="true" gutter="25">
+                    <div class="grid-item" v-masonry-tile v-for="stadium in stadiums" v-bind:key="stadium.name">
                         <div class="contact-box">
                             <!-- 主要部分 & 单个单元 -->
                             <div class="row i-row">
                                 <div class="col-md-7">
-                                    <img alt="image" class="rounded m-t-xs img-fluid i-img" src="/static/img/zongti.jpg">
+                                    <img alt="image" class="rounded m-t-xs img-fluid i-img" :src="stadium.images[0].image">
                                 </div>
                                 <div class="col-md-5 i-infobox">
                                     <h2 class="i-title"><strong>{{stadium.name}}</strong></h2>
@@ -127,7 +127,7 @@ import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import Toolbox from "@/components/Toolbox"
 import 'jquery'
-import 'masonry-layout'
+
 export default {
     data() {
         return {
@@ -141,12 +141,6 @@ export default {
         Footer
     },
     mounted() {
-        var msnry = new Masonry('.grid', {
-            // options...
-            itemSelector: ".grid-item",
-            columnWidth: 500,
-            gutter: 25
-        });
         this.$axios.get('stadium/', {})
             .then(res => {
                 if (res.data.error) {
@@ -159,14 +153,6 @@ export default {
                     this.stadiums = res.data
                 }
             })
-    },
-    updated() {
-        var msnry = new Masonry('.grid', {
-            // options...
-            itemSelector: ".grid-item",
-            columnWidth: 500,
-            gutter: 25
-        });
     },
     methods: {
         editStadium(index){
