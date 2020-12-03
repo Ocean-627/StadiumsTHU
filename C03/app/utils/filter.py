@@ -55,7 +55,7 @@ class ReserveEventFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:
         model = ReserveEvent
-        fields = ['id', 'stadium_id', 'court_id', 'duration_id', 'startTime', 'endTime']
+        fields = ['id', 'user_id', 'stadium_id', 'court_id', 'duration_id', 'startTime', 'endTime']
 
 
 class CommentFilter(filters.FilterSet):
@@ -71,3 +71,9 @@ class CollectEventFilter(filters.FilterSet):
     class Meta:
         model = CollectEvent
         fields = ['id', 'stadium_id']
+
+
+class ChangeDurationFilter(filters.FilterSet):
+    class Meta:
+        model = ChangeDuration
+        fields = ['id']

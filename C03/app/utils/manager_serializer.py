@@ -48,3 +48,21 @@ class ChangeScheduleSerializer(serializers.ModelSerializer):
         model = ChangeSchedule
         fields = '__all__'
         read_only_fields = ['manager', 'stadium']
+
+
+class ChangeDurationSerializer(serializers.ModelSerializer):
+    courtType_id = serializers.IntegerField(label='场馆类型编号', write_only=True)
+
+    def validate_courtType_id(self, value):
+        courtType = CourtType.objects.filter(id=value).first()
+        if not courtType:
+            raise ValidationError('Invalid courtType_id')
+        return value
+
+    def create(self, validated_data):
+        return ChangeDuration(manager=self.context['request'].user, **validated_data)
+
+    class Meta:
+        model = ChangeDuration
+        fields = '__all__'
+        read_only_fields = ['manager', 'courtType']

@@ -52,6 +52,7 @@ class LoginView(APIView):
         obj.save()
         ret = Response(
             {'message': 'ok', 'username': obj.username, 'loginToken': loginToken})
+        ret.set_cookie('loginToken', loginToken)
         return ret
 
 
@@ -89,14 +90,6 @@ class StadiumView(ListAPIView):
         return Response({'message': 'ok'})
 
 
-class ChangeScheduleView(CreateAPIView):
-    """
-    修改场馆开放时间相关
-    """
-    authentication_classes = [ManagerAuthtication]
-    serializer_class = ChangeScheduleSerializer
-
-
 class CourtView(ListAPIView):
     """
     场地信息
@@ -127,65 +120,33 @@ class DurationView(ListAPIView):
     filter_class = DurationFilter
 
 
-class ReserveEventView(APIView):
+class ReserveEventView(ListAPIView):
     """
     预约信息
     """
+    # authentication_classes = [ManagerAuthtication]
+    queryset = ReserveEvent.objects.all()
+    serializer_class = ReserveEventSerializer
+    filter_class = ReserveEventFilter
+
+
+class ChangeScheduleView(CreateAPIView):
+    """
+    修改场馆开放时间相关
+    """
     authentication_classes = [ManagerAuthtication]
-
-    def get(self, request):
-        req_data = request.query_params
-        courtId = req_data.get('courtId', '')
-        durationId = req_data.get('durationId', '')
-        if not courtId or not durationId:
-            return JsonResponse({'error': 'Incomplete information'})
-        duration = Duration.objects.all().filter(id=int(durationId))[0]
-        event = duration.reserveevent_set.all()
-        return JsonResponse({'event': json(event)})
+    serializer_class = ChangeScheduleSerializer
 
 
-class ChangeDurationView(APIView):
+class ChangeDurationView(ListAPIView, CreateAPIView):
     """
     修改预约时段信息
     """
 
-    # authentication_classes = [ManagerAuthtication]
-
-    def post(self, request):
-        req_data = request.data
-        courtTypeId = req_data.get('courtTypeId', '')
-        managerId = req_data.get('managerId', '')
-        startDate = req_data.get('startDate', '')
-        duration = req_data.get('duration', '')
-        openHours = req_data.get('openHours', '')
-        price = req_data.get('price', '')
-        membership = req_data.get('membership', '')
-        if not courtTypeId \
-                or not managerId or not startDate \
-                or not duration or not openHours \
-                or not membership or not price:
-            return JsonResponse({'error': 'Incomplete information'})
-        manager = Manager.objects.all().filter(id=int(managerId))[0]
-        courtType = CourtType.objects.all().filter(id=int(courtTypeId))[0]
-        changeDuration = ChangeDuration(courtType=courtType,
-                                        manager=manager,
-                                        openingHours=openHours,
-                                        date=startDate,
-                                        membership=membership,
-                                        price=price)
-        changeDuration.save()
-
-        # TODO: 立刻处理更改时段操作
-
-        return JsonResponse({'message': 'ok'})
-
-    def get(self, request):
-        req_data = request.query_params
-        eventId = req_data.get('eventId', '')
-        if not eventId:
-            return JsonResponse({'error': 'Incomplete information'})
-        changeDuration = ChangeDuration.objects.all().filter(id=int(eventId))[0]
-        return JsonResponse(model_to_dict(changeDuration))
+    authentication_classes = [ManagerAuthtication]
+    queryset = ChangeDuration.objects.all()
+    serializer_class = ChangeDurationSerializer
+    filter_class = ChangeDurationFilter
 
 
 class AddEventView(APIView):
