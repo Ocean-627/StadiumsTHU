@@ -318,23 +318,32 @@ QueryParam:
 Response:
 [
     {
-        "id": 7,
-        "stadiumName": "综合体育馆",
-        "courtName": "场地0",
+        "id": 15,
         "result": "success",
-        "comments": [],
-        "has_comments": false,
-        "startTime": "10:00",
-        "endTime": "11:00",
+        "comments": [
+            {
+                "id": 32,
+                "courtName": "场地4",
+                "images": [],
+                "content": "有一说一确实得试一下你知道吧，要不然不放心",
+                "score": 3,
+                "user": 1,
+                "court": 52
+            }
+        ],
+        "has_comments": true,
+        "stadium": "综合体育馆",
+        "court": "场地4",
+        "court_id": 52,
+        "date": "2020-11-26",
+        "startTime": "11:00",
+        "endTime": "12:00",
         "payment": false,
         "cancel": false,
         "checked": false,
         "leave": false,
-        "stadium": 10,
-        "court": 32,
-        "user": 2,
-        "duration": 241
-    },
+        "user": 1
+    }
 ]
 ```
 
@@ -427,7 +436,6 @@ Response:
     "score": 3,
     "user": 2,
     "court": 33,
-    "reserve": 8
 }
 ```
 
