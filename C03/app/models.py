@@ -24,7 +24,7 @@ class User(models.Model):
 class Stadium(models.Model):
     # 场馆
     name = models.CharField(max_length=32)
-    pinyin = models.CharField(max_length=100)
+    pinyin = models.CharField(max_length=100, null=True)
     information = models.CharField(max_length=300)
     # TODO:开放时间和关闭时间可以设置为DateField
     openTime = models.CharField(max_length=32)
@@ -33,8 +33,6 @@ class Stadium(models.Model):
     openState = models.BooleanField()
     foreDays = models.IntegerField()
     durations = models.CharField(max_length=32, null=True)
-    score = models.FloatField(verbose_name='评分', default=4.9)
-    comments = models.IntegerField(default=0)
     location = models.CharField(max_length=10, null=True, default="学堂路")
     longitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, verbose_name='经度')
     latitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, verbose_name='纬度')
@@ -127,6 +125,7 @@ class ChangeSchedule(models.Model):
     # 修改场馆开放和关闭时间点
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
+    openState = models.BooleanField()
     openTime = models.CharField(max_length=30)
     closeTime = models.CharField(max_length=30)
     startDate = models.CharField(max_length=30)

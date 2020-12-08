@@ -434,32 +434,14 @@ export default {
         // 修改场馆基本信息
         case 1:
           request_body = {
-            stadiumId: this.$route.query.id,
+            stadium_id: this.$route.query.id,
             managerId: 3,
             name: this.$refs.name.value,
             openState: this.$refs.openState.value === "开放",
             information: this.$refs.information.value,
             contact: this.$refs.contact.value
           };
-          break;
-        case 2:
-          break;
-
-        // 修改场馆开放关闭时间
-        case 3:
-          request_body = {
-            stadiumId: this.$route.query.id,
-            managerId: 3,
-            startDate: this.$refs.startDate.value,
-            openTime: this.$refs.openTime.value,
-            closeTime: this.$refs.closeTime.value,
-            foreDays: this.$refs.foreDays.value
-          };
-          break;
-        default:
-          break;
-      }
-      this.$axios.post("stadium/", request_body).then(res => {
+                this.$axios.post("stadium/", request_body).then(res => {
         console.log(res);
         if (res.data.error) {
           alert("Error! Please try again.");
@@ -476,6 +458,42 @@ export default {
           window.location.replace("/stadium_management/stadium_info");
         }
       });
+          break;
+        case 2:
+          break;
+
+        // 修改场馆开放关闭时间
+        case 3:
+          request_body = {
+            stadium_id: this.$route.query.id,
+            managerId: 3,
+            openState:1,
+            startDate: this.$refs.startDate.value,
+            openTime: this.$refs.openTime.value,
+            closeTime: this.$refs.closeTime.value,
+            foreDays: this.$refs.foreDays.value
+          };
+          this.$axios.post("changeschedule/", request_body,).then(res => {
+            console.log(res);
+            if (res.data.error) {
+              alert("Error! Please try again.");
+            } else {
+            setTimeout(
+              () =>
+              swal({
+                title: "成功",
+                text: "场馆信息修改成功",
+                type: "success"
+                }),1000
+              );
+          window.location.replace("/stadium_management/stadium_info");
+        }
+      });
+          break;
+        default:
+          break;
+      }
+
     }
   }
 };

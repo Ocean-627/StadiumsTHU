@@ -6,18 +6,19 @@
       <div class="row wrapper border-bottom white-bg page-heading">
         <!--Breadcrum 导航-->
         <div class="col-lg-9">
-        
-          <h2>场地预留 <small>@{{stadiumName}}</small></h2>
+          <h2>
+            场地预留 <small>@{{ stadiumName }}</small>
+          </h2>
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
               <a href="/home">主页</a>
             </li>
             <li class="breadcrumb-item">场馆管理</li>
             <li class="breadcrumb-item">
-              <a href="/stadium_management/ground_reserve">场地预留</a>
+              <a href="/stadium_management/ground_reserve">预约记录管理</a>
             </li>
             <li class="breadcrumb-item active">
-              <strong>详细信息</strong>
+              <strong>场地预留</strong>
             </li>
           </ol>
         </div>
@@ -26,18 +27,19 @@
         <!-- TODO: 在路由里添加参数，控制是到哪一个场馆的编辑页面 -->
         <div class="row" style="margin-bottom: 20px">
           <div class="col-lg-3">
-            <select class="chosen-select" v-model="current_date" id="date" @changed="changeDate()">
+            <select
+              class="chosen-select"
+              v-model="current_date"
+              id="date"
+              @changed="changeDate()"
+            >
               <option v-for="(date, index) in dates" :key="date" :value="index">
                 {{ date }}
               </option>
             </select>
           </div>
         </div>
-        <div
-          class="row"
-          v-for="ground in grounds"
-          :key="ground.type"
-        >
+        <div class="row" v-for="ground in grounds" :key="ground.type">
           <div class="col-lg-12">
             <div class="ibox">
               <div class="ibox-title">
@@ -48,11 +50,17 @@
                   </a>
                   <ul class="dropdown-menu dropdown-user">
                     <li>
-                      <a class="dropdown-item" data-toggle="modal" data-target="#myModal">场地预留</a>
+                      <a
+                        class="dropdown-item"
+                        data-toggle="modal"
+                        data-target="#myModal"
+                        >场地预留</a
+                      >
                     </li>
                     <li>
                       <a class="dropdown-item" v-on:click="manage(ground)"
-                        >预约管理</a>
+                        >预约管理</a
+                      >
                     </li>
                   </ul>
                   <a class="collapse-link">
@@ -62,7 +70,7 @@
               </div>
               <div class="ibox-content">
                 <div v-for="data in ground.courts" :key="data.id">
-                  <h5>{{ data.id }}</h5>
+                  <h5>{{ data.name }}</h5>
                   <div class="progress">
                     <div
                       v-for="reserve in data.reservedDuration"
@@ -78,7 +86,13 @@
                   <br />
                 </div>
               </div>
-              <div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+              <div
+                class="modal inmodal"
+                id="myModal"
+                tabindex="-1"
+                role="dialog"
+                aria-hidden="true"
+              >
                 <div class="modal-dialog">
                   <div class="modal-content animated fadeIn">
                     <div class="modal-header">
@@ -90,14 +104,14 @@
                     </div>
                     <div class="modal-body">
                       <p>
-                        场地类型：<strong>{{ ground.name }}</strong>
+                        场地类型：<strong>{{ ground.type }}</strong>
                       </p>
                       <div class="form-group" id="data_1">
                         <label class="font-normal">使用日期</label>
                         <div class="input-group date">
-                          <span class="input-group-addon"><i class="fa fa-calendar"></i></span><inputtype="text"
-                            class="form-control"
-                          />
+                          <span class="input-group-addon"
+                            ><i class="fa fa-calendar"></i></span
+                          ><input type="text" class="form-control" />
                         </div>
                       </div>
                       <div class="form-group">
@@ -133,7 +147,8 @@
                               <input
                                 type="text"
                                 class="form-control"
-                                v-model="form_end" ref="endTime"
+                                v-model="form_end"
+                                ref="endTime"
                               />
                               <span class="input-group-addon">
                                 <span class="fa fa-clock-o"></span>
@@ -143,20 +158,39 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <label class="font-normal">使用者（选填）</label><br>
-                        <div><small>请在下方输入使用者的学号/工号（或留空）。预约信息将通过站内消息通知他们。</small></div>
-                        <input class="tagsinput form-control" type="text" ref="user_id"/>
+                        <label class="font-normal">使用者（选填）</label><br />
+                        <div>
+                          <small
+                            >请在下方输入使用者的学号/工号（或留空）。预约信息将通过站内消息通知他们。</small
+                          >
+                        </div>
+                        <input
+                          class="tagsinput form-control"
+                          type="text"
+                          ref="user_id"
+                        />
                       </div>
                       <div class="form-group">
                         <label class="font-normal">预留场地数</label>
                         <div class="row">
-                          <div class="col-sm-4"><input class="touchspin" type="text" ref="number"></div>
+                          <div class="col-sm-4">
+                            <input class="touchspin" type="text" ref="number" />
+                          </div>
                         </div>
                       </div>
                       <div class="form-group">
-                        <label class="font-normal">预留场地序号（选填）</label><br>
-                        <div><small>如果指定了预留的场地序号，那么将预留指定的场地，即使场地上原本有预约（该预约将被取消并通过站内信通知用户）。如果未指定序号，那么后台将会自动选择空闲的场地进行预留。若空闲场地不足，则必须手动指定序号。</small></div>
-                        <input class="tagsinput form-control" type="text" ref="court_id"/>
+                        <label class="font-normal">预留场地序号（选填）</label
+                        ><br />
+                        <div>
+                          <small
+                            >如果指定了预留的场地序号，那么将预留指定的场地，即使场地上原本有预约（该预约将被取消并通过站内信通知用户）。如果未指定序号，那么后台将会自动选择空闲的场地进行预留。若空闲场地不足，则必须手动指定序号。</small
+                          >
+                        </div>
+                        <input
+                          class="tagsinput form-control"
+                          type="text"
+                          ref="court_id"
+                        />
                       </div>
                       <div class="form-group">
                         <label class="font-normal">备注（选填）</label>
@@ -171,8 +205,12 @@
                       >
                         取消
                       </button>
-                      <button type="button" class="btn btn-primary" data-dismiss="modal"
-                        v-on:click="submit(ground)">
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        data-dismiss="modal"
+                        v-on:click="submit(ground)"
+                      >
                         确认
                       </button>
                     </div>
@@ -278,11 +316,10 @@ import "@/assets/js/plugins/jasny/jasny-bootstrap.min.js";
 import "@/assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js";
 import "@/assets/js/plugins/datapicker/bootstrap-datepicker.js";
 import "@/assets/js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js";
+import { duration } from "moment";
 
 export default {
   data() {
-    // TODO: 在获取到信息之后，要对每种场地的每个场地的预定列表做预处理 fix_reserves()
-    //          如果要改对应的属性名称的话，Common.vue里的预处理函数也需要改一点点
     let res = {
       grounds: [],
       dates: [
@@ -296,11 +333,10 @@ export default {
       form_time: "",
       form_start: "",
       form_end: "",
-      stadiumName: "测试"
-    }
-    
+      stadiumName: ""
+    };
 
-    return res
+    return res;
   },
   components: {
     Toolbox,
@@ -402,47 +438,118 @@ export default {
       buttondown_class: "btn btn-white",
       buttonup_class: "btn btn-white"
     });
-    let request = {
+
+    let request1 = {
+      params: {
+        stadium_id: this.$route.query.id
+      }
+    };
+
+    let request2 = {
       params: {
         stadium_id: this.$route.query.id,
         date: $("#date option:selected")
           .text()
           .toString()
-          .replace(/(^\s*)|(\s*$)/g, ""),
-        floor: 1
+          .replace(/(^\s*)|(\s*$)/g, "")
       }
     };
 
-    // TODO：解决显示bug
-    this.$axios.get("court/", request).then(res => {
-      this.stadiumName = res.data.name;
-      this.grounds = res.data.reserveInfo;
+    let request3 = {
+      params: {
+        id: this.$route.query.id
+      }
+    };
 
-      // 遍历场地类型
+    let p = Promise.all([
+      this.$axios.get("court/", request1),
+      this.$axios.get("duration/", request2),
+      this.$axios.get("courttype/", request1),
+      this.$axios.get("stadium/", request3)
+    ]);
+    p.then(res => {
+      this.stadiumName = res[3].data[0].name;
+      let courts = res[0].data;
+      let durations = res[1].data;
+      let courttypes = res[2].data;
+      let map_id_to_court = {};
+      for (let i = 0; i < courts.length; i++) {
+        map_id_to_court[courts[i].id] = i;
+      }
+      for (let i = 0; i < durations.length; i++) {
+        if (
+          courts[map_id_to_court[durations[i].court]].reservedDuration ===
+          undefined
+        ) {
+          courts[map_id_to_court[durations[i].court]].reservedDuration = [];
+        }
+        courts[map_id_to_court[durations[i].court]].reservedDuration.push(
+          durations[i]
+        );
+      }
+
+      let map_id_to_time = {};
+      for (let i = 0; i < courttypes.length; i++) {
+        map_id_to_time[courttypes[i].id] = courttypes[i].openingHours;
+      }
+
+      let map_type_to_index = {};
+      for (let i = 0; i < courts.length; i++) {
+        if (map_type_to_index[courts[i].type] === undefined) {
+          this.grounds.push({
+            type: courts[i].type,
+            courts: [],
+            openingHours: map_id_to_time[courts[i].courtType]
+          });
+          map_type_to_index[courts[i].type] = this.grounds.length - 1;
+        }
+        this.grounds[map_type_to_index[courts[i].type]].courts.push(courts[i]);
+      }
+
       for (let i = 0; i < this.grounds.length; i++) {
-        let openTimes = this.grounds[i].openingHours.split(" ")
-        this.grounds[i].open_times = []
+        let openTimes = this.grounds[i].openingHours.split(" ");
+        this.grounds[i].open_times = [];
 
         // 构造某个场地类型的open_times
-        for (let k = 0; k < openTimes.length; k++){
-          var openTime = {"startTime": openTimes[k].split("-")[0].toString(),
-                          "endTime": openTimes[k].split("-")[1].toString()}
-          this.grounds[i].open_times.push(openTime)
+        for (let k = 0; k < openTimes.length; k++) {
+          var openTime = {
+            startTime: openTimes[k].split("-")[0].toString(),
+            endTime: openTimes[k].split("-")[1].toString()
+          };
+          this.grounds[i].open_times.push(openTime);
         }
 
         // 遍历特定场地
         for (let j = 0; j < this.grounds[i].courts.length; j++) {
+          // 遍历特定时段，设定type字段
+          if (this.grounds[i].courts[j].reservedDuration === undefined) {
+            this.grounds[i].courts[j].reservedDuration = [];
+          }
+          for (
+            let p = 0;
+            p < this.grounds[i].courts[j].reservedDuration.length;
+            p++
+          ) {
+            // openstate为0表示是管理员预留的场地，为1表示是用户自己预订的场地
+            this.grounds[i].courts[j].reservedDuration[p].type =
+              2 -
+              Number(this.grounds[i].courts[j].reservedDuration[p].openState);
+          }
 
-            // 遍历特定时段，设定type字段
-            for (let p = 0; p < this.grounds[i].courts[i].reservedDuration.length;p++){
-              
-              // openstate为0表示是管理员预留的场地，为1表示是用户自己预订的场地
-              this.grounds[i].courts[i].reservedDuration[p].type = 2 - this.grounds[i].courts[i].reservedDuration[p].openState
-            }
+          // 遍历特定时段，设定type字段
+          for (
+            let p = 0;
+            p < this.grounds[i].courts[j].reservedDuration.length;
+            p++
+          ) {
+            // openstate为0表示是管理员预留的场地，为1表示是用户自己预订的场地
+            this.grounds[i].courts[j].reservedDuration[p].type =
+              2 - this.grounds[i].courts[j].reservedDuration[p].openState;
+          }
 
-            this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
-              this.grounds[i].courts[j].reservedDuration,
-              this.grounds[i].open_times
+          this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
+            this.grounds[i].courts[j].reservedDuration,
+            this.grounds[i].open_times
           );
         }
       }
