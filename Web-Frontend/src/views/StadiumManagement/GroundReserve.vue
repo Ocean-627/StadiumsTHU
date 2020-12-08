@@ -24,7 +24,6 @@
         </div>
       </div>
       <div class="wrapper wrapper-content animated fadeInRight ecommerce">
-        <!-- TODO: 在路由里添加参数，控制是到哪一个场馆的编辑页面 -->
         <div class="row" style="margin-bottom: 20px">
           <div class="col-lg-3">
             <select

@@ -65,7 +65,8 @@ export default {
         else{
           alert(res.data.loginToken)
           this.$cookie.set('loginToken',res.data.loginToken);
-          this.$router.push("/home");
+          localStorage.setItem("username", res.data.username)
+          window.location.replace("/home")
         }
       });
     }

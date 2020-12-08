@@ -7,12 +7,12 @@
                         <div class="dropdown profile-element">
                             <img alt="image" class="rounded-circle" src="../../static/img/mabaoguo.jpg" />
                             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                                <span class="block m-t-xs font-bold">马保国</span>
+                                <span class="block m-t-xs font-bold">{{ username }}</span>
                                 <span class="text-muted text-xs block">管理员 <b class="caret"></b></span>
                             </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                                <li><a class="dropdown-item" href="profile.html">个人信息</a></li>
-                                <li><a class="dropdown-item" href="mailbox.html">信箱</a></li>
+                                <li><a class="dropdown-item" href="/profile">个人信息</a></li>
+                                <li><a class="dropdown-item" href="/messages">信箱</a></li>
                                 <li class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="/login">登出</a></li>
                             </ul>
@@ -60,7 +60,9 @@
 <script>
 export default {
     data() {
-        return {}
+        return {
+            username: localStorage.getItem("username")
+        }
     }
 }
 </script>
