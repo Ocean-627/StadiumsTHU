@@ -1,4 +1,28 @@
 from app.utils.serializer import *
+from app.utils.validator import *
+
+
+class LogonSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(label='用户名', validators=[MinLengthValidator(3), MaxLengthValidator(20)])
+    password = serializers.CharField(label='密码',
+                                     validators=[MinLengthValidator(8), MaxLengthValidator(18), SafeValidator])
+
+    class Meta:
+        model = Manager
+        fields = '__all__'
+
+
+class ManagerSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(label='用户名', validators=[MinLengthValidator(3), MaxLengthValidator(20)],
+                                     required=False)
+    password = serializers.CharField(label='密码',
+                                     validators=[MinLengthValidator(8), MaxLengthValidator(18), SafeValidator],
+                                     required=False)
+
+    class Meta:
+        model = Manager
+        fields = '__all__'
+        read_only_fields = ['userId', 'loginToken']
 
 
 class StadiumSerializerForManager(StadiumSerializer):

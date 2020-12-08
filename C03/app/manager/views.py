@@ -13,23 +13,12 @@ from app.utils.pagination import *
 from app.utils.authtication import ManagerAuthtication
 
 
-class LogonView(APIView):
+class LogonView(CreateAPIView):
     """
     管理员注册
+    TODO: 目前是直接注册，日后应该加入验证环节
     """
-
-    def post(self, request):
-        req_data = request.data
-        username = req_data.get('username')
-        password = req_data.get('password')
-        email = req_data.get('email')
-        userId = req_data.get('userId')
-        # TODO:检查stadium是否存在
-        if not username or not password or not email or not userId:
-            return Response({'error': 'Incomplete information'})
-        manager = Manager(username=username, password=password, email=email, userId=userId)
-        manager.save()
-        return Response({'message': 'ok'})
+    serializer_class = LogonSerializer
 
 
 class LoginView(APIView):
@@ -67,6 +56,26 @@ class LogoutView(APIView):
         ret = JsonResponse({'message': 'ok'})
         ret.delete_cookie('loginToken')
         return ret
+
+
+class ManagerView(APIView):
+    """
+    管理员信息
+    """
+    authentication_classes = [ManagerAuthtication]
+
+    def get(self, request):
+        manager = request.user
+        manager = ManagerSerializer(manager, many=False)
+        return Response(manager.data)
+
+    def post(self, request):
+        req_data = request.data
+        ser = ManagerSerializer(data=req_data)
+        if not ser.is_valid():
+            return Response({'error': ser.errors})
+        ser.update(request.user, ser.validated_data)
+        return Response({'message': 'ok'})
 
 
 class StadiumView(ListAPIView):

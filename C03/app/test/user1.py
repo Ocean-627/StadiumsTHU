@@ -46,6 +46,7 @@ class GetStadiumTest(TestCase):
         self.assertEqual(len(content), 2)
         self.assertEqual(content[0]['name'], '综合体育馆')
         self.assertEqual(content[1]['name'], '陈明游泳馆')
+        self.assertEqual(content[0]['score'], 3)
 
         params = {
             'info': '综合'

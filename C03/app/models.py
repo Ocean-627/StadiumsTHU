@@ -46,6 +46,7 @@ class Manager(models.Model):
     userId = models.IntegerField(verbose_name='管理员编号', unique=True)
     email = models.EmailField()
     loginToken = models.CharField(max_length=100, null=True)
+    image = models.ImageField(upload_to='manager', verbose_name='头像', null=True)
     # TODO:完善信息
 
 
