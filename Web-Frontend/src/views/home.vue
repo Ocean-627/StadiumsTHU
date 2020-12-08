@@ -34,6 +34,10 @@ export default {
         Toolbox, Navbar, Header, Footer
     },
     mounted() {
+        // this.$axios.get('manager/', {})
+        // .then(res => {
+        //     console.log(res.data);
+        // })
         let _this = this
         setTimeout(function () {
             toastr.options = {
@@ -44,6 +48,7 @@ export default {
             };
             toastr.success('清动家园管理者', '欢迎您 ' + _this.username);
         }, 1300);
+
     }
 }
 
