@@ -90,9 +90,6 @@ class DurationSerializer(serializers.ModelSerializer):
 
 
 class ReserveEventSerializer(serializers.ModelSerializer):
-    stadiumName = serializers.CharField(source='stadium.name', required=False)
-    courtName = serializers.CharField(source='court.name', required=False)
-    userName = serializers.CharField(source='user.username', required=False)
     result = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField(required=False)
     has_comments = serializers.SerializerMethodField(required=False)
@@ -101,12 +98,13 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         return obj.get_result_display()
 
     def get_comments(self, obj):
-        comments = obj.comment_set.all()
+        comments = Comment.objects.filter(reserve_id=obj.id)
         comments = CommentSerializer(comments, many=True)
         return comments.data
 
     def get_has_comments(self, obj):
-        size = len(obj.comment_set.all())
+        comments = Comment.objects.filter(reserve_id=obj.id)
+        size = len(comments)
         return size > 0
 
     duration_id = serializers.IntegerField(label='时段编号', write_only=True)
@@ -119,27 +117,28 @@ class ReserveEventSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         duration = Duration.objects.filter(id=validated_data.get('duration_id')).first()
-        stadium = duration.stadium
-        court = duration.court
+        stadium = duration.stadium.name
+        court = duration.court.name
         # modify corresponding duration
         duration.accessible = False
         duration.user = self.context['request'].user
         duration.save()
         return ReserveEvent.objects.create(user=self.context['request'].user, **validated_data, stadium=stadium,
-                                           court=court, startTime=duration.startTime, endTime=duration.endTime,
+                                           court=court, date=duration.date, court_id=duration.court.id,
+                                           startTime=duration.startTime, endTime=duration.endTime,
                                            result='S')
 
     class Meta:
         model = ReserveEvent
         fields = '__all__'
-        read_only_fields = ['user', 'stadium', 'court', 'duration', ' result', 'startTime', 'endTime']
+        read_only_fields = ['user', 'stadium', 'court', 'court_id', 'date', 'result', 'startTime', 'endTime']
 
 
 class CommentSerializer(serializers.ModelSerializer):
     courtName = serializers.CharField(source='court.name', required=False)
     images = serializers.SerializerMethodField(required=False)
 
-    reserve_id = serializers.IntegerField(label='场馆编号', write_only=True)
+    reserve_id = serializers.IntegerField(label='预订编号', write_only=True)
     content = serializers.CharField(label='评论内容', validators=[MinLengthValidator(15), MaxLengthValidator(300)])
 
     def get_images(self, obj):
@@ -155,13 +154,14 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         event = ReserveEvent.objects.filter(id=validated_data.get('reserve_id')).first()
-        comment = Comment.objects.create(user=event.user, court=event.court, **validated_data)
+        court = Court.objects.get(id=event.court_id)
+        comment = Comment.objects.create(user=event.user, court=court, **validated_data)
         return comment
 
     class Meta:
         model = Comment
         fields = '__all__'
-        read_only_fields = ['user', 'court', 'reserve']
+        read_only_fields = ['user', 'court']
 
 
 class CommentImageSerializer(serializers.ModelSerializer):
