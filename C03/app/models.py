@@ -46,6 +46,7 @@ class Manager(models.Model):
     userId = models.IntegerField(verbose_name='管理员编号', unique=True)
     email = models.EmailField()
     loginToken = models.CharField(max_length=100, null=True)
+    image = models.ImageField(upload_to='manager', verbose_name='头像', null=True)
     # TODO:完善信息
 
 
@@ -94,11 +95,13 @@ class ReserveEvent(models.Model):
         (WAITING, 'waiting'),
     )
     # 预定事件
-    stadium = models.ForeignKey(Stadium, on_delete=models.DO_NOTHING)
-    court = models.ForeignKey(Court, on_delete=models.DO_NOTHING)
+    stadium = models.CharField(max_length=32)
+    court = models.CharField(max_length=32)
+    court_id = models.IntegerField()
+    duration_id = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    duration = models.ForeignKey(Duration, on_delete=models.DO_NOTHING)
     result = models.CharField(max_length=2, choices=APPLY_RESULT, default=WAITING, verbose_name='预定结果')
+    date = models.CharField(max_length=10)
     startTime = models.CharField(max_length=50)
     endTime = models.CharField(max_length=50)
     payment = models.BooleanField(null=True, verbose_name='是否支付')
@@ -148,7 +151,7 @@ class Comment(models.Model):
     # 场地评论
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
-    reserve = models.ForeignKey(ReserveEvent, on_delete=models.DO_NOTHING)
+    reserve_id = models.IntegerField()
     score = models.IntegerField(default=3)
     content = models.CharField(max_length=300)
 

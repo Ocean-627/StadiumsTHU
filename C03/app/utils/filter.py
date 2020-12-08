@@ -52,10 +52,13 @@ class DurationFilter(filters.FilterSet):
 
 
 class ReserveEventFilter(filters.FilterSet):
+    stadium = filters.CharFilter(field_name='stadium', lookup_expr='icontains')
+    court = filters.CharFilter(field_name='court', lookup_expr='icontains')
+
     # TODO:更多筛选信息
     class Meta:
         model = ReserveEvent
-        fields = ['id', 'user_id', 'stadium_id', 'court_id', 'duration_id', 'startTime', 'endTime']
+        fields = ['id', 'user_id', 'duration_id', 'date', 'startTime', 'endTime']
 
 
 class CommentFilter(filters.FilterSet):
@@ -64,7 +67,7 @@ class CommentFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:
         model = Comment
-        fields = ['id', 'court_id']
+        fields = ['id', 'court_id', 'reserve_id']
 
 
 class CollectEventFilter(filters.FilterSet):

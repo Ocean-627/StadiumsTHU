@@ -120,7 +120,7 @@ class ReserveView(ListAPIView, CreateAPIView):
         event.cancel = True
         event.save()
         # TODO:进行退款等操作
-        duration = event.duration
+        duration = Duration.objects.get(id=event.duration_id)
         duration.user = None
         duration.accessible = True
         duration.save()
