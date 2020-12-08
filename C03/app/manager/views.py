@@ -5,8 +5,6 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
 from django.http import JsonResponse
-from django.http import HttpResponse
-import json
 
 from app.utils.utils import *
 from app.utils.manager_serializer import *

@@ -18,15 +18,17 @@ def md5(seq):
 
 stadiums = [
     {'name': 'xxh的场馆',
+     'pinyin': 'xxh',
      'information': 'xxh用来debug的场馆',
      'openTime': '08:00',
      'closeTime': '18:00',
      'contact': '4008823823',
      'openState': True,
-     'foreDays': 3
-        , 'durations': '01:00'
+     'foreDays': 3,
+     'durations': '01:00'
      },
     {'name': 'cbx的场馆',
+     'pinyin': 'cbx',
      'information': 'cbx用来写bug的场馆',
      'openTime': '07:00',
      'closeTime': '18:00',
@@ -69,11 +71,6 @@ def initStadium(info):
 def clearDatabase():
     # 清空场馆相关信息
     Stadium.objects.all().delete()
-
-
-def json(vec):
-    # 转化为json格式
-    return [model_to_dict(item) for item in vec]
 
 
 def judgeDate(A, B):
