@@ -18,6 +18,7 @@ class ManagerSerializer(serializers.ModelSerializer):
     password = serializers.CharField(label='密码',
                                      validators=[MinLengthValidator(8), MaxLengthValidator(18), SafeValidator],
                                      required=False)
+    email = serializers.EmailField(required=False)
 
     class Meta:
         model = Manager
