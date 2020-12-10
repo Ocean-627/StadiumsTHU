@@ -23,36 +23,45 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="ibox-content forum-post-container">
-              <div class="forum-post-info">
-                <h4>
-                  <span class="text-navy"
-                    ><i class="fa fa-globe"></i>一般性讨论 </span
-                  >-公告- <span class="text-muted">自由会谈</span>
-                </h4>
-              </div>
-              <div class="media" v-for="session in sessions" :key="session.id">
+              <div class="media" v-for="session in sessions" :key="session.id" :class="session.type | style_filter">
                 <a class="forum-avatar" href="#">
-                  <img src="/static/img/a1.jpg" class="rounded-circle" alt="image" />
+                  <img
+                    :src="session.usericon"
+                    class="rounded-circle"
+                    alt="image"
+                  />
                   <div class="author-info">
-                    <strong>{{ session.user }}</strong><br />
-                    {{ session.latestUpdateTime | datetime_format_2 }}<br />
+                    <strong>{{ session.user }}</strong
+                    ><br />
+                    {{ session.updateTime | datetime_format_2 }}<br />
                   </div>
                 </a>
                 <div class="media-body">
-                  <h4 class="media-heading">月牙草的标准块</h4>
-                  与普遍的看法相反，Lorem
-                  Ipsum并不是简单的随机文本。它起源于公元前45年的一部古典拉丁文学作品，距今已有2000多年的历史。
-
-                  <br /><br />弗吉尼亚州汉普顿悉尼学院（Hampden Sydney
-                  College）的拉丁文教授理查德麦克林托克（Richard
-                  McClintock）查阅了一段洛伦伊普苏姆（Lorem
-                  Ipsum）的文章中较为晦涩的拉丁文单词consectetur，并查阅了古典文学中对这个单词的引用，发现了不容置疑的来源。Lorem
-                  Ipsum来自西塞罗在公元前45年所著的《德菲尼布斯博诺勒姆和马洛勒姆》（善与恶的极端）的第1.10.32节和第1.10.33节。这本书是一本关于伦理学的论文，在文艺复兴时期非常流行。Lorem
-                  Ipsum的第一行“Lorem Ipsum dolor sit
-                  amet…”来自第1.10.32节中的一行。
-
-                  <br /><br />迈克·史密斯，Zender公司首席执行官。
+                  <h4 class="media-heading">“{{ session.digest }}...”</h4>
+                  {{ (session.latestmsg.sendertype === "manager") ? "管理员" : "用户" }} <strong>{{ session.latestmsg.sender }}</strong> 的最新回复：
+                  <br /><br />
+                  {{ session.latestmsg.content }}
                 </div>
+              </div>
+              <nav aria-label="navigation">
+                <ul class="pagination justify-content-center" style="margin-top: 15px; margin-bottom: 10px;">
+                  <li class="page-item" v-show="page > page_size">
+                    <a class="page-link" aria-label="Previous" v-on:click="prepage()">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  <li class="page-item" v-for="i in cur_pages()" :key="i">
+                    <a class="page-link" v-on:click="setpage(i)">{{ page_size * Math.floor((page-1) / page_size) + i }}</a>
+                  </li>
+                  <li class="page-item" v-show="page + page_size < total">
+                    <a class="page-link" aria-label="Next" v-on:click="nextpage()">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+              <div style="text-align: center;">
+                  第 {{ this.page }}/{{ this.total }} 页
               </div>
             </div>
           </div>
@@ -79,13 +88,50 @@ import Toolbox from "@/components/Toolbox";
 export default {
   data() {
     return {
-        sessions: [
-            {
-                id: 1,
-                user: "cbx",
-                latestUpdateTime: new Date() - 100000
-            }
-        ]
+      sessions: [
+        {
+          id: 1,
+          user: "马保国",
+          usericon: "../../static/img/mabaoguo.jpg",
+          updateTime: new Date() - 100000,
+          digest: "朋友们好，我是混元形意",
+          type: 0,
+          latestmsg: {
+              content: "马老师，发生什么事了？",
+              sendertype: "manager",
+              sender: "cbx"
+          }
+        },
+        {
+          id: 2,
+          user: "马保国",
+          usericon: "../../static/img/mabaoguo.jpg",
+          updateTime: new Date() - 100000,
+          digest: "朋友们好，我是混元形意",
+          type: 1,
+          latestmsg: {
+              content: "马老师，发生什么事了？",
+              sendertype: "manager",
+              sender: "cbx"
+          }
+        },
+        {
+          id: 3,
+          user: "马保国",
+          usericon: "../../static/img/mabaoguo.jpg",
+          updateTime: new Date() - 100000,
+          digest: "朋友们好，我是混元形意",
+          type: 2,
+          latestmsg: {
+              content: "马老师，发生什么事了？",
+              sendertype: "manager",
+              sender: "cbx"
+          }
+        }
+      ],
+      page: 1,
+      page_size: 10,
+      total: 123,
     };
   },
   components: {
@@ -94,6 +140,29 @@ export default {
     Header,
     Footer
   },
-  mounted() {}
+  mounted() {},
+  methods: {
+      prepage(){
+          this.page -= this.page % this.page_size + this.page_size - 1
+      },
+      nextpage(){
+          this.page -= this.page % this.page_size
+          this.page += this.page_size + 1
+      },
+      cur_pages(){
+          let tmp = this.page - this.page % this.page_size
+          return Math.min(this.page_size, this.total - tmp);
+      },
+      setpage(i){
+          this.page = this.page_size * Math.floor((this.page - 1) / this.page_size) + i
+      }
+  },
+  filters: {
+      style_filter(type){
+          if(type === 0) return "black-bg";     // solved
+          if(type === 1) return "gray-bg";      // open
+          if(type === 2) return "yellow-bg";    // unsolved
+      }
+  }
 };
 </script>
