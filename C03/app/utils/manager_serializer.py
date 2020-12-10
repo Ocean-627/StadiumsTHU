@@ -28,6 +28,8 @@ class ManagerSerializer(serializers.ModelSerializer):
 class StadiumSerializerForManager(StadiumSerializer):
     stadium_id = serializers.IntegerField(write_only=True)
     courtTypes = serializers.SerializerMethodField(required=False)
+    name = serializers.CharField(validators=[MaxLengthValidator(32)], required=False)
+    information = serializers.CharField(validators=[MaxLengthValidator(300)], required=False)
 
     def validate_stadium_id(self, value):
         stadium = Stadium.objects.filter(id=value).first()

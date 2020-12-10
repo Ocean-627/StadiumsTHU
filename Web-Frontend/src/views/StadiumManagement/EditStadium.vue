@@ -169,7 +169,7 @@
                           <button
                             type="button"
                             class="btn btn-primary"
-                            v-on:click="submit()"
+                            v-on:click="submit(2)"
                           >
                             提交
                           </button>
@@ -315,7 +315,6 @@
                           <input
                             class="form-control"
                             v-model="locData.address"
-                            :disabled="true"
                           />
                         </div>
                       </div>
@@ -357,7 +356,7 @@
                           <button
                             type="button"
                             class="btn btn-primary"
-                            v-on:click="submit(3)"
+                            v-on:click="submit(4)"
                           >
                             提交
                           </button>
@@ -469,6 +468,7 @@ export default {
       }
     };
     this.$axios.get("stadium/", request).then(res => {
+      console.log(res.data[0]);
       this.name = res.data[0].name;
       this.openTime = res.data[0].openTime;
       this.closeTime = res.data[0].closeTime;
@@ -479,6 +479,14 @@ export default {
       this.$refs.foreDays.value = res.data[0].foreDays;
       this.$refs.openTime.value = res.data[0].openTime;
       this.$refs.closeTime.value = res.data[0].closeTime;
+      this.locData.longitude = res.data[0].longitude;
+      this.locData.latitude = res.data[0].latitude;
+      this.locData.address = res.data[0].location;
+      // 初始化地图
+      let myMarker = new BMap.Marker(
+        new BMap.Point(this.locData.longitude, this.locData.latitude)
+      );
+      map.addOverlay(myMarker);
     });
   },
   updated() {
@@ -566,20 +574,19 @@ export default {
             contact: this.$refs.contact.value
           };
           this.$axios.post("stadium/", request_body).then(res => {
-            console.log(res);
             if (res.data.error) {
               alert("Error! Please try again.");
             } else {
+              swal({
+                title: "成功",
+                text: "场馆信息修改成功",
+                type: "success"
+              });
               setTimeout(
                 () =>
-                  swal({
-                    title: "成功",
-                    text: "场馆信息修改成功",
-                    type: "success"
-                  }),
+                  window.location.replace("/stadium_management/stadium_info"),
                 1000
               );
-              window.location.replace("/stadium_management/stadium_info");
             }
           });
           break;
@@ -598,20 +605,44 @@ export default {
             foreDays: this.$refs.foreDays.value
           };
           this.$axios.post("changeschedule/", request_body).then(res => {
-            console.log(res);
             if (res.data.error) {
               alert("Error! Please try again.");
             } else {
+              swal({
+                title: "成功",
+                text: "场馆信息修改成功",
+                type: "success"
+              });
               setTimeout(
                 () =>
-                  swal({
-                    title: "成功",
-                    text: "场馆信息修改成功",
-                    type: "success"
-                  }),
+                  window.location.replace("/stadium_management/stadium_info"),
                 1000
               );
-              window.location.replace("/stadium_management/stadium_info");
+            }
+          });
+          break;
+        // 修改场馆定位
+        case 4:
+          request_body = {
+            stadium_id: this.$route.query.id,
+            longitude: this.locData.longitude.toString(),
+            latitude: this.locData.latitude.toString(),
+            location: this.locData.address
+          };
+          this.$axios.post("stadium/", request_body).then(res => {
+            if (res.data.error) {
+              alert("Error! Please try again.");
+            } else {
+              swal({
+                title: "成功",
+                text: "场馆信息修改成功",
+                type: "success"
+              });
+              setTimeout(
+                () =>
+                  window.location.replace("/stadium_management/stadium_info"),
+                1000
+              );
             }
           });
           break;
@@ -635,14 +666,7 @@ export default {
     },
     clickEvent(e) {
       map.clearOverlays();
-      let Icon_0 = new BMap.Icon(
-        "http://api0.map.bdimg.com/images/marker_red_sprite.png",
-        new BMap.Size(64, 64),
-        { anchor: new BMap.Size(18, 32), imageSize: new BMap.Size(36, 25) }
-      );
-      let myMarker = new BMap.Marker(new BMap.Point(e.point.lng, e.point.lat), {
-        icon: Icon_0
-      });
+      let myMarker = new BMap.Marker(new BMap.Point(e.point.lng, e.point.lat));
       map.addOverlay(myMarker);
       //用所定位的经纬度查找所在地省市街道等信息
       let point = new BMap.Point(e.point.lng, e.point.lat);
@@ -669,15 +693,7 @@ export default {
       map.addOverlay(myMarker);
       this.locData.longitude = point.point.lng;
       this.locData.latitude = point.point.lat;
-    },
-    findlocation() {
-      this.$emit("findlocdata", this.locData);
-      this.temp.location = this.keyword;
-      this.temp.lng = this.locData.longitude;
-      this.temp.lat = this.locData.latitude;
-      this.mapVisible = false;
-    },
-    ready() {}
+    }
   }
 };
 </script>
