@@ -247,6 +247,7 @@ class MessageSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         message = Message.objects.create(sender='U', **validated_data)
         session = message.session
+        session.checked = False
         session.save()
         return message
 

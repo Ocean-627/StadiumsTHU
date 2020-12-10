@@ -165,6 +165,9 @@ class CommentImageView(CreateAPIView):
 
 
 class CollectView(ListAPIView, CreateAPIView):
+    """
+    收藏场馆
+    """
     authentication_classes = [UserAuthtication]
     throttle_classes = [UserThrottle]
     queryset = CollectEvent.objects.all()
@@ -186,6 +189,9 @@ class CollectView(ListAPIView, CreateAPIView):
 
 
 class SessionView(ListAPIView, CreateAPIView):
+    """
+    会话信息
+    """
     authentication_classes = [UserAuthtication]
     throttle_classes = [UserThrottle]
     queryset = Session.objects.all()
@@ -195,8 +201,21 @@ class SessionView(ListAPIView, CreateAPIView):
     def get_queryset(self):
         return Session.objects.filter(user=self.request.user.id)
 
+    def put(self, request):
+        req_data = request.data
+        session_id = req_data.get('session_id')
+        session = Session.objects.filter(id=session_id, user=self.request.user.id).first()
+        if not session:
+            return Response({'error': 'Invalid session_id'})
+        session.open = False
+        session.save()
+        return Response({'message': 'ok'})
+
 
 class MessageView(ListAPIView, CreateAPIView):
+    """
+    消息
+    """
     authentication_classes = [UserAuthtication]
     throttle_classes = [UserThrottle]
     queryset = Message.objects.all()

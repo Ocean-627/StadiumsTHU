@@ -180,6 +180,7 @@ class Session(models.Model):
     # 会话
     user = models.IntegerField()
     open = models.BooleanField(default=True, verbose_name='会话状态')
+    checked = models.BooleanField(default=False, verbose_name='审核状态')
     userName = models.CharField(max_length=32, null=True)
     createTime = models.DateTimeField(auto_now_add=True)
     # 最近更新时间

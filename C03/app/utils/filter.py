@@ -93,7 +93,7 @@ class SessionFilter(filters.FilterSet):
 
     class Meta:
         model = Session
-        fields = ['id', 'open']
+        fields = ['id', 'open', 'checked']
 
 
 class MessageFilter(filters.FilterSet):
