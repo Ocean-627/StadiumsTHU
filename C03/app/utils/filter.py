@@ -86,3 +86,20 @@ class AddEventFilter(filters.FilterSet):
     class Meta:
         model = AddEvent
         fields = ['id']
+
+
+class SessionFilter(filters.FilterSet):
+    sort = filters.OrderingFilter(fields=('createTime', 'updateTime'))
+
+    class Meta:
+        model = Session
+        fields = ['id', 'open', 'checked']
+
+
+class MessageFilter(filters.FilterSet):
+    sort = filters.OrderingFilter(fields=('createTime', ))
+    content = filters.CharFilter(field_name='content', lookup_expr='icontains')
+
+    class Meta:
+        model = Message
+        fields = ['id', 'session_id']

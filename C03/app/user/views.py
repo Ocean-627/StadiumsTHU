@@ -165,6 +165,9 @@ class CommentImageView(CreateAPIView):
 
 
 class CollectView(ListAPIView, CreateAPIView):
+    """
+    收藏场馆
+    """
     authentication_classes = [UserAuthtication]
     throttle_classes = [UserThrottle]
     queryset = CollectEvent.objects.all()
@@ -183,3 +186,48 @@ class CollectView(ListAPIView, CreateAPIView):
             return Response({'error': 'Invalid collect_id'})
         collect.delete()
         return Response({'message': 'ok'})
+
+
+class SessionView(ListAPIView, CreateAPIView):
+    """
+    会话信息
+    """
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializer
+    filter_class = SessionFilter
+
+    def get_queryset(self):
+        return Session.objects.filter(user_id=self.request.user.id)
+
+    def put(self, request):
+        req_data = request.data
+        session_id = req_data.get('session_id')
+        session = Session.objects.filter(id=session_id, user_id=self.request.user.id).first()
+        if not session:
+            return Response({'error': 'Invalid session_id'})
+        session.open = False
+        session.save()
+        return Response({'message': 'ok'})
+
+
+class MessageView(ListAPIView, CreateAPIView):
+    """
+    消息
+    """
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    filter_class = MessageFilter
+
+    def get_queryset(self):
+        sessions = Session.objects.filter(user_id=self.request.user.id)
+        queryset = None
+        for session in sessions:
+            if not queryset:
+                queryset = session.message_set.all()
+            else:
+                queryset = queryset | session.message_set.all()
+        return queryset

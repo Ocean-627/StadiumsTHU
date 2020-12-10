@@ -262,3 +262,33 @@ class StadiumImageView(CreateAPIView):
     """
     # authentication_classes = [ManagerAuthtication]
     serializer_class = StadiumImageSerializer
+
+
+class SessionView(ListAPIView, CreateAPIView):
+    """
+    会话信息
+    """
+    authentication_classes = [ManagerAuthtication]
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializerForManager
+    filter_class = SessionFilter
+    pagination_class = SessionPagination
+
+    def put(self, request):
+        req_data = request.data
+        ser = SessionSerializer(data=req_data)
+        if not ser.is_valid():
+            return Response({'error': ser.errors})
+        session = Session.objects.get(id=req_data.get('session_id'))
+        ser.update(session, ser.validated_data)
+        return Response({'message': 'ok'})
+
+
+class MessageView(ListAPIView, CreateAPIView):
+    """
+    消息
+    """
+    authentication_classes = [ManagerAuthtication]
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializerForManager
+    filter_class = MessageFilter
