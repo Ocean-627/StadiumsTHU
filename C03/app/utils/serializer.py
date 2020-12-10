@@ -226,12 +226,12 @@ class SessionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        return Session.objects.create(user=user.id, userName=user.name, **validated_data)
+        return Session.objects.create(user_id=user.id, **validated_data)
 
     class Meta:
         model = Session
         fields = '__all__'
-        read_only_fields = ['user']
+        read_only_fields = ['user_id']
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -239,7 +239,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
     def validate_session_id(self, value):
         user = self.context['request'].user
-        session = Session.objects.filter(id=value, user=user.id).first()
+        session = Session.objects.filter(id=value, user_id=user.id).first()
         if not session:
             raise ValidationError('Invalid session_id')
         return value

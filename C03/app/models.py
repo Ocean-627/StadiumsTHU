@@ -178,10 +178,9 @@ class CollectEvent(models.Model):
 
 class Session(models.Model):
     # 会话
-    user = models.IntegerField()
+    user_id = models.IntegerField()
     open = models.BooleanField(default=True, verbose_name='会话状态')
     checked = models.BooleanField(default=False, verbose_name='审核状态')
-    userName = models.CharField(max_length=32, null=True)
     createTime = models.DateTimeField(auto_now_add=True)
     # 最近更新时间
     updateTime = models.DateTimeField(auto_now=True)
@@ -198,6 +197,6 @@ class Message(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE)
     sender = models.CharField(max_length=2, choices=SENDER, verbose_name='发送方')
     # 如果sender为MANGER 则需要保存manager的id
-    manager = models.IntegerField(null=True)
+    manager_id = models.IntegerField(null=True)
     content = models.CharField(max_length=500)
     createTime = models.DateTimeField(auto_now_add=True)

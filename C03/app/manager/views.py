@@ -264,13 +264,13 @@ class StadiumImageView(CreateAPIView):
     serializer_class = StadiumImageSerializer
 
 
-class SessionView(ListAPIView):
+class SessionView(ListAPIView, CreateAPIView):
     """
     会话信息
     """
-    # authentication_classes = [ManagerAuthtication]
+    authentication_classes = [ManagerAuthtication]
     queryset = Session.objects.all()
-    serializer_class = SessionSerializer
+    serializer_class = SessionSerializerForManager
     filter_class = SessionFilter
 
     def put(self, request):
@@ -287,7 +287,7 @@ class MessageView(ListAPIView, CreateAPIView):
     """
     消息
     """
-    # authentication_classes = [ManagerAuthtication]
+    authentication_classes = [ManagerAuthtication]
     queryset = Message.objects.all()
-    serializer_class = MessageSerializer
+    serializer_class = MessageSerializerForManager
     filter_class = MessageFilter

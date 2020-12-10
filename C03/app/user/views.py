@@ -199,12 +199,12 @@ class SessionView(ListAPIView, CreateAPIView):
     filter_class = SessionFilter
 
     def get_queryset(self):
-        return Session.objects.filter(user=self.request.user.id)
+        return Session.objects.filter(user_id=self.request.user.id)
 
     def put(self, request):
         req_data = request.data
         session_id = req_data.get('session_id')
-        session = Session.objects.filter(id=session_id, user=self.request.user.id).first()
+        session = Session.objects.filter(id=session_id, user_id=self.request.user.id).first()
         if not session:
             return Response({'error': 'Invalid session_id'})
         session.open = False
@@ -223,7 +223,7 @@ class MessageView(ListAPIView, CreateAPIView):
     filter_class = MessageFilter
 
     def get_queryset(self):
-        sessions = Session.objects.filter(user=self.request.user.id)
+        sessions = Session.objects.filter(user_id=self.request.user.id)
         queryset = None
         for session in sessions:
             if not queryset:
