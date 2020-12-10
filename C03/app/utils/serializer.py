@@ -253,5 +253,5 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = '__all__'
+        exclude = ['manager_id']
         read_only_fields = ['session', 'sender']

@@ -272,6 +272,7 @@ class SessionView(ListAPIView, CreateAPIView):
     queryset = Session.objects.all()
     serializer_class = SessionSerializerForManager
     filter_class = SessionFilter
+    pagination_class = SessionPagination
 
     def put(self, request):
         req_data = request.data

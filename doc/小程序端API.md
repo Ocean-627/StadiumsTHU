@@ -549,6 +549,119 @@ Response:
 }
 ```
 
+#### 站内会话
+
+##### 查看所有会话
+
+```js
+Method: GET
+URL: /api/user/session
+Request:{
+    'id': '',
+    'open': '',
+    'checked': ''
+    'sort': ''
+}
+Response:
+[
+    {
+        "id": 3,
+        "messages": [],
+        "user_id": 2,
+        "open": true,
+        "checked": false,
+        "createTime": "2020-12-10T03:50:39.587558Z",
+        "updateTime": "2020-12-10T03:50:39.587558Z"
+    },
+]
+```
+
+请求参数中`open`字段代表会话是否关闭，`checked`代表管理员是否已经审核。
+
+`sort`目前支持按照`createTime`和`updateTime`排序。
+
+返回值中`messages`是一个列表，每一项是一条消息。
+
+**创建会话**
+
+```js
+Method: POST
+URL: /api/user/session
+Request:{}
+Response:
+{
+    "id": 11,
+    "messages": [],
+    "user_id": 2,
+    "open": false,
+    "checked": false,
+    "createTime": "2020-12-10T09:56:56.624058Z",
+    "updateTime": "2020-12-10T09:56:56.624058Z"
+}
+```
+
+不需要任何参数。
+
+**关闭会话**
+
+```js
+Method: PUT
+URL: /api/user/session
+Request:{
+    'session_id': ''
+}
+Response:
+{
+    'message': 'ok'
+}
+```
+
+**发送消息**
+
+```js
+Method: POST
+URL: /api/user/message
+Request:{
+    'session_id': '',
+    'content': ''
+}
+Response:
+{
+    "id": 10,
+    "sender": "U",
+    "content": "我们是尽力局",
+    "createTime": "2020-12-10T10:01:55.554084Z",
+    "session": 11
+}
+```
+
+请求参数中`session_id`代表会话的`id`，`content`代表消息内容。
+
+**查看消息**
+
+```js
+Method: GET
+URL: /api/user/message
+Request:{
+    'session_id': '',
+    'id': '',
+    'sort': '',
+    'content': ''
+}
+Response:
+[
+    {
+        "id": 2,
+        "sender": "U",
+        "content": "管理员您好，我上当了",
+        "createTime": "2020-12-10T04:16:16.262133Z",
+        "session": 2
+    }
+]
+```
+
+参数`sort`表示排序，目前只支持按照`createTime`排序，`content`按照模糊匹配查找。
+
 ## 需求：
 
 请求失败会返回什么？

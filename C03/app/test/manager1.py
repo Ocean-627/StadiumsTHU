@@ -106,6 +106,6 @@ class TestUser(TestCase):
         }
         resp = self.client.get('/api/manager/user/', params)
         content = json.loads(resp.content)['results']
-        self.assertEqual(content[0]['nickName'], 'ggggg')
-        self.assertEqual(content[1]['nickName'], 'fffff')
-        self.assertEqual(content[2]['nickName'], 'eeeee')
+        self.assertEqual(content[0]['nickName'], 'g' * 5)
+        self.assertEqual(content[1]['nickName'], 'f' * 5)
+        self.assertEqual(content[2]['nickName'], 'e' * 5)
