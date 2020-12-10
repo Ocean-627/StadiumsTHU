@@ -4,8 +4,9 @@ import Router from 'vue-router'
 // route views
 import Login from '@/views/Login'
 import Home from '@/views/Home'
-import Profile from "@/views/profile"
-import Messages from "@/views/messages";
+import Profile from "@/views/Profile"
+import Messages from "@/views/Messages";
+import MessagesDetail from "@/views/MessagesDetail";
 import StadiumInfo from '@/views/StadiumManagement/StadiumInfo'
 import UserFeedback from '@/views/StadiumManagement/UserFeedback'
 import GroundReserveMenu from '@/views/StadiumManagement/GroundReserveMenu'
@@ -48,6 +49,11 @@ export default new Router({
       path: "/messages",
       name: "Messages",
       component: Messages
+    },
+    {
+      path: "/messages/detail",
+      name: "MessagesDetail",
+      component: MessagesDetail
     },
     {
       path: "/stadium_management/stadium_info",

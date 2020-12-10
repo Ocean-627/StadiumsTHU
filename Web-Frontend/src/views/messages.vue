@@ -20,11 +20,24 @@
         </div>
       </div>
       <div class="wrapper wrapper-content animated fadeInRight ecommerce">
+        <div class="row" style="margin-bottom: 20px">
+          <div class="col-sm-2">
+            <select
+              class="chosen-select"
+              value="0"
+              id="type"
+            >
+              <option v-for="(type, index) in type_list" :key="type" :value="index">
+                {{ type }}
+              </option>
+            </select>
+          </div>
+        </div>
         <div class="row">
           <div class="col-lg-12">
             <div class="ibox-content forum-post-container">
               <div class="media" v-for="session in sessions" :key="session.id" :class="session.type | style_filter">
-                <a class="forum-avatar" href="#">
+                <a class="forum-avatar" :href="'/user_management/user_info/detail/' + session.userId">
                   <img
                     :src="session.usericon"
                     class="rounded-circle"
@@ -37,7 +50,9 @@
                   </div>
                 </a>
                 <div class="media-body">
-                  <h4 class="media-heading">“{{ session.digest }}...”</h4>
+                  <h4 class="media-heading" v-on:click="goDetail(session.id)" style="cursor: pointer;">
+                      “{{ session.digest }}...”
+                  </h4>
                   {{ (session.latestmsg.sendertype === "manager") ? "管理员" : "用户" }} <strong>{{ session.latestmsg.sender }}</strong> 的最新回复：
                   <br /><br />
                   {{ session.latestmsg.content }}
@@ -73,10 +88,14 @@
   </div>
 </template>
 
-<style scoped>
+<style>
+@import "../assets/css/plugins/chosen/bootstrap-chosen.css";
 .i-row {
   padding-top: 10px;
   padding-bottom: 10px;
+}
+.chosen-container-single .chosen-single {
+  padding: 4px 12px;
 }
 </style>
 
@@ -85,6 +104,8 @@ import Navbar from "@/components/Navbar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Toolbox from "@/components/Toolbox";
+import "jquery";
+import "@/assets/js/plugins/chosen/chosen.jquery.js";
 export default {
   data() {
     return {
@@ -92,6 +113,7 @@ export default {
         {
           id: 1,
           user: "马保国",
+          userId: 3,
           usericon: "../../static/img/mabaoguo.jpg",
           updateTime: new Date() - 100000,
           digest: "朋友们好，我是混元形意",
@@ -105,6 +127,7 @@ export default {
         {
           id: 2,
           user: "马保国",
+          userId: 3,
           usericon: "../../static/img/mabaoguo.jpg",
           updateTime: new Date() - 100000,
           digest: "朋友们好，我是混元形意",
@@ -118,6 +141,7 @@ export default {
         {
           id: 3,
           user: "马保国",
+          userId: 3,
           usericon: "../../static/img/mabaoguo.jpg",
           updateTime: new Date() - 100000,
           digest: "朋友们好，我是混元形意",
@@ -131,7 +155,8 @@ export default {
       ],
       page: 1,
       page_size: 10,
-      total: 123,
+      total: 123,   // total page count
+      type_list: ["全部", "待处理", "已处理", "已关闭"],
     };
   },
   components: {
@@ -140,7 +165,13 @@ export default {
     Header,
     Footer
   },
-  mounted() {},
+  mounted() {
+      $(".chosen-select").chosen({ width: "100%" });
+      this.$axios.get("messages/")
+  },
+  updated(){
+      $(".chosen-select").chosen({ width: "100%" });
+  },
   methods: {
       prepage(){
           this.page -= this.page % this.page_size + this.page_size - 1
@@ -155,7 +186,10 @@ export default {
       },
       setpage(i){
           this.page = this.page_size * Math.floor((this.page - 1) / this.page_size) + i
-      }
+      },
+      goDetail(id){
+          window.location.replace("/messages/detail?id=" + id)
+      },
   },
   filters: {
       style_filter(type){
@@ -163,6 +197,6 @@ export default {
           if(type === 1) return "gray-bg";      // open
           if(type === 2) return "yellow-bg";    // unsolved
       }
-  }
+  },
 };
 </script>
