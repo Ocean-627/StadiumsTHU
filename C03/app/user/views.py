@@ -183,3 +183,32 @@ class CollectView(ListAPIView, CreateAPIView):
             return Response({'error': 'Invalid collect_id'})
         collect.delete()
         return Response({'message': 'ok'})
+
+
+class SessionView(ListAPIView, CreateAPIView):
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializer
+    filter_class = SessionFilter
+
+    def get_queryset(self):
+        return Session.objects.filter(user=self.request.user.id)
+
+
+class MessageView(ListAPIView, CreateAPIView):
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    filter_class = MessageFilter
+
+    def get_queryset(self):
+        sessions = Session.objects.filter(user=self.request.user.id)
+        queryset = None
+        for session in sessions:
+            if not queryset:
+                queryset = session.message_set.all()
+            else:
+                queryset = queryset | session.message_set.all()
+        return queryset

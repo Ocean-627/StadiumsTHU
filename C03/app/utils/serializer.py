@@ -214,3 +214,43 @@ class CollectEventSerializer(serializers.ModelSerializer):
         model = CollectEvent
         fields = '__all__'
         read_only_fields = ['stadium', 'user']
+
+
+class SessionSerializer(serializers.ModelSerializer):
+    messages = serializers.SerializerMethodField(required=False)
+
+    def get_messages(self, obj):
+        message_list = obj.message_set.all()
+        message_list = MessageSerializer(message_list, many=True)
+        return message_list.data
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        return Session.objects.create(user=user.id, userName=user.name, **validated_data)
+
+    class Meta:
+        model = Session
+        fields = '__all__'
+        read_only_fields = ['user']
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    session_id = serializers.IntegerField(label='会话编号', write_only=True)
+
+    def validate_session_id(self, value):
+        user = self.context['request'].user
+        session = Session.objects.filter(id=value, user=user.id).first()
+        if not session:
+            raise ValidationError('Invalid session_id')
+        return value
+
+    def create(self, validated_data):
+        message = Message.objects.create(sender='U', **validated_data)
+        session = message.session
+        session.save()
+        return message
+
+    class Meta:
+        model = Message
+        fields = '__all__'
+        read_only_fields = ['session', 'sender']

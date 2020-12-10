@@ -15,4 +15,6 @@ urlpatterns = [
     path('reserve/', views.ReserveView.as_view()),
     path('comment/', views.CommentView.as_view()),
     path('commentimage/', views.CommentImageView.as_view()),
+    path('session/', views.SessionView.as_view()),
+    path('message/', views.MessageView.as_view()),
 ]

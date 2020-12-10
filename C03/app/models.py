@@ -174,3 +174,29 @@ class CollectEvent(models.Model):
     # 收藏信息
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
+
+
+class Session(models.Model):
+    # 会话
+    user = models.IntegerField()
+    open = models.BooleanField(default=True, verbose_name='会话状态')
+    userName = models.CharField(max_length=32, null=True)
+    createTime = models.DateTimeField(auto_now_add=True)
+    # 最近更新时间
+    updateTime = models.DateTimeField(auto_now=True)
+
+
+class Message(models.Model):
+    # 消息
+    USER = 'U'
+    MANAGER = 'M'
+    SENDER = (
+        (USER, 'user'),
+        (MANAGER, 'manager'),
+    )
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    sender = models.CharField(max_length=2, choices=SENDER, verbose_name='发送方')
+    # 如果sender为MANGER 则需要保存manager的id
+    manager = models.IntegerField(null=True)
+    content = models.CharField(max_length=500)
+    createTime = models.DateTimeField(auto_now_add=True)
