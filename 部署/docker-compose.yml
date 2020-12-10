@@ -1,0 +1,56 @@
+version: "3"
+services:
+  app:
+    restart: always
+    build: .
+    command: >
+      bash -c
+      "python manage.py makemigrations &&
+      python manage.py migrate &&
+      gunicorn --timeout=30 --workers=4 --bind :8000 C03.wsgi:application"
+    volumes:
+      - .:/code
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    networks:
+      - web_network
+      - db_network
+  db:
+    image: mysql:5.7
+    volumes:
+      - /hom/ubuntu/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=1234567890
+      - MYSQL_DATABASE=platform
+      - MYSQL_USER=debian-sys-maint
+      - MYSQL_PASS=1OpN9k8rLhRFyFBC
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    networks:
+      - db_network
+  nginx:
+    restart: always
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
+      - /etc/ssl:/etc/ssl
+      - /etc/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - app
+    networks:
+      - web_network
+
+networks:
+  web_network:
+    driver: bridge
+  db_network:
+    driver: bridge
+
