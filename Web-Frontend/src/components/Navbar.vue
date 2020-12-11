@@ -28,9 +28,8 @@
                         <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">场馆管理</span> <span
                                 class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li><a href="/stadium_management/stadium_info">场馆信息管理</a></li>
+                            <li><a href="/stadium_management/stadium_info">场馆列表</a></li>
                             <li><a href="/stadium_management/user_feedback">用户反馈</a></li>
-                            <li><a href="/stadium_management/ground_reserve">预约记录管理</a></li>
                         </ul>
                     </li>
                     <li>

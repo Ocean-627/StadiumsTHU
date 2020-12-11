@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="wrapper wrapper-content animated fadeInRight ecommerce">
-          <div class="small-chat-box">
+          <div class="small-chat-box active">
         <div class="heading" draggable="true">
                 <small class="chat-date float-right">02.19.2015
 
@@ -109,6 +109,15 @@
 .i-row {
   padding-top: 10px;
   padding-bottom: 10px;
+}
+.small-chat-box {
+    position: relative;
+    bottom: 0;
+    right: 0;
+    border: none;
+}
+.small-chat-box.active {
+    display: inline;
 }
 </style>
 
