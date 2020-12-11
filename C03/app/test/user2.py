@@ -8,7 +8,7 @@ from app.utils.utils import initStadium
 
 class TestReserve(TestCase):
     def setUp(self) -> None:
-        User.objects.create(openId='cbx', loginToken=1)
+        User.objects.create(userId=123, loginToken=1)
         initStadium(stadiums[0])
         initStadium(stadiums[1])
         self.headers = {'HTTP_loginToken': 1}
@@ -21,7 +21,7 @@ class TestReserve(TestCase):
         self.assertEqual(resp.status_code, 201)
         duration = Duration.objects.filter(id=160).first()
         self.assertEqual(duration.accessible, False)
-        self.assertEqual(duration.user.openId, 'cbx')
+        self.assertEqual(duration.user.userId, 123)
 
         resp = self.client.post('/api/user/reserve/', params, **self.headers)
         content = json.loads(resp.content)
@@ -42,7 +42,7 @@ class TestReserve(TestCase):
 
 class TestComment(TestCase):
     def setUp(self) -> None:
-        User.objects.create(openId='cbx', loginToken=1)
+        User.objects.create(userId=123, loginToken=1)
         initStadium(stadiums[0])
         initStadium(stadiums[1])
         self.headers = {'HTTP_loginToken': 1}
@@ -93,7 +93,7 @@ class TestComment(TestCase):
 
 class TestCollect(TestCase):
     def setUp(self) -> None:
-        User.objects.create(openId='cbx', loginToken=1)
+        User.objects.create(userId=123, loginToken=1)
         initStadium(stadiums[0])
         initStadium(stadiums[1])
         self.headers = {'HTTP_loginToken': 1}

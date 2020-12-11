@@ -8,11 +8,13 @@ class UserFilter(filters.FilterSet):
     nickName = filters.CharFilter(field_name='nickName', lookup_expr='icontains')
     userId = filters.CharFilter(field_name='userId', lookup_expr='icontains')
     email = filters.CharFilter(field_name='email', lookup_expr='icontains')
+    type = filters.CharFilter(field_name='type', lookup_expr='icontains')
+    major = filters.CharFilter(field_name='major', lookup_expr='icontains')
     sort = filters.OrderingFilter(fields=('phone', 'name', 'nickName', 'userId', 'email'))
 
     class Meta:
         model = User
-        fields = ['id', 'auth']
+        fields = ['id']
 
 
 class StadiumFilter(filters.FilterSet):
