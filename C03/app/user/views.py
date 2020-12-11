@@ -24,19 +24,18 @@ class LoginView(APIView):
         token = req_data.get('token')
         if not token:
             return Response({'error': 'Requires token'})
-        try:
-            auth = thss.login(token=token)
-            userId = auth.get('card')
-            user = User.objects.filter(userId=userId).first()
-            if not user:
-                user = User(userId=userId, name=auth.get('name'), phone=auth.get('cell'), email=auth.get('mail'))
-                user.save()
-            loginToken = md5(userId)
-            user.loginToken = loginToken
+        auth = thss.login(token=token).get('user')
+        if not auth:
+            return JsonResponse({'error': 'Login failed'})
+        userId = auth.get('card')
+        user = User.objects.filter(userId=userId).first()
+        if not user:
+            user = User(userId=userId, name=auth.get('name'), phone=auth.get('cell'), email=auth.get('mail'))
             user.save()
-            return Response({'message': 'ok', 'loginToken': loginToken})
-        except Exception as e:
-            return Response({'error': 'Exception occurred'})
+        loginToken = md5(userId)
+        user.loginToken = loginToken
+        user.save()
+        return Response({'message': 'ok', 'loginToken': loginToken})
 
 
 class UserView(APIView):
