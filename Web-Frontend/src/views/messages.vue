@@ -36,26 +36,26 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="ibox-content forum-post-container">
-              <div class="media" v-for="session in sessions" :key="session.id" :class="session.type | style_filter">
-                <a class="forum-avatar" :href="'/user_management/user_info/detail/' + session.userId">
+              <div class="media" v-for="session in this.sessions" :key="session.id" :class="session | style_filter">
+                <a class="forum-avatar" :href="'/user_management/user_info/detail/' + session.user_id">
                   <img
-                    :src="session.usericon"
+                    :src="session.image"
                     class="rounded-circle"
                     alt="image"
                   />
                   <div class="author-info">
-                    <strong>{{ session.user }}</strong
+                    <strong>{{ session.userName }}</strong
                     ><br />
                     {{ session.updateTime | datetime_format_2 }}<br />
                   </div>
                 </a>
                 <div class="media-body">
                   <h4 class="media-heading" v-on:click="goDetail(session.id)" style="cursor: pointer;">
-                      “{{ session.digest }}...”
+                      “{{ session.messages[0].content | digest }}”
                   </h4>
-                  {{ (session.latestmsg.sendertype === "manager") ? "管理员" : "用户" }} <strong>{{ session.latestmsg.sender }}</strong> 的最新回复：
+                  {{ (session.messages[session.messages.length-1].sender === "M") ? "管理员" : "用户" }} <strong>{{ session.messages[session.messages.length-1].sender }}</strong> 的最新回复：
                   <br /><br />
-                  {{ session.latestmsg.content }}
+                  {{ session.messages[session.messages.length-1].content }}
                 </div>
               </div>
               <nav aria-label="navigation">
@@ -109,53 +109,11 @@ import "@/assets/js/plugins/chosen/chosen.jquery.js";
 export default {
   data() {
     return {
-      sessions: [
-        {
-          id: 1,
-          user: "马保国",
-          userId: 3,
-          usericon: "../../static/img/mabaoguo.jpg",
-          updateTime: new Date() - 100000,
-          digest: "朋友们好，我是混元形意",
-          type: 0,
-          latestmsg: {
-              content: "马老师，发生什么事了？",
-              sendertype: "manager",
-              sender: "cbx"
-          }
-        },
-        {
-          id: 2,
-          user: "马保国",
-          userId: 3,
-          usericon: "../../static/img/mabaoguo.jpg",
-          updateTime: new Date() - 100000,
-          digest: "朋友们好，我是混元形意",
-          type: 1,
-          latestmsg: {
-              content: "马老师，发生什么事了？",
-              sendertype: "manager",
-              sender: "cbx"
-          }
-        },
-        {
-          id: 3,
-          user: "马保国",
-          userId: 3,
-          usericon: "../../static/img/mabaoguo.jpg",
-          updateTime: new Date() - 100000,
-          digest: "朋友们好，我是混元形意",
-          type: 2,
-          latestmsg: {
-              content: "马老师，发生什么事了？",
-              sendertype: "manager",
-              sender: "cbx"
-          }
-        }
-      ],
+      sessions: [],
+      // pagination
       page: 1,
       page_size: 10,
-      total: 123,   // total page count
+      total: 0,   // total page count
       type_list: ["全部", "待处理", "已处理", "已关闭"],
     };
   },
@@ -167,7 +125,18 @@ export default {
   },
   mounted() {
       $(".chosen-select").chosen({ width: "100%" });
-      this.$axios.get("messages/")
+      this.$axios.get("session/", {
+        params: {
+            page: this.page,
+            size: this.page_size,
+            sort: "-updateTime"
+        }
+      })
+      .then(res => {
+          this.total = Math.ceil(res.data.count / this.page_size)
+          this.sessions = res.data.results
+          // TODO: sender部分
+      })
   },
   updated(){
       $(".chosen-select").chosen({ width: "100%" });
@@ -192,10 +161,16 @@ export default {
       },
   },
   filters: {
-      style_filter(type){
-          if(type === 0) return "black-bg";     // solved
-          if(type === 1) return "gray-bg";      // open
-          if(type === 2) return "yellow-bg";    // unsolved
+      style_filter(session) {
+          if(!session.open) return "black-bg";     // solved
+          if(session.checked) return "gray-bg";      // open
+          return "yellow-bg";    // unsolved
+      },
+      digest(msg) {
+          if(msg.length > 10){
+              return msg.slice(0, 10) + "..."
+          }
+          return msg
       }
   },
 };

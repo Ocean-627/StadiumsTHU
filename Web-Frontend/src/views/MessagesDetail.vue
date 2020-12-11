@@ -46,7 +46,7 @@ import Toolbox from "@/components/Toolbox";
 export default {
   data() {
     return {
-      
+      session: {}
     };
   },
   components: {
@@ -56,7 +56,15 @@ export default {
     Footer
   },
   mounted() {
-     
+      this.$axios.get("session/", {
+          params: {
+              id: this.$route.query.id
+          }
+      })
+      .then(res => {
+          this.session = res.data.results[0]
+          console.log(this.session)
+      })
   },
   updated(){
     
