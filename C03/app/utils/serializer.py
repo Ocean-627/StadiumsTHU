@@ -21,13 +21,18 @@ class StadiumSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField(required=False)
     comments = serializers.SerializerMethodField(required=False)
     score = serializers.SerializerMethodField(required=False)
-    courtTypes = serializers.SerializerMethodField(required=False)
     collect = serializers.SerializerMethodField(required=False)
+    courtTypes = serializers.SerializerMethodField(required=False)
 
     def get_images(self, obj):
         images_list = obj.stadiumimage_set.all()
         images_list = StadiumImageSerializer(images_list, many=True)
         return images_list.data
+
+    def get_courtTypes(self, obj):
+        types = obj.courttype_set.all()
+        types = CourtTypeSerializer(types, many=True)
+        return types.data
 
     def get_comments(self, obj):
         court_list = obj.court_set.all()
@@ -49,11 +54,6 @@ class StadiumSerializer(serializers.ModelSerializer):
         else:
             return tot_score / tot_num
 
-    def get_courtTypes(self, obj):
-        types = obj.courttype_set.all()
-        types = CourtTypeSerializer(types, many=True)
-        return types.data
-
     def get_collect(self, obj):
         res = obj.collectevent_set.filter(user=self.context['request'].user).first()
         if not res:
@@ -62,7 +62,7 @@ class StadiumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stadium
-        fields = '__all__'
+        exclude = ['information', 'contact', 'foreDays']
 
 
 class CourtTypeSerializer(serializers.ModelSerializer):
@@ -94,6 +94,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField(required=False)
     has_comments = serializers.SerializerMethodField(required=False)
     image = serializers.SerializerMethodField(required=False)
+    price = serializers.SerializerMethodField(required=False)
 
     def get_result(self, obj):
         return obj.get_result_display()
@@ -114,6 +115,11 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         if not image:
             return None
         return image.image.url
+
+    def get_price(self, obj):
+        court = Court.objects.get(id=obj.court_id)
+        price = court.courtType.price
+        return price
 
     duration_id = serializers.IntegerField(label='时段编号', write_only=True)
 
@@ -163,13 +169,14 @@ class CommentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         event = ReserveEvent.objects.filter(id=validated_data.get('reserve_id')).first()
         court = Court.objects.get(id=event.court_id)
-        comment = Comment.objects.create(user=event.user, court=court, **validated_data)
+        stadium_id = court.stadium.id
+        comment = Comment.objects.create(user=event.user, court=court, stadium_id=stadium_id, **validated_data)
         return comment
 
     class Meta:
         model = Comment
         fields = '__all__'
-        read_only_fields = ['user', 'court']
+        read_only_fields = ['user', 'court', 'stadium_id']
 
 
 class CommentImageSerializer(serializers.ModelSerializer):

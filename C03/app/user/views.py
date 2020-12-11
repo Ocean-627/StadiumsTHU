@@ -141,6 +141,7 @@ class CommentView(ListAPIView, CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     filter_class = CommentFilter
+    pagination_class = CommentPagination
 
     def get_queryset(self):
         return Comment.objects.filter(user=self.request.user)

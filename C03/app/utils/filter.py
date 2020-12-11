@@ -67,7 +67,7 @@ class CommentFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:
         model = Comment
-        fields = ['id', 'court_id', 'reserve_id']
+        fields = ['id', 'court_id', 'reserve_id', 'stadium_id']
 
 
 class CollectEventFilter(filters.FilterSet):

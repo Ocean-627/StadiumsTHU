@@ -391,7 +391,10 @@ Method: GET
 URL: /api/user/comment
 Request:{
     'content': '',
-    'court_id': ''
+    'court_id': ''，
+    'stadium_id': '',
+    'page': '',
+    'size': ''
 }
 Response:
 [
@@ -417,6 +420,10 @@ Response:
 `content`在评价内容中进行模糊匹配。
 
 `court_id`**精确**匹配场地编号。
+
+`stadium_id`精确匹配场馆编号。
+
+`page`和`size`是分页参数，`page`代表分页的第几页，`size`代表一页的大小。
 
 **评价场馆**
 

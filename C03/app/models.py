@@ -151,6 +151,7 @@ class Comment(models.Model):
     # 场地评论
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
+    stadium_id = models.IntegerField()
     reserve_id = models.IntegerField()
     score = models.IntegerField(default=3)
     content = models.CharField(max_length=300)
