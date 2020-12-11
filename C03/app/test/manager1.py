@@ -26,21 +26,21 @@ class TestManager(TestCase):
 
         manager = Manager.objects.first()
         manager.loginToken = '1'
-
-        # TODO: 设置cookies
+        manager.save()
 
         params = {}
-        resp = self.client.get('/api/manager/manager/', params)
+        headers = {'HTTP_loginToken': '1'}
+        resp = self.client.get('/api/manager/manager/', params, **headers)
         self.assertEqual(resp.status_code, 200)
         content = json.loads(resp.content)
-        self.assertEqual(content[0]['username'], 'cbx')
+        self.assertEqual(content['username'], 'cbx')
 
         params = {
             'username': 'haha',
             'loginToken': '3',
             'userId': 9
         }
-        resp = self.client.post('/api/manager/manager/', params)
+        resp = self.client.post('/api/manager/manager/', params, **headers)
         self.assertEqual(resp.status_code, 200)
         manager = Manager.objects.first()
         self.assertEqual(manager.userId, 7)
@@ -80,7 +80,7 @@ class TestUser(TestCase):
         chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
         chars.reverse()
         for i in range(10):
-            User.objects.create(openId='haha' + str(i), userId=i, nickName=chars[i]*5)
+            User.objects.create(openId='haha' + str(i), userId=i, nickName=chars[i] * 5)
 
     def test_user(self):
         params = {}

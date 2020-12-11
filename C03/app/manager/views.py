@@ -35,10 +35,12 @@ class LoginView(APIView):
             return Response({'error': 'Login failed'})
         loginToken = md5(userId)
         obj.loginToken = loginToken
-        print(loginToken)
         obj.save()
+        url = None
+        if obj.image:
+            url = obj.image
         ret = Response(
-            {'message': 'ok', 'loginToken': loginToken})
+            {'message': 'ok', 'username': obj.username, 'image': url, 'loginToken': loginToken})
         ret.set_cookie('loginToken', loginToken)
         return ret
 
