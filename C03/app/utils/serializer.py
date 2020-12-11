@@ -65,6 +65,12 @@ class StadiumSerializer(serializers.ModelSerializer):
         exclude = ['information', 'contact', 'foreDays']
 
 
+class StadiumDetailSerializer(StadiumSerializer):
+    class Meta:
+        model = Stadium
+        fields = '__all__'
+
+
 class CourtTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourtType

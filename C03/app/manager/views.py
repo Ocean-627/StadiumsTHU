@@ -38,7 +38,7 @@ class LoginView(APIView):
         print(loginToken)
         obj.save()
         ret = Response(
-            {'message': 'ok', 'username': obj.username, 'loginToken': loginToken})
+            {'message': 'ok', 'loginToken': loginToken})
         ret.set_cookie('loginToken', loginToken)
         return ret
 

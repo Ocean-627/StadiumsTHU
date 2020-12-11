@@ -70,6 +70,17 @@ class StadiumView(ListAPIView):
     filter_class = StadiumFilter
 
 
+class StadiumDetailView(ListAPIView):
+    """
+    场馆详细信息
+    """
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+    queryset = Stadium.objects.all()
+    serializer_class = StadiumDetailSerializer
+    filter_class = StadiumFilter
+
+
 class CourtView(ListAPIView):
     """
     场地信息
