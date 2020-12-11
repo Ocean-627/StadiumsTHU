@@ -30,8 +30,8 @@ class LoginView(APIView):
         userId = auth.get('card')
         user = User.objects.filter(userId=userId).first()
         if not user:
-            user = User(userId=userId, name=auth.get('name'), phone=auth.get('cell'), email=auth.get('mail'))
-            user.save()
+            user = User.objects.create(userId=userId, name=auth.get('name'), phone=auth.get('cell'),
+                                       email=auth.get('mail'))
         loginToken = md5(userId)
         user.loginToken = loginToken
         user.save()
