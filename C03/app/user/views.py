@@ -11,7 +11,7 @@ from app.utils.filter import *
 from app.utils.serializer import *
 from app.utils.pagination import *
 from app.utils.utils import *
-from app.user import wx
+from app.user import thss
 
 
 class LoginView(APIView):
@@ -21,21 +21,18 @@ class LoginView(APIView):
 
     def post(self, request):
         req_data = request.data
-        code = req_data.get('code')
-        if not code:
-            return Response({'error': 'Requires code'})
+        token = req_data.get('token')
+        if not token:
+            return Response({'error': 'Requires token'})
         try:
-            auth = wx.login(js_code=code)
-            openId = auth.get('openid')
-            if not openId:
-                return Response({'error': 'Invalid code'})
-            user = User.objects.filter(openId=openId).first()
+            auth = thss.login(token=token)
+            userId = auth.get('card')
+            user = User.objects.filter(userId=userId).first()
             if not user:
-                user = User(openId=openId)
+                user = User(userId=userId, name=auth.get('name'), phone=auth.get('cell'), email=auth.get('mail'))
                 user.save()
-            loginToken = md5(openId)
+            loginToken = md5(userId)
             user.loginToken = loginToken
-            user.loginTime = now()
             user.save()
             return Response({'message': 'ok', 'loginToken': loginToken})
         except Exception as e:
