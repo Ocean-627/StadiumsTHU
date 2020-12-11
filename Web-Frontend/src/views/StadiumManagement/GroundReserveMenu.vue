@@ -27,7 +27,7 @@
                         <div class="contact-box">
                             <!-- 主要部分 & 单个单元 -->
                             <div class="row i-row">
-                                <div class="col-md-7">
+                                <div class="col-md-7 i-infobox">
                                     <img alt="image" class="rounded m-t-xs img-fluid" :src="stadium.images[0].image">
                                 </div>
                                 <div class="col-md-5 i-infobox">
@@ -90,6 +90,9 @@
     line-height: 30px;
     font-size: 13px;
     font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
 }
 
 .i-star {

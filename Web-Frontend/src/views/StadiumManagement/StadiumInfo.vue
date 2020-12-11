@@ -31,14 +31,14 @@
                         <div class="contact-box">
                             <!-- 主要部分 & 单个单元 -->
                             <div class="row i-row">
-                                <div class="col-md-7">
+                                <div class="col-md-7 i-infobox">
                                     <img alt="image" class="rounded m-t-xs img-fluid i-img" :src="stadium.images[0].image">
                                 </div>
                                 <div class="col-md-5 i-infobox">
-                                    <h2 class="i-title"><strong>{{stadium.name}}</strong></h2>
-                                    <i class="fa fa-comment-o i-icon"></i>{{stadium.comments}}条评论 <br>
-                                    <i class="fa fa-clock-o i-icon"></i>开放时间：{{stadium.openTime}} - {{stadium.closeTime}}<br>
-                                    <i class="fa fa-location-arrow i-icon"></i>{{stadium.location}}<br>
+                                    <div><h2 class="i-title"><strong>{{stadium.name}}</strong></h2></div>
+                                    <div><i class="fa fa-comment-o i-icon"></i>{{stadium.comments}}条评论 <br></div>
+                                    <div><i class="fa fa-clock-o i-icon"></i>开放时间：{{stadium.openTime}} - {{stadium.closeTime}}<br></div>
+                                    <div><i class="fa fa-location-arrow i-icon"></i>{{stadium.location}}<br></div>
                                     <div class="i-score">
                                         <i v-for="num in 5" :key="num" style="margin-right: 3px" :class="(num<=stadium.score)?'fa fa-star i-star':((num-0.5<=stadium.score)?'fa fa-star-half-o i-star':'fa fa-star-o i-star')"></i> {{ stadium.score }}
                                     </div>
@@ -105,6 +105,9 @@
     line-height: 30px;
     font-size: 13px;
     font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
 }
 
 .i-star {

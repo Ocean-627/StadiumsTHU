@@ -5,7 +5,7 @@
                 <ul class="nav metismenu" id="side-menu">
                     <li class="nav-header">
                         <div class="dropdown profile-element">
-                            <img alt="image" class="rounded-circle" src="../../static/img/mabaoguo.jpg" />
+                            <img alt="image" class="rounded-circle" :src="image" :onerror="defaultImg" style="width: 48px; height: 48px;" />
                             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                                 <span class="block m-t-xs font-bold">{{ username }}</span>
                                 <span class="text-muted text-xs block">管理员 <b class="caret"></b></span>
@@ -61,8 +61,15 @@
 export default {
     data() {
         return {
-            username: localStorage.getItem("username")
+            username: localStorage.getItem("username"),
+            image: localStorage.getItem('image')
+        }
+    },
+    computed: {
+        defaultImg () {
+            return 'this.src="' + require('../../static/img/white.jpg') + '"';
         }
     }
+
 }
 </script>
