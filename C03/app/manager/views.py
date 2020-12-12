@@ -11,6 +11,43 @@ from app.utils.manager_serializer import *
 from app.utils.filter import *
 from app.utils.pagination import *
 from app.utils.authtication import ManagerAuthtication
+from apscheduler.scheduler import Scheduler
+
+'''
+定时事件
+'''
+
+
+def daily_task():
+
+    '''
+       普通情况，正常更新duration时段
+    '''
+    # # now_date = calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), 1)
+    # now_date = datetime.datetime.now().strftime('%Y-%m-%d')
+    # durations = Duration.objects.all()
+    # for duration in durations:
+    #     flag = judgeDate(duration.date, now_date)
+    #     if flag < 0:
+    #         duration.date = calculateDate(now_date, duration.stadium.foreDays - 1)
+    #         duration.openState = 1
+    #         duration.accessible = 1
+    #         duration.save()
+
+
+    # obj = Manager.objects.filter(userId=userId, password=password).first()
+
+
+# def minute_task():
+#     print("ddwjl")
+#
+#
+# sched = Scheduler()
+# sched.add_cron_job(daily_task, hour=16, minute=0)
+# sched.add_interval_job(minute_task, seconds=60)
+# sched.start()
+
+# daily_task()
 
 
 class LogonView(CreateAPIView):
