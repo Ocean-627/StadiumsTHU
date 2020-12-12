@@ -19,33 +19,52 @@ from apscheduler.scheduler import Scheduler
 
 
 def daily_task():
+    now_date = calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), 1)
+    old_date = datetime.datetime.now().strftime('%Y-%m-%d')
+    durations = Duration.objects.all()
+    delete_durations = durations.filter(date=old_date)
+    delete_durations.delete()
 
-    '''
-       普通情况，正常更新duration时段
-    '''
-    # # now_date = calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), 1)
-    # now_date = datetime.datetime.now().strftime('%Y-%m-%d')
-    # durations = Duration.objects.all()
-    # for duration in durations:
-    #     flag = judgeDate(duration.date, now_date)
-    #     if flag < 0:
-    #         duration.date = calculateDate(now_date, duration.stadium.foreDays - 1)
-    #         duration.openState = 1
-    #         duration.accessible = 1
-    #         duration.save()
+    changeDurations = ChangeDuration.objects.all()
+    for changeDuration in changeDurations:
+        changeDate = calculateDate(now_date, changeDuration.courtType.stadium.foreDays - 1)
+        flag = judgeDate(changeDuration.date, changeDate)
+        if flag == 0:
+            changeDuration.courtType.openingHours = changeDuration.openingHours
+            changeDuration.courtType.duration = changeDuration.duration
+            changeDuration.courtType.price = changeDuration.price
+            changeDuration.courtType.membership = changeDuration.membership
+            changeDuration.courtType.openState = changeDuration.openState
+            changeDuration.courtType.save()
+
+    courtTypes = CourtType.objects.all()
+    for courtType in courtTypes:
+        changeDate = calculateDate(now_date, courtType.stadium.foreDays - 1)
+
+        openHours = courtType.openingHours.split(" ")
+        for court in courtType.court_set.all():
+            for openHour in openHours:
+                startTime, endTime = openHour.split('-')
+                totalSeconds = judgeTime(endTime, startTime)
+                seconds = judgeTime(courtType.duration, "00:00")
+                for k in range(int(totalSeconds // seconds)):
+                    endTime = (datetime.datetime.strptime(str(startTime), "%H:%M") + datetime.timedelta(
+                        seconds=seconds)).strftime('%H:%M')
+                    myDuration = Duration(stadium=courtType.stadium, court=court, startTime=startTime, endTime=endTime,
+                                          date=changeDate, openState=courtType.openState, accessible=1, courtType=courtType)
+                    myDuration.save()
+                    startTime = endTime
 
 
-    # obj = Manager.objects.filter(userId=userId, password=password).first()
+def minute_task():
+    print("")
 
 
-# def minute_task():
-#     print("ddwjl")
-#
-#
-# sched = Scheduler()
-# sched.add_cron_job(daily_task, hour=16, minute=0)
-# sched.add_interval_job(minute_task, seconds=60)
-# sched.start()
+sched = Scheduler()
+sched.add_cron_job(daily_task, hour=16, minute=0)
+sched.add_interval_job(minute_task, seconds=60)
+sched.start()
+
 
 # daily_task()
 

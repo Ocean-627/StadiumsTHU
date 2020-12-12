@@ -58,6 +58,7 @@ class CourtType(models.Model):
     duration = models.CharField(max_length=30, verbose_name='单次预约限定时长', default="01:00")
     price = models.IntegerField(verbose_name='预约费用', default=30)
     membership = models.IntegerField(verbose_name='同行人数', default=3)
+    openState = models.BooleanField()
 
 
 class Court(models.Model):
@@ -76,6 +77,7 @@ class Court(models.Model):
 class Duration(models.Model):
     # 预约时段
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
+    courtType = models.ForeignKey(CourtType, related_name='+', on_delete=models.CASCADE, null=True)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     date = models.CharField(max_length=10)
@@ -116,11 +118,13 @@ class ChangeDuration(models.Model):
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     courtType = models.ForeignKey(CourtType, on_delete=models.CASCADE)
     openingHours = models.CharField(max_length=300)
+    duration = models.CharField(max_length=10, null=True)
     date = models.CharField(max_length=32)
     time = models.DateTimeField(default=timezone.now)
     type = models.IntegerField(default=1)
     price = models.IntegerField(default=1)
     membership = models.IntegerField(default=1)
+    openState = models.BooleanField()
     # TODO:完善事件信息
 
 
