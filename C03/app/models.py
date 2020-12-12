@@ -18,6 +18,8 @@ class User(models.Model):
     email = models.EmailField(null=True)
     phone = models.CharField(max_length=20, null=True)
     image = models.ImageField(upload_to='user', verbose_name='头像', null=True)
+    defaults = models.IntegerField(verbose_name='违约次数', default=0)
+    blacklist = models.CharField(max_length=20, null=True)
     # TODO:完善信息
 
 
@@ -204,3 +206,11 @@ class Message(models.Model):
     manager_id = models.IntegerField(null=True)
     content = models.CharField(max_length=500)
     createTime = models.DateTimeField(auto_now_add=True)
+
+
+class Default(models.Model):
+    # 违约记录
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    time = models.CharField(max_length=100, null=True)
+    cancel = models.BooleanField(default=False, verbose_name='管理员是否手动撤销预约记录')
+    # TODO:完善信息

@@ -1,6 +1,5 @@
 from itertools import chain
 from operator import attrgetter
-
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
@@ -12,6 +11,9 @@ from app.utils.filter import *
 from app.utils.pagination import *
 from app.utils.authtication import ManagerAuthtication
 from apscheduler.scheduler import Scheduler
+import time
+from datetime import datetime
+import pytz
 
 '''
 定时事件
@@ -19,12 +21,15 @@ from apscheduler.scheduler import Scheduler
 
 
 def daily_task():
+
+    # 删除旧数据
     now_date = calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), 1)
     old_date = datetime.datetime.now().strftime('%Y-%m-%d')
     durations = Duration.objects.all()
     delete_durations = durations.filter(date=old_date)
     delete_durations.delete()
 
+    # 修改信息使之生效
     changeDurations = ChangeDuration.objects.all()
     for changeDuration in changeDurations:
         changeDate = calculateDate(now_date, changeDuration.courtType.stadium.foreDays - 1)
@@ -37,10 +42,10 @@ def daily_task():
             changeDuration.courtType.openState = changeDuration.openState
             changeDuration.courtType.save()
 
+    # 添加新数据
     courtTypes = CourtType.objects.all()
     for courtType in courtTypes:
         changeDate = calculateDate(now_date, courtType.stadium.foreDays - 1)
-
         openHours = courtType.openingHours.split(" ")
         for court in courtType.court_set.all():
             for openHour in openHours:
@@ -55,18 +60,31 @@ def daily_task():
                     myDuration.save()
                     startTime = endTime
 
+    # 将用户移出黑名单
+    changeDate = calculateDate(now_date, -100)
+    User.objects.all().filter(blacklist=changeDate).update(blacklist="", defaults=0)
+
 
 def minute_task():
-    print("")
-
+    # 判断违约并记录违约事件
+    tz = pytz.timezone('Asia/Shanghai')
+    myDate = datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
+    myTime = datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
+    reserveEvents = ReserveEvent.objects.filter(date=myDate)
+    for reserveEvent in reserveEvents:
+        if judgeTime(reserveEvent.startTime, calculateTime(myTime, 600)) >0 and reserveEvent.checked == 0:
+            reserveEvent.checked = 1
+            reserveEvent.user.defaults += 1
+            default = Default(user=reserveEvent.user, time=myDate+" "+myTime)
+            default.save()
+            if reserveEvent.user.defaults == 3:
+                reserveEvent.user.blacklist = myDate
+            reserveEvent.user.save()
 
 sched = Scheduler()
 sched.add_cron_job(daily_task, hour=16, minute=0)
 sched.add_interval_job(minute_task, seconds=60)
 sched.start()
-
-
-# daily_task()
 
 
 class LogonView(CreateAPIView):
