@@ -113,6 +113,7 @@ class ReserveView(ListAPIView, CreateAPIView):
     queryset = ReserveEvent.objects.all()
     serializer_class = ReserveEventSerializer
     filter_class = ReserveEventFilter
+    pagination_class = ReserveHistoryPagination
 
     def get_queryset(self):
         return ReserveEvent.objects.filter(user=self.request.user)

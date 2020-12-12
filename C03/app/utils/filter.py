@@ -60,7 +60,8 @@ class ReserveEventFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:
         model = ReserveEvent
-        fields = ['id', 'user_id', 'duration_id', 'date', 'startTime', 'endTime']
+        fields = ['id', 'user_id', 'duration_id', 'date', 'startTime', 'endTime', 'payment', 'cancel', 'checked',
+                  'leave']
 
 
 class CommentFilter(filters.FilterSet):
@@ -99,7 +100,7 @@ class SessionFilter(filters.FilterSet):
 
 
 class MessageFilter(filters.FilterSet):
-    sort = filters.OrderingFilter(fields=('createTime', ))
+    sort = filters.OrderingFilter(fields=('createTime',))
     content = filters.CharFilter(field_name='content', lookup_expr='icontains')
 
     class Meta:

@@ -101,6 +101,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
     has_comments = serializers.SerializerMethodField(required=False)
     image = serializers.SerializerMethodField(required=False)
     price = serializers.SerializerMethodField(required=False)
+    type = serializers.SerializerMethodField(required=False)
 
     def get_result(self, obj):
         return obj.get_result_display()
@@ -126,6 +127,11 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         court = Court.objects.get(id=obj.court_id)
         price = court.courtType.price
         return price
+
+    def get_type(self, obj):
+        court = Court.objects.get(id=obj.court_id)
+        type = court.courtType.type
+        return type
 
     duration_id = serializers.IntegerField(label='时段编号', write_only=True)
 
