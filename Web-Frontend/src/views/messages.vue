@@ -20,39 +20,63 @@
         </div>
       </div>
       <div class="wrapper wrapper-content animated fadeInRight ecommerce">
+        <div class="row" style="margin-bottom: 20px">
+          <div class="col-sm-2">
+            <select
+              class="chosen-select"
+              value="0"
+              id="type"
+            >
+              <option v-for="(type, index) in type_list" :key="type" :value="index">
+                {{ type }}
+              </option>
+            </select>
+          </div>
+        </div>
         <div class="row">
           <div class="col-lg-12">
             <div class="ibox-content forum-post-container">
-              <div class="forum-post-info">
-                <h4>
-                  <span class="text-navy"
-                    ><i class="fa fa-globe"></i>一般性讨论 </span
-                  >-公告- <span class="text-muted">自由会谈</span>
-                </h4>
-              </div>
-              <div class="media" v-for="session in sessions" :key="session.id">
-                <a class="forum-avatar" href="#">
-                  <img src="/static/img/a1.jpg" class="rounded-circle" alt="image" />
+              <div class="media" v-for="session in this.sessions" :key="session.id" :class="session | style_filter">
+                <a class="forum-avatar" :href="'/user_management/user_info/detail/' + session.user_id">
+                  <img
+                    :src="session.image"
+                    class="rounded-circle"
+                    alt="image"
+                  />
                   <div class="author-info">
-                    <strong>{{ session.user }}</strong><br />
-                    {{ session.latestUpdateTime | datetime_format_2 }}<br />
+                    <strong>{{ session.userName }}</strong
+                    ><br />
+                    {{ session.updateTime | datetime_format_2 }}<br />
                   </div>
                 </a>
                 <div class="media-body">
-                  <h4 class="media-heading">月牙草的标准块</h4>
-                  与普遍的看法相反，Lorem
-                  Ipsum并不是简单的随机文本。它起源于公元前45年的一部古典拉丁文学作品，距今已有2000多年的历史。
-
-                  <br /><br />弗吉尼亚州汉普顿悉尼学院（Hampden Sydney
-                  College）的拉丁文教授理查德麦克林托克（Richard
-                  McClintock）查阅了一段洛伦伊普苏姆（Lorem
-                  Ipsum）的文章中较为晦涩的拉丁文单词consectetur，并查阅了古典文学中对这个单词的引用，发现了不容置疑的来源。Lorem
-                  Ipsum来自西塞罗在公元前45年所著的《德菲尼布斯博诺勒姆和马洛勒姆》（善与恶的极端）的第1.10.32节和第1.10.33节。这本书是一本关于伦理学的论文，在文艺复兴时期非常流行。Lorem
-                  Ipsum的第一行“Lorem Ipsum dolor sit
-                  amet…”来自第1.10.32节中的一行。
-
-                  <br /><br />迈克·史密斯，Zender公司首席执行官。
+                  <h4 class="media-heading" v-on:click="goDetail(session.id)" style="cursor: pointer;">
+                      “{{ session.messages[0].content | digest }}”
+                  </h4>
+                  {{ (session.messages[session.messages.length-1].sender === "M") ? "管理员" : "用户" }} <strong>{{ session.messages[session.messages.length-1].sender }}</strong> 的最新回复：
+                  <br /><br />
+                  {{ session.messages[session.messages.length-1].content }}
                 </div>
+              </div>
+              <nav aria-label="navigation">
+                <ul class="pagination justify-content-center" style="margin-top: 15px; margin-bottom: 10px;">
+                  <li class="page-item" v-show="page > page_size">
+                    <a class="page-link" aria-label="Previous" v-on:click="prepage()">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  <li class="page-item" v-for="i in cur_pages()" :key="i">
+                    <a class="page-link" v-on:click="setpage(i)">{{ page_size * Math.floor((page-1) / page_size) + i }}</a>
+                  </li>
+                  <li class="page-item" v-show="page + page_size < total">
+                    <a class="page-link" aria-label="Next" v-on:click="nextpage()">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+              <div style="text-align: center;">
+                  第 {{ this.page }}/{{ this.total }} 页
               </div>
             </div>
           </div>
@@ -64,10 +88,14 @@
   </div>
 </template>
 
-<style scoped>
+<style>
+@import "../assets/css/plugins/chosen/bootstrap-chosen.css";
 .i-row {
   padding-top: 10px;
   padding-bottom: 10px;
+}
+.chosen-container-single .chosen-single {
+  padding: 4px 12px;
 }
 </style>
 
@@ -76,16 +104,17 @@ import Navbar from "@/components/Navbar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Toolbox from "@/components/Toolbox";
+import "jquery";
+import "@/assets/js/plugins/chosen/chosen.jquery.js";
 export default {
   data() {
     return {
-        sessions: [
-            {
-                id: 1,
-                user: "cbx",
-                latestUpdateTime: new Date() - 100000
-            }
-        ]
+      sessions: [],
+      // pagination
+      page: 1,
+      page_size: 10,
+      total: 0,   // total page count
+      type_list: ["全部", "待处理", "已处理", "已关闭"],
     };
   },
   components: {
@@ -94,6 +123,55 @@ export default {
     Header,
     Footer
   },
-  mounted() {}
+  mounted() {
+      $(".chosen-select").chosen({ width: "100%" });
+      this.$axios.get("session/", {
+        params: {
+            page: this.page,
+            size: this.page_size,
+            sort: "-updateTime"
+        }
+      })
+      .then(res => {
+          this.total = Math.ceil(res.data.count / this.page_size)
+          this.sessions = res.data.results
+          // TODO: sender部分
+      })
+  },
+  updated(){
+      $(".chosen-select").chosen({ width: "100%" });
+  },
+  methods: {
+      prepage(){
+          this.page -= this.page % this.page_size + this.page_size - 1
+      },
+      nextpage(){
+          this.page -= this.page % this.page_size
+          this.page += this.page_size + 1
+      },
+      cur_pages(){
+          let tmp = this.page - this.page % this.page_size
+          return Math.min(this.page_size, this.total - tmp);
+      },
+      setpage(i){
+          this.page = this.page_size * Math.floor((this.page - 1) / this.page_size) + i
+      },
+      goDetail(id){
+          window.location.replace("/messages/detail?id=" + id)
+      },
+  },
+  filters: {
+      style_filter(session) {
+          if(!session.open) return "black-bg";     // solved
+          if(session.checked) return "gray-bg";      // open
+          return "yellow-bg";    // unsolved
+      },
+      digest(msg) {
+          if(msg.length > 10){
+              return msg.slice(0, 10) + "..."
+          }
+          return msg
+      }
+  },
 };
 </script>

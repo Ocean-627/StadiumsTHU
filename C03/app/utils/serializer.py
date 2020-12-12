@@ -93,6 +93,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
     result = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField(required=False)
     has_comments = serializers.SerializerMethodField(required=False)
+    image = serializers.SerializerMethodField(required=False)
 
     def get_result(self, obj):
         return obj.get_result_display()
@@ -106,6 +107,13 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         comments = Comment.objects.filter(reserve_id=obj.id)
         size = len(comments)
         return size > 0
+
+    def get_image(self, obj):
+        court = Court.objects.get(id=obj.court_id)
+        image = court.stadium.stadiumimage_set.first()
+        if not image:
+            return None
+        return image.image.url
 
     duration_id = serializers.IntegerField(label='时段编号', write_only=True)
 

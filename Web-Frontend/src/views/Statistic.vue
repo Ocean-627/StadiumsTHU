@@ -6,7 +6,7 @@
             <div class="row wrapper border-bottom white-bg page-heading">
                 <!--Breadcrum 导航-->
                 <div class="col-lg-9">
-                    <h2>场馆信息管理</h2>
+                    <h2>场馆列表</h2>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="index.html">主页</a>
