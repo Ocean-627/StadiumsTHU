@@ -88,9 +88,9 @@ WSGI_APPLICATION = 'C03.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'platform',
+        'NAME': 'StadiumTHU',
         'USER': 'root',
-        'PASSWORD': '1234567890',
+        'PASSWORD': 'c3fc0c751ecee33b',
         'HOST': '140.143.163.227',
         'PORT': '3306',
     }

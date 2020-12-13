@@ -15,7 +15,7 @@
             </li>
             <li class="breadcrumb-item">场馆管理</li>
             <li class="breadcrumb-item">
-              <a href="/stadium_management/ground_reserve">预约记录管理</a>
+              <a href="/stadium_management/stadium_info">场馆列表</a>
             </li>
             <li class="breadcrumb-item active">
               <strong>场地预留</strong>

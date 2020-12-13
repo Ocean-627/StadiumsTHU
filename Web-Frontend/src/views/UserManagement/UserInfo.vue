@@ -115,19 +115,6 @@ export default {
                             itemRender: { name: '$input', props: { placeholder: '请输入手机号' } } 
                         },
                         { 
-                            field: 'auth', 
-                            title: '是否认证', 
-                            span: 6, 
-                            folding: true, 
-                            itemRender: { 
-                                name: '$select', 
-                                options: [
-                                    { label: '已认证', value: true },
-                                    { label: '未认证', value: false }
-                                ]
-                            } 
-                        },
-                        { 
                             span: 24, 
                             align: 'center', 
                             collapseNode: true, 
@@ -203,21 +190,16 @@ export default {
                     },
                     { field: 'nickName', sortable: true, title: '昵称' },
                     { field: 'userId', sortable: true, title: '学号/工号' },
-                    { field: 'type', sortable: true, title: '用户类型' },
+                    { 
+                        field: 'type',  
+                        title: '用户类型',
+                        filters: [
+                            { label: '在校学生', value: '在校学生' },
+                            { label: '教工', value: '教工' }
+                        ], 
+                    },
                     { field: 'email', sortable: true, title: '邮箱', visible: false },
                     { field: 'phone', sortable: true, title: '手机'},
-                    { 
-                        field: 'auth', 
-                        title: '是否认证', 
-                        filters: [
-                            { label: '已认证', value: true },
-                            { label: '未认证', value: false }
-                        ],
-                        formatter: function(value){
-                            if(value === "true") return "已认证"
-                            return "未认证"
-                        }
-                    },
                     { 
                         field: 'loginTime', 
                         sortable: true, 

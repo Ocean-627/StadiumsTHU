@@ -4,11 +4,11 @@ import Router from 'vue-router'
 // route views
 import Login from '@/views/Login'
 import Home from '@/views/Home'
-import Profile from "@/views/profile"
-import Messages from "@/views/messages";
+import Profile from "@/views/Profile"
+import Messages from "@/views/Messages";
+import MessagesDetail from "@/views/MessagesDetail";
 import StadiumInfo from '@/views/StadiumManagement/StadiumInfo'
 import UserFeedback from '@/views/StadiumManagement/UserFeedback'
-import GroundReserveMenu from '@/views/StadiumManagement/GroundReserveMenu'
 import GroundReserve from '@/views/StadiumManagement/GroundReserve'
 import ReserveRecord from '@/views/StadiumManagement/ReserveRecord'
 import UserInfo from '@/views/UserManagement/UserInfo'
@@ -50,6 +50,11 @@ export default new Router({
       component: Messages
     },
     {
+      path: "/messages/detail",
+      name: "MessagesDetail",
+      component: MessagesDetail
+    },
+    {
       path: "/stadium_management/stadium_info",
       name: "StadiumInfo",
       component: StadiumInfo
@@ -60,17 +65,12 @@ export default new Router({
       component: UserFeedback
     },
     {
-      path: "/stadium_management/ground_reserve",
-      name: "GroundReserveMenu",
-      component: GroundReserveMenu
-    },
-    {
-      path: "/stadium_management/ground_reserve/detail",
+      path: "/stadium_management/stadium_info/detail",
       name: "GroundReserve",
       component: GroundReserve
     },
     {
-      path: "/stadium_management/ground_reserve/record",
+      path: "/stadium_management/stadium_info/record",
       name: "ReserveRecord",
       component: ReserveRecord
     },
