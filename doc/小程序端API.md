@@ -173,6 +173,12 @@ Response:
 
      返回在images列表中，列表中每一项是图片的URL，可以直接访问。
 
+**新增了加强版**
+
+`URL:/api/user/stadiumdetail`
+
+获取更详细的信息，之前的`URL`只返回一个信息相对较少的列表。
+
 ##### 获取场地信息
 
 ```js
@@ -391,7 +397,10 @@ Method: GET
 URL: /api/user/comment
 Request:{
     'content': '',
-    'court_id': ''
+    'court_id': ''，
+    'stadium_id': '',
+    'page': '',
+    'size': ''
 }
 Response:
 [
@@ -417,6 +426,10 @@ Response:
 `content`在评价内容中进行模糊匹配。
 
 `court_id`**精确**匹配场地编号。
+
+`stadium_id`精确匹配场馆编号。
+
+`page`和`size`是分页参数，`page`代表分页的第几页，`size`代表一页的大小。
 
 **评价场馆**
 

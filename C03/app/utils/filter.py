@@ -8,11 +8,13 @@ class UserFilter(filters.FilterSet):
     nickName = filters.CharFilter(field_name='nickName', lookup_expr='icontains')
     userId = filters.CharFilter(field_name='userId', lookup_expr='icontains')
     email = filters.CharFilter(field_name='email', lookup_expr='icontains')
+    type = filters.CharFilter(field_name='type', lookup_expr='icontains')
+    major = filters.CharFilter(field_name='major', lookup_expr='icontains')
     sort = filters.OrderingFilter(fields=('phone', 'name', 'nickName', 'userId', 'email'))
 
     class Meta:
         model = User
-        fields = ['id', 'auth']
+        fields = ['id']
 
 
 class StadiumFilter(filters.FilterSet):
@@ -58,7 +60,8 @@ class ReserveEventFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:
         model = ReserveEvent
-        fields = ['id', 'user_id', 'duration_id', 'date', 'startTime', 'endTime']
+        fields = ['id', 'user_id', 'duration_id', 'date', 'startTime', 'endTime', 'payment', 'cancel', 'checked',
+                  'leave']
 
 
 class CommentFilter(filters.FilterSet):
@@ -67,7 +70,7 @@ class CommentFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:
         model = Comment
-        fields = ['id', 'court_id', 'reserve_id']
+        fields = ['id', 'court_id', 'reserve_id', 'stadium_id']
 
 
 class CollectEventFilter(filters.FilterSet):
@@ -97,7 +100,7 @@ class SessionFilter(filters.FilterSet):
 
 
 class MessageFilter(filters.FilterSet):
-    sort = filters.OrderingFilter(fields=('createTime', ))
+    sort = filters.OrderingFilter(fields=('createTime',))
     content = filters.CharFilter(field_name='content', lookup_expr='icontains')
 
     class Meta:
