@@ -60,8 +60,8 @@ class ReserveEventFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:
         model = ReserveEvent
-        fields = ['id', 'user_id', 'duration_id', 'date', 'startTime', 'endTime', 'payment', 'cancel', 'checked',
-                  'leave']
+        fields = ['id', 'stadium_id', 'user_id', 'duration_id', 'date', 'startTime', 'endTime', 'payment', 'cancel',
+                  'checked', 'leave']
 
 
 class CommentFilter(filters.FilterSet):

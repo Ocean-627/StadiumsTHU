@@ -117,8 +117,8 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         return size > 0
 
     def get_image(self, obj):
-        court = Court.objects.get(id=obj.court_id)
-        image = court.stadium.stadiumimage_set.first()
+        stadium = Stadium.objects.get(id=obj.stadium_id)
+        image = stadium.stadiumimage_set.first()
         if not image:
             return None
         return image.image.url
@@ -143,21 +143,22 @@ class ReserveEventSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         duration = Duration.objects.filter(id=validated_data.get('duration_id')).first()
-        stadium = duration.stadium.name
-        court = duration.court.name
+        stadium = duration.stadium
+        court = duration.court
         # modify corresponding duration
         duration.accessible = False
         duration.user = self.context['request'].user
         duration.save()
-        return ReserveEvent.objects.create(user=self.context['request'].user, **validated_data, stadium=stadium,
-                                           court=court, date=duration.date, court_id=duration.court.id,
+        return ReserveEvent.objects.create(user=self.context['request'].user, **validated_data, stadium=stadium.name,
+                                           stadium_id=stadium.id, court=court.name, date=duration.date,
+                                           court_id=court.id,
                                            startTime=duration.startTime, endTime=duration.endTime,
                                            result='S')
 
     class Meta:
         model = ReserveEvent
         fields = '__all__'
-        read_only_fields = ['user', 'stadium', 'court', 'court_id', 'date', 'result', 'startTime', 'endTime']
+        read_only_fields = ['user', 'stadium', 'court', 'stadium_id', 'court_id', 'date', 'result', 'startTime', 'endTime']
 
 
 class CommentSerializer(serializers.ModelSerializer):

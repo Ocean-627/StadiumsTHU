@@ -94,6 +94,7 @@ class ReserveEvent(models.Model):
     )
     # 预定事件
     stadium = models.CharField(max_length=32)
+    stadium_id = models.IntegerField()
     court = models.CharField(max_length=32)
     court_id = models.IntegerField()
     duration_id = models.IntegerField()
