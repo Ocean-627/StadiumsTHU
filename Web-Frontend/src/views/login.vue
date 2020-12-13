@@ -63,7 +63,6 @@ export default {
           alert("Error! Please try again.");
         }
         else{
-          alert(res.data.loginToken)
           //this.$cookie.set('loginToken',res.data.loginToken);
           localStorage.setItem("username", res.data.username);
           localStorage.setItem("id", res.data.id);

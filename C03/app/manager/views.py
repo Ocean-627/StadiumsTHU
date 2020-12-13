@@ -12,7 +12,7 @@ from app.utils.pagination import *
 from app.utils.authtication import ManagerAuthtication
 from apscheduler.scheduler import Scheduler
 import time
-from datetime import datetime
+import datetime
 import pytz
 
 '''
@@ -21,7 +21,7 @@ import pytz
 
 
 def daily_task():
-
+    print("Start daily update...")
     # 删除旧数据
     now_date = calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), 1)
     old_date = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -63,13 +63,14 @@ def daily_task():
     # 将用户移出黑名单
     changeDate = calculateDate(now_date, -100)
     User.objects.all().filter(blacklist=changeDate).update(blacklist="", defaults=0)
+    print("Finished!")
 
 
 def minute_task():
     # 判断违约并记录违约事件
     tz = pytz.timezone('Asia/Shanghai')
-    myDate = datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
-    myTime = datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
+    myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
+    myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
     reserveEvents = ReserveEvent.objects.filter(date=myDate)
     for reserveEvent in reserveEvents:
         if judgeTime(reserveEvent.startTime, calculateTime(myTime, 600)) >0 and reserveEvent.checked == 0:
@@ -80,6 +81,7 @@ def minute_task():
             if reserveEvent.user.defaults == 3:
                 reserveEvent.user.blacklist = myDate
             reserveEvent.user.save()
+
 
 sched = Scheduler()
 sched.add_cron_job(daily_task, hour=16, minute=0)
