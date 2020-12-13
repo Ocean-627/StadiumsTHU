@@ -68,12 +68,14 @@ def daily_task():
 
 def minute_task():
     # 判断违约并记录违约事件
+    print("Start minute update...")
     tz = pytz.timezone('Asia/Shanghai')
     myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
     myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
     reserveEvents = ReserveEvent.objects.filter(date=myDate)
     for reserveEvent in reserveEvents:
-        if judgeTime(reserveEvent.startTime, calculateTime(myTime, 600)) >0 and reserveEvent.checked == 0:
+        if judgeTime(reserveEvent.startTime, calculateTime(myTime, 600)) < 0 and reserveEvent.checked == 0:
+            print("default!")
             reserveEvent.checked = 1
             reserveEvent.user.defaults += 1
             default = Default(user=reserveEvent.user, time=myDate+" "+myTime)
@@ -81,6 +83,8 @@ def minute_task():
             if reserveEvent.user.defaults == 3:
                 reserveEvent.user.blacklist = myDate
             reserveEvent.user.save()
+    print("Finished!")
+
 
 '''
 若代码已经部署到服务器上，在本机上运行后端时务必将以下四行注释掉，否则会更改服务器数据库
