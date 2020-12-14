@@ -87,6 +87,12 @@ def calculateDate(A, B):
     return (dateTime_p + datetime.timedelta(days=+B)).strftime("%Y-%m-%d")
 
 
+def calculateTime(A, B):
+    # 返回A时刻B秒之后的时刻
+    dateTime_p = datetime.datetime.strptime(A, '%H:%M')
+    return (dateTime_p + datetime.timedelta(seconds=+B)).strftime("%H:%M")
+
+
 def judgeTime(A, B):
     # 判断A时刻在B时刻之后的秒数
     format_pattern = '%H:%M'

@@ -25,4 +25,3 @@ urlpatterns = [
     path('message/', views.MessageView.as_view()),
     # path('revoke/', views.revoke)
 ]
-

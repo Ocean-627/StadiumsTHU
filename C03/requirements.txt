@@ -10,3 +10,4 @@ djangorestframework
 Pillow
 django_filter
 django-cors-headers
+django-crontab

@@ -16,6 +16,8 @@ class User(models.Model):
     phone = models.CharField(max_length=20, null=True)
     major = models.CharField(max_length=20, null=True)
     image = models.ImageField(upload_to='user', verbose_name='头像', null=True)
+    defaults = models.IntegerField(verbose_name='违约次数', default=0)
+    blacklist = models.CharField(max_length=20, null=True)
     # TODO:完善信息
 
 
@@ -56,6 +58,7 @@ class CourtType(models.Model):
     duration = models.CharField(max_length=30, verbose_name='单次预约限定时长', default="01:00")
     price = models.IntegerField(verbose_name='预约费用', default=30)
     membership = models.IntegerField(verbose_name='同行人数', default=3)
+    openState = models.BooleanField()
 
 
 class Court(models.Model):
@@ -74,6 +77,7 @@ class Court(models.Model):
 class Duration(models.Model):
     # 预约时段
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
+    courtType = models.ForeignKey(CourtType, related_name='+', on_delete=models.CASCADE, null=True)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     date = models.CharField(max_length=10)
@@ -115,11 +119,13 @@ class ChangeDuration(models.Model):
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     courtType = models.ForeignKey(CourtType, on_delete=models.CASCADE)
     openingHours = models.CharField(max_length=300)
+    duration = models.CharField(max_length=10, null=True)
     date = models.CharField(max_length=32)
     time = models.DateTimeField(default=timezone.now)
     type = models.IntegerField(default=1)
     price = models.IntegerField(default=1)
     membership = models.IntegerField(default=1)
+    openState = models.BooleanField()
     # TODO:完善事件信息
 
 
@@ -200,3 +206,11 @@ class Message(models.Model):
     manager_id = models.IntegerField(null=True)
     content = models.CharField(max_length=500)
     createTime = models.DateTimeField(auto_now_add=True)
+
+
+class Default(models.Model):
+    # 违约记录
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    time = models.CharField(max_length=100, null=True)
+    cancel = models.BooleanField(default=False, verbose_name='管理员是否手动撤销预约记录')
+    # TODO:完善信息
