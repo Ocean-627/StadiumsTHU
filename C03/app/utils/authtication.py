@@ -31,7 +31,7 @@ class ManagerAuthtication(BaseAuthentication):
     """
 
     def authenticate(self, request):
-        loginToken = request.COOKIES.get('loginToken')
+        loginToken = request.headers.get('loginToken')
         if not loginToken:
             raise AuthenticationFailed({'error': 'Requires loginToken'})
         obj = Manager.objects.filter(loginToken=loginToken).first()

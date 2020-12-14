@@ -11,7 +11,7 @@ from app.utils.filter import *
 from app.utils.serializer import *
 from app.utils.pagination import *
 from app.utils.utils import *
-from app.user import wx
+from app.user import thss
 
 
 class LoginView(APIView):
@@ -21,25 +21,22 @@ class LoginView(APIView):
 
     def post(self, request):
         req_data = request.data
-        code = req_data.get('code')
-        if not code:
-            return Response({'error': 'Requires code'})
-        try:
-            auth = wx.login(js_code=code)
-            openId = auth.get('openid')
-            if not openId:
-                return Response({'error': 'Invalid code'})
-            user = User.objects.filter(openId=openId).first()
-            if not user:
-                user = User(openId=openId)
-                user.save()
-            loginToken = md5(openId)
-            user.loginToken = loginToken
-            user.loginTime = now()
-            user.save()
-            return Response({'message': 'ok', 'loginToken': loginToken})
-        except Exception as e:
-            return Response({'error': 'Exception occurred'})
+        token = req_data.get('token')
+        if not token:
+            return Response({'error': 'Requires token'})
+        auth = thss.login(token=token).get('user')
+        if not auth:
+            return JsonResponse({'error': 'Login failed'})
+        userId = auth.get('card')
+        user = User.objects.filter(userId=userId).first()
+        if not user:
+            user = User.objects.create(userId=userId, nickName=auth.get('name'), name=auth.get('name'),
+                                       phone=auth.get('cell'),
+                                       email=auth.get('mail'), major=auth.get('department'))
+        loginToken = md5(userId)
+        user.loginToken = loginToken
+        user.save()
+        return Response({'message': 'ok', 'loginToken': loginToken})
 
 
 class UserView(APIView):
@@ -74,6 +71,17 @@ class StadiumView(ListAPIView):
     filter_class = StadiumFilter
 
 
+class StadiumDetailView(ListAPIView):
+    """
+    场馆详细信息
+    """
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+    queryset = Stadium.objects.all()
+    serializer_class = StadiumDetailSerializer
+    filter_class = StadiumFilter
+
+
 class CourtView(ListAPIView):
     """
     场地信息
@@ -105,6 +113,7 @@ class ReserveView(ListAPIView, CreateAPIView):
     queryset = ReserveEvent.objects.all()
     serializer_class = ReserveEventSerializer
     filter_class = ReserveEventFilter
+    pagination_class = ReserveHistoryPagination
 
     def get_queryset(self):
         return ReserveEvent.objects.filter(user=self.request.user)
@@ -141,6 +150,7 @@ class CommentView(ListAPIView, CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     filter_class = CommentFilter
+    pagination_class = CommentPagination
 
     def get_queryset(self):
         return Comment.objects.filter(user=self.request.user)

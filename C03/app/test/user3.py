@@ -6,7 +6,7 @@ from app.models import *
 
 class TestSession(TestCase):
     def setUp(self) -> None:
-        User.objects.create(openId='cbx', loginToken=1)
+        User.objects.create(userId=123, loginToken=1)
         self.headers = {'HTTP_loginToken': 1}
 
     def test_session(self):
@@ -32,12 +32,12 @@ class TestSession(TestCase):
 
 class TestMessage(TestCase):
     def setUp(self) -> None:
-        User.objects.create(openId='cbx', loginToken=1)
-        Session.objects.create(user=1)
+        User.objects.create(userId=123, loginToken=1)
+        Session.objects.create(user_id=1)
         self.headers = {'HTTP_loginToken': 1}
 
     def test_message(self):
-        Session.objects.create(user=1)
+        Session.objects.create(user_id=1)
         params = {
             'session_id': 1,
             'content': 'nice'

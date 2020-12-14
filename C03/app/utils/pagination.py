@@ -15,3 +15,13 @@ class SessionPagination(BasePagination):
     page_size = 10
     max_page_size = 30
 
+
+class CommentPagination(BasePagination):
+    page_size = 10
+    max_page_size = 30
+
+
+class ReserveHistoryPagination(BasePagination):
+    page_size = 15
+    max_page_size = 30
+

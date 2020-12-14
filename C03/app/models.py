@@ -6,17 +6,15 @@ import django.utils.timezone as timezone
 # Create your models here.
 class User(models.Model):
     # 普通用户
-    openId = models.CharField(max_length=50, unique=True)
     loginToken = models.CharField(max_length=100, null=True)
     loginTime = models.DateTimeField(auto_now=True, null=True)
-    # TODO:通过身份验证或用户完善信息的方式获取以下fields
-    auth = models.BooleanField(default=False)
     type = models.CharField(max_length=10, default='在校学生')
     name = models.CharField(max_length=32, null=True)
     nickName = models.CharField(max_length=32, null=True)
-    userId = models.IntegerField(verbose_name='学生编号', null=True)
+    userId = models.IntegerField(verbose_name='学生编号', unique=True)
     email = models.EmailField(null=True)
     phone = models.CharField(max_length=20, null=True)
+    major = models.CharField(max_length=20, null=True)
     image = models.ImageField(upload_to='user', verbose_name='头像', null=True)
     defaults = models.IntegerField(verbose_name='违约次数', default=0)
     blacklist = models.CharField(max_length=20, null=True)
@@ -100,6 +98,7 @@ class ReserveEvent(models.Model):
     )
     # 预定事件
     stadium = models.CharField(max_length=32)
+    stadium_id = models.IntegerField()
     court = models.CharField(max_length=32)
     court_id = models.IntegerField()
     duration_id = models.IntegerField()
@@ -157,6 +156,7 @@ class Comment(models.Model):
     # 场地评论
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     court = models.ForeignKey(Court, on_delete=models.CASCADE)
+    stadium_id = models.IntegerField()
     reserve_id = models.IntegerField()
     score = models.IntegerField(default=3)
     content = models.CharField(max_length=300)
