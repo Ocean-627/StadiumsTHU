@@ -105,7 +105,7 @@ class AddEventSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        return AddEvent.objects.create(manager=self.context['request'].user, **validated_data)
+        return AddEvent.objects.create(**validated_data)
 
     class Meta:
         model = AddEvent
