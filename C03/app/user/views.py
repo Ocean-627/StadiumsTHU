@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.utils.timezone import now
 
 from app.utils.authtication import UserAuthtication
+from app.utils.permission import UserPermission
 from app.utils.throttle import UserThrottle
 from app.utils.filter import *
 from app.utils.serializer import *
@@ -109,6 +110,7 @@ class ReserveView(ListAPIView, CreateAPIView):
     预订信息
     """
     authentication_classes = [UserAuthtication]
+    permission_classes = [UserPermission]
     throttle_classes = [UserThrottle]
     queryset = ReserveEvent.objects.all()
     serializer_class = ReserveEventSerializer
