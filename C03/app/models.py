@@ -150,6 +150,7 @@ class AddEvent(models.Model):
     date = models.CharField(max_length=32)
     time = models.DateTimeField(default=timezone.now)
     type = models.IntegerField(default=2)
+    information = models.CharField(max_length=1000, null=True)
     # TODO:完善事件信息
 
 

@@ -272,8 +272,8 @@ class AddEventView(ListAPIView):
             flag += cp2 > 0 and cp3 > 0
             if flag > 0:
                 myDuration.openState = 0
-                myDuration.reserveevnt.cancel = 1
-                myDuration.reserveevnt.save()
+                myDuration.reserveEvent.cancel = 1
+                myDuration.reserveEvent.save()
                 myDuration.save()
         return Response({'message': 'ok'})
 
