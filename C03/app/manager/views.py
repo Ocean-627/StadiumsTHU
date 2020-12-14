@@ -124,7 +124,7 @@ class LoginView(APIView):
         obj.save()
         url = None
         if obj.image:
-            url = obj.image
+            url = obj.image.url
         return Response(
             {'message': 'ok', 'username': obj.username, 'image': url, 'loginToken': loginToken})
 
