@@ -121,10 +121,8 @@ class LoginView(APIView):
         url = None
         if obj.image:
             url = obj.image
-        ret = Response(
+        return Response(
             {'message': 'ok', 'username': obj.username, 'image': url, 'loginToken': loginToken})
-        ret.set_cookie('loginToken', loginToken)
-        return ret
 
 
 class LogoutView(APIView):

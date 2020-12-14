@@ -45,9 +45,9 @@ def initStadium(info):
     Stadium.objects.create(**info)
     stadium = Stadium.objects.get(name=info['name'])
     # 创建场地类型
-    type1 = CourtType(stadium=stadium, type='羽毛球', openingHours="8:00-10:00,13:00-17:00")
+    type1 = CourtType(stadium=stadium, type='羽毛球', openingHours="8:00-10:00,13:00-17:00", openState=True)
     type1.save()
-    type2 = CourtType(stadium=stadium, type='篮球', openingHours='8:00-10:00,13:00-17:00')
+    type2 = CourtType(stadium=stadium, type='篮球', openingHours='8:00-10:00,13:00-17:00', openState=True)
     type2.save()
     # 创建场地
     courtNum = 5

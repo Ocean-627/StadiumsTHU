@@ -80,7 +80,7 @@ class TestUser(TestCase):
         chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
         chars.reverse()
         for i in range(10):
-            User.objects.create(openId='haha' + str(i), userId=i, nickName=chars[i] * 5)
+            User.objects.create(userId=i, nickName=chars[i] * 5)
 
     def test_user(self):
         params = {}

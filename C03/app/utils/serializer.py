@@ -166,7 +166,7 @@ class CommentSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField(required=False)
 
     reserve_id = serializers.IntegerField(label='预订编号', write_only=True)
-    content = serializers.CharField(label='评论内容', validators=[MinLengthValidator(15), MaxLengthValidator(300)])
+    content = serializers.CharField(label='评论内容', validators=[MinLengthValidator(5), MaxLengthValidator(300)])
 
     def get_images(self, obj):
         images_list = obj.commentimage_set.all()
