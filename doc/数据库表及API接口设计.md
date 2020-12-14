@@ -437,7 +437,7 @@ Response:{
 
 ```js
 Method:POST
-URL: /api/manager/event
+URL: /api/manager/addevent/
 Request:{
     'manager_id':1,
     'court_id':2,
@@ -449,6 +449,35 @@ Response:{
     'message':'ok'
 }
 ```
+
+##### **【新】撤销信用记录**
+
+```js
+Method:PUT
+URL: /api/manager/default/
+Request:{
+    'default_id':1,
+}
+Response:{
+    'message':'ok'
+}
+```
+
+##### **【新】将用户移入或移出黑名单**
+
+```js
+Method:PUT
+URL: /api/manager/user/
+// 若用户在黑名单中，该操作将用户移出黑名单，等价于手动撤销全部信用记录
+// 若用户不在黑名单中，该操作将用户移入黑名单
+Request:{
+    'user_id':1,
+}
+Response:{
+    'message':'ok'
+}
+```
+
 
 ##### **查看用户列表**
 

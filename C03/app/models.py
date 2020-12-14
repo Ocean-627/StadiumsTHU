@@ -213,7 +213,9 @@ class Message(models.Model):
 class Default(models.Model):
     # 违约记录
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.CharField(max_length=100, null=True)
     time = models.CharField(max_length=100, null=True)
     cancel = models.BooleanField(default=False, verbose_name='管理员是否手动撤销预约记录')
-    detail = models.CharField(max_length=20,default="预约不来")
+    detail = models.CharField(max_length=20, default="预约不来")
+    valid = models.BooleanField(default=True, verbose_name='违约记录是否在有效期之内')
     # TODO:完善信息

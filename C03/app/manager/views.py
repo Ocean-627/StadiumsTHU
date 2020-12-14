@@ -65,6 +65,9 @@ def daily_task():
     # 将用户移出黑名单
     changeDate = calculateDate(now_date, -100)
     User.objects.all().filter(blacklist=changeDate).update(blacklist="", defaults=0)
+
+    # 将在有效期之外的违约记录设置为失效
+    Default.objects.all.filter(date=changeDate).update(valid=False)
     print("Finished!")
 
 
@@ -81,7 +84,7 @@ def minute_task():
             reserveEvent.checked = 1
             reserveEvent.user.defaults += 1
             reserveEvent.save()
-            default = Default(user=reserveEvent.user, time=myDate+" "+myTime)
+            default = Default(user=reserveEvent.user, date=myDate, time=myTime)
             default.save()
             if reserveEvent.user.defaults == 3:
                 reserveEvent.user.blacklist = myDate
@@ -291,8 +294,14 @@ class UserView(ListAPIView):
     def put(self, request):
         req_data = request.data
         user = User.objects.get(id=req_data.get('user_id'))
-        user.defaults = 0
-        user.blacklist = "0"
+        if user.blacklist == "0":
+            myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime(
+                '%Y-%m-%d')
+            user.blacklist = myDate
+        else:
+            Default.objects.all().filter(user=user).update(cancel=1)
+            user.defaults = 0
+            user.blacklist = "0"
         user.save()
         return Response({'message': 'ok'})
 
