@@ -288,6 +288,14 @@ class UserView(ListAPIView):
     pagination_class = UserPagination
     filter_class = UserFilter
 
+    def put(self, request):
+        req_data = request.data
+        user = User.objects.get(id=req_data.get('user_id'))
+        user.defaults = 0
+        user.blacklist = "0"
+        user.save()
+        return Response({'message': 'ok'})
+
 
 class HistoryView(APIView):
     """
@@ -302,46 +310,6 @@ class HistoryView(APIView):
         myOperations = sorted(chain(changeDuration, addEvent), key=attrgetter('time'), reverse=True)
         operations = [model_to_dict(myOperation, fields=['time', 'type', 'id']) for myOperation in myOperations]
         return JsonResponse({'operations': operations})
-
-
-def refresh():
-    print("ok")
-    # myStadium = stadium
-    # myStadium.openingHours = openHours
-    # myStadium.openTime = openTime
-    # myStadium.closeTime = closeTime
-    # myStadium.duration = duration
-    # myCourts = myStadium.court_set.all()
-    # myDurations = myStadium.duration_set.all()
-    #
-    # # 删除更改时间段后的不合法时间段，该时间段的date属性应不早于startDate
-    # for myDuration in myDurations:
-    #     if judgeDate(str(myDuration.date), str(startDate)) >= 0:
-    #         myDuration.delete()
-    # startDate = str(datetime.datetime.strptime(startDate, '%Y-%m-%d')).split()[0]
-    # foreDays = judgeDate(str(calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), myStadium.foreDays)),
-    #                      startDate)
-    # if foreDays < 0:
-    #     return JsonResponse({'message': 'ok'})
-    # openHours = openHours.split()
-    #
-    # for openHour in openHours:
-    #     startTime, endTime = openHour.split('-')
-    #     totalSeconds = judgeTime(endTime, startTime)
-    #     seconds = judgeTime(duration, "00:00")
-    #     if totalSeconds % seconds != 0:
-    #         return JsonResponse({'error': 'can not make durations according to temp information'})
-    #     else:
-    #         for k in range(int(totalSeconds // seconds)):
-    #             endTime = (datetime.datetime.strptime(str(startTime), "%H:%M") + datetime.timedelta(
-    #                 seconds=seconds)).strftime('%H:%M')
-    #             for i in range(foreDays + 1):
-    #                 date = calculateDate(startDate, i)
-    #                 for j in range(len(myCourts)):
-    #                     myDuration = Duration(stadium=stadium, court=myCourts[j], startTime=startTime,
-    #                                           endTime=endTime, date=date, openState=1, accessible=1)
-    #                     myDuration.save()
-    #             startTime = endTime
 
 
 class StadiumImageView(CreateAPIView):
