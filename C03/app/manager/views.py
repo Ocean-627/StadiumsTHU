@@ -378,3 +378,26 @@ class MessageView(ListAPIView, CreateAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializerForManager
     filter_class = MessageFilter
+
+
+class DefaultView(ListAPIView, CreateAPIView):
+    """
+    违约记录
+    """
+    # authentication_classes = [ManagerAuthtication]
+    # queryset = Message.objects.all()
+    # serializer_class = MessageSerializerForManager
+    # filter_class = MessageFilter
+
+
+    def put(self, request):
+        req_data = request.data
+        default = Default.objects.get(id=req_data.get('default_id'))
+        if default.cancel == 0:
+            return Response({'error': 'manager has cancelled this record.'})
+        default.cancel = 1
+        default.save()
+        default.user.defaults -= 1
+        default.user.blacklist = "0"
+        default.user.save()
+        return Response({'message': 'ok'})

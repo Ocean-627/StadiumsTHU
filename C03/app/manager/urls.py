@@ -23,5 +23,6 @@ urlpatterns = [
     path('history/', views.HistoryView.as_view()),
     path('session/', views.SessionView.as_view()),
     path('message/', views.MessageView.as_view()),
+    path('default/', views.DefaultView.as_view()),
     # path('revoke/', views.revoke)
 ]
