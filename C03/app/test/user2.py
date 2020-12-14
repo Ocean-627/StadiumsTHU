@@ -29,7 +29,8 @@ class TestReserve(TestCase):
         self.assertEqual(resp.status_code, 400)
 
         params = {
-            'event_id': 1
+            'id': 1,
+            'cancel': 1
         }
         resp = self.client.put('/api/user/reserve/', params, **self.headers, content_type='application/json')
         self.assertEqual(resp.status_code, 200)

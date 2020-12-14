@@ -107,10 +107,10 @@ class ReserveEvent(models.Model):
     date = models.CharField(max_length=10)
     startTime = models.CharField(max_length=50)
     endTime = models.CharField(max_length=50)
-    payment = models.BooleanField(null=True, verbose_name='是否支付')
-    cancel = models.BooleanField(null=True, verbose_name='是否取消')
-    checked = models.BooleanField(null=True, verbose_name='是否使用')
-    leave = models.BooleanField(null=True, verbose_name='是否离开')
+    payment = models.BooleanField(default=False, verbose_name='是否支付')
+    cancel = models.BooleanField(default=False, verbose_name='是否取消')
+    checked = models.BooleanField(default=False, verbose_name='是否使用')
+    leave = models.BooleanField(default=False, verbose_name='是否离开')
     # TODO:完善事件信息
 
 

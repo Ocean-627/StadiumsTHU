@@ -133,7 +133,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         type = court.courtType.type
         return type
 
-    duration_id = serializers.IntegerField(label='时段编号', write_only=True)
+    duration_id = serializers.IntegerField(label='时段编号')
 
     def validate_duration_id(self, value):
         duration = Duration.objects.filter(id=value, accessible=True).first()
@@ -158,7 +158,22 @@ class ReserveEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReserveEvent
         fields = '__all__'
-        read_only_fields = ['user', 'stadium', 'court', 'stadium_id', 'court_id', 'date', 'result', 'startTime', 'endTime']
+        read_only_fields = ['user', 'stadium', 'court', 'stadium_id', 'court_id', 'date', 'result', 'startTime',
+                            'endTime']
+
+
+class ReserveModifySerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(write_only=True)
+
+    def validate_event_id(self, value):
+        reserve = ReserveEvent.objects.filter(user=self.context['request'].user, id=value).first()
+        if not reserve:
+            raise ValidationError('Invalid id')
+        return value
+
+    class Meta:
+        model = ReserveEvent
+        fields = ['id', 'payment', 'cancel', 'checked', 'leave']
 
 
 class CommentSerializer(serializers.ModelSerializer):

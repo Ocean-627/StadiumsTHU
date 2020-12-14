@@ -361,14 +361,18 @@ Response:
 
    问题不大，只是文档手滑写错了。
 
-##### 取消预订
+##### 更改预订
 
 ```js
 Method: PUT
 URL: /api/user/reserve
 Request:
 {
-    'event_id': '',
+    'id': '',
+    'payment': '',
+    'cancel': '',
+    'checked': '',
+    'leave': ''
 }
 Response:
 {
@@ -376,7 +380,28 @@ Response:
 }
 ```
 
-其中 `eventId`代表要取消预定的时段 `id`。
+其中 `id`代表要取消预定的时段 `id`。
+
+四个参数都是可选的，代表这个预定的状态。
+
+其中`cancel`应该进行合法性检查，暂时不清楚前端还是后端做。
+
+**删除历史记录**
+
+```js
+Method: DELETE
+URL: /api/user/reserve
+Request:
+{
+    'id': '',
+}
+Response:
+{
+    'message': 'ok',
+}
+```
+
+`id`为要删除的记录的`id`
 
 ###### 需求：
 
@@ -386,7 +411,7 @@ Response:
 
   2. ~~查看预定里面没给预定时段id~~
 
-     返回在`duration`中
+     返回在`duration_id`中，但是`duration`是会每天更新的，不应该用这个东西作为筛选的参数。
 
 ### 评价场馆
 
@@ -456,7 +481,7 @@ Response:
 
 请求参数分别为事件的`Id`和评价内容。
 
-`content`要求至少为$15$字，最多为$300$字。
+`content`要求至少为$5$字，最多为$300$字。
 
 **撤销评价**
 

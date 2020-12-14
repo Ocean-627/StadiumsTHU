@@ -6,7 +6,7 @@ from app.utils.utils import stadiums
 from app.utils.utils import initStadium
 
 
-class TestChangeDuration(TestCase):
+class TestChangeSchedule(TestCase):
     def setUp(self) -> None:
         Manager.objects.create(username='cbx', password='123', userId=1, email='cbx@qq.com', loginToken=1)
         initStadium(stadiums[0])
@@ -23,8 +23,6 @@ class TestChangeDuration(TestCase):
             'foreDays': 3
         }
         resp = self.client.post('/api/manager/changeschedule/', params, **self.headers)
-        content = json.loads(resp.content)
-        print(content)
         self.assertEqual(resp.status_code, 201)
 
         schedule = ChangeSchedule.objects.first()

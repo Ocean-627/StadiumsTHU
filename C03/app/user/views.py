@@ -119,23 +119,27 @@ class ReserveView(ListAPIView, CreateAPIView):
         return ReserveEvent.objects.filter(user=self.request.user)
 
     def put(self, request):
-        # 取消预订
         req_data = request.data
-        user = request.user
-        eventId = req_data.get('event_id')
-        event = ReserveEvent.objects.filter(user=user, id=eventId).first()
-        if not event:
-            return Response({'error': 'Reserve does not exist'})
-        event.cancel = True
-        event.save()
-        # TODO:进行退款等操作
-        duration = Duration.objects.get(id=event.duration_id)
-        duration.user = None
-        duration.accessible = True
-        duration.save()
+        ser = ReserveModifySerializer(data=req_data)
+        if not ser.is_valid():
+            return Response({'error': ser.errors})
+        reserve = ReserveEvent.objects.get(id=ser.validated_data.get('id'))
+        ser.update(reserve, ser.validated_data)
+        # 额外处理退订事件
+        if 'cancel' in ser.validated_data:
+            duration = Duration.objects.get(id=reserve.duration_id)
+            duration.accessible = True
+            duration.user = None
+            duration.save()
         return Response({'message': 'ok'})
 
     def delete(self, request):
+        req_data = request.data
+        id = req_data.get('id')
+        reserve = ReserveEvent.objects.filter(user=request.user, id=id).first()
+        if not reserve:
+            return Response({'error': 'Invalid id'})
+        reserve.delete()
         return Response({'message': 'ok'})
 
 
