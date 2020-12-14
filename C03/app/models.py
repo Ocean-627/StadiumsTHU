@@ -74,19 +74,6 @@ class Court(models.Model):
     # TODO:完善信息
 
 
-class Duration(models.Model):
-    # 预约时段
-    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
-    courtType = models.ForeignKey(CourtType, related_name='+', on_delete=models.CASCADE, null=True)
-    court = models.ForeignKey(Court, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    date = models.CharField(max_length=10)
-    startTime = models.CharField(max_length=10)
-    endTime = models.CharField(max_length=10)
-    openState = models.BooleanField()
-    accessible = models.BooleanField()
-
-
 class ReserveEvent(models.Model):
     SUCCESS = 'S'
     FAIL = 'F'
@@ -112,6 +99,20 @@ class ReserveEvent(models.Model):
     checked = models.BooleanField(default=False, verbose_name='是否使用')
     leave = models.BooleanField(default=False, verbose_name='是否离开')
     # TODO:完善事件信息
+
+
+class Duration(models.Model):
+    # 预约时段
+    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
+    courtType = models.ForeignKey(CourtType, related_name='+', on_delete=models.CASCADE, null=True)
+    court = models.ForeignKey(Court, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    date = models.CharField(max_length=10)
+    startTime = models.CharField(max_length=10)
+    endTime = models.CharField(max_length=10)
+    openState = models.BooleanField()
+    accessible = models.BooleanField()
+    reserveEvent = models.ForeignKey(ReserveEvent, on_delete=models.CASCADE, null=True)
 
 
 class ChangeDuration(models.Model):
