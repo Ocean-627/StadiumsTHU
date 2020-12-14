@@ -215,4 +215,5 @@ class Default(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     time = models.CharField(max_length=100, null=True)
     cancel = models.BooleanField(default=False, verbose_name='管理员是否手动撤销预约记录')
+    detail = models.CharField(max_length=20,default="预约不来")
     # TODO:完善信息

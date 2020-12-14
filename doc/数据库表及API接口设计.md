@@ -433,17 +433,17 @@ Response:{
 }
 ```
 
-##### **（临时）添加场地占用**
+##### **【新】（临时）添加场地占用**
 
 ```js
 Method:POST
 URL: /api/manager/event
 Request:{
-    'managerId':2018013396,
-    'courtId':9,
-    'date':'2020-10-31',
-    'startTime':'09:00',
-    'endTime':'12:00'
+    'manager_id':1,
+    'court_id':2,
+    'date':'2020-12-15',
+    'startTime':'09:15',
+    'endTime':'09:45'
 }
 Response:{
     'message':'ok'
