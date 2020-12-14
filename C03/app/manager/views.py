@@ -256,7 +256,7 @@ class AddEventView(ListAPIView):
         ser = AddEventSerializer(data=req_data)
         if not ser.is_valid():
             return Response({'error': ser.errors})
-        addEvent = ser.save()
+        addEvent = ser.save(manager=request.user)
         startTime = addEvent.startTime
         endTime = addEvent.endTime
         myDurations = addEvent.court.duration_set.all().filter(date=addEvent.date)
