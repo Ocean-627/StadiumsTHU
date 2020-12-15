@@ -87,7 +87,7 @@ class ChangeDurationSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        return ChangeDuration(manager=self.context['request'].user, **validated_data)
+        return ChangeDuration.objects.create(manager=self.context['request'].user, **validated_data)
 
     class Meta:
         model = ChangeDuration
