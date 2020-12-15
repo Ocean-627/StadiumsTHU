@@ -1,7 +1,6 @@
 from itertools import chain
 from operator import attrgetter
 
-from apscheduler.scheduler import Scheduler
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
@@ -297,7 +296,9 @@ class UserView(ListAPIView):
 
     def put(self, request):
         req_data = request.data
-        user = User.objects.get(id=req_data.get('user_id'))
+        user = User.objects.filter(id=req_data.get('user_id')).first()
+        if not user:
+            return Response({'error': 'Invalid user_id'})
         if user.blacklist == "0":
             myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime(
                 '%Y-%m-%d')
@@ -367,15 +368,18 @@ class DefaultView(ListAPIView, CreateAPIView):
     """
     违约记录
     """
-    # authentication_classes = [ManagerAuthtication]
-    # queryset = Message.objects.all()
-    # serializer_class = MessageSerializerForManager
-    # filter_class = MessageFilter
+    authentication_classes = [ManagerAuthtication]
+    queryset = Default.objects.all()
+    serializer_class = DefaultSerializer
+    filter_class = DefaultFilter
+    pagination_class = DefaultPagination
 
     def put(self, request):
         req_data = request.data
-        default = Default.objects.get(id=req_data.get('default_id'))
-        if default.cancel == 0:
+        default = Default.objects.filter(id=req_data.get('default_id')).first()
+        if not default:
+            return Response({'error': 'Invalid default_id'})
+        if default.cancel == 1:
             return Response({'error': 'manager has cancelled this record.'})
         default.cancel = 1
         default.save()
