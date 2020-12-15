@@ -1,8 +1,11 @@
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from django.utils.timezone import now
-
+import datetime
+import pytz
+import time
 from app.models import *
+from app.utils.utils import *
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -140,8 +143,9 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         duration = Duration.objects.filter(id=value, accessible=True).first()
         if not duration:
             raise ValidationError('Invalid duration_id')
-        # TODO: 检查是否已经过了时间
-        # TODO: 比较当前时间与duration.startTime,如果不合法 raise ValidationError('Invalid duration_id')
+        myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
+        if judgeTime(duration.startTime, myTime) > 0:
+            raise ValidationError('Invalid duration_id')
         return value
 
     def create(self, validated_data):

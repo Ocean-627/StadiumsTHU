@@ -1,11 +1,9 @@
 from itertools import chain
 from operator import attrgetter
-
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
 from django.http import JsonResponse
-
 from app.utils.utils import *
 from app.utils.manager_serializer import *
 from app.utils.filter import *
@@ -105,7 +103,6 @@ def minute_task():
 '''
 若代码已经部署到服务器上，在本机上运行后端时务必将以下四行注释掉，否则会更改服务器数据库
 '''
-
 
 # sched = Scheduler()
 # sched.add_cron_job(daily_task, hour=16, minute=0)
