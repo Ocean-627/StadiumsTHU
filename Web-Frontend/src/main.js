@@ -34,6 +34,20 @@ Vue.use(VueMasonryPlugin);
 //
 //import '@/assets/js/plugins/sweetalert/sweetalert.min.js'
 
+axios.interceptors.request.use(
+  function(config) {
+    let token = window.localStorage.getItem("loginToken");
+    if (token) {
+      // 添加headers
+      config.headers.loginToken = `${token}`;
+    }
+    return config;
+  },
+  function(err) {
+    return Promise.reject(err);
+  }
+);
+
 axios.defaults.withCredentials = true;
 Vue.prototype.$http = axios
 axios.defaults.baseURL = "http://127.0.0.1:8000/api/manager";

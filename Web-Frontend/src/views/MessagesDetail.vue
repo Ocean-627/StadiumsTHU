@@ -22,82 +22,38 @@
           </ol>
         </div>
       </div>
-      <div class="wrapper wrapper-content animated fadeInRight ecommerce">
-          <div class="small-chat-box active">
-        <div class="heading" draggable="true">
-                <small class="chat-date float-right">02.19.2015
-
-                </small>闲聊
-
-            </div>
-
-            <div class="content">
-
-                <div class="left">
-                    <div class="author-name">莫妮卡·杰克逊
-                        <small class="chat-date">10： 上午2点
-
-                        </small>
-                    </div>
-                    <div class="chat-message active">Lorem Ipsum只是虚拟文本输入。
-
-                    </div>
-
+      <div
+        class="wrapper wrapper-content white-bg animated fadeInRight ecommerce"
+        style="margin-top: 15px;"
+      >
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="small-chat-box active">
+              <div class="heading" draggable="true">
+                <small class="chat-date float-right">
+                  {{ session.updateTime | datetime_format_2 }} </small
+                >消息列表
+              </div>
+              <div class="content">
+                <div
+                  v-for="msg in messages"
+                  :key="msg.id"
+                  :class="msg | msg_class"
+                >
+                  <div class="author-name">
+                    {{ msg | msg_name(session.user_name) }}
+                    <small class="chat-date">
+                      {{ msg.createTime | datetime_format }}
+                    </small>
+                  </div>
+                  <div :class="msg | content_class">
+                    {{ msg.content }}
+                  </div>
                 </div>
-                <div class="right">
-                    <div class="author-name">米克·史密斯
-
-                        <small class="chat-date">11： 24点
-
-                        </small>
-                    </div>
-                    <div class="chat-message">阴唇是简单的。
-
-                    </div>
-                </div>
-                <div class="left">
-                    <div class="author-name">爱丽丝·诺瓦克。
-
-                        <small class="chat-date">晚上8:45
-
-                        </small>
-                    </div>
-                    <div class="chat-message active">检查这个库存字符。
-
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="author-name">安娜·拉姆森。
-
-                        <small class="chat-date">11： 24点
-
-                        </small>
-                    </div>
-                    <div class="chat-message">月牙草的标准块
-
-                    </div>
-                </div>
-                <div class="left">
-                    <div class="author-name">米克巷
-
-                        <small class="chat-date">晚上8:45
-
-                        </small>
-                    </div>
-                    <div class="chat-message active">我相信。Lorem Ipsum只是一个虚拟文本。
-
-                    </div>
-                </div>
-
-
-            </div>
-            <div class="form-chat">
-                <div class="input-group input-group-sm">
-                    <input type="text" class="form-control">
-                    <span class="input-group-btn"> <button class="btn btn-primary" type="button">发送
-                        </button> </span></div>
+              </div>
             </div>
           </div>
+        </div>
       </div>
       <Footer></Footer>
     </div>
@@ -111,13 +67,27 @@
   padding-bottom: 10px;
 }
 .small-chat-box {
-    position: relative;
-    bottom: 0;
-    right: 0;
-    border: none;
+  position: relative;
+  bottom: 0;
+  right: 0;
+  border: none;
+  background-color: #fff;
 }
 .small-chat-box.active {
-    display: inline;
+  display: inline;
+}
+.small-chat-box .heading {
+    font-size: 16px;
+}
+.small-chat-box .content .author-name {
+    font-size: 15px;
+}
+.small-chat-box .chat-date {
+    font-size: 14px;
+}
+.small-chat-box .content .chat-message {
+    font-size: 15px;
+    padding: 10px 15px;
 }
 </style>
 
@@ -129,7 +99,84 @@ import Toolbox from "@/components/Toolbox";
 export default {
   data() {
     return {
-      session: {}
+      session: {
+        user_name: "cbx",
+        updateTime: new Date() - 2e6
+      },
+      messages: [
+        {
+          id: 1,
+          session: 1,
+          sender: "U",
+          manager_id: null,
+          manager_name: null,
+          content: "我就告诉你啥呢",
+          createTime: new Date() - 2e7
+        },
+        {
+          id: 2,
+          session: 1,
+          sender: "M",
+          manager_id: 1,
+          manager_name: "刘强",
+          content: "就是说啥呢",
+          createTime: new Date() - 1e7
+        },
+        {
+          id: 3,
+          session: 1,
+          sender: "U",
+          manager_name: null,
+          manager_id: null,
+          content: "就是为什么就是说啥呢",
+          createTime: new Date() - 8e6
+        },
+        {
+          id: 4,
+          session: 1,
+          sender: "M",
+          manager_id: 1,
+          manager_name: "刘强",
+          content: "我这样跟你对话呢",
+          createTime: new Date() - 7e6
+        },
+        {
+          id: 6,
+          session: 1,
+          sender: "U",
+          manager_id: null,
+          manager_name: null,
+          content: "因为咱们就是说啥呢",
+          createTime: new Date() - 6e6
+        },
+        {
+          id: 7,
+          session: 1,
+          sender: "U",
+          manager_id: null,
+          manager_name: null,
+          content: "真的！",
+          createTime: new Date() - 5e6
+        },
+        {
+          id: 8,
+          session: 1,
+          sender: "M",
+          manager_id: 1,
+          content: "就是说啥呢",
+          manager_name: "刘强",
+          createTime: new Date() - 3e6
+        },
+        {
+          id: 10,
+          session: 1,
+          sender: "M",
+          manager_id: 1,
+          content: "来你回来你回来",
+          manager_name: "刘强",
+          createTime: new Date() - 2e6
+        }
+      ]
     };
   },
   components: {
@@ -139,24 +186,34 @@ export default {
     Footer
   },
   mounted() {
-      this.$axios.get("session/", {
-          params: {
-              id: this.$route.query.id
-          }
+    this.$axios
+      .get("session/", {
+        params: {
+          id: this.$route.query.id
+        }
       })
       .then(res => {
-          this.session = res.data.results[0]
-          console.log(this.session)
-      })
+        this.session = res.data.results[0];
+        console.log(this.session);
+      });
   },
-  updated(){
-    
-  },
-  methods: {
-
-  },
+  updated() {},
+  methods: {},
   filters: {
-
-  },
+    msg_class: function(msg) {
+      if (msg.sender === "U" || msg.manager_id != localStorage.getItem("id"))
+        return "left";
+      return "right";
+    },
+    content_class: function(msg) {
+      if (msg.sender === "U" || msg.manager_id != localStorage.getItem("id"))
+        return "chat-message active";
+      return "chat-message";
+    },
+    msg_name: function(msg, default_name) {
+      if (msg.sender === "U") return default_name;
+      return msg.manager_name;
+    }
+  }
 };
 </script>
