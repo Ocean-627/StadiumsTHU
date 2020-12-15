@@ -144,7 +144,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         if not duration:
             raise ValidationError('Invalid duration_id')
         myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
-        if judgeTime(duration.startTime, myTime) > 0:
+        if judgeTime(duration.startTime, myTime) < 0:
             raise ValidationError('Invalid duration_id')
         return value
 

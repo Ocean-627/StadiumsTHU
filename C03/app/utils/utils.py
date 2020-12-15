@@ -93,7 +93,7 @@ def calculateTime(A, B):
 
 
 def judgeTime(A, B):
-    # 判断A时刻在B时刻之前的秒数
+    # 判断A时刻在B时刻之后的秒数
     format_pattern = '%H:%M'
     difference = (datetime.datetime.strptime(A, format_pattern) - datetime.datetime.strptime(B, format_pattern))
     return difference.total_seconds()

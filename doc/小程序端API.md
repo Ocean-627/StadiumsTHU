@@ -287,7 +287,7 @@ Response:
 
 ```js
 Method: POST
-URL: /api/user/reserve
+URL: /api/user/reserve/
 Request:
 {
     'duration_id': '',
