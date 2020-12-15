@@ -413,41 +413,22 @@ Response:{
 }	
 ```
 
-##### **【新】修改场馆开放时间**  
-
-```js
-Method:PUT
-URL: /api/manager/stadium/
-// 与下一个接口在时间上通过前端处理使之满足自洽性
-Request:{
-    'stadium_id':1,                                     
-    'openTime':'08:00',
-    'closeTime':'22:00'，
-    'openState':0, // 此处无效
-    ''
-}
-Response:{
-    'message':'ok',
-}
-```
-
 ##### **【新】修改场地类型开放时间**  
 
 ```js
 Method:POST
-URL: /api/manager/stadium/
-// 与下一个接口在时间上通过前端处理使之满足自洽性
+URL: /api/manager/changeduration/
 Request:{
-    'stadium_id':1,                                     
-    'startTime':'08:00',
-    'endTime':'22:00'
+    'date':2020-12-15,                                     
+    'courtType_id':1,
+    'openingHours':'08:00-10:00'
 }
 Response:{
     'message':'ok',
 }
 ```
 
-##### **【新】（临时）添加场地占用**
+##### **【新】添加场地占用**
 
 ```js
 Method:POST
@@ -461,6 +442,59 @@ Request:{
 }
 Response:{
     'message':'ok'
+}
+```
+
+##### **【新】获取特定用户信用记录**
+
+```js
+Method:GET
+URL: /api/manager/default/
+Request:{
+    'user_id':1,
+}
+Response:{
+    "count": 4,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "date": "2020-12-14",
+            "time": "22:29",
+            "cancel": true,
+            "detail": "预约不来",
+            "valid": true,
+            "user": 1
+        },
+        {
+            "id": 2,
+            "date": "2020-12-14",
+            "time": "22:29",
+            "cancel": true,
+            "detail": "预约不来",
+            "valid": true,
+            "user": 1
+        },
+        {
+            "id": 3,
+            "date": "2020-12-14",
+            "time": "22:29",
+            "cancel": true,
+            "detail": "预约不来",
+            "valid": true,
+            "user": 1
+        },
+        {
+            "id": 9,
+            "date": null,
+            "time": null,
+            "cancel": false,
+            "detail": "预约不来",
+            "valid": false,
+            "user": 1
+        }
+    ]
 }
 ```
 
