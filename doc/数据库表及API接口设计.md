@@ -413,20 +413,34 @@ Response:{
 }	
 ```
 
-##### **（永久）修改场馆预约时间**  
+##### **【新】修改场馆开放时间**  
+
+```js
+Method:PUT
+URL: /api/manager/stadium/
+// 与下一个接口在时间上通过前端处理使之满足自洽性
+Request:{
+    'stadium_id':1,                                     
+    'openTime':'08:00',
+    'closeTime':'22:00'，
+    'openState':0, // 此处无效
+    ''
+}
+Response:{
+    'message':'ok',
+}
+```
+
+##### **【新】修改场地类型开放时间**  
 
 ```js
 Method:POST
-URL: /api/manager/change
+URL: /api/manager/stadium/
+// 与下一个接口在时间上通过前端处理使之满足自洽性
 Request:{
-    // 该处应为场馆id，即stadiumId
-    'stadiumId':1,                                     
-    'managerId':2018013396,
-    'startDate':'2020-11-01',
-    'duration':'02:00',
-    'openTime':'09:00',
-    'closeTime':'22:00',
-    'openHours':'09:00-12:00 13:00-17:00 18:00-22:00'
+    'stadium_id':1,                                     
+    'startTime':'08:00',
+    'endTime':'22:00'
 }
 Response:{
     'message':'ok',

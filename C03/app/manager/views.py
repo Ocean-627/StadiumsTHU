@@ -28,18 +28,34 @@ def daily_task():
     delete_durations = durations.filter(date=old_date)
     delete_durations.delete()
 
-    # 修改信息使之生效
+    # 修改场地预订时间修改信息使之生效
     changeDurations = ChangeDuration.objects.all()
     for changeDuration in changeDurations:
         changeDate = calculateDate(now_date, changeDuration.courtType.stadium.foreDays - 1)
-        flag = judgeDate(changeDuration.date, changeDate)
-        if flag == 0:
-            changeDuration.courtType.openingHours = changeDuration.openingHours
-            changeDuration.courtType.duration = changeDuration.duration
-            changeDuration.courtType.price = changeDuration.price
-            changeDuration.courtType.membership = changeDuration.membership
-            changeDuration.courtType.openState = changeDuration.openState
-            changeDuration.courtType.save()
+        courtType = changeDuration.courtType
+        if not judgeDate(changeDuration.date, changeDate):
+            courtType.openingHours = changeDuration.openingHours
+            courtType.duration = changeDuration.duration
+            courtType.price = changeDuration.price
+            courtType.membership = changeDuration.membership
+            courtType.openState = changeDuration.openState
+        elif not judgeDate(changeDuration.date, now_date):
+            courtType.openingHours = changeDuration.openingHours
+            courtType.duration = changeDuration.duration
+            courtType.price = changeDuration.price
+            courtType.membership = changeDuration.membership
+            courtType.openState = changeDuration.openState
+            courtType.save()
+
+            # 更新场馆信息
+            openHours = courtType.split(" ")
+            for openHour in openHours:
+                startTime, endTime = openHour.split('-')
+                if judgeTime(courtType.stadium.openTime, startTime) > 0:
+                    courtType.stadium.startTime = startTime
+                if judgeTime(courtType.stadium.endTime, endTime) < 0:
+                    courtType.stadium.endTime = endTime
+                courtType.stadium.save()
 
     # 添加新数据
     courtTypes = CourtType.objects.all()
