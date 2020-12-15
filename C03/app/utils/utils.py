@@ -76,7 +76,6 @@ def clearDatabase():
 def judgeDate(A, B):
     # 判断A日期在B日期之后的天数
     format_pattern = '%Y-%m-%d'
-    # B = B.strftime(format_pattern)
     difference = (datetime.datetime.strptime(A, format_pattern) - datetime.datetime.strptime(B, format_pattern))
     return difference.days
 
@@ -98,3 +97,17 @@ def judgeTime(A, B):
     format_pattern = '%H:%M'
     difference = (datetime.datetime.strptime(A, format_pattern) - datetime.datetime.strptime(B, format_pattern))
     return difference.total_seconds()
+
+
+def judgeAddEvent(event_start_time, duration_start_time, event_end_time, duration_end_time):
+    # 判断事件是否会占用该时段
+    cp1 = judgeTime(duration_end_time, event_start_time)
+    cp2 = judgeTime(event_start_time, duration_start_time)
+    cp3 = judgeTime(duration_end_time, event_end_time)
+    cp4 = judgeTime(event_end_time, duration_start_time)
+    flag = 0
+    flag += cp1 > 0 and cp2 > 0
+    flag += cp3 > 0 and cp4 > 0
+    flag += cp2 < 0 and cp3 < 0
+    flag += cp2 > 0 and cp3 > 0
+    return flag > 0

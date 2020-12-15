@@ -58,13 +58,23 @@ def daily_task():
                     endTime = (datetime.datetime.strptime(str(startTime), "%H:%M") + datetime.timedelta(
                         seconds=seconds)).strftime('%H:%M')
                     myDuration = Duration(stadium=courtType.stadium, court=court, startTime=startTime, endTime=endTime,
-                                          date=changeDate, openState=courtType.openState, accessible=1, courtType=courtType)
+                                          date=changeDate, openState=courtType.openState, accessible=1,
+                                          courtType=courtType)
                     myDuration.save()
                     startTime = endTime
 
     # 将用户移出黑名单
     changeDate = calculateDate(now_date, -100)
     User.objects.all().filter(blacklist=changeDate).update(blacklist="", defaults=0)
+
+    # 添加场地占用事件
+    addEvents = AddEvent.objects.all().filter(date=now_date)
+    for addEvent in addEvents:
+        myDurations = addEvent.court.duration_set.all().filter(date=now_date)
+        for myDuration in myDurations:
+            if judgeAddEvent(addEvent.startTime, addEvent.endTime, myDurations.startTime, myDurations.endTime):
+                myDuration.openState = 0
+                myDuration.save()
 
     # 将在有效期之外的违约记录设置为失效
     Default.objects.all.filter(date=changeDate).update(valid=False)
@@ -79,7 +89,8 @@ def minute_task():
     myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
     reserveEvents = ReserveEvent.objects.filter(date=myDate)
     for reserveEvent in reserveEvents:
-        if judgeTime(reserveEvent.startTime, calculateTime(myTime, 600)) < 0 and reserveEvent.checked == 0 and reserveEvent.cancel == 0:
+        if judgeTime(reserveEvent.startTime,
+                     calculateTime(myTime, 600)) < 0 and reserveEvent.checked == 0 and reserveEvent.cancel == 0:
             print("default!")
             reserveEvent.checked = 1
             reserveEvent.user.defaults += 1
@@ -95,6 +106,7 @@ def minute_task():
 '''
 若代码已经部署到服务器上，在本机上运行后端时务必将以下四行注释掉，否则会更改服务器数据库
 '''
+
 
 # sched = Scheduler()
 # sched.add_cron_job(daily_task, hour=16, minute=0)
@@ -264,16 +276,7 @@ class AddEventView(ListAPIView):
         endTime = addEvent.endTime
         myDurations = addEvent.court.duration_set.all().filter(date=addEvent.date)
         for myDuration in myDurations:
-            cp1 = judgeTime(myDuration.endTime, startTime)
-            cp2 = judgeTime(startTime, myDuration.startTime)
-            cp3 = judgeTime(myDuration.endTime, endTime)
-            cp4 = judgeTime(endTime, myDuration.startTime)
-            flag = 0
-            flag += cp1 > 0 and cp2 > 0
-            flag += cp3 > 0 and cp4 > 0
-            flag += cp2 < 0 and cp3 < 0
-            flag += cp2 > 0 and cp3 > 0
-            if flag > 0:
+            if judgeAddEvent(startTime, endTime, myDurations.startTime, myDurations.endTime):
                 myDuration.openState = 0
                 try:
                     reserveEvent = ReserveEvent.objects.get(duration_id=myDuration.id)
@@ -367,6 +370,7 @@ class DefaultView(ListAPIView, CreateAPIView):
     """
     违约记录
     """
+
     # authentication_classes = [ManagerAuthtication]
     # queryset = Message.objects.all()
     # serializer_class = MessageSerializerForManager
