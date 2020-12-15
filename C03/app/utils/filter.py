@@ -91,6 +91,14 @@ class AddEventFilter(filters.FilterSet):
         fields = ['id']
 
 
+class DefaultFilter(filters.FilterSet):
+    detail = filters.CharFilter(field_name='detail', lookup_expr='icontains')
+
+    class Meta:
+        model = Default
+        fields = ['id', 'user_id', 'cancel', 'valid']
+
+
 class SessionFilter(filters.FilterSet):
     sort = filters.OrderingFilter(fields=('createTime', 'updateTime'))
 

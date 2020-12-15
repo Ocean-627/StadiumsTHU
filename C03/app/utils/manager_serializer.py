@@ -166,3 +166,18 @@ class MessageSerializerForManager(serializers.ModelSerializer):
         model = Message
         fields = '__all__'
         read_only_fields = ['session', 'sender', 'manager_id']
+
+
+class DefaultSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(write_only=True)
+
+    def validate_user_id(self, value):
+        user = User.objects.filter(id=value).first()
+        if not user:
+            raise  ValidationError('Invalid user_id')
+        return value
+
+    class Meta:
+        model = Default
+        fields = '__all__'
+        read_only_fields = ['user']
