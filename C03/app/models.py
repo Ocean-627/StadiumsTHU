@@ -112,7 +112,6 @@ class Duration(models.Model):
     endTime = models.CharField(max_length=10)
     openState = models.BooleanField()
     accessible = models.BooleanField()
-    reserveEvent = models.ForeignKey(ReserveEvent, on_delete=models.CASCADE, null=True)
 
 
 class ChangeDuration(models.Model):
