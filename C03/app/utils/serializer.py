@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
+from django.utils.timezone import now
 
 from app.models import *
 
@@ -139,6 +140,8 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         duration = Duration.objects.filter(id=value, accessible=True).first()
         if not duration:
             raise ValidationError('Invalid duration_id')
+        # TODO: 检查是否已经过了时间
+        # TODO: 比较当前时间与duration.startTime,如果不合法 raise ValidationError('Invalid duration_id')
         return value
 
     def create(self, validated_data):
