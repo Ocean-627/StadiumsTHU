@@ -127,6 +127,7 @@ class ChangeDuration(models.Model):
     membership = models.IntegerField(default=1)
     openState = models.BooleanField()
     details = models.CharField(default="计算机网络", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
     state = models.IntegerField()
     # TODO:完善事件信息
 
@@ -153,6 +154,7 @@ class AddEvent(models.Model):
     type = models.CharField(default="场地占用", max_length=20)
     information = models.CharField(max_length=1000, null=True)
     details = models.CharField(default="汇编与编译原理", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
     state = models.IntegerField()
     # TODO:完善事件信息
 
@@ -225,20 +227,22 @@ class Default(models.Model):
 
 
 class AddBlacklist(models.Model):
-    # 添加至黑名单事件
+    # 添加至黑名单操作
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     type = models.CharField(default="移入黑名单", max_length=20)
     time = models.DateTimeField(default=timezone.now)
     details = models.CharField(default="操作系统", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
     state = models.IntegerField()
     # TODO:完善信息
 
 
 class OtherOperation(models.Model):
-    # 其他事件
+    # 其他不可撤销操作，主要包括移出黑名单操作，撤销信用记录操作及编辑场馆信息操作
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     time = models.DateTimeField(default=timezone.now)
     type = models.CharField(default="其他操作", max_length=20)
     details = models.CharField(default="软件工程", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
     # TODO:完善信息

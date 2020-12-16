@@ -422,6 +422,7 @@ Request:{
     'date':2020-12-15,                                     
     'courtType_id':1,
     'openingHours':'08:00-10:00'
+		'details':'学校通知调整'          // 可选参数，即对应网页端的备注选项
 }
 Response:{
     'message':'ok',
@@ -438,7 +439,8 @@ Request:{
     'court_id':2,
     'date':'2020-12-15',
     'startTime':'09:15',
-    'endTime':'09:45'
+    'endTime':'09:45'，
+    'details':'马杯赛事'            // 可选参数，即对应网页端的备注选项
 }
 Response:{
     'message':'ok'
@@ -505,6 +507,7 @@ Method:PUT
 URL: /api/manager/default/
 Request:{
     'default_id':1,
+    'detail':''                   // 可选参数，对应备注
 }
 Response:{
     'message':'ok'
