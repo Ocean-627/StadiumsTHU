@@ -75,8 +75,8 @@ def daily_task():
                     endTime = (datetime.datetime.strptime(str(startTime), "%H:%M") + datetime.timedelta(
                         seconds=seconds)).strftime('%H:%M')
                     myDuration = Duration(stadium=courtType.stadium, court=court, startTime=startTime, endTime=endTime,
-                                              date=changeDate, openState=courtType.openState, accessible=1,
-                                              courtType=courtType)
+                                          date=changeDate, openState=courtType.openState, accessible=1,
+                                          courtType=courtType)
                     myDuration.save()
                     startTime = endTime
 
@@ -126,6 +126,8 @@ def minute_task():
 '''
 若代码已经部署到服务器上，在本机上运行后端时务必将以下四行注释掉，否则会更改服务器数据库
 '''
+
+
 # sched = Scheduler()
 # sched.add_cron_job(daily_task, hour=0, minute=19)
 # sched.add_interval_job(minute_task, seconds=60)
@@ -337,15 +339,17 @@ class HistoryView(APIView):
     """
     历史操作信息
     """
+    # TODO: 至少要支持分页吧
     authentication_classes = [ManagerAuthtication]
 
     def get(self, request):
         manager = request.user
         changeDuration = manager.changeduration_set.all()
+        changeDuration = ChangeDurationSerializer(changeDuration, many=True).data
         addEvent = manager.addevent_set.all()
-        myOperations = sorted(chain(changeDuration, addEvent), key=attrgetter('time'), reverse=True)
-        operations = [model_to_dict(myOperation, fields=['time', 'type', 'id', 'cancel']) for myOperation in myOperations]
-        return JsonResponse({'operations': operations})
+        addEvent = AddEventSerializer(addEvent, many=True).data
+        myOperations = sorted(chain(changeDuration, addEvent), key=lambda event: event['time'], reverse=True)
+        return Response(myOperations)
 
 
 class StadiumImageView(CreateAPIView):

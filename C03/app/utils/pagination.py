@@ -29,3 +29,4 @@ class ReserveHistoryPagination(BasePagination):
 class DefaultPagination(BasePagination):
     page_size = 15
     max_page_size = 30
+
