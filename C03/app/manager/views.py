@@ -111,8 +111,7 @@ def minute_task():
     reserveEvents = ReserveEvent.objects.filter(date=myDate)
     for reserveEvent in reserveEvents:
         if judgeTime(reserveEvent.startTime,
-                     calculateTime(myTime, 600)) < 0 and reserveEvent.checked == 0 and reserveEvent.cancel == 0\
-                    and reserveEvent.date == myDate:
+                     calculateTime(myTime, 600)) < 0 and reserveEvent.checked == 0 and reserveEvent.cancel == 0:
             print("default!")
             reserveEvent.checked = 1
             reserveEvent.user.defaults += 1

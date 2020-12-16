@@ -143,8 +143,9 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         duration = Duration.objects.filter(id=value, accessible=True).first()
         if not duration:
             raise ValidationError('Invalid duration_id')
+        myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
         myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
-        if judgeTime(duration.startTime, myTime) < 0:
+        if judgeTime(duration.startTime, myTime) < 0 and duration.date == myDate:
             raise ValidationError('Invalid duration_id, you should not reserve duration that passed')
         return value
 
