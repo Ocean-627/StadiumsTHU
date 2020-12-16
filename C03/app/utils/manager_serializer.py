@@ -174,10 +174,15 @@ class DefaultSerializer(serializers.ModelSerializer):
     def validate_user_id(self, value):
         user = User.objects.filter(id=value).first()
         if not user:
-            raise  ValidationError('Invalid user_id')
+            raise ValidationError('Invalid user_id')
         return value
 
     class Meta:
         model = Default
         fields = '__all__'
         read_only_fields = ['user']
+
+
+class HistorySerializer(serializers.Serializer):
+    page = serializers.IntegerField(default=1, validators=[MinValueValidator(1)])
+    size = serializers.IntegerField(default=15, validators=[MinValueValidator(1)])

@@ -348,8 +348,16 @@ class HistoryView(APIView):
         changeDuration = ChangeDurationSerializer(changeDuration, many=True).data
         addEvent = manager.addevent_set.all()
         addEvent = AddEventSerializer(addEvent, many=True).data
-        myOperations = sorted(chain(changeDuration, addEvent), key=lambda event: event['time'], reverse=True)
-        return Response(myOperations)
+        operations = sorted(chain(changeDuration, addEvent), key=lambda event: event['time'], reverse=True)
+        # 分页
+        req_data = request.query_params
+        ser = HistorySerializer(data=req_data)
+        if not ser.is_valid():
+            return Response({'error': ser.errors})
+        pagination = MyPagination(max_page_size=30)
+        operations = pagination.paginate(operations, page=ser.validated_data.get('page'),
+                                         size=ser.validated_data.get('size'))
+        return Response(operations)
 
 
 class StadiumImageView(CreateAPIView):

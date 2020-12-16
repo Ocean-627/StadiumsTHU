@@ -30,3 +30,20 @@ class DefaultPagination(BasePagination):
     page_size = 15
     max_page_size = 30
 
+
+class MyPagination(object):
+
+    def __init__(self, max_page_size=30):
+        self.max_page_size = max_page_size
+
+    def paginate(self, queryset, page, size):
+        left = (page - 1) * size
+        right = page * size
+        if left >= len(queryset):
+            res = []
+        else:
+            res = queryset[left:right]
+        return {
+            'counts': len(queryset),
+            'results': res
+        }
