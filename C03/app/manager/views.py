@@ -83,7 +83,7 @@ def daily_task():
 
     # 将用户移出黑名单
     changeDate = calculateDate(now_date, -100)
-    User.objects.all().filter(blacklist=changeDate).update(blacklist="", defaults=0)
+    User.objects.all().filter(inBlacklistTime=changeDate).update(inBlacklistTime=None, inBlacklist=False, defaults=0)
 
     # 添加场地占用事件
     addEvents = AddEvent.objects.all().filter(date=now_date)
@@ -119,7 +119,8 @@ def minute_task():
             default = Default(user=reserveEvent.user, date=myDate, time=myTime)
             default.save()
             if reserveEvent.user.defaults == 3:
-                reserveEvent.user.blacklist = myDate
+                reserveEvent.user.inBlacklistTime = myDate
+                reserveEvent.user.inBlacklist = True
             reserveEvent.user.save()
     print("Finished!")
 
@@ -319,6 +320,14 @@ class AddEventView(ListAPIView):
         return Response({'message': 'ok'})
 
 
+class AddBlacklistView(ListAPIView):
+    """
+    加入黑名单操作
+    """
+    authentication_classes = [ManagerAuthtication]
+    queryset = AddBlacklist.objects.all()
+
+
 class UserView(ListAPIView):
     """
     用户信息
@@ -328,22 +337,6 @@ class UserView(ListAPIView):
     serializer_class = UserSerializer
     pagination_class = UserPagination
     filter_class = UserFilter
-
-    def put(self, request):
-        req_data = request.data
-        user = User.objects.filter(id=req_data.get('user_id')).first()
-        if not user:
-            return Response({'error': 'Invalid user_id'}, status=400)
-        if user.blacklist == "0":
-            myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime(
-                '%Y-%m-%d')
-            user.blacklist = myDate
-        else:
-            Default.objects.all().filter(user=user).update(cancel=1)
-            user.defaults = 0
-            user.blacklist = "0"
-        user.save()
-        return Response({'message': 'ok'})
 
 
 class HistoryView(APIView):
@@ -355,14 +348,22 @@ class HistoryView(APIView):
 
     def get(self, request):
         manager = request.user
-        changeDuration = manager.changeduration_set.all()
-        addEvent = manager.addevent_set.all()
-        addBlackList = manager.addblacklist_set.all()
-        operations = sorted(chain(changeDuration, addEvent, addBlackList), key=attrgetter('time'), reverse=True)
+        req_data = request.query_params
+        type = req_data.get('type')
+        if type == '1':
+            operations = manager.changeduration_set.all().order_by('-time')
+        elif type == '2':
+            operations = manager.addevent_set.all().order_by('-time')
+        elif type == '3':
+            operations = manager.addblacklist_set.all().order_by('-time')
+        else:
+            changeDuration = manager.changeduration_set.all()
+            addEvent = manager.addevent_set.all()
+            addBlackList = manager.addblacklist_set.all()
+            operations = sorted(chain(changeDuration, addEvent, addBlackList), key=attrgetter('time'), reverse=True)
         operations = [model_to_dict(ope, fields=['time', 'type', 'id', 'state', 'details', 'content']) for ope in
                       operations]
         # 分页
-        req_data = request.query_params
         ser = HistorySerializer(data=req_data)
         if not ser.is_valid():
             return Response({'error': ser.errors}, status=400)
@@ -429,7 +430,10 @@ class DefaultView(ListAPIView, CreateAPIView):
             return Response({'error': 'manager has cancelled this record.'}, status=400)
         default.cancel = 1
         default.save()
-        default.user.defaults -= 1
-        default.user.blacklist = "0"
-        default.user.save()
+        user = default.user
+        user.defaults -= 1
+        if user.defaults < 3:
+            user.inBlacklist = 0
+            user.inBlacklistTime = None
+        user.save()
         return Response({'message': 'ok'})

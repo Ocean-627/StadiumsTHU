@@ -17,7 +17,8 @@ class User(models.Model):
     major = models.CharField(max_length=20, null=True)
     image = models.ImageField(upload_to='user', verbose_name='头像', null=True)
     defaults = models.IntegerField(verbose_name='违约次数', default=0)
-    blacklist = models.CharField(max_length=20, null=True)
+    inBlacklist = models.BooleanField(verbose_name='在黑名单中', default=0)
+    inBlacklistTime = models.CharField(max_length=20, null=True)
     # TODO:完善信息
 
 
@@ -99,6 +100,7 @@ class ReserveEvent(models.Model):
     cancel = models.BooleanField(default=False, verbose_name='是否取消')
     checked = models.BooleanField(default=False, verbose_name='是否使用')
     leave = models.BooleanField(default=False, verbose_name='是否离开')
+    createTime = models.DateTimeField(auto_now_add=True)
     # TODO:完善事件信息
 
 
