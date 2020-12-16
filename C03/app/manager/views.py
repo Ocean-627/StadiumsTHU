@@ -9,7 +9,7 @@ from app.utils.manager_serializer import *
 from app.utils.filter import *
 from app.utils.pagination import *
 from app.utils.authtication import ManagerAuthtication
-from apscheduler.scheduler import Scheduler
+# from apscheduler.scheduler import Scheduler
 import time
 import datetime
 import pytz
@@ -55,8 +55,6 @@ def daily_task():
     # 添加新数据
     courtTypes = CourtType.objects.all()
     for courtType in courtTypes:
-        if courtType.stadium.id == 2:
-            continue
         changeDate = calculateDate(now_date, courtType.stadium.foreDays - 1)
         try:
             changeDuration = ChangeDuration.objects.get(courtType=courtType, date=changeDate)
