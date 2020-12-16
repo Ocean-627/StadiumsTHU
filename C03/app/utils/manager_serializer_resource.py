@@ -52,6 +52,12 @@ class StadiumSerializerForManager(StadiumSerializer):
         read_only_fields = ['openTime', 'closeTime', 'foreDays', 'openState']
 
 
+class CreateStadiumSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stadium
+        fields = '__all__'
+
+
 class CourtTypeSerializerForManager(CourtTypeSerializer):
     amount = serializers.SerializerMethodField(required=False)
 

@@ -175,9 +175,7 @@ class LogoutView(APIView):
         manager = request.user
         manager.loginToken = ''
         manager.save()
-        ret = JsonResponse({'message': 'ok'})
-        ret.delete_cookie('loginToken')
-        return ret
+        return Response({'message': 'ok'})
 
 
 class ManagerView(APIView):
@@ -200,7 +198,7 @@ class ManagerView(APIView):
         return Response({'message': 'ok'})
 
 
-class StadiumView(ListAPIView):
+class StadiumView(ListAPIView, CreateAPIView):
     """
     场馆信息
     """
@@ -209,7 +207,12 @@ class StadiumView(ListAPIView):
     serializer_class = StadiumSerializerForManager
     filter_class = StadiumFilter
 
-    def post(self, request):
+    def get_serializer(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            return CreateStadiumSerializer(*args, **kwargs)
+        return StadiumSerializerForManager(*args, **kwargs)
+
+    def put(self, request):
         req_data = request.data
         ser = StadiumSerializerForManager(data=req_data)
         if not ser.is_valid():
