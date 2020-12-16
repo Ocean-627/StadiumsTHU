@@ -14,7 +14,7 @@ class UserFilter(filters.FilterSet):
 
     class Meta:
         model = User
-        fields = ['id']
+        fields = ['id', 'inBlacklist']
 
 
 class StadiumFilter(filters.FilterSet):
