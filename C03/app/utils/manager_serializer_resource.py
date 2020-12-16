@@ -53,16 +53,36 @@ class StadiumSerializerForManager(StadiumSerializer):
 
 
 class CreateStadiumSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        return Stadium.objects.create(openState=0, **validated_data)
+
     class Meta:
         model = Stadium
         fields = '__all__'
+        read_only_fields = ['openState']
 
 
-class CourtTypeSerializerForManager(CourtTypeSerializer):
+class CourtTypeSerializerForManager(serializers.ModelSerializer):
     amount = serializers.SerializerMethodField(required=False)
+    stadium_id = serializers.IntegerField(write_only=True)
+
+    def validate_stadium_id(self, value):
+        stadium = Stadium.objects.filter(id=value).first()
+        if not stadium:
+            raise ValidationError('Invalid stadium_id')
+        return value
 
     def get_amount(self, obj):
         return len(obj.court_set.all())
+
+    def create(self, validated_data):
+        return CourtType.objects.create(openState=0, **validated_data)
+
+    class Meta:
+        model = CourtType
+        fields = '__all__'
+        read_only_fields = ['openState', 'stadium']
 
 
 class SessionSerializerForManager(serializers.ModelSerializer):

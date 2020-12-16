@@ -238,8 +238,23 @@ class CourtTypeView(ListAPIView):
     场地类型信息
     """
     queryset = CourtType.objects.all()
-    serializer_class = CourtTypeSerializer
+    serializer_class = CourtTypeSerializerForManager
     filter_class = CourtTypeFilter
+
+    def post(self, request):
+        req_data = request.data
+        ser = CourtTypeSerializerForManager(data=req_data)
+        if not ser.is_valid():
+            return Response({'error': ser.errors}, status=400)
+        number_ser = NumberSerializer(data=req_data)
+        if not number_ser.is_valid():
+            return Response({'error': number_ser.errors}, status=400)
+        courtType = ser.save()
+        num = number_ser.validated_data.get('num')
+        for i in range(1, num + 1):
+            Court.objects.create(stadium=courtType.stadium, courtType=courtType, price=courtType.price, openState=0,
+                                 location='304B', type=courtType.type, name=courtType.type + str(i) + '号场地')
+        return Response({'message': 'ok'})
 
 
 class DurationView(ListAPIView):
@@ -341,10 +356,11 @@ class HistoryView(APIView):
     def get(self, request):
         manager = request.user
         changeDuration = manager.changeduration_set.all()
-        changeDuration = ChangeDurationSerializer(changeDuration, many=True).data
         addEvent = manager.addevent_set.all()
-        addEvent = AddEventSerializer(addEvent, many=True).data
-        operations = sorted(chain(changeDuration, addEvent), key=lambda event: event['time'], reverse=True)
+        addBlackList = manager.addblacklist_set.all()
+        operations = sorted(chain(changeDuration, addEvent, addBlackList), key=attrgetter('time'), reverse=True)
+        operations = [model_to_dict(ope, fields=['time', 'type', 'id', 'state', 'details', 'content']) for ope in
+                      operations]
         # 分页
         req_data = request.query_params
         ser = HistorySerializer(data=req_data)

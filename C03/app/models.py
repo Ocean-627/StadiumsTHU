@@ -36,6 +36,7 @@ class Stadium(models.Model):
     location = models.CharField(max_length=10, null=True, default="学堂路")
     longitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, verbose_name='经度')
     latitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, verbose_name='纬度')
+    createTime = models.CharField(max_length=20)
     # TODO:完善信息
 
 

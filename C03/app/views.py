@@ -10,6 +10,7 @@ import base64
 
 
 def test(request):
+    Stadium.objects.get(id=8).delete()
     return JsonResponse({'test': 'just for test'})
 
 
