@@ -10,6 +10,6 @@ class UserPermission(object):
             return True
         user = request.user
         if user.inBlacklist:
-            return True
-        else:
             return False
+        else:
+            return True

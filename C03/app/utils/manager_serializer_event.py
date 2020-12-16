@@ -38,6 +38,28 @@ class AddEventSerializer(serializers.ModelSerializer):
         read_only_fields = ['manager', 'court']
 
 
+class AddBlacklistSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(label='用户编号', write_only=True)
+
+    def validate_user_id(self, value):
+        user = User.objects.filter(id=value).first()
+        if not user:
+            raise ValidationError('Invalid user_id')
+        return value
+
+    def create(self, validated_data):
+        user = User.objects.get(id=validated_data.get('user_id'))
+        user.inBlacklist = True
+        user.inBlacklistTime = timezone.now().date()
+        user.save()
+        return AddBlacklist.objects.create(manager=self.context['request'].user, **validated_data)
+
+    class Meta:
+        model = AddBlacklist
+        fields = '__all__'
+        read_only_fields = ['manager', 'user']
+
+
 class HistorySerializer(serializers.Serializer):
     page = serializers.IntegerField(default=1, validators=[MinValueValidator(1)])
     size = serializers.IntegerField(default=15, validators=[MinValueValidator(1)])

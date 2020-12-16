@@ -320,12 +320,14 @@ class AddEventView(ListAPIView):
         return Response({'message': 'ok'})
 
 
-class AddBlacklistView(ListAPIView):
+class AddBlacklistView(ListAPIView, CreateAPIView):
     """
     加入黑名单操作
     """
     authentication_classes = [ManagerAuthtication]
     queryset = AddBlacklist.objects.all()
+    serializer_class = AddBlacklistSerializer
+    filter_class = AddBlacklistFilter
 
 
 class UserView(ListAPIView):

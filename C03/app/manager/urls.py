@@ -23,5 +23,6 @@ urlpatterns = [
     path('session/', views.SessionView.as_view()),
     path('message/', views.MessageView.as_view()),
     path('default/', views.DefaultView.as_view()),
+    path('blacklist/', views.AddBlacklistView.as_view()),
     # path('revoke/', views.revoke)
 ]
