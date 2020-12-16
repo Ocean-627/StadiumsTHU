@@ -38,21 +38,10 @@ class AddEventSerializer(serializers.ModelSerializer):
         read_only_fields = ['manager', 'court']
 
 
-class DefaultSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(write_only=True)
-
-    def validate_user_id(self, value):
-        user = User.objects.filter(id=value).first()
-        if not user:
-            raise ValidationError('Invalid user_id')
-        return value
-
-    class Meta:
-        model = Default
-        fields = '__all__'
-        read_only_fields = ['user']
-
-
 class HistorySerializer(serializers.Serializer):
     page = serializers.IntegerField(default=1, validators=[MinValueValidator(1)])
     size = serializers.IntegerField(default=15, validators=[MinValueValidator(1)])
+
+
+class NumberSerializer(serializers.Serializer):
+    num = serializers.IntegerField(validators=[MinValueValidator(1)])
