@@ -122,10 +122,12 @@ class ChangeDuration(models.Model):
     duration = models.CharField(max_length=10, null=True)
     date = models.CharField(max_length=32)
     time = models.DateTimeField(default=timezone.now)
-    type = models.IntegerField(default=1)
+    type = models.CharField(default="修改预约时间段", max_length=20)
     price = models.IntegerField(default=1)
     membership = models.IntegerField(default=1)
     openState = models.BooleanField()
+    details = models.CharField(default="计算机网络", max_length=100)
+    state = models.IntegerField()
     # TODO:完善事件信息
 
 
@@ -148,8 +150,10 @@ class AddEvent(models.Model):
     endTime = models.CharField(max_length=32)
     date = models.CharField(max_length=32)
     time = models.DateTimeField(default=timezone.now)
-    type = models.IntegerField(default=2)
+    type = models.CharField(default="场地占用", max_length=20)
     information = models.CharField(max_length=1000, null=True)
+    details = models.CharField(default="汇编与编译原理", max_length=100)
+    state = models.IntegerField()
     # TODO:完善事件信息
 
 
@@ -217,4 +221,24 @@ class Default(models.Model):
     cancel = models.BooleanField(default=False, verbose_name='管理员是否手动撤销预约记录')
     detail = models.CharField(max_length=20, default="预约不来")
     valid = models.BooleanField(default=True, verbose_name='违约记录是否在有效期之内')
+    # TODO:完善信息
+
+
+class AddBlacklist(models.Model):
+    # 添加至黑名单事件
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(default="移入黑名单", max_length=20)
+    time = models.DateTimeField(default=timezone.now)
+    details = models.CharField(default="操作系统", max_length=100)
+    state = models.IntegerField()
+    # TODO:完善信息
+
+
+class OtherOperation(models.Model):
+    # 其他事件
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    time = models.DateTimeField(default=timezone.now)
+    type = models.CharField(default="其他操作", max_length=20)
+    details = models.CharField(default="软件工程", max_length=100)
     # TODO:完善信息

@@ -9,7 +9,7 @@ from app.utils.manager_serializer import *
 from app.utils.filter import *
 from app.utils.pagination import *
 from app.utils.authtication import ManagerAuthtication
-# from apscheduler.scheduler import Scheduler
+from apscheduler.scheduler import Scheduler
 import time
 import datetime
 import pytz
@@ -22,8 +22,8 @@ import pytz
 def daily_task():
     print("Start daily update...")
     # 删除旧数据
-    now_date = calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), 1)
-    old_date = datetime.datetime.now().strftime('%Y-%m-%d')
+    old_date = calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), -1)
+    now_date = datetime.datetime.now().strftime('%Y-%m-%d')
     durations = Duration.objects.all()
     delete_durations = durations.filter(date=old_date)
     delete_durations.delete()
@@ -31,15 +31,10 @@ def daily_task():
     # 修改场地预订时间修改信息使之生效
     changeDurations = ChangeDuration.objects.all()
     for changeDuration in changeDurations:
-        changeDate = calculateDate(now_date, changeDuration.courtType.stadium.foreDays - 1)
-        courtType = changeDuration.courtType
-        if not judgeDate(changeDuration.date, changeDate):
-            courtType.openingHours = changeDuration.openingHours
-            courtType.duration = changeDuration.duration
-            courtType.price = changeDuration.price
-            courtType.membership = changeDuration.membership
-            courtType.openState = changeDuration.openState
-        elif not judgeDate(changeDuration.date, now_date):
+        if changeDuration.state == 1 or changeDuration.state == 2:
+            continue
+        if not judgeDate(changeDuration.date, now_date):
+            courtType = changeDuration.courtType
             courtType.openingHours = changeDuration.openingHours
             courtType.duration = changeDuration.duration
             courtType.price = changeDuration.price
@@ -60,19 +55,30 @@ def daily_task():
     # 添加新数据
     courtTypes = CourtType.objects.all()
     for courtType in courtTypes:
+        if courtType.stadium.id == 2:
+            continue
         changeDate = calculateDate(now_date, courtType.stadium.foreDays - 1)
-        openHours = courtType.openingHours.split(" ")
-        for court in courtType.court_set.all():
-            for openHour in openHours:
+        try:
+            changeDuration = ChangeDuration.objects.get(courtType=courtType, date=changeDate)
+            openHours = changeDuration.openingHours.split(" ")
+            duration = changeDuration.duration
+            changeDuration.state = 2
+            changeDuration.save()
+        except:
+            openHours = courtType.openingHours.split(" ")
+            duration = courtType.duration
+        print(openHours)
+        seconds = judgeTime(duration, "00:00")
+        for openHour in openHours:
+            for court in courtType.court_set.all():
                 startTime, endTime = openHour.split('-')
                 totalSeconds = judgeTime(endTime, startTime)
-                seconds = judgeTime(courtType.duration, "00:00")
                 for k in range(int(totalSeconds // seconds)):
                     endTime = (datetime.datetime.strptime(str(startTime), "%H:%M") + datetime.timedelta(
                         seconds=seconds)).strftime('%H:%M')
                     myDuration = Duration(stadium=courtType.stadium, court=court, startTime=startTime, endTime=endTime,
-                                          date=changeDate, openState=courtType.openState, accessible=1,
-                                          courtType=courtType)
+                                              date=changeDate, openState=courtType.openState, accessible=1,
+                                              courtType=courtType)
                     myDuration.save()
                     startTime = endTime
 
@@ -83,21 +89,24 @@ def daily_task():
     # 添加场地占用事件
     addEvents = AddEvent.objects.all().filter(date=now_date)
     for addEvent in addEvents:
+        if addEvent.state == 1 or addEvent.state == 2:
+            continue
         myDurations = addEvent.court.duration_set.all().filter(date=now_date)
         for myDuration in myDurations:
-            if judgeAddEvent(addEvent.startTime, addEvent.endTime, myDurations.startTime, myDurations.endTime):
+            if judgeAddEvent(addEvent.startTime, addEvent.endTime, myDuration.startTime, myDuration.endTime):
                 myDuration.openState = 0
                 myDuration.save()
+                addEvent.state = 2
+                addEvent.save()
 
     # 将在有效期之外的违约记录设置为失效
-    Default.objects.all.filter(date=changeDate).update(valid=False)
+    Default.objects.all().filter(date=changeDate).update(valid=False)
     print("Finished!")
 
 
 def minute_task():
     # 判断违约并记录违约事件
     print("Start minute update...")
-    tz = pytz.timezone('Asia/Shanghai')
     myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
     myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
     reserveEvents = ReserveEvent.objects.filter(date=myDate)
@@ -119,9 +128,8 @@ def minute_task():
 '''
 若代码已经部署到服务器上，在本机上运行后端时务必将以下四行注释掉，否则会更改服务器数据库
 '''
-
 # sched = Scheduler()
-# sched.add_cron_job(daily_task, hour=16, minute=0)
+# sched.add_cron_job(daily_task, hour=0, minute=19)
 # sched.add_interval_job(minute_task, seconds=60)
 # sched.start()
 
@@ -338,7 +346,7 @@ class HistoryView(APIView):
         changeDuration = manager.changeduration_set.all()
         addEvent = manager.addevent_set.all()
         myOperations = sorted(chain(changeDuration, addEvent), key=attrgetter('time'), reverse=True)
-        operations = [model_to_dict(myOperation, fields=['time', 'type', 'id']) for myOperation in myOperations]
+        operations = [model_to_dict(myOperation, fields=['time', 'type', 'id', 'cancel']) for myOperation in myOperations]
         return JsonResponse({'operations': operations})
 
 
