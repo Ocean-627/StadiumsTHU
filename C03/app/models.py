@@ -132,17 +132,6 @@ class ChangeDuration(models.Model):
     # TODO:完善事件信息
 
 
-class ChangeSchedule(models.Model):
-    # 修改场馆开放和关闭时间点
-    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
-    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
-    openState = models.BooleanField()
-    openTime = models.CharField(max_length=30)
-    closeTime = models.CharField(max_length=30)
-    startDate = models.CharField(max_length=30)
-    foreDays = models.IntegerField()
-
-
 class AddEvent(models.Model):
     # （临时）添加活动事件
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)

@@ -262,14 +262,6 @@ class ReserveEventView(ListAPIView):
     filter_class = ReserveEventFilter
 
 
-class ChangeScheduleView(CreateAPIView):
-    """
-    修改场馆开放时间相关
-    """
-    authentication_classes = [ManagerAuthtication]
-    serializer_class = ChangeScheduleSerializer
-
-
 class ChangeDurationView(ListAPIView, CreateAPIView):
     """
     修改预约时段信息
