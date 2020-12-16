@@ -24,10 +24,10 @@ class LoginView(APIView):
         req_data = request.data
         token = req_data.get('token')
         if not token:
-            return Response({'error': 'Requires token'})
+            return Response({'error': 'Requires token'}, status=400)
         auth = thss.login(token=token).get('user')
         if not auth:
-            return JsonResponse({'error': 'Login failed'})
+            return JsonResponse({'error': 'Login failed'}, status=500)
         userId = auth.get('card')
         user = User.objects.filter(userId=userId).first()
         if not user:
@@ -56,7 +56,7 @@ class UserView(APIView):
         req_data = request.data
         ser = UserSerializer(data=req_data)
         if not ser.is_valid():
-            return Response({'error': ser.errors})
+            return Response({'error': ser.errors}, status=400)
         ser.update(request.user, ser.validated_data)
         return Response({'message': 'ok'})
 
@@ -124,7 +124,7 @@ class ReserveView(ListAPIView, CreateAPIView):
         req_data = request.data
         ser = ReserveModifySerializer(data=req_data)
         if not ser.is_valid():
-            return Response({'error': ser.errors})
+            return Response({'error': ser.errors}, status=400)
         reserve = ReserveEvent.objects.get(id=ser.validated_data.get('id'))
         ser.update(reserve, ser.validated_data)
         # 额外处理退订事件
@@ -140,7 +140,7 @@ class ReserveView(ListAPIView, CreateAPIView):
         id = req_data.get('id')
         reserve = ReserveEvent.objects.filter(user=request.user, id=id).first()
         if not reserve:
-            return Response({'error': 'Invalid id'})
+            return Response({'error': 'Invalid id'}, status=400)
         reserve.delete()
         return Response({'message': 'ok'})
 
@@ -167,7 +167,7 @@ class CommentView(ListAPIView, CreateAPIView):
         user = request.user
         comment = user.comment_set.filter(user=user, id=id).first()
         if not comment:
-            return Response({'error': 'Delete comment failed'})
+            return Response({'error': 'Delete comment failed'}, status=400)
         comment.delete()
         return Response({'message': 'ok'})
 
@@ -199,7 +199,7 @@ class CollectView(ListAPIView, CreateAPIView):
         user = request.user
         collect = CollectEvent.objects.filter(user=user, id=id).first()
         if not collect:
-            return Response({'error': 'Invalid collect_id'})
+            return Response({'error': 'Invalid collect_id'}, status=400)
         collect.delete()
         return Response({'message': 'ok'})
 
@@ -222,7 +222,7 @@ class SessionView(ListAPIView, CreateAPIView):
         session_id = req_data.get('session_id')
         session = Session.objects.filter(id=session_id, user_id=self.request.user.id).first()
         if not session:
-            return Response({'error': 'Invalid session_id'})
+            return Response({'error': 'Invalid session_id'}, status=400)
         session.open = False
         session.save()
         return Response({'message': 'ok'})

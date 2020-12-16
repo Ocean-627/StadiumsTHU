@@ -153,7 +153,7 @@ class LoginView(APIView):
         password = req_data.get('password')
         obj = Manager.objects.filter(userId=userId, password=password).first()
         if not obj:
-            return Response({'error': 'Login failed'})
+            return Response({'error': 'Login failed'}, status=403)
         loginToken = md5(userId)
         obj.loginToken = loginToken
         obj.save()
@@ -194,7 +194,7 @@ class ManagerView(APIView):
         req_data = request.data
         ser = ManagerSerializer(data=req_data)
         if not ser.is_valid():
-            return Response({'error': ser.errors})
+            return Response({'error': ser.errors}, 400)
         ser.update(request.user, ser.validated_data)
         return Response({'message': 'ok'})
 
@@ -212,7 +212,7 @@ class StadiumView(ListAPIView):
         req_data = request.data
         ser = StadiumSerializerForManager(data=req_data)
         if not ser.is_valid():
-            return Response({'error': ser.errors})
+            return Response({'error': ser.errors}, status=400)
         stadium = Stadium.objects.filter(id=ser.validated_data.get('stadium_id')).first()
         ser.update(stadium, ser.validated_data)
         return Response({'message': 'ok'})
@@ -290,7 +290,7 @@ class AddEventView(ListAPIView):
         req_data = request.data
         ser = AddEventSerializer(data=req_data)
         if not ser.is_valid():
-            return Response({'error': ser.errors})
+            return Response({'error': ser.errors}, status=400)
         addEvent = ser.save(manager=request.user)
         startTime = addEvent.startTime
         endTime = addEvent.endTime
@@ -322,7 +322,7 @@ class UserView(ListAPIView):
         req_data = request.data
         user = User.objects.filter(id=req_data.get('user_id')).first()
         if not user:
-            return Response({'error': 'Invalid user_id'})
+            return Response({'error': 'Invalid user_id'}, status=400)
         if user.blacklist == "0":
             myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime(
                 '%Y-%m-%d')
@@ -353,7 +353,7 @@ class HistoryView(APIView):
         req_data = request.query_params
         ser = HistorySerializer(data=req_data)
         if not ser.is_valid():
-            return Response({'error': ser.errors})
+            return Response({'error': ser.errors}, status=400)
         pagination = MyPagination(max_page_size=30)
         operations = pagination.paginate(operations, page=ser.validated_data.get('page'),
                                          size=ser.validated_data.get('size'))
@@ -382,7 +382,7 @@ class SessionView(ListAPIView, CreateAPIView):
         req_data = request.data
         ser = SessionSerializer(data=req_data)
         if not ser.is_valid():
-            return Response({'error': ser.errors})
+            return Response({'error': ser.errors}, status=400)
         session = Session.objects.get(id=req_data.get('session_id'))
         ser.update(session, ser.validated_data)
         return Response({'message': 'ok'})
@@ -412,9 +412,9 @@ class DefaultView(ListAPIView, CreateAPIView):
         req_data = request.data
         default = Default.objects.filter(id=req_data.get('default_id')).first()
         if not default:
-            return Response({'error': 'Invalid default_id'})
+            return Response({'error': 'Invalid default_id'}, status=400)
         if default.cancel == 1:
-            return Response({'error': 'manager has cancelled this record.'})
+            return Response({'error': 'manager has cancelled this record.'}, status=400)
         default.cancel = 1
         default.save()
         default.user.defaults -= 1
