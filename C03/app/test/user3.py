@@ -23,7 +23,7 @@ class TestSession(TestCase):
         params = {}
         resp = self.client.post('/api/user/session/', params, **self.headers)
         self.assertEqual(resp.status_code, 201)
-        session = Session.objects.get(id=1)
+        session = Session.objects.first()
         self.assertEqual(session.user_id, 1)
 
         resp = self.client.post('/api/user/session/', params, **self.headers)

@@ -199,6 +199,7 @@ class CommentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         event = ReserveEvent.objects.filter(id=validated_data.get('reserve_id')).first()
         event.has_comments = True
+        event.save()
         court = Court.objects.get(id=event.court_id)
         stadium_id = court.stadium.id
         comment = Comment.objects.create(user=event.user, court=court, stadium_id=stadium_id, **validated_data)

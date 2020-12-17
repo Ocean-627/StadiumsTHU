@@ -127,6 +127,7 @@ class Comment(models.Model):
     reserve_id = models.IntegerField()
     score = models.IntegerField(default=3)
     content = models.CharField(max_length=300)
+    createTime = models.DateTimeField(auto_now_add=True)
 
 
 class CommentImage(models.Model):
