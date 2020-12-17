@@ -6,6 +6,10 @@ import cookie from 'vue-cookie'
 import router from "./router";
 import Common from "./Common";
 import axios from "axios";
+// 导入组件库
+import ElementUI from 'element-ui' // 导入组件相关样式
+import 'element-ui/lib/theme-chalk/index.css' // 配置vue插件
+
 
 import "xe-utils";
 import VXETable from "vxe-table";
@@ -14,6 +18,7 @@ import VXETablePluginExportXLSX from "vxe-table-plugin-export-xlsx";
 import moment from "moment";
 import { VueMasonryPlugin } from "vue-masonry";
 
+Vue.use(ElementUI)
 Vue.use(VXETable);
 VXETable.use(VXETablePluginExportXLSX);
 

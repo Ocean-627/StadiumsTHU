@@ -58,7 +58,7 @@ def daily_task():
     for courtType in courtTypes:
         changeDate = calculateDate(now_date, courtType.stadium.foreDays - 1)
         try:
-            changeDuration = ChangeDuration.objects.get(courtType=courtType, date=changeDate)
+            changeDuration = ChangeDuration.objects.filter(courtType=courtType, is_active=True)[0]
             openHours = changeDuration.openingHours.split(" ")
             duration = changeDuration.duration
             changeDuration.state = 2
@@ -66,7 +66,6 @@ def daily_task():
         except:
             openHours = courtType.openingHours.split(" ")
             duration = courtType.duration
-        print(openHours)
         seconds = judgeTime(duration, "00:00")
         for openHour in openHours:
             for court in courtType.court_set.all():
