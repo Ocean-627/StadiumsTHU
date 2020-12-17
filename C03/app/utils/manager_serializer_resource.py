@@ -98,6 +98,8 @@ class SessionSerializerForManager(serializers.ModelSerializer):
 
     def get_image(self, obj):
         user = User.objects.get(id=obj.user_id)
+        if not user.image:
+            return None
         return user.image.url
 
     def get_userName(self, obj):

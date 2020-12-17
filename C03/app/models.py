@@ -181,32 +181,6 @@ class CollectEvent(models.Model):
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
 
 
-class Session(models.Model):
-    # 会话
-    user_id = models.IntegerField()
-    open = models.BooleanField(default=True, verbose_name='会话状态')
-    checked = models.BooleanField(default=False, verbose_name='审核状态')
-    createTime = models.DateTimeField(auto_now_add=True)
-    # 最近更新时间
-    updateTime = models.DateTimeField(auto_now=True)
-
-
-class Message(models.Model):
-    # 消息
-    USER = 'U'
-    MANAGER = 'M'
-    SENDER = (
-        (USER, 'user'),
-        (MANAGER, 'manager'),
-    )
-    session = models.ForeignKey(Session, on_delete=models.CASCADE)
-    sender = models.CharField(max_length=2, choices=SENDER, verbose_name='发送方')
-    # 如果sender为MANGER 则需要保存manager的id
-    manager_id = models.IntegerField(null=True)
-    content = models.CharField(max_length=500)
-    createTime = models.DateTimeField(auto_now_add=True)
-
-
 class Default(models.Model):
     # 违约记录
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -238,3 +212,29 @@ class OtherOperation(models.Model):
     details = models.CharField(default="软件工程", max_length=100)
     content = models.CharField(default="软件工程", max_length=100)
     # TODO:完善信息
+
+
+class Session(models.Model):
+    # 会话
+    user_id = models.IntegerField()
+    open = models.BooleanField(default=True, verbose_name='会话状态')
+    checked = models.BooleanField(default=False, verbose_name='审核状态')
+    createTime = models.DateTimeField(auto_now_add=True)
+    # 最近更新时间
+    updateTime = models.DateTimeField(auto_now=True)
+
+
+class Message(models.Model):
+    # 消息
+    USER = 'U'
+    MANAGER = 'M'
+    SENDER = (
+        (USER, 'user'),
+        (MANAGER, 'manager'),
+    )
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    sender = models.CharField(max_length=2, choices=SENDER, verbose_name='发送方')
+    # 如果sender为MANGER 则需要保存manager的id
+    manager_id = models.IntegerField(null=True)
+    content = models.CharField(max_length=500)
+    createTime = models.DateTimeField(auto_now_add=True)

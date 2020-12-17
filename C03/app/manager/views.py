@@ -390,7 +390,7 @@ class AddBlacklistView(ListAPIView, CreateAPIView):
         # TODO: 管理员可以撤销其他管理员的操作么？
         addBlacklist = AddBlacklist.objects.filter(id=id).first()
         if not addBlacklist:
-            return Response({'error': 'Invalid addBlacklist_id'}, status=400)
+            return Response({'error': 'Invalid Blacklist_id'}, status=400)
         addBlacklist.state = 1
         addBlacklist.save()
         user = addBlacklist.user

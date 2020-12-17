@@ -10,6 +10,10 @@ from app.utils.utils import initStadium
 原因：确定了几种管理员的事件，测试接口是否正常
 结果: 发现了一些拼写错误导致的bug
       发现了场地占用事件无法正确更改预约
+      
+第一次修改 2020-12-17
+原因：测试加入黑名单功能
+结果：正常
 """
 
 
@@ -129,3 +133,30 @@ class TestAddEvent(TestCase):
         self.assertEqual(ReserveEvent.objects.get(id=1).cancel, 1)
         self.assertEqual(ReserveEvent.objects.get(id=2).cancel, 1)
         self.assertEqual(ReserveEvent.objects.get(id=3).cancel, 0)
+
+
+class TestAddBlacklist(TestCase):
+    def setUp(self) -> None:
+        Manager.objects.create(username='cbx', password='123', userId=1, email='cbx@qq.com', loginToken=1)
+        self.headers = {'HTTP_loginToken': 1}
+        User.objects.create(userId=2018011891)
+
+    def test_addblacklist(self):
+        params = {
+            'user_id': 1,
+            'state': 0
+        }
+        resp = self.client.post('/api/manager/blacklist/', params, **self.headers)
+        self.assertEqual(resp.status_code, 201)
+
+        user = User.objects.first()
+        self.assertEqual(user.inBlacklist, 1)
+
+        params = {
+            'id': 1
+        }
+        resp = self.client.put('/api/manager/blacklist/', params, **self.headers, content_type='application/json')
+        self.assertEqual(resp.status_code, 200)
+
+        user = User.objects.first()
+        self.assertEqual(user.inBlacklist, 0)
