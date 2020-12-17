@@ -42,22 +42,33 @@
                       </a>
                           <ul class="dropdown-menu dropdown-user">
                           <li>
-                                            <a class="dropdown-item" data-toggle="modal" data-target="#myModal">场地预留</a>
+                          <a class="dropdown-item" data-toggle="modal" data-target="#myModal">场地预留</a>
                         </li>
                         <li>
                           <a class="dropdown-item" v-on:click="manage(ground)">预约管理</a>
                         </li>
                       </ul>
-                      <a class="collapse-link">
-                        <i class="fa fa-chevron-up"></i>
-                      </a>
+                      <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                          </div>
                             </div>
                             <div class="ibox-content">
                                 <div v-for="data in ground.courts" :key="data.id">
                                     <h5>{{ data.name }}</h5>
                                     <div class="progress">
-                                        <div v-for="reserve in data.reservedDuration" :key="reserve.id" :class="reserve.type | progress_type" :style="reserve | progress_length" role="progressbar" aria-valuemin="0" aria-valuemax="100" :title="reserve | progress_title"></div>
+                                        <div v-for="reserve in data.reservedDuration" 
+                                        :key="reserve.id" 
+                                        :class="reserve.type | progress_type" 
+                                        :style="0, reserve, data.reservedDuration | progress_length" role="progressbar" aria-valuemin="0" aria-valuemax="100" 
+                                        :title="reserve | progress_title">
+                                        </div>
+                                    </div>
+      
+                                    <div>
+                                        <div v-for="reserve in data.reservedDuration" 
+                                        :key="reserve.id" 
+                                        :style="1, reserve, data.reservedDuration | progress_length" >
+                                        {{reserve.startTime}}
+                                        </div>
                                     </div>
                                     <br/>
                                 </div>
@@ -347,7 +358,13 @@ export default {
         return "progress-bar progress-bar-disabled";
       }
     },
-    progress_length: function(reserve) {
+    progress_length: function(flag, reserve, durations) {
+      var sh, sm;
+      sh = parseInt(durations[0].startTime.split(":")[0]);
+      sm = parseInt(durations[0].startTime.split(":")[1]);
+      var eh, em;
+      eh = parseInt(durations[durations.length - 1].endTime.split(":")[0]);
+      em = parseInt(durations[durations.length - 1].endTime.split(":")[1]);
       var h, m;
       h = parseInt(reserve.startTime.split(":")[0]);
       m = parseInt(reserve.startTime.split(":")[1]);
@@ -355,8 +372,13 @@ export default {
       h = parseInt(reserve.endTime.split(":")[0]);
       m = parseInt(reserve.endTime.split(":")[1]);
       var end_time = h * 60 + m;
-      var delta = (end_time - start_time) / 14.4;
-      return "width: " + delta.toString() + "%";
+      var delta = (end_time - start_time) * 100 / (eh * 60 + em - sh * 60 - sm);
+      if (flag == 0){
+        return "width: " + delta.toString() + "%";
+      }
+      else{
+        return "display: inline-block;"+" width: " + delta.toString() + "%";
+      } 
     },
     progress_title: function(reserve) {
       let type = reserve.type;
