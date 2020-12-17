@@ -119,47 +119,6 @@ class Duration(models.Model):
     accessible = models.BooleanField()
 
 
-class ChangeDuration(models.Model):
-    # （永久）修改预约时段事件
-
-    def is_active(self):
-        now_date = datetime.datetime.now().strftime('%Y-%m-%d')
-        if self.courtType.stadium.foreDays > judgeDate(self.date, now_date) > 0:
-            return True
-        return False
-
-    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
-    courtType = models.ForeignKey(CourtType, on_delete=models.CASCADE)
-    openingHours = models.CharField(max_length=300)
-    duration = models.CharField(max_length=10, null=True)
-    date = models.CharField(max_length=32)
-    time = models.DateTimeField(auto_now_add=True)
-    type = models.CharField(default="修改预约时间段", max_length=20)
-    price = models.IntegerField(default=1)
-    membership = models.IntegerField(default=1)
-    openState = models.BooleanField()
-    details = models.CharField(default="计算机网络", max_length=100)
-    content = models.CharField(default="软件工程", max_length=100)
-    state = models.IntegerField()
-    # TODO:完善事件信息
-
-
-class AddEvent(models.Model):
-    # （临时）添加活动事件
-    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
-    court = models.ForeignKey(Court, on_delete=models.CASCADE)
-    startTime = models.CharField(max_length=32)
-    endTime = models.CharField(max_length=32)
-    date = models.CharField(max_length=32)
-    time = models.DateTimeField(auto_now_add=True)
-    type = models.CharField(default="场地占用", max_length=20)
-    information = models.CharField(max_length=1000, null=True)
-    details = models.CharField(default="汇编与编译原理", max_length=100)
-    content = models.CharField(default="软件工程", max_length=100)
-    state = models.IntegerField()
-    # TODO:完善事件信息
-
-
 class Comment(models.Model):
     # 场地评论
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -201,15 +160,80 @@ class Default(models.Model):
     # TODO:完善信息
 
 
+class ChangeDuration(models.Model):
+    # （永久）修改预约时段事件
+    V = 0
+    C = 1
+    E = 2
+    APPLY_RESULT = (
+        (V, 'valid'),
+        (C, 'cancel'),
+        (E, 'exceed time limit'),
+    )
+
+    def is_active(self):
+        now_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        if self.courtType.stadium.foreDays > judgeDate(self.date, now_date) > 0:
+            return True
+        return False
+
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    courtType = models.ForeignKey(CourtType, on_delete=models.CASCADE)
+    openingHours = models.CharField(max_length=300)
+    duration = models.CharField(max_length=10, null=True)
+    date = models.CharField(max_length=32)
+    time = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(default="修改预约时间段", max_length=20)
+    price = models.IntegerField(default=1)
+    membership = models.IntegerField(default=1)
+    openState = models.BooleanField()
+    details = models.CharField(default="计算机网络", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
+    state = models.IntegerField(choices=APPLY_RESULT, default=V, verbose_name='事件状态')
+    # TODO:完善事件信息
+
+
+class AddEvent(models.Model):
+    # （临时）添加活动事件
+    V = 0
+    C = 1
+    E = 2
+    APPLY_RESULT = (
+        (V, 'valid'),
+        (C, 'cancel'),
+        (E, 'exceed time limit'),
+    )
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    court = models.ForeignKey(Court, on_delete=models.CASCADE)
+    startTime = models.CharField(max_length=32)
+    endTime = models.CharField(max_length=32)
+    date = models.CharField(max_length=32)
+    time = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(default="场地占用", max_length=20)
+    information = models.CharField(max_length=1000, null=True)
+    details = models.CharField(default="汇编与编译原理", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
+    state = models.IntegerField(choices=APPLY_RESULT, default=V, verbose_name='事件状态')
+    # TODO:完善事件信息
+
+
 class AddBlacklist(models.Model):
     # 添加至黑名单操作
+    V = 0
+    C = 1
+    E = 2
+    APPLY_RESULT = (
+        (V, 'valid'),
+        (C, 'cancel'),
+        (E, 'exceed time limit'),
+    )
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     type = models.CharField(default="移入黑名单", max_length=20)
     time = models.DateTimeField(auto_now_add=True)
     details = models.CharField(default="操作系统", max_length=100)
     content = models.CharField(default="软件工程", max_length=100)
-    state = models.IntegerField()
+    state = models.IntegerField(choices=APPLY_RESULT, default=V, verbose_name='事件状态')
     # TODO:完善信息
 
 

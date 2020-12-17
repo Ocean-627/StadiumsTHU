@@ -85,21 +85,21 @@ class ChangeDurationFilter(filters.FilterSet):
     # TODO:更多筛选条件
     class Meta:
         model = ChangeDuration
-        fields = ['id']
+        fields = ['id', 'state']
 
 
 class AddEventFilter(filters.FilterSet):
     # TODO:更多筛选条件
     class Meta:
         model = AddEvent
-        fields = ['id']
+        fields = ['id', 'state']
 
 
 class AddBlacklistFilter(filters.FilterSet):
     # TODO:更多筛选条件
     class Meta:
         model = AddBlacklist
-        fields = ['id']
+        fields = ['id', 'state']
 
 
 class DefaultFilter(filters.FilterSet):
