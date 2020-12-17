@@ -5,6 +5,16 @@ from app.models import *
 from app.utils.utils import stadiums
 from app.utils.utils import initStadium
 
+"""
+测试时间 2020-12-04
+原因：测试管理员对各种静态资源的访问
+结果: 发现了管理员所需信息返回不全的bug
+
+第一次修改 2020-12-17
+原因：增加了创建场馆功能
+结果：正常
+"""
+
 
 class TestStaticSource(TestCase):
     def setUp(self) -> None:
@@ -33,6 +43,43 @@ class TestStaticSource(TestCase):
         resp = self.client.get('/api/manager/duration/', params)
         content = json.loads(resp.content)
         self.assertEqual(len(content), 8)
+
+
+class TestCreateStadium(TestCase):
+    def setUp(self) -> None:
+        Manager.objects.create(username='cbx', password='123', userId=1, email='cbx@qq.com', loginToken=1)
+        self.headers = {'HTTP_loginToken': 1}
+
+    def test_create(self):
+        params = {
+            'name': '测试场馆',
+            'information': '测试用',
+            'openTime': '08:00',
+            'closeTime': '10:00',
+            'openState': 1,
+            'foreDays': 3,
+            'createTime': '2020-12-25'
+        }
+        resp = self.client.post('/api/manager/stadium/', params, **self.headers)
+        self.assertEqual(resp.status_code, 201)
+
+        stadium = Stadium.objects.first()
+        self.assertEqual(stadium.openState, 0)
+
+        params = {
+            'stadium_id': 1,
+            'type': '羽毛球',
+            'openingHours': '08:00-12:00,13:00-17:00',
+            'openState': 1
+        }
+        resp = self.client.post('/api/manager/courttype/', params, **self.headers)
+        self.assertEqual(resp.status_code, 400)
+
+        params['num'] = 4
+        resp = self.client.post('/api/manager/courttype/', params, **self.headers)
+        self.assertEqual(resp.status_code, 200)
+
+        self.assertEqual(len(Court.objects.all()), 4)
 
 
 class TestReserve(TestCase):

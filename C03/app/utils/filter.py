@@ -10,7 +10,8 @@ class UserFilter(filters.FilterSet):
     email = filters.CharFilter(field_name='email', lookup_expr='icontains')
     type = filters.CharFilter(field_name='type', lookup_expr='icontains')
     major = filters.CharFilter(field_name='major', lookup_expr='icontains')
-    sort = filters.OrderingFilter(fields=('phone', 'name', 'nickName', 'userId', 'email'))
+    sort = filters.OrderingFilter(
+        fields=('phone', 'name', 'nickName', 'userId', 'email', 'loginTime', 'inBlacklistTime'))
 
     class Meta:
         model = User

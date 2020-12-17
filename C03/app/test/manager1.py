@@ -5,6 +5,20 @@ from app.models import *
 from app.utils.utils import stadiums
 from app.utils.utils import initStadium
 
+"""
+测试时间 2020-11-19
+原因：测试管理员对于静态资源的访问
+结果: 正常
+
+第一次修改 2020-11-25
+原因：增加了对用户进行筛选
+结果：发现了部分表项不能排序的bug
+
+第二次修改 2020-11-27
+原因：增加了分页功能
+结果：正常
+"""
+
 
 class TestManager(TestCase):
     def setUp(self) -> None:
