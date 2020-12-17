@@ -99,11 +99,6 @@ export default {
     created() {
         this.time += new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate()
     },
-    mounted(){
-        this.$axios.get('manager/', {})
-        .then(res => {
-            console.log(res.data);
-        })
-    }
+    mounted(){}
 }
 </script>

@@ -39,30 +39,18 @@
           <div class="col-md-2">
             <h1 style="padding-top: 30px"><strong>{{ user.nickName }}</strong></h1>
           </div>
-          <div class="col-md-3"></div>
+          <div class="col-md-4"></div>
           <div
             class="col-md-1"
             style="cursor: pointer;"
             v-on:click="sendMessage()"
           >
             <i
-              class="fa fa-envelope fa-3x"
-              style="margin-top: 40px; color: #FFBF00; cursor: pointer;"
+              class="fa fa-envelope fa-2x"
+              style="margin-top: 50px; color: #FFBF00; cursor: pointer;"
             ></i
             ><br />
             <strong style="color: #FFBF00;">发送私信</strong>
-          </div>
-          <div
-            class="col-md-1"
-            style="cursor: pointer;"
-            v-on:click="deleteUser()"
-          >
-            <i
-              class="fa fa-trash fa-3x"
-              style="margin-top: 40px; color: red;"
-            ></i
-            ><br />
-            <strong style="color: red;">注销用户</strong>
           </div>
         </div>
         <div class="row i-row">
@@ -104,22 +92,22 @@
           </div>
           <div class="col-md-1 border-right"></div>
           <div class="col-md-3">
-            <strong>认证状态</strong>
-          </div>
-          <div class="col-md-2">
-            {{ user.auth ? "已认证" : "未认证" }}
-            <i class="fa fa-check" style="color: green" v-show="user.auth"></i>
-            <i class="fa fa-times" style="color: red" v-show="!user.auth"></i>
-          </div>
-        </div>
-        <div class="row i-row">
-          <div class="col-md-3">
             <strong>最近登录时间</strong>
           </div>
           <div class="col-md-2">
             {{ user.loginTime | datetime_format }}
           </div>
-          <div class="col-md-1 border-right"></div>
+        </div>
+        <div class="row i-row">
+          <div class="col-md-3">
+            <strong>黑名单状态</strong>
+          </div>
+          <div class="col-md-1">
+            {{ user.inBlacklist ? "是" : "否" }}
+          </div>
+          <div class="col-md-2" v-show="user.inBlacklist">
+            （拉黑于{{ user.inBlacklistTime | datetime_format("YYYY-MM-DD") }}）
+          </div>
         </div>
         <div class="row i-row">
           <div class="col-md-3">
@@ -132,25 +120,26 @@
                 <th>地点</th>
                 <th>使用时间</th>
                 <th>预约时间</th>
-                <th>生效状态</th>
+                <th>状态</th>
                 <th>操作</th>
               </thead>
               <tbody
-                v-for="reserve_record in reserve_records"
+                v-for="(reserve_record, index) in reserve_records"
                 :key="reserve_record.id"
               >
                 <tr>
-                  <td>{{ reserve_record.id }}</td>
+                  <td>{{ index+1 }}</td>
                   <td>{{ reserve_record | reserve_place }}</td>
-                  <td>{{ reserve_record.use_time }}</td>
-                  <td>{{ reserve_record.reserve_time }}</td>
-                  <td :style="reserve_record.status | reserve_status">
-                    {{ reserve_record.status }}
+                  <td>{{ reserve_record.date + " " + reserve_record.startTime + "-" + reserve_record.endTime }}</td>
+                  <td>{{ reserve_record.createTime | datetime_format }}</td>
+                  <td :style="reserve_record | reserve_status_class">
+                    {{ reserve_record | reserve_status }}
                   </td>
                   <td style="padding: 5px;">
                     <button
                       class="btn btn-xs btn-danger btn-outline"
-                      v-show="reserve_record.status === '未生效'"
+                      v-show="!reserve_record.cancel && !reserve_record.checked"
+                      v-on:click="cancel_reserve(reserve_record)"
                     >
                       取消
                     </button>
@@ -258,35 +247,7 @@ export default {
   data() {
     return {
       user: {},
-      reserve_records: [
-        {
-          id: 1,
-          stadium: "紫荆气膜馆",
-          court_type: "羽毛球场",
-          court_name: "1",
-          use_time: "2020-11-10 08:00-12:00",
-          reserve_time: "2020-11-8 09:02",
-          status: "已结束"
-        },
-        {
-          id: 2,
-          stadium: "紫荆气膜馆",
-          court_type: "羽毛球场",
-          court_name: "1",
-          use_time: "2020-11-10 08:00-12:00",
-          reserve_time: "2020-11-8 09:02",
-          status: "已取消"
-        },
-        {
-          id: 3,
-          stadium: "紫荆气膜馆",
-          court_type: "羽毛球场",
-          court_name: "1",
-          use_time: "2020-11-10 08:00-12:00",
-          reserve_time: "2020-11-8 09:02",
-          status: "未生效"
-        }
-      ],
+      reserve_records: [],
       credit_records: [
         {
           id: 1,
@@ -321,31 +282,45 @@ export default {
       return (
         reserve_record.stadium +
         "(" +
-        reserve_record.court_type +
-        "-" +
-        reserve_record.court_name +
+        reserve_record.court +
         ")"
       );
     },
-    reserve_status: function(status) {
-      if (status === "已取消") return "color: orange;";
-      if (status === "未生效") return "color: #23c6c8;";
+    reserve_status: function(record) {
+      if(record.cancel) return "已取消";
+      if(!record.payment) return "未付款";
+      if(record.leave) return "已结束";
+      if(record.checked && !record.leave) return "使用中";
+      return "未使用";
+    },
+    reserve_status_class: function(record) {
+      if(record.cancel) return "color: orange;";
+      if(!record.payment) return "color: #dc3545";
+      if(record.leave) return "color: #6c757d";
+      if(record.checked && !record.leave) return "color: #17a2b8";
+      return "color: #28a745";
     },
     credit_status: function(status) {
       if (status === "生效中") return "color: #23c6c8;";
       if (status === "已撤销") return "color: orange;";
-    }
+    },
   },
   methods: {
     sendMessage() {},
-    deleteUser() {}
+    deleteUser() {},
+    cancel_reserve(record){}
   },
   mounted() {
-    this.$axios
-      .get(`/user/`, { params: { userId: this.$route.params.userId } })
-      .then(res => {
-        this.user = res.data.results[0];
-      });
+    let p = Promise.all([
+      this.$axios.get("user/", { params: { userId: this.$route.params.userId } }),
+      this.$axios.get("reserveevent/", { params: { userId: this.$route.params.user } }),
+
+    ]);
+    p.then(res => {
+        this.user = res[0].data.results[0];
+        this.reserve_records = res[1].data.results
+        console.log(res[1].data.results)
+    });
   }
 };
 </script>

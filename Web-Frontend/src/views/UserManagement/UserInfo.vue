@@ -129,9 +129,6 @@ export default {
                     ]
                 },
                 toolbarConfig: {
-                    buttons: [
-                        { code: 'delete', name: '删除', icon: 'fa fa-trash-o', status: 'danger' },
-                    ],
                     refresh: true,
                     export: true,
                     print: true,
@@ -157,9 +154,6 @@ export default {
                                 queryParams[property] = values.join(',')
                             })
                             return this.$axios.get(`user/`, {params: queryParams}).then(res => res.data)
-                        },
-                        delete: ({ body }) => {
-                            console.log(body)
                         }
                     }
                 },
@@ -175,7 +169,7 @@ export default {
                                 return [
                                     h('u', {
                                         style: {
-                                            color: 'blue',
+                                            color: '007bff',
                                             cursor: 'pointer'
                                         },
                                         on: {
@@ -207,6 +201,30 @@ export default {
                         visible: false,
                         formatter: function(value) {
                             return moment(value).format("YYYY-MM-DD HH:mm:ss");
+                        }
+                    },
+                    { 
+                        field: 'inBlacklist',  
+                        title: '黑名单状态', 
+                        visible: false,
+                        filters: [
+                            { label: '是', value: true },
+                            { label: '否', value: false }
+                        ],
+                        formatter: function(value) {
+                            if(value.cellValue) return "是"
+                            return "否"
+                        }
+                    },
+                    {
+                        field: 'inBlacklistTime', 
+                        sortable: true, 
+                        title: '拉黑时间', 
+                        visible: false,
+                        formatter: function(value) {
+                            console.log(value)
+                            if(value.cellValue == "0") return ""
+                            return moment(value).format("YYYY-MM-DD");
                         }
                     }
                 ],

@@ -37,7 +37,7 @@
                                 class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
                             <li><a href="/user_management/user_info">用户信息</a></li>
-                            <li><a href="/user_management/black_list">黑名单管理</a></li>
+                            <li><a href="/user_management/blacklist">黑名单管理</a></li>
                         </ul>
                     </li>
                     <li>

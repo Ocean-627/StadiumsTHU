@@ -139,11 +139,8 @@ export default {
                             filters.forEach(({ property, values }) => {
                                 queryParams[property] = values.join(',')
                             })
-                            return this.$axios.get(`user/`, {params: queryParams}).then(res => res.data)
+                            return this.$axios.get(`history/`, {params: queryParams}).then(res => console.log(res.data))
                         },
-                        delete: ({ body }) => {
-                            console.log(body)
-                        }
                     }
                 },
                 columns: [
@@ -158,7 +155,7 @@ export default {
                                 return [
                                     h('u', {
                                         style: {
-                                            color: 'blue',
+                                            color: '#007bff',
                                             cursor: 'pointer'
                                         },
                                         on: {
