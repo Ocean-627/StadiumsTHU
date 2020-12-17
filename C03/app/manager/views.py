@@ -118,7 +118,7 @@ def minute_task():
             reserveEvent.save()
             default = Default(user=reserveEvent.user, date=myDate, time=myTime)
             default.save()
-            if reserveEvent.user.defaults == 3:
+            if reserveEvent.user.defaults >= 3:
                 reserveEvent.user.inBlacklistTime = myDate
                 reserveEvent.user.inBlacklist = True
             reserveEvent.user.save()
@@ -297,7 +297,7 @@ class ReserveEventView(ListAPIView):
     filter_class = ReserveEventFilter
 
 
-class DefaultView(ListAPIView, CreateAPIView):
+class DefaultView(ListAPIView):
     """
     违约记录
     """
@@ -359,15 +359,15 @@ class AddEventView(ListAPIView):
         endTime = addEvent.endTime
         myDurations = addEvent.court.duration_set.all().filter(date=addEvent.date)
         for myDuration in myDurations:
-            if judgeAddEvent(startTime, endTime, myDurations.startTime, myDurations.endTime):
+            if judgeAddEvent(startTime, myDuration.startTime, endTime, myDuration.endTime):
                 myDuration.openState = 0
-                try:
-                    reserveEvent = ReserveEvent.objects.get(duration_id=myDuration.id)
-                    reserveEvent.cancel = 1
-                    reserveEvent.save()
-                except:
-                    pass
                 myDuration.save()
+                reserveEvent = ReserveEvent.objects.filter(duration_id=myDuration.id).first()
+                if not reserveEvent:
+                    continue
+                # TODO: 最好在这里给用户发回一条消息
+                reserveEvent.cancel = 1
+                reserveEvent.save()
         return Response({'message': 'ok'})
 
     def put(self, request):
