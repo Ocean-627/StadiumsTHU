@@ -17,7 +17,8 @@ class User(models.Model):
     major = models.CharField(max_length=20, null=True)
     image = models.ImageField(upload_to='user', verbose_name='头像', null=True)
     defaults = models.IntegerField(verbose_name='违约次数', default=0)
-    blacklist = models.CharField(max_length=20, null=True)
+    inBlacklist = models.BooleanField(verbose_name='在黑名单中', default=0)
+    inBlacklistTime = models.CharField(max_length=20, null=True)
     # TODO:完善信息
 
 
@@ -36,6 +37,7 @@ class Stadium(models.Model):
     location = models.CharField(max_length=10, null=True, default="学堂路")
     longitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, verbose_name='经度')
     latitude = models.DecimalField(max_digits=10, decimal_places=6, null=True, verbose_name='纬度')
+    createTime = models.CharField(max_length=20)
     # TODO:完善信息
 
 
@@ -98,6 +100,7 @@ class ReserveEvent(models.Model):
     cancel = models.BooleanField(default=False, verbose_name='是否取消')
     checked = models.BooleanField(default=False, verbose_name='是否使用')
     leave = models.BooleanField(default=False, verbose_name='是否离开')
+    createTime = models.DateTimeField(auto_now_add=True)
     # TODO:完善事件信息
 
 
@@ -121,23 +124,15 @@ class ChangeDuration(models.Model):
     openingHours = models.CharField(max_length=300)
     duration = models.CharField(max_length=10, null=True)
     date = models.CharField(max_length=32)
-    time = models.DateTimeField(default=timezone.now)
-    type = models.IntegerField(default=1)
+    time = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(default="修改预约时间段", max_length=20)
     price = models.IntegerField(default=1)
     membership = models.IntegerField(default=1)
     openState = models.BooleanField()
+    details = models.CharField(default="计算机网络", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
+    state = models.IntegerField()
     # TODO:完善事件信息
-
-
-class ChangeSchedule(models.Model):
-    # 修改场馆开放和关闭时间点
-    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
-    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
-    openState = models.BooleanField()
-    openTime = models.CharField(max_length=30)
-    closeTime = models.CharField(max_length=30)
-    startDate = models.CharField(max_length=30)
-    foreDays = models.IntegerField()
 
 
 class AddEvent(models.Model):
@@ -147,9 +142,12 @@ class AddEvent(models.Model):
     startTime = models.CharField(max_length=32)
     endTime = models.CharField(max_length=32)
     date = models.CharField(max_length=32)
-    time = models.DateTimeField(default=timezone.now)
-    type = models.IntegerField(default=2)
+    time = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(default="场地占用", max_length=20)
     information = models.CharField(max_length=1000, null=True)
+    details = models.CharField(default="汇编与编译原理", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
+    state = models.IntegerField()
     # TODO:完善事件信息
 
 
@@ -217,4 +215,26 @@ class Default(models.Model):
     cancel = models.BooleanField(default=False, verbose_name='管理员是否手动撤销预约记录')
     detail = models.CharField(max_length=20, default="预约不来")
     valid = models.BooleanField(default=True, verbose_name='违约记录是否在有效期之内')
+    # TODO:完善信息
+
+
+class AddBlacklist(models.Model):
+    # 添加至黑名单操作
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(default="移入黑名单", max_length=20)
+    time = models.DateTimeField(auto_now_add=True)
+    details = models.CharField(default="操作系统", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
+    state = models.IntegerField()
+    # TODO:完善信息
+
+
+class OtherOperation(models.Model):
+    # 其他不可撤销操作，主要包括移出黑名单操作，撤销信用记录操作及编辑场馆信息操作
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    time = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(default="其他操作", max_length=20)
+    details = models.CharField(default="软件工程", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
     # TODO:完善信息

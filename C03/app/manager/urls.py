@@ -17,12 +17,12 @@ urlpatterns = [
     path('duration/', views.DurationView.as_view()),
     path('reserveevent/', views.ReserveEventView.as_view()),
     path('changeduration/', views.ChangeDurationView.as_view()),
-    path('changeschedule/', views.ChangeScheduleView.as_view()),
     path('addevent/', views.AddEventView.as_view()),
     path('user/', views.UserView.as_view()),
     path('history/', views.HistoryView.as_view()),
     path('session/', views.SessionView.as_view()),
     path('message/', views.MessageView.as_view()),
     path('default/', views.DefaultView.as_view()),
+    path('blacklist/', views.AddBlacklistView.as_view()),
     # path('revoke/', views.revoke)
 ]

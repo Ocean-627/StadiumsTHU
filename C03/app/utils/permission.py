@@ -9,7 +9,7 @@ class UserPermission(object):
         if request.method == 'GET':
             return True
         user = request.user
-        if user.blacklist == '0':
-            return True
-        else:
+        if user.inBlacklist:
             return False
+        else:
+            return True

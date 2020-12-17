@@ -143,9 +143,10 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         duration = Duration.objects.filter(id=value, accessible=True).first()
         if not duration:
             raise ValidationError('Invalid duration_id')
+        myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
         myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
-        if judgeTime(duration.startTime, myTime) < 0:
-            raise ValidationError('Invalid duration_id')
+        if judgeTime(duration.startTime, myTime) < 0 and duration.date == myDate:
+            raise ValidationError('Invalid duration_id, you should not reserve duration that passed')
         return value
 
     def create(self, validated_data):
@@ -305,3 +306,18 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         exclude = ['manager_id']
         read_only_fields = ['session', 'sender']
+
+
+class DefaultSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(write_only=True)
+
+    def validate_user_id(self, value):
+        user = User.objects.filter(id=value).first()
+        if not user:
+            raise ValidationError('Invalid user_id')
+        return value
+
+    class Meta:
+        model = Default
+        fields = '__all__'
+        read_only_fields = ['user']

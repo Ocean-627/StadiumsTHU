@@ -14,7 +14,7 @@ class UserFilter(filters.FilterSet):
 
     class Meta:
         model = User
-        fields = ['id']
+        fields = ['id', 'inBlacklist']
 
 
 class StadiumFilter(filters.FilterSet):
@@ -80,14 +80,23 @@ class CollectEventFilter(filters.FilterSet):
 
 
 class ChangeDurationFilter(filters.FilterSet):
+    # TODO:更多筛选条件
     class Meta:
         model = ChangeDuration
         fields = ['id']
 
 
 class AddEventFilter(filters.FilterSet):
+    # TODO:更多筛选条件
     class Meta:
         model = AddEvent
+        fields = ['id']
+
+
+class AddBlacklistFilter(filters.FilterSet):
+    # TODO:更多筛选条件
+    class Meta:
+        model = AddBlacklist
         fields = ['id']
 
 
