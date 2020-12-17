@@ -32,7 +32,7 @@ def daily_task():
     # 修改场地预订时间修改信息使之生效
     changeDurations = ChangeDuration.objects.all()
     for changeDuration in changeDurations:
-        if changeDuration.state == 1 or changeDuration.state == 2:
+        if changeDuration.state == 1:
             continue
         if not judgeDate(changeDuration.date, now_date):
             courtType = changeDuration.courtType
@@ -44,13 +44,13 @@ def daily_task():
             courtType.save()
 
             # 更新场馆信息
-            openHours = courtType.split(" ")
+            openHours = courtType.openingHours.split(" ")
             for openHour in openHours:
                 startTime, endTime = openHour.split('-')
                 if judgeTime(courtType.stadium.openTime, startTime) > 0:
-                    courtType.stadium.startTime = startTime
-                if judgeTime(courtType.stadium.endTime, endTime) < 0:
-                    courtType.stadium.endTime = endTime
+                    courtType.stadium.openTime = startTime
+                if judgeTime(courtType.stadium.closeTime, endTime) < 0:
+                    courtType.stadium.closeTime = endTime
                 courtType.stadium.save()
 
     # 添加新数据
@@ -130,7 +130,7 @@ def minute_task():
 
 
 # sched = Scheduler()
-# sched.add_cron_job(daily_task, hour=0, minute=19)
+# sched.add_cron_job(daily_task, hour=0, minute=0)
 # sched.add_interval_job(minute_task, seconds=60)
 # sched.start()
 
