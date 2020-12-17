@@ -57,6 +57,7 @@ class DurationFilter(filters.FilterSet):
 class ReserveEventFilter(filters.FilterSet):
     stadium = filters.CharFilter(field_name='stadium', lookup_expr='icontains')
     court = filters.CharFilter(field_name='court', lookup_expr='icontains')
+    sort = filters.OrderingFilter(fields=('createTime', ))
 
     # TODO:更多筛选信息
     class Meta:

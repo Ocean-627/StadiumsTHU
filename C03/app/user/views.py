@@ -118,7 +118,7 @@ class ReserveView(ListAPIView, CreateAPIView):
     pagination_class = ReserveHistoryPagination
 
     def get_queryset(self):
-        return ReserveEvent.objects.filter(user=self.request.user)
+        return ReserveEvent.objects.filter(user=self.request.user).order_by('-createTime')
 
     def put(self, request):
         req_data = request.data

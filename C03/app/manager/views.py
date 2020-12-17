@@ -295,6 +295,9 @@ class ReserveEventView(ListAPIView):
     serializer_class = ReserveEventSerializer
     filter_class = ReserveEventFilter
 
+    def get_queryset(self):
+        return ReserveEvent.objects.all().order_by('-createTime')
+
 
 class DefaultView(ListAPIView):
     """
