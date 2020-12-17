@@ -292,7 +292,7 @@ class ReserveEventView(ListAPIView):
     """
     # authentication_classes = [ManagerAuthtication]
     queryset = ReserveEvent.objects.all()
-    serializer_class = ReserveEventSerializer
+    serializer_class = ReserveEventSerializerForManager
     filter_class = ReserveEventFilter
     pagination_class = ReserveHistoryPagination
 

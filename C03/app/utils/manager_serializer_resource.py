@@ -85,6 +85,13 @@ class CourtTypeSerializerForManager(serializers.ModelSerializer):
         read_only_fields = ['openState', 'stadium']
 
 
+class ReserveEventSerializerForManager(ReserveEventSerializer):
+    userName = serializers.SerializerMethodField(required=False)
+
+    def get_userName(self, obj):
+        return obj.user.name
+
+
 class SessionSerializerForManager(serializers.ModelSerializer):
     image = serializers.SerializerMethodField(required=False)
     userName = serializers.SerializerMethodField(required=False)
