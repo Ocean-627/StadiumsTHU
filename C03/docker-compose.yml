@@ -20,25 +20,28 @@ services:
   db:
     image: mysql:5.7
     volumes:
-      - /hom/ubuntu/mysql:/var/lib/mysql
-    ports:
-      - "3306:3306"
+      - /home/ubuntu/mysql:/var/lib/mysql
+    env_file: .env
     restart: always
     environment:
-      - TZ=Asia/Shanghai
-      - MYSQL_ROOT_PASSWORD=1234567890
-      - MYSQL_DATABASE=platform
-      - MYSQL_USER=debian-sys-maint
-      - MYSQL_PASS=1OpN9k8rLhRFyFBC
+      - TZ=${DB_TZ}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASS=${DB_USER_PASS}
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    expose:
+      - "3306"
+    ports: 
+      - "3306:3306"
     networks:
       - db_network
   nginx:
     restart: always
     image: nginx:latest
     ports:
-      - "80:80"
-      - "443:443"
+      - "5000:80"
+      - "4434:443"
     volumes:
       - ./config/nginx:/etc/nginx/conf.d
       - /etc/ssl:/etc/ssl

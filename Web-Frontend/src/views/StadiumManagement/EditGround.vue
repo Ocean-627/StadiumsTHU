@@ -15,7 +15,7 @@
                             场馆管理
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="/stadium_management/stadium_info">场馆信息管理</a>
+                            <a href="/stadium_management/stadium_info">场馆列表</a>
                         </li>
                         <li class="breadcrumb-item active">
                             <strong>场地信息编辑</strong>
@@ -60,8 +60,8 @@
                         <input type="text" class="form-control"/>
                     </div>
                 </div>
-                <div class="grid">
-                    <div class="grid-item" v-for="(ground, _index) in grounds" v-bind:key="ground.name">
+                <div class="grid" v-masonry transition-duration="0.3s" item-selector=".grid-item" horizontal-order="true" gutter="25">
+                    <div class="grid-item" v-masonry-tile v-for="(ground, _index) in grounds" v-bind:key="ground.name">
                         <div class="contact-box">
                             <!-- 主要部分 & 单个单元 -->
                             <div class="panel-body">
@@ -239,12 +239,6 @@ export default {
         Footer
     },
     mounted() {
-        var msnry = new Masonry('.grid', {
-            // options...
-            itemSelector: ".grid-item",
-            columnWidth: 450,
-            gutter: 25
-        })
         $('.chosen-select').chosen({ width: "100%" })
         $(".touchspin").TouchSpin({
             buttondown_class: 'btn btn-white',
@@ -284,12 +278,6 @@ export default {
             })
         },
     updated() {
-        var msnry = new Masonry('.grid', {
-            // options...
-            itemSelector: ".grid-item",
-            columnWidth: 450,
-            gutter: 25
-        })
         $('.chosen-select').chosen({ width: "100%" })
         $(".touchspin").TouchSpin({
             buttondown_class: 'btn btn-white',

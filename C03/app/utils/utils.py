@@ -45,9 +45,9 @@ def initStadium(info):
     Stadium.objects.create(**info)
     stadium = Stadium.objects.get(name=info['name'])
     # 创建场地类型
-    type1 = CourtType(stadium=stadium, type='羽毛球', openingHours="8:00-10:00,13:00-17:00")
+    type1 = CourtType(stadium=stadium, type='羽毛球', openingHours="8:00-10:00,13:00-17:00", openState=True)
     type1.save()
-    type2 = CourtType(stadium=stadium, type='篮球', openingHours='8:00-10:00,13:00-17:00')
+    type2 = CourtType(stadium=stadium, type='篮球', openingHours='8:00-10:00,13:00-17:00', openState=True)
     type2.save()
     # 创建场地
     courtNum = 5
@@ -76,7 +76,6 @@ def clearDatabase():
 def judgeDate(A, B):
     # 判断A日期在B日期之后的天数
     format_pattern = '%Y-%m-%d'
-    # B = B.strftime(format_pattern)
     difference = (datetime.datetime.strptime(A, format_pattern) - datetime.datetime.strptime(B, format_pattern))
     return difference.days
 
@@ -87,8 +86,28 @@ def calculateDate(A, B):
     return (dateTime_p + datetime.timedelta(days=+B)).strftime("%Y-%m-%d")
 
 
+def calculateTime(A, B):
+    # 返回A时刻B秒之后的时刻
+    dateTime_p = datetime.datetime.strptime(A, '%H:%M')
+    return (dateTime_p + datetime.timedelta(seconds=+B)).strftime("%H:%M")
+
+
 def judgeTime(A, B):
     # 判断A时刻在B时刻之后的秒数
     format_pattern = '%H:%M'
     difference = (datetime.datetime.strptime(A, format_pattern) - datetime.datetime.strptime(B, format_pattern))
     return difference.total_seconds()
+
+
+def judgeAddEvent(event_start_time, duration_start_time, event_end_time, duration_end_time):
+    # 判断事件是否会占用该时段
+    cp1 = judgeTime(duration_end_time, event_start_time)
+    cp2 = judgeTime(event_start_time, duration_start_time)
+    cp3 = judgeTime(duration_end_time, event_end_time)
+    cp4 = judgeTime(event_end_time, duration_start_time)
+    flag = 0
+    flag += cp1 > 0 and cp2 > 0
+    flag += cp3 > 0 and cp4 > 0
+    flag += cp2 < 0 and cp3 < 0
+    flag += cp2 > 0 and cp3 > 0
+    return flag > 0

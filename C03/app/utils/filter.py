@@ -8,11 +8,13 @@ class UserFilter(filters.FilterSet):
     nickName = filters.CharFilter(field_name='nickName', lookup_expr='icontains')
     userId = filters.CharFilter(field_name='userId', lookup_expr='icontains')
     email = filters.CharFilter(field_name='email', lookup_expr='icontains')
+    type = filters.CharFilter(field_name='type', lookup_expr='icontains')
+    major = filters.CharFilter(field_name='major', lookup_expr='icontains')
     sort = filters.OrderingFilter(fields=('phone', 'name', 'nickName', 'userId', 'email'))
 
     class Meta:
         model = User
-        fields = ['id', 'auth']
+        fields = ['id', 'inBlacklist']
 
 
 class StadiumFilter(filters.FilterSet):
@@ -52,10 +54,14 @@ class DurationFilter(filters.FilterSet):
 
 
 class ReserveEventFilter(filters.FilterSet):
+    stadium = filters.CharFilter(field_name='stadium', lookup_expr='icontains')
+    court = filters.CharFilter(field_name='court', lookup_expr='icontains')
+
     # TODO:更多筛选信息
     class Meta:
         model = ReserveEvent
-        fields = ['id', 'user_id', 'stadium_id', 'court_id', 'duration_id', 'startTime', 'endTime']
+        fields = ['id', 'stadium_id', 'user_id', 'duration_id', 'date', 'startTime', 'endTime', 'payment', 'cancel',
+                  'checked', 'leave']
 
 
 class CommentFilter(filters.FilterSet):
@@ -64,7 +70,7 @@ class CommentFilter(filters.FilterSet):
     # TODO:更多筛选信息
     class Meta:
         model = Comment
-        fields = ['id', 'court_id']
+        fields = ['id', 'court_id', 'reserve_id', 'stadium_id']
 
 
 class CollectEventFilter(filters.FilterSet):
@@ -74,12 +80,46 @@ class CollectEventFilter(filters.FilterSet):
 
 
 class ChangeDurationFilter(filters.FilterSet):
+    # TODO:更多筛选条件
     class Meta:
         model = ChangeDuration
         fields = ['id']
 
 
 class AddEventFilter(filters.FilterSet):
+    # TODO:更多筛选条件
     class Meta:
         model = AddEvent
         fields = ['id']
+
+
+class AddBlacklistFilter(filters.FilterSet):
+    # TODO:更多筛选条件
+    class Meta:
+        model = AddBlacklist
+        fields = ['id']
+
+
+class DefaultFilter(filters.FilterSet):
+    detail = filters.CharFilter(field_name='detail', lookup_expr='icontains')
+
+    class Meta:
+        model = Default
+        fields = ['id', 'user_id', 'cancel', 'valid']
+
+
+class SessionFilter(filters.FilterSet):
+    sort = filters.OrderingFilter(fields=('createTime', 'updateTime'))
+
+    class Meta:
+        model = Session
+        fields = ['id', 'open', 'checked']
+
+
+class MessageFilter(filters.FilterSet):
+    sort = filters.OrderingFilter(fields=('createTime',))
+    content = filters.CharFilter(field_name='content', lookup_expr='icontains')
+
+    class Meta:
+        model = Message
+        fields = ['id', 'session_id']

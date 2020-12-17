@@ -8,12 +8,12 @@ from app.utils.utils import initStadium
 
 class UserTest(TestCase):
     def setUp(self) -> None:
-        User.objects.create(openId='cbx', loginToken=1)
+        User.objects.create(userId=123, loginToken=1)
         self.headers = {'HTTP_loginToken': 1}
 
     def test_user(self):
         params = {
-            'openId': 'xxh',
+            'userId': 456,
             'phone': '18801225328',
             'nickName': '三个字'
         }
@@ -21,13 +21,13 @@ class UserTest(TestCase):
         user = User.objects.all().first()
         self.assertEqual(user.nickName, params['nickName'])
         self.assertEqual(user.phone, params['phone'])
-        self.assertEqual(user.openId, 'cbx')
+        self.assertEqual(user.userId, 123)
 
 
 class GetStadiumTest(TestCase):
 
     def setUp(self) -> None:
-        User.objects.create(openId='cbx', loginToken=1)
+        User.objects.create(userId=123, loginToken=1)
         Stadium.objects.create(name='综合体育馆', information='综合体育馆', openTime='08:00', closeTime='18:00', openState=True,
                                foreDays=3)
         Stadium.objects.create(name='陈明游泳馆', information='陈明游泳馆', openTime='09:00', closeTime='19:00', openState=True,
@@ -46,6 +46,7 @@ class GetStadiumTest(TestCase):
         self.assertEqual(len(content), 2)
         self.assertEqual(content[0]['name'], '综合体育馆')
         self.assertEqual(content[1]['name'], '陈明游泳馆')
+        self.assertEqual(content[0]['score'], 3)
 
         params = {
             'info': '综合'
@@ -66,7 +67,7 @@ class GetStadiumTest(TestCase):
 
 class GetCourtTest(TestCase):
     def setUp(self) -> None:
-        User.objects.create(openId='cbx', loginToken=1)
+        User.objects.create(userId=123, loginToken=1)
         initStadium(stadiums[0])
         initStadium(stadiums[1])
         self.headers = {'HTTP_loginToken': 1}
@@ -96,7 +97,7 @@ class GetCourtTest(TestCase):
 
 class GetDurationTest(TestCase):
     def setUp(self) -> None:
-        User.objects.create(openId='cbx', loginToken=1)
+        User.objects.create(userId=456, loginToken=1)
         initStadium(stadiums[0])
         initStadium(stadiums[1])
         self.headers = {'HTTP_loginToken': 1}

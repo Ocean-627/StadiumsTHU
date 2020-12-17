@@ -5,14 +5,14 @@
                 <ul class="nav metismenu" id="side-menu">
                     <li class="nav-header">
                         <div class="dropdown profile-element">
-                            <img alt="image" class="rounded-circle" src="../../static/img/mabaoguo.jpg" />
+                            <img alt="image" class="rounded-circle" :src="image" :onerror="defaultImg" style="width: 48px; height: 48px;" />
                             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                                <span class="block m-t-xs font-bold">马保国</span>
+                                <span class="block m-t-xs font-bold">{{ username }}</span>
                                 <span class="text-muted text-xs block">管理员 <b class="caret"></b></span>
                             </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                                <li><a class="dropdown-item" href="profile.html">个人信息</a></li>
-                                <li><a class="dropdown-item" href="mailbox.html">信箱</a></li>
+                                <li><a class="dropdown-item" href="/profile">个人信息</a></li>
+                                <li><a class="dropdown-item" href="/messages">信箱</a></li>
                                 <li class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="/login">登出</a></li>
                             </ul>
@@ -28,9 +28,8 @@
                         <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">场馆管理</span> <span
                                 class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li><a href="/stadium_management/stadium_info">场馆信息管理</a></li>
+                            <li><a href="/stadium_management/stadium_info">场馆列表</a></li>
                             <li><a href="/stadium_management/user_feedback">用户反馈</a></li>
-                            <li><a href="/stadium_management/ground_reserve">预约记录管理</a></li>
                         </ul>
                     </li>
                     <li>
@@ -60,7 +59,16 @@
 <script>
 export default {
     data() {
-        return {}
+        return {
+            username: localStorage.getItem("username"),
+            image: localStorage.getItem('image')
+        }
+    },
+    computed: {
+        defaultImg () {
+            return 'this.src="' + require('../../static/img/white.jpg') + '"';
+        }
     }
+
 }
 </script>

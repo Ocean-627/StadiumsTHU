@@ -6,12 +6,13 @@ from django.http import JsonResponse
 from django.utils.timezone import now
 
 from app.utils.authtication import UserAuthtication
+from app.utils.permission import UserPermission
 from app.utils.throttle import UserThrottle
 from app.utils.filter import *
-from app.utils.serializer import *
+from app.utils.user_serializer import *
 from app.utils.pagination import *
 from app.utils.utils import *
-from app.user import wx
+from app.user import thss
 
 
 class LoginView(APIView):
@@ -21,25 +22,22 @@ class LoginView(APIView):
 
     def post(self, request):
         req_data = request.data
-        code = req_data.get('code')
-        if not code:
-            return Response({'error': 'Requires code'})
-        try:
-            auth = wx.login(js_code=code)
-            openId = auth.get('openid')
-            if not openId:
-                return Response({'error': 'Invalid code'})
-            user = User.objects.filter(openId=openId).first()
-            if not user:
-                user = User(openId=openId)
-                user.save()
-            loginToken = md5(openId)
-            user.loginToken = loginToken
-            user.loginTime = now()
-            user.save()
-            return Response({'message': 'ok', 'loginToken': loginToken})
-        except Exception as e:
-            return Response({'error': 'Exception occurred'})
+        token = req_data.get('token')
+        if not token:
+            return Response({'error': 'Requires token'}, status=400)
+        auth = thss.login(token=token).get('user')
+        if not auth:
+            return JsonResponse({'error': 'Login failed'}, status=500)
+        userId = auth.get('card')
+        user = User.objects.filter(userId=userId).first()
+        if not user:
+            user = User.objects.create(userId=userId, nickName=auth.get('name'), name=auth.get('name'),
+                                       phone=auth.get('cell'),
+                                       email=auth.get('mail'), major=auth.get('department'))
+        loginToken = md5(userId)
+        user.loginToken = loginToken
+        user.save()
+        return Response({'message': 'ok', 'loginToken': loginToken})
 
 
 class UserView(APIView):
@@ -58,7 +56,7 @@ class UserView(APIView):
         req_data = request.data
         ser = UserSerializer(data=req_data)
         if not ser.is_valid():
-            return Response({'error': ser.errors})
+            return Response({'error': ser.errors}, status=400)
         ser.update(request.user, ser.validated_data)
         return Response({'message': 'ok'})
 
@@ -71,6 +69,17 @@ class StadiumView(ListAPIView):
     throttle_classes = [UserThrottle]
     queryset = Stadium.objects.all()
     serializer_class = StadiumSerializer
+    filter_class = StadiumFilter
+
+
+class StadiumDetailView(ListAPIView):
+    """
+    场馆详细信息
+    """
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+    queryset = Stadium.objects.all()
+    serializer_class = StadiumDetailSerializer
     filter_class = StadiumFilter
 
 
@@ -101,32 +110,45 @@ class ReserveView(ListAPIView, CreateAPIView):
     预订信息
     """
     authentication_classes = [UserAuthtication]
+    permission_classes = [UserPermission]
     throttle_classes = [UserThrottle]
     queryset = ReserveEvent.objects.all()
     serializer_class = ReserveEventSerializer
     filter_class = ReserveEventFilter
+    pagination_class = ReserveHistoryPagination
 
     def get_queryset(self):
         return ReserveEvent.objects.filter(user=self.request.user)
 
     def put(self, request):
-        # 取消预订
         req_data = request.data
-        user = request.user
-        eventId = req_data.get('event_id')
-        event = ReserveEvent.objects.filter(user=user, id=eventId).first()
-        if not event:
-            return Response({'error': 'Reserve does not exist'})
-        event.cancel = True
-        event.save()
-        # TODO:进行退款等操作
-        duration = event.duration
-        duration.user = None
-        duration.accessible = True
-        duration.save()
+        ser = ReserveModifySerializer(data=req_data)
+        if not ser.is_valid():
+            return Response({'error': ser.errors}, status=400)
+        reserve = ReserveEvent.objects.get(id=ser.validated_data.get('id'))
+        ser.update(reserve, ser.validated_data)
+        # 额外处理退订事件
+        if 'cancel' in ser.validated_data:
+            duration = Duration.objects.filter(id=reserve.duration_id).first()
+            if not duration:
+                return Response({'error': 'Duration not found'}, status=404)
+            date = duration.date
+            # TODO: 只根据日期判断，暂定为2天
+            cur = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
+            if judgeDate(date, cur) < 2:
+                return Response({'error': 'You can not cancel this reserve because it will due in 2 days.'}, status=400)
+            duration.accessible = True
+            duration.user = None
+            duration.save()
         return Response({'message': 'ok'})
 
     def delete(self, request):
+        req_data = request.data
+        id = req_data.get('id')
+        reserve = ReserveEvent.objects.filter(user=request.user, id=id).first()
+        if not reserve:
+            return Response({'error': 'Invalid id'}, status=400)
+        reserve.delete()
         return Response({'message': 'ok'})
 
 
@@ -141,6 +163,7 @@ class CommentView(ListAPIView, CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     filter_class = CommentFilter
+    pagination_class = CommentPagination
 
     def get_queryset(self):
         return Comment.objects.filter(user=self.request.user)
@@ -151,7 +174,7 @@ class CommentView(ListAPIView, CreateAPIView):
         user = request.user
         comment = user.comment_set.filter(user=user, id=id).first()
         if not comment:
-            return Response({'error': 'Delete comment failed'})
+            return Response({'error': 'Delete comment failed'}, status=400)
         comment.delete()
         return Response({'message': 'ok'})
 
@@ -165,6 +188,9 @@ class CommentImageView(CreateAPIView):
 
 
 class CollectView(ListAPIView, CreateAPIView):
+    """
+    收藏场馆
+    """
     authentication_classes = [UserAuthtication]
     throttle_classes = [UserThrottle]
     queryset = CollectEvent.objects.all()
@@ -180,6 +206,51 @@ class CollectView(ListAPIView, CreateAPIView):
         user = request.user
         collect = CollectEvent.objects.filter(user=user, id=id).first()
         if not collect:
-            return Response({'error': 'Invalid collect_id'})
+            return Response({'error': 'Invalid collect_id'}, status=400)
         collect.delete()
         return Response({'message': 'ok'})
+
+
+class SessionView(ListAPIView, CreateAPIView):
+    """
+    会话信息
+    """
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+    queryset = Session.objects.all()
+    serializer_class = SessionSerializer
+    filter_class = SessionFilter
+
+    def get_queryset(self):
+        return Session.objects.filter(user_id=self.request.user.id)
+
+    def put(self, request):
+        req_data = request.data
+        session_id = req_data.get('session_id')
+        session = Session.objects.filter(id=session_id, user_id=self.request.user.id).first()
+        if not session:
+            return Response({'error': 'Invalid session_id'}, status=400)
+        session.open = False
+        session.save()
+        return Response({'message': 'ok'})
+
+
+class MessageView(ListAPIView, CreateAPIView):
+    """
+    消息
+    """
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    filter_class = MessageFilter
+
+    def get_queryset(self):
+        sessions = Session.objects.filter(user_id=self.request.user.id)
+        queryset = None
+        for session in sessions:
+            if not queryset:
+                queryset = session.message_set.all()
+            else:
+                queryset = queryset | session.message_set.all()
+        return queryset

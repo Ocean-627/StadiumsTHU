@@ -173,6 +173,12 @@ Response:
 
      返回在images列表中，列表中每一项是图片的URL，可以直接访问。
 
+**新增了加强版**
+
+`URL:/api/user/stadiumdetail`
+
+获取更详细的信息，之前的`URL`只返回一个信息相对较少的列表。
+
 ##### 获取场地信息
 
 ```js
@@ -281,7 +287,7 @@ Response:
 
 ```js
 Method: POST
-URL: /api/user/reserve
+URL: /api/user/reserve/
 Request:
 {
     'duration_id': '',
@@ -318,23 +324,32 @@ QueryParam:
 Response:
 [
     {
-        "id": 7,
-        "stadiumName": "综合体育馆",
-        "courtName": "场地0",
+        "id": 15,
         "result": "success",
-        "comments": [],
-        "has_comments": false,
-        "startTime": "10:00",
-        "endTime": "11:00",
+        "comments": [
+            {
+                "id": 32,
+                "courtName": "场地4",
+                "images": [],
+                "content": "有一说一确实得试一下你知道吧，要不然不放心",
+                "score": 3,
+                "user": 1,
+                "court": 52
+            }
+        ],
+        "has_comments": true,
+        "stadium": "综合体育馆",
+        "court": "场地4",
+        "court_id": 52,
+        "date": "2020-11-26",
+        "startTime": "11:00",
+        "endTime": "12:00",
         "payment": false,
         "cancel": false,
         "checked": false,
         "leave": false,
-        "stadium": 10,
-        "court": 32,
-        "user": 2,
-        "duration": 241
-    },
+        "user": 1
+    }
 ]
 ```
 
@@ -346,14 +361,18 @@ Response:
 
    问题不大，只是文档手滑写错了。
 
-##### 取消预订
+##### 更改预订
 
 ```js
 Method: PUT
 URL: /api/user/reserve
 Request:
 {
-    'event_id': '',
+    'id': '',
+    'payment': '',
+    'cancel': '',
+    'checked': '',
+    'leave': ''
 }
 Response:
 {
@@ -361,7 +380,28 @@ Response:
 }
 ```
 
-其中 `eventId`代表要取消预定的时段 `id`。
+其中 `id`代表要取消预定的时段 `id`。
+
+四个参数都是可选的，代表这个预定的状态。
+
+其中`cancel`应该进行合法性检查，暂时不清楚前端还是后端做。
+
+**删除历史记录**
+
+```js
+Method: DELETE
+URL: /api/user/reserve
+Request:
+{
+    'id': '',
+}
+Response:
+{
+    'message': 'ok',
+}
+```
+
+`id`为要删除的记录的`id`
 
 ###### 需求：
 
@@ -371,7 +411,7 @@ Response:
 
   2. ~~查看预定里面没给预定时段id~~
 
-     返回在`duration`中
+     返回在`duration_id`中，但是`duration`是会每天更新的，不应该用这个东西作为筛选的参数。
 
 ### 评价场馆
 
@@ -382,7 +422,10 @@ Method: GET
 URL: /api/user/comment
 Request:{
     'content': '',
-    'court_id': ''
+    'court_id': ''，
+    'stadium_id': '',
+    'page': '',
+    'size': ''
 }
 Response:
 [
@@ -409,6 +452,10 @@ Response:
 
 `court_id`**精确**匹配场地编号。
 
+`stadium_id`精确匹配场馆编号。
+
+`page`和`size`是分页参数，`page`代表分页的第几页，`size`代表一页的大小。
+
 **评价场馆**
 
 ```js
@@ -427,7 +474,6 @@ Response:
     "score": 3,
     "user": 2,
     "court": 33,
-    "reserve": 8
 }
 ```
 
@@ -435,7 +481,7 @@ Response:
 
 请求参数分别为事件的`Id`和评价内容。
 
-`content`要求至少为$15$字，最多为$300$字。
+`content`要求至少为$5$字，最多为$300$字。
 
 **撤销评价**
 
@@ -540,6 +586,119 @@ Response:
     'message': 'ok'
 }
 ```
+
+#### 站内会话
+
+##### 查看所有会话
+
+```js
+Method: GET
+URL: /api/user/session
+Request:{
+    'id': '',
+    'open': '',
+    'checked': ''
+    'sort': ''
+}
+Response:
+[
+    {
+        "id": 3,
+        "messages": [],
+        "user_id": 2,
+        "open": true,
+        "checked": false,
+        "createTime": "2020-12-10T03:50:39.587558Z",
+        "updateTime": "2020-12-10T03:50:39.587558Z"
+    },
+]
+```
+
+请求参数中`open`字段代表会话是否关闭，`checked`代表管理员是否已经审核。
+
+`sort`目前支持按照`createTime`和`updateTime`排序。
+
+返回值中`messages`是一个列表，每一项是一条消息。
+
+**创建会话**
+
+```js
+Method: POST
+URL: /api/user/session
+Request:{}
+Response:
+{
+    "id": 11,
+    "messages": [],
+    "user_id": 2,
+    "open": false,
+    "checked": false,
+    "createTime": "2020-12-10T09:56:56.624058Z",
+    "updateTime": "2020-12-10T09:56:56.624058Z"
+}
+```
+
+不需要任何参数。
+
+**关闭会话**
+
+```js
+Method: PUT
+URL: /api/user/session
+Request:{
+    'session_id': ''
+}
+Response:
+{
+    'message': 'ok'
+}
+```
+
+**发送消息**
+
+```js
+Method: POST
+URL: /api/user/message
+Request:{
+    'session_id': '',
+    'content': ''
+}
+Response:
+{
+    "id": 10,
+    "sender": "U",
+    "content": "我们是尽力局",
+    "createTime": "2020-12-10T10:01:55.554084Z",
+    "session": 11
+}
+```
+
+请求参数中`session_id`代表会话的`id`，`content`代表消息内容。
+
+**查看消息**
+
+```js
+Method: GET
+URL: /api/user/message
+Request:{
+    'session_id': '',
+    'id': '',
+    'sort': '',
+    'content': ''
+}
+Response:
+[
+    {
+        "id": 2,
+        "sender": "U",
+        "content": "管理员您好，我上当了",
+        "createTime": "2020-12-10T04:16:16.262133Z",
+        "session": 2
+    }
+]
+```
+
+参数`sort`表示排序，目前只支持按照`createTime`排序，`content`按照模糊匹配查找。
 
 ## 需求：
 

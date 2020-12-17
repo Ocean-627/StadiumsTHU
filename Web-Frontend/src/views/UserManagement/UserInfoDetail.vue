@@ -344,9 +344,7 @@ export default {
     this.$axios
       .get(`/user/`, { params: { userId: this.$route.params.userId } })
       .then(res => {
-          console.log(res)
         this.user = res.data.results[0];
-        console.log(this.user);
       });
   }
 };

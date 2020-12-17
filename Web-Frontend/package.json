@@ -28,6 +28,7 @@
         "outlayer": "^2.1.1",
         "popper.js": "^1.16.1",
         "vue": "^2.5.2",
+        "vue-baidu-map": "^0.21.22",
         "vue-cookie": "^1.1.4",
         "vue-masonry": "^0.12.0",
         "vue-router": "^3.0.1",

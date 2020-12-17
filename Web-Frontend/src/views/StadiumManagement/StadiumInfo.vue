@@ -6,7 +6,7 @@
             <div class="row wrapper border-bottom white-bg page-heading">
                 <!--Breadcrum 导航-->
                 <div class="col-lg-9">
-                    <h2>场馆信息管理</h2>
+                    <h2>场馆列表</h2>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="/home">主页</a>
@@ -15,7 +15,7 @@
                             场馆管理
                         </li>
                         <li class="breadcrumb-item active">
-                            <strong>场馆信息管理</strong>
+                            <strong>场馆列表</strong>
                         </li>
                     </ol>
                 </div>
@@ -31,15 +31,16 @@
                         <div class="contact-box">
                             <!-- 主要部分 & 单个单元 -->
                             <div class="row i-row">
-                                <div class="col-md-7">
+                                <div class="col-md-7 i-infobox">
                                     <img alt="image" class="rounded m-t-xs img-fluid i-img" :src="stadium.images[0].image">
                                 </div>
                                 <div class="col-md-5 i-infobox">
-                                    <h2 class="i-title"><strong>{{stadium.name}}</strong></h2>
-                                    <i class="fa fa-comment-o i-icon"></i>{{stadium.comments}}条评论 <br>
-                                    <i class="fa fa-clock-o i-icon"></i>开放时间：{{stadium.openTime}} - {{stadium.closeTime}}<br>
-                                    <i class="fa fa-location-arrow i-icon"></i>{{stadium.location}}<br>
+                                    <div><h2 class="i-title"><strong>{{stadium.name}}</strong></h2></div>
+                                    <div><i class="fa fa-comment-o i-icon"></i>{{stadium.comments}}条评论 <br></div>
+                                    <div><i class="fa fa-clock-o i-icon"></i>开放时间：{{stadium.openTime}} - {{stadium.closeTime}}<br></div>
+                                    <div><i class="fa fa-location-arrow i-icon"></i>{{stadium.location}}<br></div>
                                     <div class="i-score">
+                                        <i class="fa fa-heart i-icon"></i>
                                         <i v-for="num in 5" :key="num" style="margin-right: 3px" :class="(num<=stadium.score)?'fa fa-star i-star':((num-0.5<=stadium.score)?'fa fa-star-half-o i-star':'fa fa-star-o i-star')"></i> {{ stadium.score }}
                                     </div>
                                 </div>
@@ -54,16 +55,20 @@
                             </div>
                             <div class="contact-box-footer">
     
-                                <a type="button" class="btn btn-outline btn-default" v-on:click="editStadium(stadium.id)">
+                                <button type="button" class="btn btn-outline btn-default" v-on:click="editStadium(stadium.id)">
                                     <i class="fa fa-edit"></i> 编辑场馆信息
-                                </a>
+                                </button>
     
-                                <a type="button" class="btn btn-outline btn-default" v-on:click="editGround(stadium.id)">  
+                                <button type="button" class="btn btn-outline btn-default" v-on:click="editGround(stadium.id)">  
                                     <i class="fa fa-clock-o"></i> 修改预定时间段
-                                </a>
+                                </button>
     
-                                <button type="button" class="btn btn-outline btn-danger" v-on:click="deleteStadium(stadium.id)">
-                                    <i class="fa fa-trash"></i> 移除场馆 
+                                <button type="button" class="btn btn-outline btn-default" v-on:click="enter(stadium)">  
+                                    <i class="fa fa-tasks"></i> 场地预留
+                                </button>
+
+                                <button type="button" class="btn btn-outline btn-default" v-on:click="checkReserve(stadium)">  
+                                    <i class="fa fa-eye"></i> 查看预约
                                 </button>
                             </div>
                         </div>
@@ -86,7 +91,7 @@
 }
 
 .contact-box {
-    max-width: 500px;
+    max-width: 550px;
     padding: 15px;
 }
 
@@ -105,6 +110,9 @@
     line-height: 30px;
     font-size: 13px;
     font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
 }
 
 .i-star {
@@ -160,6 +168,12 @@ export default {
         },
         editGround(index){
             window.location.replace("/stadium_management/stadium_info/edit_ground?id="+index.toString());
+        },
+        enter(stadium) {
+            window.location.replace('/stadium_management/stadium_info/detail?id='+stadium.id.toString())
+        },
+        checkReserve(stadium) {
+            window.location.replace('/stadium_management/stadium_info/record?id='+stadium.id.toString())
         },
         deleteStadium(index) {
             swal({

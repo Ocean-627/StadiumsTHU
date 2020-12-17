@@ -6,7 +6,7 @@
             <div class="row wrapper border-bottom white-bg page-heading">
                 <!--Breadcrum 导航-->
                 <div class="col-lg-9">
-                    <h2>用户信息 </h2>
+                    <h2>预约记录 </h2>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="/home">主页</a>
@@ -15,7 +15,7 @@
                             场馆管理
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="/stadium_management/ground_reserve">预约记录管理</a>
+                            <a href="/stadium_management/stadium_info">场馆列表</a>
                         </li>
                         <li class="breadcrumb-item active">
                             <strong>预约记录</strong>

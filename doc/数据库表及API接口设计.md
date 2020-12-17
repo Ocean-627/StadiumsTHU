@@ -413,42 +413,122 @@ Response:{
 }	
 ```
 
-##### **（永久）修改场馆预约时间**  
+##### **【新】修改场地类型开放时间**  
 
 ```js
 Method:POST
-URL: /api/manager/change
+URL: /api/manager/changeduration/
 Request:{
-    // 该处应为场馆id，即stadiumId
-    'stadiumId':1,                                     
-    'managerId':2018013396,
-    'startDate':'2020-11-01',
-    'duration':'02:00',
-    'openTime':'09:00',
-    'closeTime':'22:00',
-    'openHours':'09:00-12:00 13:00-17:00 18:00-22:00'
+    'date':2020-12-15,                                     
+    'courtType_id':1,
+    'openingHours':'08:00-10:00'
+		'details':'学校通知调整'          // 可选参数，即对应网页端的备注选项
 }
 Response:{
     'message':'ok',
 }
 ```
 
-##### **（临时）添加场地占用**
+##### **【新】添加场地占用**
 
 ```js
 Method:POST
-URL: /api/manager/event
+URL: /api/manager/addevent/
 Request:{
-    'managerId':2018013396,
-    'courtId':9,
-    'date':'2020-10-31',
-    'startTime':'09:00',
-    'endTime':'12:00'
+    'manager_id':1,
+    'court_id':2,
+    'date':'2020-12-15',
+    'startTime':'09:15',
+    'endTime':'09:45'，
+    'details':'马杯赛事'            // 可选参数，即对应网页端的备注选项
 }
 Response:{
     'message':'ok'
 }
 ```
+
+##### **【新】获取特定用户信用记录**
+
+```js
+Method:GET
+URL: /api/manager/default/
+Request:{
+    'user_id':1,
+}
+Response:{
+    "count": 4,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "date": "2020-12-14",
+            "time": "22:29",
+            "cancel": true,
+            "detail": "预约不来",
+            "valid": true,
+            "user": 1
+        },
+        {
+            "id": 2,
+            "date": "2020-12-14",
+            "time": "22:29",
+            "cancel": true,
+            "detail": "预约不来",
+            "valid": true,
+            "user": 1
+        },
+        {
+            "id": 3,
+            "date": "2020-12-14",
+            "time": "22:29",
+            "cancel": true,
+            "detail": "预约不来",
+            "valid": true,
+            "user": 1
+        },
+        {
+            "id": 9,
+            "date": null,
+            "time": null,
+            "cancel": false,
+            "detail": "预约不来",
+            "valid": false,
+            "user": 1
+        }
+    ]
+}
+```
+
+##### **【新】撤销信用记录**
+
+```js
+Method:PUT
+URL: /api/manager/default/
+Request:{
+    'default_id':1,
+    'detail':''                   // 可选参数，对应备注
+}
+Response:{
+    'message':'ok'
+}
+```
+
+##### **【新】将用户移入或移出黑名单**
+
+```js
+Method:PUT
+URL: /api/manager/user/
+// 若用户在黑名单中，该操作将用户移出黑名单，等价于手动撤销全部信用记录
+// 若用户不在黑名单中，该操作将用户移入黑名单
+Request:{
+    'user_id':1,
+}
+Response:{
+    'message':'ok'
+}
+```
+
 
 ##### **查看用户列表**
 

@@ -5,7 +5,7 @@
             <Header></Header>
             <div class="row border-bottom white-bg dashboard-header">
                 <div class="col-md-3">
-                    <h2>欢迎您，马保国</h2>
+                    <h2>欢迎您，{{ this.username }}</h2>
                     <small>您有42条消息和6条通知。</small>
                 </div>
             </div>
@@ -26,12 +26,19 @@ import Footer from "@/components/Footer"
 import Toolbox from "@/components/Toolbox"
 export default {
     data() {
-        return {}
+        return {
+            username: localStorage.getItem("username")
+        }
     },
     components: {
         Toolbox, Navbar, Header, Footer
     },
     mounted() {
+        // this.$axios.get('manager/', {})
+        // .then(res => {
+        //     console.log(res.data);
+        // })
+        let _this = this
         setTimeout(function () {
             toastr.options = {
                 closeButton: true,
@@ -39,8 +46,9 @@ export default {
                 showMethod: 'slideDown',
                 timeOut: 4000
             };
-            toastr.success('清动家园管理者', '欢迎您 马保国');
+            toastr.success('清动家园管理者', '欢迎您 ' + _this.username);
         }, 1300);
+
     }
 }
 
