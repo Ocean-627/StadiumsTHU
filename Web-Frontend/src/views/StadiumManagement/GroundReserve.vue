@@ -26,7 +26,7 @@
             <div class="wrapper wrapper-content animated fadeInRight ecommerce">
                 <div class="row" style="margin-bottom: 20px">
                     <div class="col-lg-3">
-                        <el-select v-model="current_date" id="date" @change="changeDate(current_date)">
+                        <el-select v-model="current_date" id="date" @change="setDate(dates[current_date].label)">
                             <el-option v-for="date in dates" :key="date.value" :value="date.value" :label="date.label"/>
                         </el-select> 
                     </div>
@@ -280,7 +280,9 @@ export default {
       form_time: "",
       form_start: "",
       form_end: "",
-      stadiumName: ""
+      stadiumName: "",
+      courts:"",
+      map_id_to_court:""
     };
 
     return res;
@@ -304,8 +306,33 @@ export default {
     manage(ground) {
       // TODO: 跳转到相应的预约信息管理界面就行
     },
-    changeDate(val){
-
+    setDate(date){
+      let request = {
+        params: {
+          stadium_id: this.$route.query.id,
+          date: date
+        }
+      };
+      this.$axios.get("duration/", request).then(res => {
+        let durations = res.data;
+        for (let i = 0; i < durations.length; i++) {
+          this.courts[this.map_id_to_court[durations[i].court]].reservedDuration = [];
+        }
+        for (let i = 0; i < durations.length; i++) {
+          this.courts[this.map_id_to_court[durations[i].court]].reservedDuration.push(durations[i]);
+        }
+        for (let i = 0; i < this.grounds.length; i++) {
+          for (let j = 0; j < this.grounds[i].courts.length; j++) {
+            if (this.grounds[i].courts[j].reservedDuration === undefined) {
+              this.grounds[i].courts[j].reservedDuration = [];
+            }
+            this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
+              this.grounds[i].courts[j].reservedDuration
+            );
+          }
+        }
+        this.$forceUpdate();
+      });
     }
   },
   filters: {
@@ -390,106 +417,53 @@ export default {
     });
     let request1 = {
       params: {
-        stadium_id: this.$route.query.id
-      }
-    };
-    var date = new Date();
-    date.setDate(date.getDate());
-    var dateString =
-      date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-    let request2 = {
-      params: {
-        stadium_id: this.$route.query.id,
-        date: dateString
-      }
-    };
-    let request3 = {
-      params: {
         id: this.$route.query.id
       }
     };
+    let request2 = {
+      params: {
+        stadium_id: this.$route.query.id
+      }
+    };
     let p = Promise.all([
-      this.$axios.get("court/", request1),
-      this.$axios.get("duration/", request2),
-      this.$axios.get("stadium/", request3)
-    ]);
+      this.$axios.get("stadium/", request1),
+      this.$axios.get("court/", request2)]);
     p.then(res => {
       var myDate = new Date();
       this.dates = [];
-      for (let i = 0; i < res[2].data[0].foreDays; i++) {
+      for (let i = 0; i < res[0].data[0].foreDays; i++) {
         var date = new Date();
         date.setDate(date.getDate() + i);
         var dateString = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         this.dates.push({ value: i, label: dateString });
       }
-      this.stadiumName = res[2].data[0].name;
-      let courts = res[0].data;
-      let durations = res[1].data;
-      let courttypes = res[2].data[0].courtTypes;
-      let map_id_to_court = {};
-      for (let i = 0; i < courts.length; i++) {
-        map_id_to_court[courts[i].id] = i;
+      this.stadiumName = res[0].data[0].name;
+      let courttypes = res[0].data[0].courtTypes;
+      this.map_id_to_court = {};
+      this.courts = res[1].data;
+      for (let i = 0; i < this.courts.length; i++) {
+        this.map_id_to_court[this.courts[i].id] = i;
       }
-      for (let i = 0; i < durations.length; i++) {
-        if (courts[map_id_to_court[durations[i].court]].reservedDuration === undefined) {
-          courts[map_id_to_court[durations[i].court]].reservedDuration = [];
-        }
-        courts[map_id_to_court[durations[i].court]].reservedDuration.push(durations[i]);
-      }
-
       let map_id_to_time = {};
       for (let i = 0; i < courttypes.length; i++) {
         map_id_to_time[courttypes[i].id] = courttypes[i].openingHours;
       }
-
       let map_type_to_index = {};
-      for (let i = 0; i < courts.length; i++) {
-        if (map_type_to_index[courts[i].type] === undefined) {
+      for (let i = 0; i < this.courts.length; i++) {
+        if (map_type_to_index[this.courts[i].type] === undefined) {
           this.grounds.push({
-            type: courts[i].type,
+            type: this.courts[i].type,
             courts: [],
-            openingHours: map_id_to_time[courts[i].courtType]
+            openingHours: map_id_to_time[this.courts[i].courtType]
           });
-          map_type_to_index[courts[i].type] = this.grounds.length - 1;
+          map_type_to_index[this.courts[i].type] = this.grounds.length - 1;
         }
-        this.grounds[map_type_to_index[courts[i].type]].courts.push(courts[i]);
+        this.grounds[map_type_to_index[this.courts[i].type]].courts.push(this.courts[i]);
       }
-
-      for (let i = 0; i < this.grounds.length; i++) {
-        let openTimes = this.grounds[i].openingHours.split(" ");
-        this.grounds[i].open_times = [];
-
-        // 构造某个场地类型的open_times
-        for (let k = 0; k < openTimes.length; k++) {
-          var openTime = {
-            startTime: openTimes[k].split("-")[0].toString(),
-            endTime: openTimes[k].split("-")[1].toString()
-          };
-          this.grounds[i].open_times.push(openTime);
-        }
-
-        // 遍历特定场地
-        for (let j = 0; j < this.grounds[i].courts.length; j++) {
-          // 遍历特定时段，设定type字段
-          if (this.grounds[i].courts[j].reservedDuration === undefined) {
-            this.grounds[i].courts[j].reservedDuration = [];
-          }
-          for (
-            let p = 0;
-            p < this.grounds[i].courts[j].reservedDuration.length;
-            p++
-          ) {
-            // openstate为0表示是管理员预留的场地，为1表示是用户自己预订的场地
-            this.grounds[i].courts[j].reservedDuration[p].type =
-              2 -
-              Number(this.grounds[i].courts[j].reservedDuration[p].openState);
-          }
-          this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
-            this.grounds[i].courts[j].reservedDuration,
-            this.grounds[i].open_times
-          );
-        }
-      }
+      var date = new Date();
+      date.setDate(date.getDate());
+      var dateString = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+      this.setDate(dateString);
     });
   }
 };
