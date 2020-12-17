@@ -11,21 +11,6 @@ export default {
         let i = 0, j = 0
         let e = "00:00"
         for(; i < reserves.length; i++){
-            if(e != reserves[i].startTime){
-                durations.push({
-                    type: -1,
-                    startTime: e,
-                    endTime: reserves[i].startTime
-                })
-            }
-            e = reserves[i].endTime
-        }
-        durations.push({
-            type: -1,
-            startTime: e,
-            endTime: "24:00"
-        })
-        for (i=0; i < reserves.length; i++){
             var type;
             if ((reserves[i].openState === true)&&(reserves[i].accessible === true)){
                 type = 0;
@@ -41,7 +26,20 @@ export default {
                 startTime: reserves[i].startTime,
                 endTime: reserves[i].endTime
             })
+            if(e != reserves[i].startTime){
+                durations.push({
+                    type: -1,
+                    startTime: e,
+                    endTime: reserves[i].startTime
+                })
+            }
+            e = reserves[i].endTime
         }
+        durations.push({
+            type: -1,
+            startTime: e,
+            endTime: "24:00"
+        })
         var compare = function(obj1,obj2){
             var value1 = obj1["startTime"];
             var value2 = obj2["startTime"];
