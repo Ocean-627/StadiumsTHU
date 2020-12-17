@@ -1,5 +1,6 @@
 from django.db import models
 from app.utils.validator import *
+from app.utils.utils import *
 import django.utils.timezone as timezone
 
 
@@ -119,6 +120,13 @@ class Duration(models.Model):
 
 class ChangeDuration(models.Model):
     # （永久）修改预约时段事件
+
+    def is_active(self):
+        now_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        if self.courtType.stadium.foreDays > judgeDate(self.date, now_date) > 0:
+            return True
+        return False
+
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     courtType = models.ForeignKey(CourtType, on_delete=models.CASCADE)
     openingHours = models.CharField(max_length=300)
