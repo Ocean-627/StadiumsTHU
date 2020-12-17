@@ -4,6 +4,10 @@ from app.utils.validator import *
 
 class ChangeDurationSerializer(serializers.ModelSerializer):
     courtType_id = serializers.IntegerField(label='场馆类型编号', write_only=True)
+    state = serializers.SerializerMethodField()
+
+    def get_state(self, obj):
+        return obj.get_state_display()
 
     def validate_courtType_id(self, value):
         courtType = CourtType.objects.filter(id=value).first()
@@ -22,6 +26,10 @@ class ChangeDurationSerializer(serializers.ModelSerializer):
 
 class AddEventSerializer(serializers.ModelSerializer):
     court_id = serializers.IntegerField(label='场地编号', write_only=True)
+    state = serializers.SerializerMethodField()
+
+    def get_state(self, obj):
+        return obj.get_state_display()
 
     def validate_court_id(self, value):
         court = Court.objects.filter(id=value).first()
@@ -40,6 +48,10 @@ class AddEventSerializer(serializers.ModelSerializer):
 
 class AddBlacklistSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(label='用户编号', write_only=True)
+    state = serializers.SerializerMethodField()
+
+    def get_state(self, obj):
+        return obj.get_state_display()
 
     def validate_user_id(self, value):
         user = User.objects.filter(id=value).first()

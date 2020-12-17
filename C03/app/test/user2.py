@@ -5,6 +5,12 @@ from app.models import *
 from app.utils.utils import stadiums
 from app.utils.utils import initStadium
 
+"""
+测试时间 2020-11-24
+原因：测试用户的各项基本动态操作，如预订，评论，收藏
+结果: 正常
+"""
+
 
 class TestReserve(TestCase):
     def setUp(self) -> None:

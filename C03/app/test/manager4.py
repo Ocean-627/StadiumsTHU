@@ -3,39 +3,84 @@ import json
 from django.test import TestCase
 from app.models import *
 
+"""
+测试时间 2020-12-17
+原因：测试管理员端对站内会话的处理，以及和用户的交互
+结果: 发现了获取用户图片时的bug
+"""
 
-class TestCreateStadium(TestCase):
+
+class TestSession(TestCase):
     def setUp(self) -> None:
         Manager.objects.create(username='cbx', password='123', userId=1, email='cbx@qq.com', loginToken=1)
-        self.headers = {'HTTP_loginToken': 1}
+        self.manager_headers = {'HTTP_loginToken': 1}
 
-    def test_create(self):
+        User.objects.create(userId=2018011891, loginToken=2)
+        User.objects.create(userId=2018011894, loginToken=3)
+        self.user1_headers = {'HTTP_loginToken': 2}
+        self.user2_headers = {'HTTP_loginToken': 3}
+
+    def test_chat(self):
         params = {
-            'name': '测试场馆',
-            'information': '测试用',
-            'openTime': '08:00',
-            'closeTime': '10:00',
-            'openState': 1,
-            'foreDays': 3,
-            'createTime': '2020-12-25'
+            'user_id': 1
         }
-        resp = self.client.post('/api/manager/stadium/', params, **self.headers)
+        resp = self.client.post('/api/manager/session/', params, **self.manager_headers)
         self.assertEqual(resp.status_code, 201)
 
-        stadium = Stadium.objects.first()
-        self.assertEqual(stadium.openState, 0)
+        params = {
+            'session_id': 1,
+            'content': '1'
+        }
+        resp = self.client.post('/api/manager/message/', params, **self.manager_headers)
+        self.assertEqual(resp.status_code, 201)
+
+        params = {}
+        resp = self.client.get('/api/user/message/', params, **self.user1_headers)
+        self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertEqual(content[0]['sender'], 'M')
 
         params = {
-            'stadium_id': 1,
-            'type': '羽毛球',
-            'openingHours': '08:00-12:00,13:00-17:00',
-            'openState': 1
+            'session_id': 1,
         }
-        resp = self.client.post('/api/manager/courttype/', params, **self.headers)
-        self.assertEqual(resp.status_code, 400)
+        resp = self.client.get('/api/user/message/', params, **self.user1_headers)
+        self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertEqual(len(content), 1)
 
-        params['num'] = 4
-        resp = self.client.post('/api/manager/courttype/', params, **self.headers)
+        params = {
+            'id': 1,
+            'checked': 1
+        }
+        # 用户的session是没有分页的，因此不需要再取results
+        resp = self.client.get('/api/user/session/', params, **self.user1_headers)
+        self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertEqual(len(content), 1)
+
+        params = {}
+        resp = self.client.get('/api/user/session/', params, **self.user2_headers)
+        self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertEqual(len(content), 0)
+
+        params = {
+            'session_id': 1,
+            'content': 2
+        }
+        resp = self.client.post('/api/user/message/', params, **self.user1_headers)
+
+        params = {}
+        resp = self.client.get('/api/manager/session/', params, **self.manager_headers)
         self.assertEqual(resp.status_code, 200)
 
-        self.assertEqual(len(Court.objects.all()), 4)
+        content = json.loads(resp.content)['results']
+        self.assertEqual(content[0]['checked'], False)
+
+        params = {
+            'session_id': 1,
+            'open': False
+        }
+        resp = self.client.put('/api/manager/session/', params, **self.manager_headers, content_type='application/json')
+        session = Session.objects.first()
+        self.assertEqual(session.open, False)

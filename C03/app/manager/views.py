@@ -58,7 +58,7 @@ def daily_task():
     for courtType in courtTypes:
         changeDate = calculateDate(now_date, courtType.stadium.foreDays - 1)
         try:
-            changeDuration = ChangeDuration.objects.get(courtType=courtType, date=changeDate)
+            changeDuration = ChangeDuration.objects.filter(courtType=courtType, is_active=True)[0]
             openHours = changeDuration.openingHours.split(" ")
             duration = changeDuration.duration
             changeDuration.state = 2
@@ -66,7 +66,6 @@ def daily_task():
         except:
             openHours = courtType.openingHours.split(" ")
             duration = courtType.duration
-        print(openHours)
         seconds = judgeTime(duration, "00:00")
         for openHour in openHours:
             for court in courtType.court_set.all():
@@ -118,7 +117,7 @@ def minute_task():
             reserveEvent.save()
             default = Default(user=reserveEvent.user, date=myDate, time=myTime)
             default.save()
-            if reserveEvent.user.defaults == 3:
+            if reserveEvent.user.defaults >= 3:
                 reserveEvent.user.inBlacklistTime = myDate
                 reserveEvent.user.inBlacklist = True
             reserveEvent.user.save()
@@ -296,8 +295,11 @@ class ReserveEventView(ListAPIView):
     serializer_class = ReserveEventSerializer
     filter_class = ReserveEventFilter
 
+    def get_queryset(self):
+        return ReserveEvent.objects.all().order_by('-createTime')
 
-class DefaultView(ListAPIView, CreateAPIView):
+
+class DefaultView(ListAPIView):
     """
     违约记录
     """
@@ -359,15 +361,15 @@ class AddEventView(ListAPIView):
         endTime = addEvent.endTime
         myDurations = addEvent.court.duration_set.all().filter(date=addEvent.date)
         for myDuration in myDurations:
-            if judgeAddEvent(startTime, endTime, myDurations.startTime, myDurations.endTime):
+            if judgeAddEvent(startTime, myDuration.startTime, endTime, myDuration.endTime):
                 myDuration.openState = 0
-                try:
-                    reserveEvent = ReserveEvent.objects.get(duration_id=myDuration.id)
-                    reserveEvent.cancel = 1
-                    reserveEvent.save()
-                except:
-                    pass
                 myDuration.save()
+                reserveEvent = ReserveEvent.objects.filter(duration_id=myDuration.id).first()
+                if not reserveEvent:
+                    continue
+                # TODO: 最好在这里给用户发回一条消息
+                reserveEvent.cancel = 1
+                reserveEvent.save()
         return Response({'message': 'ok'})
 
     def put(self, request):
@@ -390,7 +392,7 @@ class AddBlacklistView(ListAPIView, CreateAPIView):
         # TODO: 管理员可以撤销其他管理员的操作么？
         addBlacklist = AddBlacklist.objects.filter(id=id).first()
         if not addBlacklist:
-            return Response({'error': 'Invalid addBlacklist_id'}, status=400)
+            return Response({'error': 'Invalid Blacklist_id'}, status=400)
         addBlacklist.state = 1
         addBlacklist.save()
         user = addBlacklist.user

@@ -1,5 +1,6 @@
 from django.db import models
 from app.utils.validator import *
+from app.utils.utils import *
 import django.utils.timezone as timezone
 
 
@@ -96,6 +97,7 @@ class ReserveEvent(models.Model):
     date = models.CharField(max_length=10)
     startTime = models.CharField(max_length=50)
     endTime = models.CharField(max_length=50)
+    has_comments = models.BooleanField(default=0)
     payment = models.BooleanField(default=False, verbose_name='是否支付')
     cancel = models.BooleanField(default=False, verbose_name='是否取消')
     checked = models.BooleanField(default=False, verbose_name='是否使用')
@@ -115,40 +117,6 @@ class Duration(models.Model):
     endTime = models.CharField(max_length=10)
     openState = models.BooleanField()
     accessible = models.BooleanField()
-
-
-class ChangeDuration(models.Model):
-    # （永久）修改预约时段事件
-    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
-    courtType = models.ForeignKey(CourtType, on_delete=models.CASCADE)
-    openingHours = models.CharField(max_length=300)
-    duration = models.CharField(max_length=10, null=True)
-    date = models.CharField(max_length=32)
-    time = models.DateTimeField(auto_now_add=True)
-    type = models.CharField(default="修改预约时间段", max_length=20)
-    price = models.IntegerField(default=1)
-    membership = models.IntegerField(default=1)
-    openState = models.BooleanField()
-    details = models.CharField(default="计算机网络", max_length=100)
-    content = models.CharField(default="软件工程", max_length=100)
-    state = models.IntegerField()
-    # TODO:完善事件信息
-
-
-class AddEvent(models.Model):
-    # （临时）添加活动事件
-    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
-    court = models.ForeignKey(Court, on_delete=models.CASCADE)
-    startTime = models.CharField(max_length=32)
-    endTime = models.CharField(max_length=32)
-    date = models.CharField(max_length=32)
-    time = models.DateTimeField(auto_now_add=True)
-    type = models.CharField(default="场地占用", max_length=20)
-    information = models.CharField(max_length=1000, null=True)
-    details = models.CharField(default="汇编与编译原理", max_length=100)
-    content = models.CharField(default="软件工程", max_length=100)
-    state = models.IntegerField()
-    # TODO:完善事件信息
 
 
 class Comment(models.Model):
@@ -181,6 +149,104 @@ class CollectEvent(models.Model):
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
 
 
+class Default(models.Model):
+    # 违约记录
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.CharField(max_length=100, null=True)
+    time = models.CharField(max_length=100, null=True)
+    cancel = models.BooleanField(default=False, verbose_name='管理员是否手动撤销预约记录')
+    detail = models.CharField(max_length=20, default="预约不来")
+    valid = models.BooleanField(default=True, verbose_name='违约记录是否在有效期之内')
+    # TODO:完善信息
+
+
+class ChangeDuration(models.Model):
+    # （永久）修改预约时段事件
+    V = 0
+    C = 1
+    E = 2
+    APPLY_RESULT = (
+        (V, 'valid'),
+        (C, 'cancel'),
+        (E, 'exceed time limit'),
+    )
+
+    def is_active(self):
+        now_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        if self.courtType.stadium.foreDays > judgeDate(self.date, now_date) > 0:
+            return True
+        return False
+
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    courtType = models.ForeignKey(CourtType, on_delete=models.CASCADE)
+    openingHours = models.CharField(max_length=300)
+    duration = models.CharField(max_length=10, null=True)
+    date = models.CharField(max_length=32)
+    time = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(default="修改预约时间段", max_length=20)
+    price = models.IntegerField(default=1)
+    membership = models.IntegerField(default=1)
+    openState = models.BooleanField()
+    details = models.CharField(default="计算机网络", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
+    state = models.IntegerField(choices=APPLY_RESULT, default=V, verbose_name='事件状态')
+    # TODO:完善事件信息
+
+
+class AddEvent(models.Model):
+    # （临时）添加活动事件
+    V = 0
+    C = 1
+    E = 2
+    APPLY_RESULT = (
+        (V, 'valid'),
+        (C, 'cancel'),
+        (E, 'exceed time limit'),
+    )
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    court = models.ForeignKey(Court, on_delete=models.CASCADE)
+    startTime = models.CharField(max_length=32)
+    endTime = models.CharField(max_length=32)
+    date = models.CharField(max_length=32)
+    time = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(default="场地占用", max_length=20)
+    information = models.CharField(max_length=1000, null=True)
+    details = models.CharField(default="汇编与编译原理", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
+    state = models.IntegerField(choices=APPLY_RESULT, default=V, verbose_name='事件状态')
+    # TODO:完善事件信息
+
+
+class AddBlacklist(models.Model):
+    # 添加至黑名单操作
+    V = 0
+    C = 1
+    E = 2
+    APPLY_RESULT = (
+        (V, 'valid'),
+        (C, 'cancel'),
+        (E, 'exceed time limit'),
+    )
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(default="移入黑名单", max_length=20)
+    time = models.DateTimeField(auto_now_add=True)
+    details = models.CharField(default="操作系统", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
+    state = models.IntegerField(choices=APPLY_RESULT, default=V, verbose_name='事件状态')
+    # TODO:完善信息
+
+
+class OtherOperation(models.Model):
+    # 其他不可撤销操作，主要包括移出黑名单操作，撤销信用记录操作及编辑场馆信息操作
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    time = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(default="其他操作", max_length=20)
+    details = models.CharField(default="软件工程", max_length=100)
+    content = models.CharField(default="软件工程", max_length=100)
+    # TODO:完善信息
+
+
 class Session(models.Model):
     # 会话
     user_id = models.IntegerField()
@@ -205,36 +271,3 @@ class Message(models.Model):
     manager_id = models.IntegerField(null=True)
     content = models.CharField(max_length=500)
     createTime = models.DateTimeField(auto_now_add=True)
-
-
-class Default(models.Model):
-    # 违约记录
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.CharField(max_length=100, null=True)
-    time = models.CharField(max_length=100, null=True)
-    cancel = models.BooleanField(default=False, verbose_name='管理员是否手动撤销预约记录')
-    detail = models.CharField(max_length=20, default="预约不来")
-    valid = models.BooleanField(default=True, verbose_name='违约记录是否在有效期之内')
-    # TODO:完善信息
-
-
-class AddBlacklist(models.Model):
-    # 添加至黑名单操作
-    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    type = models.CharField(default="移入黑名单", max_length=20)
-    time = models.DateTimeField(auto_now_add=True)
-    details = models.CharField(default="操作系统", max_length=100)
-    content = models.CharField(default="软件工程", max_length=100)
-    state = models.IntegerField()
-    # TODO:完善信息
-
-
-class OtherOperation(models.Model):
-    # 其他不可撤销操作，主要包括移出黑名单操作，撤销信用记录操作及编辑场馆信息操作
-    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
-    time = models.DateTimeField(auto_now_add=True)
-    type = models.CharField(default="其他操作", max_length=20)
-    details = models.CharField(default="软件工程", max_length=100)
-    content = models.CharField(default="软件工程", max_length=100)
-    # TODO:完善信息

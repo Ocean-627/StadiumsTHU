@@ -10,7 +10,8 @@ class UserFilter(filters.FilterSet):
     email = filters.CharFilter(field_name='email', lookup_expr='icontains')
     type = filters.CharFilter(field_name='type', lookup_expr='icontains')
     major = filters.CharFilter(field_name='major', lookup_expr='icontains')
-    sort = filters.OrderingFilter(fields=('phone', 'name', 'nickName', 'userId', 'email'))
+    sort = filters.OrderingFilter(
+        fields=('phone', 'name', 'nickName', 'userId', 'email', 'loginTime', 'inBlacklistTime'))
 
     class Meta:
         model = User
@@ -56,12 +57,13 @@ class DurationFilter(filters.FilterSet):
 class ReserveEventFilter(filters.FilterSet):
     stadium = filters.CharFilter(field_name='stadium', lookup_expr='icontains')
     court = filters.CharFilter(field_name='court', lookup_expr='icontains')
+    sort = filters.OrderingFilter(fields=('createTime', ))
 
     # TODO:更多筛选信息
     class Meta:
         model = ReserveEvent
         fields = ['id', 'stadium_id', 'user_id', 'duration_id', 'date', 'startTime', 'endTime', 'payment', 'cancel',
-                  'checked', 'leave']
+                  'checked', 'leave', 'has_comments']
 
 
 class CommentFilter(filters.FilterSet):
@@ -83,21 +85,21 @@ class ChangeDurationFilter(filters.FilterSet):
     # TODO:更多筛选条件
     class Meta:
         model = ChangeDuration
-        fields = ['id']
+        fields = ['id', 'state']
 
 
 class AddEventFilter(filters.FilterSet):
     # TODO:更多筛选条件
     class Meta:
         model = AddEvent
-        fields = ['id']
+        fields = ['id', 'state']
 
 
 class AddBlacklistFilter(filters.FilterSet):
     # TODO:更多筛选条件
     class Meta:
         model = AddBlacklist
-        fields = ['id']
+        fields = ['id', 'state']
 
 
 class DefaultFilter(filters.FilterSet):
