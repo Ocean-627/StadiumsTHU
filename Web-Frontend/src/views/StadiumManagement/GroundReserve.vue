@@ -38,49 +38,48 @@
                                 <h5>{{ ground.type }}</h5>
                                 <div class="ibox-tools">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="fa fa-wrench" style="color: green"></i>
-                      </a>
-                          <ul class="dropdown-menu dropdown-user">
-                          <li>
-                          <a class="dropdown-item" data-toggle="modal" data-target="#myModal">场地预留</a>
-                        </li>
-                        <li>
-                          <a class="dropdown-item" v-on:click="manage(ground)">预约管理</a>
-                        </li>
-                      </ul>
-                      <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                         </div>
-                            </div>
+                                    <i class="fa fa-wrench" style="color: green"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                      <li>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#myModal">场地预留</a>
+                                      </li>
+                                      <li>
+                                        <a class="dropdown-item" v-on:click="manage(ground)">预约管理</a>
+                                      </li>
+                                    </ul>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                  </div>
+                              </div>
                             <div class="ibox-content">
-                                <div v-for="data in ground.courts" :key="data.id">
-                                    <h5>{{ data.name }}</h5>
-                                    <div class="progress">
-                                        <div v-for="reserve in data.reservedDuration" 
-                                        :key="reserve.id" 
-                                        :class="reserve.type | progress_type" 
-                                        :style="0, reserve, data.reservedDuration | progress_length" role="progressbar" aria-valuemin="0" aria-valuemax="100" 
-                                        :title="reserve | progress_title">
-                                        </div>
+                              <div v-for="data in ground.courts" :key="data.id">
+                                  <h5>{{ data.name }}</h5>
+                                  <div class="progress">
+                                      <div v-for="reserve in data.reservedDuration" 
+                                      :key="reserve.id" 
+                                      :class="reserve.type | progress_type" 
+                                      :style="0, reserve, data.reservedDuration | progress_length" role="progressbar" aria-valuemin="0" aria-valuemax="100" 
+                                      :title="reserve | progress_title">
+                                      </div>
                                     </div>
-      
-                                    <div>
-                                        <div v-for="reserve in data.reservedDuration" 
-                                        :key="reserve.id" 
-                                        :style="1, reserve, data.reservedDuration | progress_length" >
-                                        {{reserve.startTime}}
-                                        </div>
+                                  <div>
+                                      <div v-for="reserve in data.reservedDuration" 
+                                      :key="reserve.id" 
+                                      :style="1, reserve, data.reservedDuration | progress_length" >
+                                      {{reserve.startTime}}
+                                      </div>
                                     </div>
-                                    <br/>
+                                  <br/>
                                 </div>
-                            </div>
+                              </div>
                             <div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content animated fadeIn">
                                         <div class="modal-header">
                                             <button type="button" class="close" data-dismiss="modal">
-                            <span aria-hidden="true">&times;</span
-                            ><span class="sr-only">关闭</span></button
-                          ><br />
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only">关闭</span></button>
+                            <br />
                           <h4 class="modal-title">场地预留</h4>
                         </div>
                         <div class="modal-body">
@@ -90,47 +89,28 @@
                           <div class="form-group" id="data_1">
                             <label class="font-normal">使用日期</label>
                             <div class="input-group date">
-                              <span class="input-group-addon"
-                                ><i class="fa fa-calendar"></i></span
-                              ><input type="text" class="form-control" />
+                              <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                          
+                              <input type="text" class="form-control" />
                             </div>
                           </div>
                           <div class="form-group">
                             <label class="font-normal">使用时段</label>
                             <div class="form-group row">
                               <div class="col-sm-5">
-                                <div
-                                  class="input-group clockpicker"
-                                  data-autoclose="true"
-                                >
-                                  <input
-                                    type="text"
-                                    class="form-control"
-                                    v-model="form_start"
-                                    ref="startTime"
-                                  />
+                                <div class="input-group clockpicker" data-autoclose="true">
+                                  <input type="text" class="form-control" v-model="form_start" id="setEventDate" ref="startTime"/>
                                   <span class="input-group-addon">
                                     <span class="fa fa-clock-o"></span>
                                   </span>
                                 </div>
                               </div>
-                              <div
-                                class="col-sm-1 text-center"
-                                style="line-height: 35.5px"
-                              >
+                              <div class="col-sm-1 text-center" style="line-height: 35.5px">
                                 至
                               </div>
                               <div class="col-sm-5">
-                                <div
-                                  class="input-group clockpicker"
-                                  data-autoclose="true"
-                                >
-                                  <input
-                                    type="text"
-                                    class="form-control"
-                                    v-model="form_end"
-                                    ref="endTime"
-                                  />
+                                <div class="input-group clockpicker" data-autoclose="true">
+                                  <input type="text" class="form-control" v-model="form_end" ref="endTime"/>
                                   <span class="input-group-addon">
                                     <span class="fa fa-clock-o"></span>
                                   </span>
@@ -141,15 +121,9 @@
                           <div class="form-group">
                             <label class="font-normal">使用者（选填）</label><br />
                             <div>
-                              <small
-                                >请在下方输入使用者的学号/工号（或留空）。预约信息将通过站内消息通知他们。</small
-                              >
+                              <small>请在下方输入使用者的学号/工号（或留空）。预约信息将通过站内消息通知他们。</small>
                             </div>
-                            <input
-                              class="tagsinput form-control"
-                              type="text"
-                              ref="user_id"
-                            />
+                            <input class="tagsinput form-control" type="text" ref="user_id" />
                           </div>
                           <div class="form-group">
                             <label class="font-normal">预留场地数</label>
@@ -160,18 +134,13 @@
                             </div>
                           </div>
                           <div class="form-group">
-                            <label class="font-normal">预留场地序号（选填）</label
-                            ><br />
+                            <label class="font-normal">预留场地序号（选填）</label><br/>
                             <div>
-                              <small
-                                >如果指定了预留的场地序号，那么将预留指定的场地，即使场地上原本有预约（该预约将被取消并通过站内信通知用户）。如果未指定序号，那么后台将会自动选择空闲的场地进行预留。若空闲场地不足，则必须手动指定序号。</small
-                              >
+                              <small>
+                                如果指定了预留的场地序号，那么将预留指定的场地，即使场地上原本有预约（该预约将被取消并通过站内信通知用户）。如果未指定序号，那么后台将会自动选择空闲的场地进行预留。若空闲场地不足，则必须手动指定序号。
+                              </small>
                             </div>
-                            <input
-                              class="tagsinput form-control"
-                              type="text"
-                              ref="court_id"
-                            />
+                            <input class="tagsinput form-control" type="text" ref="court_id"/>
                           </div>
                           <div class="form-group">
                             <label class="font-normal">备注（选填）</label>
@@ -264,7 +233,26 @@
   -webkit-box-shadow: none;
 }
 </style>
-
+<script type="text/javascript">
+    var element = document.getElementById("demo")
+    //element.focus();
+    element.value = "this is sun222"
+    //txtChange()  如果只是赋值后执行一个函数，只要调用函数即可
+    if (element.fireEvent) {
+        element.fireEvent('onchange');
+    } else {
+        ev = document.createEvent("HTMLEvents");
+        //event.initEvent(eventType,canBubble,cancelable)
+        //eventType:字符串值，事件的类型
+        //canBubble：事件是否冒泡
+        //cancelable：是否可以用preventDefault()方法取消事件
+        ev.initEvent("change", false, true);
+        element.dispatchEvent(ev);
+    }
+    function txtChange(a) {
+        alert(a.value);
+    }
+</script>
 <script>
 import Navbar from "@/components/Navbar";
 import Header from "@/components/Header";
@@ -344,6 +332,11 @@ export default {
         }
         this.$forceUpdate();
       });
+    },
+    dateChange(input){
+      console.log(input)
+      alert("ok")
+
     }
   },
   filters: {
@@ -423,6 +416,14 @@ export default {
     for (var i = 0; i < clocks.length; i++) {
       $(clocks[i]).clockpicker();
     }
+    $(document).ready(function() {
+        $("#setEventDate").change(function() {
+            alert("hi")
+        })
+        //$("#demo").val("this is lily").change()   此种方法可以，下面的方法也可以
+        $("#setEventDate").val("this is lily111")
+        $("#setEventDate").trigger("change")
+    })
     $("#data_1 .input-group.date").datepicker({
       todayBtn: "linked",
       keyboardNavigation: false,
