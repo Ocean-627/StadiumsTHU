@@ -199,6 +199,17 @@ class ManagerView(APIView):
         return Response({'message': 'ok'})
 
 
+class UserView(ListAPIView):
+    """
+    用户信息
+    """
+    # authentication_classes = [ManagerAuthtication]
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    pagination_class = UserPagination
+    filter_class = UserFilter
+
+
 class StadiumView(ListAPIView, CreateAPIView):
     """
     场馆信息
@@ -223,15 +234,12 @@ class StadiumView(ListAPIView, CreateAPIView):
         return Response({'message': 'ok'})
 
 
-class CourtView(ListAPIView):
+class StadiumImageView(CreateAPIView):
     """
-    场地信息
+    场馆图片信息
     """
-
     # authentication_classes = [ManagerAuthtication]
-    queryset = Court.objects.all()
-    serializer_class = CourtSerializer
-    filter_class = CourtFilter
+    serializer_class = StadiumImageSerializer
 
 
 class CourtTypeView(ListAPIView):
@@ -258,6 +266,17 @@ class CourtTypeView(ListAPIView):
         return Response({'message': 'ok'})
 
 
+class CourtView(ListAPIView):
+    """
+    场地信息
+    """
+
+    # authentication_classes = [ManagerAuthtication]
+    queryset = Court.objects.all()
+    serializer_class = CourtSerializer
+    filter_class = CourtFilter
+
+
 class DurationView(ListAPIView):
     """
     时段信息
@@ -276,6 +295,34 @@ class ReserveEventView(ListAPIView):
     queryset = ReserveEvent.objects.all()
     serializer_class = ReserveEventSerializer
     filter_class = ReserveEventFilter
+
+
+class DefaultView(ListAPIView, CreateAPIView):
+    """
+    违约记录
+    """
+    authentication_classes = [ManagerAuthtication]
+    queryset = Default.objects.all()
+    serializer_class = DefaultSerializer
+    filter_class = DefaultFilter
+    pagination_class = DefaultPagination
+
+    def put(self, request):
+        req_data = request.data
+        default = Default.objects.filter(id=req_data.get('default_id')).first()
+        if not default:
+            return Response({'error': 'Invalid default_id'}, status=400)
+        if default.cancel == 1:
+            return Response({'error': 'manager has cancelled this record.'}, status=400)
+        default.cancel = 1
+        default.save()
+        user = default.user
+        user.defaults -= 1
+        if user.defaults < 3:
+            user.inBlacklist = 0
+            user.inBlacklistTime = None
+        user.save()
+        return Response({'message': 'ok'})
 
 
 class ChangeDurationView(ListAPIView, CreateAPIView):
@@ -329,16 +376,20 @@ class AddBlacklistView(ListAPIView, CreateAPIView):
     serializer_class = AddBlacklistSerializer
     filter_class = AddBlacklistFilter
 
-
-class UserView(ListAPIView):
-    """
-    用户信息
-    """
-    # authentication_classes = [ManagerAuthtication]
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    pagination_class = UserPagination
-    filter_class = UserFilter
+    def put(self, request):
+        req_data = request.data
+        id = req_data.get('id')
+        # TODO: 管理员可以撤销其他管理员的操作么？
+        addBlacklist = AddBlacklist.objects.filter(id=id).first()
+        if not addBlacklist:
+            return Response({'error': 'Invalid addBlacklist_id'}, status=400)
+        addBlacklist.state = 1
+        addBlacklist.save()
+        user = addBlacklist.user
+        user.inBlacklist = 0
+        user.inBlacklistTime = None
+        user.save()
+        return Response({'message': 'ok'})
 
 
 class HistoryView(APIView):
@@ -375,14 +426,6 @@ class HistoryView(APIView):
         return Response(operations)
 
 
-class StadiumImageView(CreateAPIView):
-    """
-    场馆图片信息
-    """
-    # authentication_classes = [ManagerAuthtication]
-    serializer_class = StadiumImageSerializer
-
-
 class SessionView(ListAPIView, CreateAPIView):
     """
     会话信息
@@ -411,31 +454,3 @@ class MessageView(ListAPIView, CreateAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializerForManager
     filter_class = MessageFilter
-
-
-class DefaultView(ListAPIView, CreateAPIView):
-    """
-    违约记录
-    """
-    authentication_classes = [ManagerAuthtication]
-    queryset = Default.objects.all()
-    serializer_class = DefaultSerializer
-    filter_class = DefaultFilter
-    pagination_class = DefaultPagination
-
-    def put(self, request):
-        req_data = request.data
-        default = Default.objects.filter(id=req_data.get('default_id')).first()
-        if not default:
-            return Response({'error': 'Invalid default_id'}, status=400)
-        if default.cancel == 1:
-            return Response({'error': 'manager has cancelled this record.'}, status=400)
-        default.cancel = 1
-        default.save()
-        user = default.user
-        user.defaults -= 1
-        if user.defaults < 3:
-            user.inBlacklist = 0
-            user.inBlacklistTime = None
-        user.save()
-        return Response({'message': 'ok'})
