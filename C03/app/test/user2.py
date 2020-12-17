@@ -9,6 +9,9 @@ from app.utils.utils import initStadium
 测试时间 2020-11-24
 原因：测试用户的各项基本动态操作，如预订，评论，收藏
 结果: 正常
+第一次修改 2020-12-18
+原因：变更了预订已经评论的方式
+结果：发现一处修改model没有保存的bug，一处逻辑bug
 """
 
 
@@ -59,6 +62,8 @@ class TestComment(TestCase):
             'duration_id': 1
         }
         resp = self.client.post('/api/user/reserve/', params, **self.headers)
+        reserve = ReserveEvent.objects.first()
+        self.assertEqual(reserve.has_comments, False)
 
         params = {
             'reserve_id': 1,
@@ -96,6 +101,16 @@ class TestComment(TestCase):
         stadium = content[0]
         self.assertEqual(stadium['score'], 4)
         self.assertEqual(stadium['comments'], 1)
+
+        params = {
+            'comment_id': 1
+        }
+        resp = self.client.delete('/api/user/comment/', params, **self.headers, content_type='application/json')
+        self.assertEqual(resp.status_code, 200)
+
+        self.assertEqual(len(Comment.objects.all()), 0)
+        reserve = ReserveEvent.objects.first()
+        self.assertEqual(reserve.has_comments, False)
 
 
 class TestCollect(TestCase):

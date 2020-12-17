@@ -42,6 +42,7 @@ stadiums = [
 
 def initStadium(info):
     # 创建场馆
+    from app.models import Stadium, CourtType, Court, Duration
     Stadium.objects.create(**info)
     stadium = Stadium.objects.get(name=info['name'])
     # 创建场地类型
@@ -66,11 +67,6 @@ def initStadium(info):
             duration = Duration(stadium=stadium, court=court2, date='11.16', startTime=str(t) + ':00',
                                 endTime=str(t + 1) + ':00', openState=True, accessible=True)
             duration.save()
-
-
-def clearDatabase():
-    # 清空场馆相关信息
-    Stadium.objects.all().delete()
 
 
 def judgeDate(A, B):
