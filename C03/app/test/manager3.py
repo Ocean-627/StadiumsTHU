@@ -67,7 +67,6 @@ class TestChangeDuration(TestCase):
             'date': '2020-12-25',
             'price': 30,
             'openState': 1,
-            'state': 0
         }
         resp = self.client.post('/api/manager/changeduration/', params, **self.headers)
         self.assertEqual(resp.status_code, 201)
@@ -118,7 +117,6 @@ class TestAddEvent(TestCase):
             'startTime': '10:00',
             'endTime': '13:00',
             'date': '11.16',
-            'state': 0,
         }
         resp = self.client.post('/api/manager/addevent/', params, **self.headers)
         self.assertEqual(resp.status_code, 200)
@@ -144,7 +142,6 @@ class TestAddBlacklist(TestCase):
     def test_addblacklist(self):
         params = {
             'user_id': 1,
-            'state': 0
         }
         resp = self.client.post('/api/manager/blacklist/', params, **self.headers)
         self.assertEqual(resp.status_code, 201)
