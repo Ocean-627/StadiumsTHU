@@ -129,7 +129,14 @@ class ReserveView(ListAPIView, CreateAPIView):
         ser.update(reserve, ser.validated_data)
         # 额外处理退订事件
         if 'cancel' in ser.validated_data:
-            duration = Duration.objects.get(id=reserve.duration_id)
+            duration = Duration.objects.filter(id=reserve.duration_id).first()
+            if not duration:
+                return Response({'error': 'Duration not found'}, status=404)
+            date = duration.date
+            # TODO: 只根据日期判断，暂定为2天
+            cur = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
+            if judgeDate(date, cur) < 2:
+                return Response({'error': 'You can not cancel this reserve because it will due in 2 days.'}, status=400)
             duration.accessible = True
             duration.user = None
             duration.save()

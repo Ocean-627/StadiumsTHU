@@ -335,6 +335,10 @@ class ChangeDurationView(ListAPIView, CreateAPIView):
     serializer_class = ChangeDurationSerializer
     filter_class = ChangeDurationFilter
 
+    def put(self, request):
+        pass
+        # TODO: 只接受一个参数id，并实现逻辑
+
 
 class AddEventView(ListAPIView):
     """
@@ -365,6 +369,10 @@ class AddEventView(ListAPIView):
                     pass
                 myDuration.save()
         return Response({'message': 'ok'})
+
+    def put(self, request):
+        pass
+        # TODO: 只接受一个参数id，并实现逻辑
 
 
 class AddBlacklistView(ListAPIView, CreateAPIView):
