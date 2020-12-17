@@ -314,7 +314,6 @@ export default {
         }
       };
       this.$axios.get("duration/", request).then(res => {
-        console.log(res)
         let durations = res.data;
         for (let i = 0; i < durations.length; i++) {
           this.courts[this.map_id_to_court[durations[i].court]].reservedDuration = [];
@@ -323,15 +322,6 @@ export default {
           this.courts[this.map_id_to_court[durations[i].court]].reservedDuration.push(durations[i]);
         }
         for (let i = 0; i < this.grounds.length; i++) {
-          let openTimes = this.grounds[i].openingHours.split(" ");
-          this.grounds[i].open_times = [];
-          for (let k = 0; k < openTimes.length; k++) {
-            var openTime = {
-              startTime: openTimes[k].split("-")[0].toString(),
-              endTime: openTimes[k].split("-")[1].toString()
-            };
-            this.grounds[i].open_times.push(openTime);
-          }
           for (let j = 0; j < this.grounds[i].courts.length; j++) {
             if (this.grounds[i].courts[j].reservedDuration === undefined) {
               this.grounds[i].courts[j].reservedDuration = [];
@@ -340,8 +330,7 @@ export default {
               this.grounds[i].courts[j].reservedDuration[p].type = 2 - Number(this.grounds[i].courts[j].reservedDuration[p].openState);
             }
             this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
-              this.grounds[i].courts[j].reservedDuration,
-              this.grounds[i].open_times
+              this.grounds[i].courts[j].reservedDuration
             );
           }
         }

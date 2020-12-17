@@ -4,21 +4,22 @@ var colorType = 0
 
 export default {
     colorType,
-    fix_reserves: function(reserves, open_times) {
+    fix_reserves: function(reserves) {
         let k = 0
         let res = []
         let close_times = []
         let i = 0, j = 0
         let e = "00:00"
-        for(; i < open_times.length; i++){
-            if(e != open_times[i].startTime){
+
+        for(; i < reserves.length; i++){
+            if(e != reserves[i].startTime){
                 close_times.push({
                     type: -1,
                     startTime: e,
-                    endTime: open_times[i].startTime
+                    endTime: reserves[i].startTime
                 })
             }
-            e = open_times[i].endTime
+            e = reserves[i].endTime
         }
         close_times.push({
             type: -1,
