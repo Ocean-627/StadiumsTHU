@@ -326,9 +326,6 @@ export default {
             if (this.grounds[i].courts[j].reservedDuration === undefined) {
               this.grounds[i].courts[j].reservedDuration = [];
             }
-            for (let p = 0; p < this.grounds[i].courts[j].reservedDuration.length; p++) {
-              this.grounds[i].courts[j].reservedDuration[p].type = 2 - Number(this.grounds[i].courts[j].reservedDuration[p].openState);
-            }
             this.grounds[i].courts[j].reservedDuration = Common.fix_reserves(
               this.grounds[i].courts[j].reservedDuration
             );
