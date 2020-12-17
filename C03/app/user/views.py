@@ -175,6 +175,12 @@ class CommentView(ListAPIView, CreateAPIView):
         comment = user.comment_set.filter(user=user, id=id).first()
         if not comment:
             return Response({'error': 'Delete comment failed'}, status=400)
+        reserve = ReserveEvent.objects.filter(id=comment.reserve_id).first()
+        if reserve:
+            num = len(Comment.objects.filter(reserve_id=reserve.id))
+            if not num:
+                reserve.has_comments = False
+                reserve.save()
         comment.delete()
         return Response({'message': 'ok'})
 

@@ -96,6 +96,7 @@ class ReserveEvent(models.Model):
     date = models.CharField(max_length=10)
     startTime = models.CharField(max_length=50)
     endTime = models.CharField(max_length=50)
+    has_comments = models.BooleanField(default=0)
     payment = models.BooleanField(default=False, verbose_name='是否支付')
     cancel = models.BooleanField(default=False, verbose_name='是否取消')
     checked = models.BooleanField(default=False, verbose_name='是否使用')

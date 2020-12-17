@@ -62,7 +62,7 @@ class ReserveEventFilter(filters.FilterSet):
     class Meta:
         model = ReserveEvent
         fields = ['id', 'stadium_id', 'user_id', 'duration_id', 'date', 'startTime', 'endTime', 'payment', 'cancel',
-                  'checked', 'leave']
+                  'checked', 'leave', 'has_comments']
 
 
 class CommentFilter(filters.FilterSet):
