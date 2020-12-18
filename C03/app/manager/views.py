@@ -107,10 +107,10 @@ def minute_task():
     print("Start minute update...")
     myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
     myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
-    reserveEvents = ReserveEvent.objects.filter(date=myDate)
+    reserveEvents = ReserveEvent.objects.filter(date=myDate, cancel=0)
     for reserveEvent in reserveEvents:
         if judgeTime(reserveEvent.startTime,
-                     calculateTime(myTime, 600)) < 0 and reserveEvent.checked == 0 and reserveEvent.cancel == 0:
+                     calculateTime(myTime, -600)) == 0 and reserveEvent.checked == 0:
             print("default!")
             reserveEvent.checked = 1
             reserveEvent.user.defaults += 1
@@ -121,7 +121,22 @@ def minute_task():
                 reserveEvent.user.inBlacklistTime = myDate
                 reserveEvent.user.inBlacklist = True
             reserveEvent.user.save()
+        elif judgeTime(reserveEvent.startTime, calculateTime(myTime, 600)) == 0:
+            print("You have a reserve event!")
+            newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将开始，请按时签到'\
+                .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
+                        startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
+            news = News(user=reserveEvent.user, type="预约即将开始", content=newsStr)
+            news.save()
+        elif judgeTime(reserveEvent.endTime, calculateTime(myTime, 600) == 0) and reserveEvent.leave == 0:
+            print("You are going to leave!")
+            newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将结束，请带好个人物品，按时离开' \
+                .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
+                        startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
+            news = News(user=reserveEvent.user, type="预约即将结束", content=newsStr)
+            news.save()
     print("Finished!")
+
 
 
 '''
