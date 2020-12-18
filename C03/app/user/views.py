@@ -49,7 +49,6 @@ class LoginView(APIView):
         user.loginToken = loginToken
         user.openId = openId
         user.save()
-        wx.reserve_success_message(user.openId, data={'你登陆成功了': '你真猛'})
         return Response({'message': 'ok', 'loginToken': loginToken})
 
 
