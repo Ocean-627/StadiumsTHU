@@ -300,6 +300,20 @@ class ReserveEventView(ListAPIView):
         return ReserveEvent.objects.all().order_by('-createTime')
 
 
+class CommentView(ListAPIView):
+    """
+    用户评论
+    """
+    authentication_classes = [ManagerAuthtication]
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializerForManager
+    filter_class = CommentFilter
+    pagination_class = CommentPagination
+
+    def get_queryset(self):
+        return Comment.objects.all().order_by('-createTime')
+
+
 class DefaultView(ListAPIView):
     """
     违约记录

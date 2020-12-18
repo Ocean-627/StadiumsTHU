@@ -92,6 +92,13 @@ class ReserveEventSerializerForManager(ReserveEventSerializer):
         return obj.user.name
 
 
+class CommentSerializerForManager(CommentSerializer):
+    userName = serializers.SerializerMethodField(required=False)
+
+    def get_userName(self, obj):
+        return obj.user.name
+
+
 class SessionSerializerForManager(serializers.ModelSerializer):
     image = serializers.SerializerMethodField(required=False)
     userName = serializers.SerializerMethodField(required=False)

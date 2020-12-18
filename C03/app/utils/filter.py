@@ -68,11 +68,14 @@ class ReserveEventFilter(filters.FilterSet):
 
 class CommentFilter(filters.FilterSet):
     content = filters.CharFilter(field_name='content', lookup_expr='icontains')
+    sort = filters.OrderingFilter(fields=('createTime', ))
+    scoreLt = filters.NumberFilter(field_name='score', lookup_expr='lt')
+    scoreGt = filters.NumberFilter(field_name='score', lookup_expr='gt')
 
     # TODO:更多筛选信息
     class Meta:
         model = Comment
-        fields = ['id', 'court_id', 'reserve_id', 'stadium_id']
+        fields = ['id', 'court_id', 'reserve_id', 'stadium_id', 'user_id', 'score']
 
 
 class CollectEventFilter(filters.FilterSet):
