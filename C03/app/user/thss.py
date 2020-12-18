@@ -4,7 +4,7 @@ import json
 
 def login(token):
     """
-    发送code并获取微信服务器响应
+    从身份认证程序获取个人信息
     """
     headers = {
         'Content-Type': 'application/json'

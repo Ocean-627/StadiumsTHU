@@ -13,6 +13,7 @@ from app.utils.user_serializer import *
 from app.utils.pagination import *
 from app.utils.utils import *
 from app.user import thss
+from app.user import wx
 
 
 class LoginView(APIView):
@@ -22,21 +23,33 @@ class LoginView(APIView):
 
     def post(self, request):
         req_data = request.data
+        # 从身份认证程序获取信息
         token = req_data.get('token')
         if not token:
             return Response({'error': 'Requires token'}, status=400)
         auth = thss.login(token=token).get('user')
         if not auth:
-            return JsonResponse({'error': 'Login failed'}, status=500)
+            return JsonResponse({'error': 'Login failed because something wrong with authtication_app'}, status=500)
         userId = auth.get('card')
+        # 从微信后端获取openid
+        js_code = req_data.get('js_code')
+        if not js_code:
+            return Response({'error': 'Requires js_code'}, status=400)
+        resp = wx.login(js_code)
+        openId = resp.get('openid')
+        if not openId:
+            return Response({'error': 'Login failed because something wrong with weixin_app'}, status=500)
+        # 创建用户
         user = User.objects.filter(userId=userId).first()
         if not user:
             user = User.objects.create(userId=userId, nickName=auth.get('name'), name=auth.get('name'),
-                                       phone=auth.get('cell'),
+                                       phone=auth.get('cell'), openId=openId,
                                        email=auth.get('mail'), major=auth.get('department'))
         loginToken = md5(userId)
         user.loginToken = loginToken
+        user.openId = openId
         user.save()
+        wx.reserve_success_message(user.openId, data={'你登陆成功了': '你真猛'})
         return Response({'message': 'ok', 'loginToken': loginToken})
 
 

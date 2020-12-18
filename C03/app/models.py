@@ -7,6 +7,7 @@ import django.utils.timezone as timezone
 # Create your models here.
 class User(models.Model):
     # 普通用户
+    openId = models.CharField(max_length=1000)
     loginToken = models.CharField(max_length=100, null=True)
     loginTime = models.DateTimeField(auto_now=True, null=True)
     type = models.CharField(max_length=10, default='在校学生')
