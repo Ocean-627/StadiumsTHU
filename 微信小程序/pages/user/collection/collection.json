@@ -1,0 +1,11 @@
+{
+  "usingComponents": {
+    "van-tag": "/miniprogram/miniprogram_npm/@vant/weapp/tag/index",
+    "van-swipe-cell": "/miniprogram/miniprogram_npm/@vant/weapp/swipe-cell/index",
+    "van-notice-bar": "/miniprogram/miniprogram_npm/@vant/weapp/notice-bar/index",
+    "van-toast": "/miniprogram/miniprogram_npm/@vant/weapp/toast/index",
+    "van-empty": "/miniprogram/miniprogram_npm/@vant/weapp/empty/index",
+    "van-button":"/miniprogram/miniprogram_npm/@vant/weapp/button/index"
+  },
+  "navigationBarTitleText": "我的收藏"
+}

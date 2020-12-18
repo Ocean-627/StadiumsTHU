@@ -1,26 +1,45 @@
-<!--pages/user/book_histroy/book_hisory.wxml-->
+<!--pages/user/book/book.wxml-->
+<!--弹出提示框-->
+<van-toast id="van-toast" />
+<!--提示对话框-->
+<van-dialog id="van-dialog" />
+
 <view class="container">
-  <!--预定信息-->
-  <view class="booking-list">
-    <view class="booking-item" wx:for="{{booking_list}}">
-      <view class="booking-info">
-        <view class="pic-wrapper">
-          <image src="{{item.imgpath}}" bindtap="jmpInfo" data-stadiumId="{{index}}"></image>
+  <!--分页-->
+  <van-tabs id="book-tab" active="{{ current_type }}" bind:change="onChangeTab" custom-class="book-vtabs">
+    <van-tab wx:for="{{statusList}}" title="{{item}}">
+      <!--空白页-->
+      <van-empty image="search" description="未查询到相关的预约" wx:if="{{empty}}"/>
+      <!--预定信息-->
+      <view class="booking-list" wx:else>
+        <view class="booking-item" wx:for="{{booking_list}}">
+          <view class="booking-info">
+            <view class="pic-wrapper">
+              <image src="{{item.imgPath}}" bindtap="jmpInfo" data-stadiumId="{{item.stadium_id}}"></image>
+            </view>
+            <view class="info-wrapper">
+              <text id="name" bindtap="jmpInfo" data-stadiumId="{{item.stadium_id}}">{{item.stadium_name}}</text>
+              <text id="court">{{item.court_name}}</text>
+              <text id="date-title">预约时间</text>
+              <text id="date">{{item.book_time}}</text>
+            </view>
+            <text id="status">{{item.status}}</text>
+          </view>
+          <view class="price-wrapper">
+            <text id="total">合计:</text>
+            <text id="cny">￥</text>
+            <text id="price">{{item.price}}</text>
+          </view>
+          <view class="op-btns">
+            <van-button round plain size="small" class="op-btn" custom-class="van-btn"
+            data-bookid="{{item.id}}" wx:if="{{item.leave && (!item.comment)}}" 
+            data-idx="{{index}}" bindtap="jmpComment">去评论</van-button>
+            <van-button round size="small" type="danger" class="op-btn" custom-class="van-btn"
+            data-bookid="{{item.id}}" wx:if="{{(item.leave) || (item.cancel)}}" 
+            data-idx="{{index}}" bindtap="deleteRecord">删除记录</van-button>
+          </view>
         </view>
-        <view class="info-wrapper">
-          <text id="name" bindtap="jmpInfo" data-stadiumId="{{index}}">{{item.stadium_name}}</text>
-          <text id="court">{{item.court_name}}</text>
-          <text id="date-title">预约时间</text>
-          <text id="date">{{item.book_time}}</text>
-        </view>
-        <text id="status">{{item.status}}</text>
       </view>
-      <text id="price">价格￥{{item.price}}</text>
-      <view class="btns">
-        <button id="delete">删除记录</button>
-        <button id="review" wx:if="{{!item.hasReview}}" bindtap="jmpReview">评价</button>
-        <button id="checkreview" wx:if="{{item.hasReview}}" bindtap="jmpMyReview">查看评论</button>
-      </view>
-    </view>
-  </view>
+    </van-tab>
+  </van-tabs>
 </view>

@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "mp-searchbar": "weui-miniprogram/searchbar/searchbar"
+    "mp-searchbar": "/miniprogram/miniprogram_npm/weui-miniprogram/searchbar/searchbar"
   },
-  "navigationBarTitleText": "地图"
+  "navigationBarTitleText": "地图",
+  "enablePullDownRefresh":false
 }

@@ -9,7 +9,7 @@
         <image src="{{pic_path}}"></image>
       </view>
       <view class="btn-wrapper" bindtap="choosePic">
-        <image src="/res/imgs/camera.png"></image>
+        <image src="{{camera_img}}"></image>
       </view>
       <text id="nickname">{{usr_nickname}}</text>
     </view>

@@ -3,10 +3,21 @@ Page({
   data: {
     nickname:'昵称',
     userId:'2017013594',
-    user_img:'/res/imgs/header_test.jpg',
+    // 图片资源文件
+    user_img:getApp().globalData.imgUrl+'/res/imgs/header_test.jpg',
+    favor_img:getApp().globalData.imgUrl+'/res/imgs/menu_favor.png',
+    my_img:getApp().globalData.imgUrl+'/res/imgs/menu_my.png',
+    history_img:getApp().globalData.imgUrl+'/res/imgs/menu_history.png',
+    calindar_img:getApp().globalData.imgUrl+'/res/imgs/menu_calindar.png',
+    info_img:getApp().globalData.imgUrl+'/res/imgs/hmenu_info.png',
+    question_img:getApp().globalData.imgUrl+'/res/imgs/hmenu_question.png',
+    settings_img:getApp().globalData.imgUrl+'/res/imgs/hmenu_settings.png',
   },
 
   onLoad: function (options) {
+  },
+
+  onShow:function() {
     this.reqUserInfo()
   },
 
@@ -24,6 +35,7 @@ Page({
 
   reqUserInfo:function() {
     var _this = this
+    const app = getApp()
     wx.request({
       method: "GET",
       url: 'https://cbx.iterator-traits.com/api/user/user/',
@@ -33,11 +45,14 @@ Page({
         'loginToken': 1,
       },
       success(res) {
-        console.log('Get Info success!')
-        _this.setUserData(res)
+        if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
+          _this.setUserData(res)
+        } else {
+          app.reqFail('获取信息失败')
+        }
       },
       fail() {
-        console.log('Get Info fail!')
+        app.reqFail('获取信息失败')
       },
       complete() {
         wx.stopPullDownRefresh({
@@ -63,6 +78,18 @@ Page({
   jmpBookHis:function() {
     wx.navigateTo({
       url: '/pages/user/book_history/book_history',
+    })
+  },
+
+  jmpCollect:function() {
+    wx.navigateTo({
+      url: '/pages/user/collection/collection',
+    })
+  },
+  
+  jmpVisitHistory:function() {
+    wx.navigateTo({
+      url: '/pages/user/visit_history/visit_history',
     })
   }
 })

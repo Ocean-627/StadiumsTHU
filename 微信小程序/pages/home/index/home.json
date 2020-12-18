@@ -1,7 +1,13 @@
 {
   "usingComponents": {
-    "mp-navigation-bar": "weui-miniprogram/navigation-bar/navigation-bar",
-    "mp-searchbar": "weui-miniprogram/searchbar/searchbar"
+    "mp-searchbar": "/miniprogram/miniprogram_npm/weui-miniprogram/searchbar/searchbar",
+    "van-sidebar": "/miniprogram/miniprogram_npm/@vant/weapp/sidebar/index",
+    "van-sidebar-item": "/miniprogram/miniprogram_npm/@vant/weapp/sidebar-item/index",
+    "van-dropdown-menu": "/miniprogram/miniprogram_npm/@vant/weapp/dropdown-menu/index",
+    "van-dropdown-item": "/miniprogram/miniprogram_npm/@vant/weapp/dropdown-item/index",
+    "van-divider": "/miniprogram/miniprogram_npm/@vant/weapp/divider/index",
+    "van-sticky": "/miniprogram/miniprogram_npm/@vant/weapp/sticky/index",
+    "van-tag": "/miniprogram/miniprogram_npm/@vant/weapp/tag/index"
   },
   "navigationBarTitleText": "主页"
 }

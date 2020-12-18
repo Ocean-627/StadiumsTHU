@@ -1,53 +1,13 @@
-<!--登录&注册界面-->
+<!--登录页面-->
 <view class="container">
-  <view class="menu">
-    <view class="{{loginStat}}" id="login" bindtap="jmplogin">
-      登录
-    </view>
-    <view class="{{logonStat}}" id="logon" bindtap="jmplogon">
-      注册
-    </view>
+  <image id="bg" src="{{bg_src}}" bindload="onBgLoad"></image>
+  <view id="title" wx:if="{{hasload}}">
+    <image id="title-img" src="{{title_src}}" mode="widthFix"></image>
   </view>
-
-  <!--输入栏-->
-  <view class="input">
-    <view class="wrapper">
-      <view class="input-left"></view>
-      <input id="account" placeholder="账号" value="{{account}}"/>
-      <view class="input-right"></view>
-    </view>
-    <view class="wrapper">
-      <view class="input-left"></view>
-      <input id="password" placeholder="密码" password="true" value="{{psw}}"/>
-      <view class="input-right"></view>
-    </view>
-    <view class="wrapper" wx:if="{{islogon}}">
-      <view class="input-left"></view>
-      <input id="verify_psw" placeholder="确认密码" password="true" value="{{vpsw}}"/>
-      <view class="input-right"></view>
-    </view>
-    <view class="wrapper" wx:if="{{islogon}}">
-      <view class="input-left"></view>
-      <input id="phone" placeholder="手机号" value="{{phone}}"/>
-      <view class="input-right"></view>
-    </view>
-  </view>
-
-  <view class="tip" wx:if="{{!islogon}}">
-    <view class="reg-tip">
-      <text id="reg-tip" bindtap="jmplogon">立即注册</text>
-    </view>
-    <view class="no-acc">
-      <text>还没有账号?</text>
-    </view>
-  </view>
-  
-  <!--按钮-->
-  <view class="btn">
-    <view class="wrapper">
-      <view class="input-left"></view>
-      <button id="login-btn">{{btn_text}}</button>
-      <view class="input-right"></view>
-    </view>
+  <view class="btns" wx:if="{{hasload}}">
+    <van-button class="login-btn" bindtap="jmpVerifyApp"
+    custom-class="van-btn" color="#07c160">身份认证登录</van-button>
+    <van-button class="login-btn" bindtap="jmpHome"
+    custom-class="van-btn" color="#7d90a9">以匿名身份登录</van-button>
   </view>
 </view>

@@ -1,0 +1,16 @@
+<!--pages/user/visit_history/visit_history.wxml-->
+<!--提示对话框-->
+<van-dialog id="van-dialog" />
+<van-notice-bar
+  left-icon="info-o"
+  text="点击记录条目可以跳转到对应页面"
+  scrollable="{{ false }}"
+/>
+<van-button id="clear-btn" type="info" size="mini" bindtap="onClearRecord">清空</van-button>
+<van-steps
+  steps="{{ records }}"
+  active="{{ -1 }}"
+  direction="vertical"
+  active-color="#ee0a24"
+  bind:click-step="jmpRecord"
+/>

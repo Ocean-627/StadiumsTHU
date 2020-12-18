@@ -1,4 +1,7 @@
 {
-  "usingComponents": {},
-  "navigationBarTitleText": "搜索场馆"
+  "usingComponents": {
+    "van-tag": "/miniprogram/miniprogram_npm/@vant/weapp/tag/index"
+  },
+  "navigationBarTitleText": "搜索场馆",
+  "enablePullDownRefresh":false
 }

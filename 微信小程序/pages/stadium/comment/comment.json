@@ -1,7 +1,8 @@
 {
   "usingComponents": {
-    "mp-navigation-bar": "weui-miniprogram/navigation-bar/navigation-bar",
-    "mp-uploader": "weui-miniprogram/uploader/uploader"
+    "mp-uploader": "/miniprogram/miniprogram_npm/weui-miniprogram/uploader/uploader",
+    "van-button": "/miniprogram/miniprogram_npm/@vant/weapp/button/index"
   },
-  "navigationStyle": "custom"
+  "navigationBarTitleText": "评论",
+  "enablePullDownRefresh":false
 }

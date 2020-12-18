@@ -1,0 +1,97 @@
+<!--pages/stadium/book.wxml-->
+<!--提示框-->
+<van-toast id="van-toast" />
+<view class="container">
+  <van-steps steps="{{ steps }}" active="{{ activeStep }}" type="main" active-color="#760280"/>
+  <!--运动选择-->
+  <view class="info-wrapper">
+    <van-divider contentPosition="center" class="info-divider"
+    customStyle="color: #760280; border-color: #760280; font-size: 14px;">
+    运动项目</van-divider>
+    <text id="stadium-name">{{stadium_name}}</text>
+    <scroll-view class="sports-list" scroll-x="true" scroll-left="{{scrollTop}}" enable-flex="true">
+      <view class="sport-wrapper" wx:for="{{sports_list}}" wx:key="type" bindtap="onChangeSport" 
+      data-sport="{{item.type}}" data-idx="{{index}}">
+        <image class="sport-icon" src="{{item.icon}}"></image>
+        <text class="{{item.choose}}">{{item.type}}</text>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <view class="book-wrapper">
+    <!--日期选择-->
+    <van-sidebar active-key="{{ choose_date }}" id="date-chooser" bind:change="onChangeDate"> 
+      <van-sidebar-item wx:for="{{date_list}}" wx:key="text" title="{{item.text}}" custom-class="date-choice"/>
+    </van-sidebar>
+
+    <!--场地列表-->
+    <scroll-view class="court-list-wrapper" scroll-y="true" style="height:800rpx">
+      <van-collapse accordion value="{{ activeName }}" bind:change="onChangeCourt" id="court-choose">
+        <van-collapse-item wx:for="{{court_list}}" wx:key="id" title="{{item.name}}" name="{{item.id}}">
+          <!--时段选择-->
+          <view class="time-choose">
+            <view class="time-check-wrapper" wx:for="{{duration_list[item.id]}}">
+              <van-checkbox custom-class="check" value="{{item.choose}}" bind:change="onSelectTime" checked-color="#A300B2"
+              data-courtId="{{item.courtId}}" data-timeIndex="{{index}}" wx:if="{{item.accessible && item.openState}}"
+              >{{item.startTime}}-{{item.endTime}}</van-checkbox>
+              <van-checkbox disabled custom-class="check" value="true" checked-color="#A300B2"
+              wx:else>{{item.startTime}}-{{item.endTime}}</van-checkbox>
+            </view>
+          </view>
+        </van-collapse-item>
+      </van-collapse>
+    </scroll-view>
+  </view>
+
+  <!--底部菜单-->
+  <view class="bottom-menu">
+    <view class="msg-display error-display" wx:if="{{show_error}}">
+      <text>{{error_text}}</text>
+    </view>
+    <view class="msg-display duration-display" wx:else>
+      <text>选择的时间段：\n{{duration_text}}</text>
+    </view>
+    <van-button round class="book-btn" custom-class="van-btn" 
+    color="linear-gradient(to right, #7232dd, #760280)"
+    bindtap="showVerify" wx:if="{{!show_error}}"
+    >确认时间</van-button>
+    <van-button disabled round class="book-btn" custom-class="van-btn" 
+    color="linear-gradient(to right, #7232dd, #760280)" wx:else
+    >确认时间</van-button>
+  </view>
+
+<!--底部弹窗-->
+  <van-popup show="{{ show_verify }}" 
+  bind:close="on_bottom_close"
+  closeable
+  position="bottom"
+  custom-style="height: 45%;">
+    <view class="pop-menu-wrapper">
+      <text class="pop-menu-title">确认预定</text>
+      <view class="pop-menu-info-wrapper">
+        <view class="pop-menu-book-wrapper">
+          <image src="{{sportsIconTable[choose_sport]}}"></image>
+          <view class="pop-menu-booking-info">
+            <text id="name">{{stadium_name}}</text>
+            <text id="court">{{court_desc}}</text>
+            <text id="date-title">预约时间</text>
+            <text id="date">{{time_desc}}</text>
+          </view>
+        </view>
+        <text id="price">价格￥{{price}}</text>
+        <view class="pop-menu-btns">
+          <van-button round class="pop-menu-btn" custom-class="van-btn" 
+          color="linear-gradient(to right, #FF3366, #CC3300)"
+          bindtap="on_bottom_close">我再想想</van-button>
+          <van-button round class="pop-menu-btn" custom-class="van-btn" 
+          color="linear-gradient(to right, #7232dd, #760280)"
+          bindtap="onBookReq" wx:if="{{!handlingBook}}">前往付款</van-button>
+          <van-button round class="pop-menu-btn" custom-class="van-btn" 
+          loading color="linear-gradient(to right, #0099FF, #0033FF)" 
+          loading-text="处理中" wx:else/>
+        </view>
+      </view>
+    </view>
+  </van-popup>
+
+</view>

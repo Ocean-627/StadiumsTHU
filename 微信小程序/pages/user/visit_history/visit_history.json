@@ -1,0 +1,10 @@
+{
+  "usingComponents": {
+    "van-steps": "/miniprogram/miniprogram_npm/@vant/weapp/steps/index",
+    "van-notice-bar": "/miniprogram/miniprogram_npm/@vant/weapp/notice-bar/index",
+    "van-button": "/miniprogram/miniprogram_npm/@vant/weapp/button/index",
+    "van-dialog": "/miniprogram/miniprogram_npm/@vant/weapp/dialog/index"
+  },
+  "navigationBarTitleText": "浏览历史",
+  "enablePullDownRefresh":false
+}
