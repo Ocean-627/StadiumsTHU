@@ -42,6 +42,7 @@ stadiums = [
 
 def initStadium(info):
     # 创建场馆
+    from app.models import Stadium, CourtType, Court, Duration
     Stadium.objects.create(**info)
     stadium = Stadium.objects.get(name=info['name'])
     # 创建场地类型
@@ -60,17 +61,12 @@ def initStadium(info):
         court2.save()
         # 创建时段
         for t in range(10, 18):
-            duration = Duration(stadium=stadium, court=court1, date='11.16', startTime=str(t) + ':00',
+            duration = Duration(stadium=stadium, court=court1, date='2020-12-30', startTime=str(t) + ':00',
                                 endTime=str(t + 1) + ':00', openState=True, accessible=True)
             duration.save()
-            duration = Duration(stadium=stadium, court=court2, date='11.16', startTime=str(t) + ':00',
+            duration = Duration(stadium=stadium, court=court2, date='2020-12-30', startTime=str(t) + ':00',
                                 endTime=str(t + 1) + ':00', openState=True, accessible=True)
             duration.save()
-
-
-def clearDatabase():
-    # 清空场馆相关信息
-    Stadium.objects.all().delete()
 
 
 def judgeDate(A, B):
@@ -101,13 +97,6 @@ def judgeTime(A, B):
 
 def judgeAddEvent(event_start_time, duration_start_time, event_end_time, duration_end_time):
     # 判断事件是否会占用该时段
-    cp1 = judgeTime(duration_end_time, event_start_time)
-    cp2 = judgeTime(event_start_time, duration_start_time)
-    cp3 = judgeTime(duration_end_time, event_end_time)
-    cp4 = judgeTime(event_end_time, duration_start_time)
-    flag = 0
-    flag += cp1 > 0 and cp2 > 0
-    flag += cp3 > 0 and cp4 > 0
-    flag += cp2 < 0 and cp3 < 0
-    flag += cp2 > 0 and cp3 > 0
-    return flag > 0
+    flag1 = judgeTime(duration_start_time, event_start_time) >=0 and judgeTime(event_end_time, duration_start_time) > 0
+    flag2 = judgeTime(event_start_time, duration_start_time) >=0 and judgeTime(duration_end_time, event_start_time) > 0
+    return flag1 or flag2

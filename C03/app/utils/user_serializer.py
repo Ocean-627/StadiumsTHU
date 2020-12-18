@@ -18,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
         # 设置read_only起到了保护的作用，即用户不能修改这些字段
-        read_only_fields = ['loginToken', 'loginTime', 'userId', 'defaults', 'blacklist']
+        read_only_fields = ['loginToken', 'loginTime', 'userId', 'defaults', 'blacklist', 'openId']
 
 
 class StadiumSerializer(serializers.ModelSerializer):
@@ -102,7 +102,6 @@ class DurationSerializer(serializers.ModelSerializer):
 class ReserveEventSerializer(serializers.ModelSerializer):
     result = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField(required=False)
-    has_comments = serializers.SerializerMethodField(required=False)
     image = serializers.SerializerMethodField(required=False)
     price = serializers.SerializerMethodField(required=False)
     type = serializers.SerializerMethodField(required=False)
@@ -114,11 +113,6 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         comments = Comment.objects.filter(reserve_id=obj.id)
         comments = CommentSerializer(comments, many=True)
         return comments.data
-
-    def get_has_comments(self, obj):
-        comments = Comment.objects.filter(reserve_id=obj.id)
-        size = len(comments)
-        return size > 0
 
     def get_image(self, obj):
         stadium = Stadium.objects.get(id=obj.stadium_id)
@@ -157,6 +151,9 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         duration.accessible = False
         duration.user = self.context['request'].user
         duration.save()
+        # send reserve success message
+        content = '您已经成功预约' + stadium.name + court.name + '预约时间为' + duration.date + ',' + duration.startTime + '-' + duration.endTime + '。'
+        News.objects.create(user=self.context['request'].user, type='预约成功', content=content)
         return ReserveEvent.objects.create(user=self.context['request'].user, **validated_data, stadium=stadium.name,
                                            stadium_id=stadium.id, court=court.name, date=duration.date,
                                            court_id=court.id,
@@ -167,7 +164,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         model = ReserveEvent
         fields = '__all__'
         read_only_fields = ['user', 'stadium', 'court', 'stadium_id', 'court_id', 'date', 'result', 'startTime',
-                            'endTime']
+                            'endTime', 'has_comments']
 
 
 class ReserveModifySerializer(serializers.ModelSerializer):
@@ -204,6 +201,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         event = ReserveEvent.objects.filter(id=validated_data.get('reserve_id')).first()
+        event.has_comments = True
+        event.save()
         court = Court.objects.get(id=event.court_id)
         stadium_id = court.stadium.id
         comment = Comment.objects.create(user=event.user, court=court, stadium_id=stadium_id, **validated_data)
@@ -308,15 +307,14 @@ class MessageSerializer(serializers.ModelSerializer):
         read_only_fields = ['session', 'sender']
 
 
+class NewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = News
+        fields = '__all__'
+        read_only_fields = ['createTime', 'type', 'user', 'content']
+
+
 class DefaultSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(write_only=True)
-
-    def validate_user_id(self, value):
-        user = User.objects.filter(id=value).first()
-        if not user:
-            raise ValidationError('Invalid user_id')
-        return value
-
     class Meta:
         model = Default
         fields = '__all__'

@@ -5,6 +5,16 @@ from app.models import *
 from app.utils.utils import stadiums
 from app.utils.utils import initStadium
 
+"""
+测试时间 2020-11-19
+原因：测试用户对静态资源的GET请求
+结果: 正常
+
+第一次修改 2020-11-22
+原因：确定了身份验证方式，在header中添加字段
+结果：学习到自定义字段一定要加HTTP_，其他正常
+"""
+
 
 class UserTest(TestCase):
     def setUp(self) -> None:

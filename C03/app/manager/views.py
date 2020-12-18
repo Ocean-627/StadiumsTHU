@@ -32,7 +32,7 @@ def daily_task():
     # 修改场地预订时间修改信息使之生效
     changeDurations = ChangeDuration.objects.all()
     for changeDuration in changeDurations:
-        if changeDuration.state == 1 or changeDuration.state == 2:
+        if changeDuration.state == 1:
             continue
         if not judgeDate(changeDuration.date, now_date):
             courtType = changeDuration.courtType
@@ -44,13 +44,13 @@ def daily_task():
             courtType.save()
 
             # 更新场馆信息
-            openHours = courtType.split(" ")
+            openHours = courtType.openingHours.split(" ")
             for openHour in openHours:
                 startTime, endTime = openHour.split('-')
                 if judgeTime(courtType.stadium.openTime, startTime) > 0:
-                    courtType.stadium.startTime = startTime
-                if judgeTime(courtType.stadium.endTime, endTime) < 0:
-                    courtType.stadium.endTime = endTime
+                    courtType.stadium.openTime = startTime
+                if judgeTime(courtType.stadium.closeTime, endTime) < 0:
+                    courtType.stadium.closeTime = endTime
                 courtType.stadium.save()
 
     # 添加新数据
@@ -58,7 +58,7 @@ def daily_task():
     for courtType in courtTypes:
         changeDate = calculateDate(now_date, courtType.stadium.foreDays - 1)
         try:
-            changeDuration = ChangeDuration.objects.get(courtType=courtType, date=changeDate)
+            changeDuration = ChangeDuration.objects.filter(courtType=courtType, is_active=True)[0]
             openHours = changeDuration.openingHours.split(" ")
             duration = changeDuration.duration
             changeDuration.state = 2
@@ -66,7 +66,6 @@ def daily_task():
         except:
             openHours = courtType.openingHours.split(" ")
             duration = courtType.duration
-        print(openHours)
         seconds = judgeTime(duration, "00:00")
         for openHour in openHours:
             for court in courtType.court_set.all():
@@ -108,21 +107,36 @@ def minute_task():
     print("Start minute update...")
     myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
     myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
-    reserveEvents = ReserveEvent.objects.filter(date=myDate)
+    reserveEvents = ReserveEvent.objects.filter(date=myDate, cancel=0)
     for reserveEvent in reserveEvents:
         if judgeTime(reserveEvent.startTime,
-                     calculateTime(myTime, 600)) < 0 and reserveEvent.checked == 0 and reserveEvent.cancel == 0:
+                     calculateTime(myTime, -600)) == 0 and reserveEvent.checked == 0:
             print("default!")
             reserveEvent.checked = 1
             reserveEvent.user.defaults += 1
             reserveEvent.save()
             default = Default(user=reserveEvent.user, date=myDate, time=myTime)
             default.save()
-            if reserveEvent.user.defaults == 3:
+            if reserveEvent.user.defaults >= 3:
                 reserveEvent.user.inBlacklistTime = myDate
                 reserveEvent.user.inBlacklist = True
             reserveEvent.user.save()
+        elif judgeTime(reserveEvent.startTime, calculateTime(myTime, 600)) == 0:
+            print("You have a reserve event!")
+            newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将开始，请按时签到'\
+                .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
+                        startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
+            news = News(user=reserveEvent.user, type="预约即将开始", content=newsStr)
+            news.save()
+        elif judgeTime(reserveEvent.endTime, calculateTime(myTime, 600) == 0) and reserveEvent.leave == 0:
+            print("You are going to leave!")
+            newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将结束，请带好个人物品，按时离开' \
+                .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
+                        startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
+            news = News(user=reserveEvent.user, type="预约即将结束", content=newsStr)
+            news.save()
     print("Finished!")
+
 
 
 '''
@@ -131,7 +145,7 @@ def minute_task():
 
 
 # sched = Scheduler()
-# sched.add_cron_job(daily_task, hour=0, minute=19)
+# sched.add_cron_job(daily_task, hour=0, minute=0)
 # sched.add_interval_job(minute_task, seconds=60)
 # sched.start()
 
@@ -292,12 +306,24 @@ class ReserveEventView(ListAPIView):
     预约信息
     """
     # authentication_classes = [ManagerAuthtication]
-    queryset = ReserveEvent.objects.all()
-    serializer_class = ReserveEventSerializer
+    queryset = ReserveEvent.objects.all().order_by('-createTime')
+    serializer_class = ReserveEventSerializerForManager
     filter_class = ReserveEventFilter
+    pagination_class = ReserveHistoryPagination
 
 
-class DefaultView(ListAPIView, CreateAPIView):
+class CommentView(ListAPIView):
+    """
+    用户评论
+    """
+    authentication_classes = [ManagerAuthtication]
+    queryset = Comment.objects.all().order_by('-createTime')
+    serializer_class = CommentSerializerForManager
+    filter_class = CommentFilter
+    pagination_class = CommentPagination
+
+
+class DefaultView(ListAPIView):
     """
     违约记录
     """
@@ -359,15 +385,15 @@ class AddEventView(ListAPIView):
         endTime = addEvent.endTime
         myDurations = addEvent.court.duration_set.all().filter(date=addEvent.date)
         for myDuration in myDurations:
-            if judgeAddEvent(startTime, endTime, myDurations.startTime, myDurations.endTime):
+            if judgeAddEvent(startTime, myDuration.startTime, endTime, myDuration.endTime):
                 myDuration.openState = 0
-                try:
-                    reserveEvent = ReserveEvent.objects.get(duration_id=myDuration.id)
-                    reserveEvent.cancel = 1
-                    reserveEvent.save()
-                except:
-                    pass
                 myDuration.save()
+                reserveEvent = ReserveEvent.objects.filter(duration_id=myDuration.id).first()
+                if not reserveEvent:
+                    continue
+                # TODO: 最好在这里给用户发回一条消息
+                reserveEvent.cancel = 1
+                reserveEvent.save()
         return Response({'message': 'ok'})
 
     def put(self, request):
@@ -390,7 +416,7 @@ class AddBlacklistView(ListAPIView, CreateAPIView):
         # TODO: 管理员可以撤销其他管理员的操作么？
         addBlacklist = AddBlacklist.objects.filter(id=id).first()
         if not addBlacklist:
-            return Response({'error': 'Invalid addBlacklist_id'}, status=400)
+            return Response({'error': 'Invalid Blacklist_id'}, status=400)
         addBlacklist.state = 1
         addBlacklist.save()
         user = addBlacklist.user

@@ -23,7 +23,6 @@ from C03 import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('test/', views.test),
-    path('fake/', views.fake),
     # Urls for image
     re_path(r'media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     # Urls for user

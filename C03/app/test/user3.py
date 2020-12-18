@@ -3,6 +3,16 @@ import json
 from django.test import TestCase
 from app.models import *
 
+"""
+测试时间 2020-12-1
+原因：增加了站内会话功能
+结果: 发现了数据表中auto_now和auto_now_add导致的bug
+
+第一次修改 2020-12-3
+原因：需要对会话进行排序，筛选等
+结果：正常
+"""
+
 
 class TestSession(TestCase):
     def setUp(self) -> None:
@@ -13,7 +23,7 @@ class TestSession(TestCase):
         params = {}
         resp = self.client.post('/api/user/session/', params, **self.headers)
         self.assertEqual(resp.status_code, 201)
-        session = Session.objects.get(id=1)
+        session = Session.objects.first()
         self.assertEqual(session.user_id, 1)
 
         resp = self.client.post('/api/user/session/', params, **self.headers)
