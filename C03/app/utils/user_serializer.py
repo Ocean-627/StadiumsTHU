@@ -151,6 +151,9 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         duration.accessible = False
         duration.user = self.context['request'].user
         duration.save()
+        # send reserve success message
+        content = '您已经成功预约' + stadium.name + court.name + '预约时间为' + duration.date + ',' + duration.startTime + '-' + duration.endTime + '。'
+        News.objects.create(user=self.context['request'].user, type='预约成功', content=content)
         return ReserveEvent.objects.create(user=self.context['request'].user, **validated_data, stadium=stadium.name,
                                            stadium_id=stadium.id, court=court.name, date=duration.date,
                                            court_id=court.id,
@@ -302,6 +305,13 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         exclude = ['manager_id']
         read_only_fields = ['session', 'sender']
+
+
+class NewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = News
+        fields = '__all__'
+        read_only_fields = ['createTime', 'type', 'user', 'content']
 
 
 class DefaultSerializer(serializers.ModelSerializer):

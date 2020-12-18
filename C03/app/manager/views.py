@@ -297,13 +297,10 @@ class ReserveEventView(ListAPIView):
     预约信息
     """
     # authentication_classes = [ManagerAuthtication]
-    queryset = ReserveEvent.objects.all()
+    queryset = ReserveEvent.objects.all().order_by('-createTime')
     serializer_class = ReserveEventSerializerForManager
     filter_class = ReserveEventFilter
     pagination_class = ReserveHistoryPagination
-
-    def get_queryset(self):
-        return ReserveEvent.objects.all().order_by('-createTime')
 
 
 class CommentView(ListAPIView):
@@ -311,13 +308,10 @@ class CommentView(ListAPIView):
     用户评论
     """
     authentication_classes = [ManagerAuthtication]
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.all().order_by('-createTime')
     serializer_class = CommentSerializerForManager
     filter_class = CommentFilter
     pagination_class = CommentPagination
-
-    def get_queryset(self):
-        return Comment.objects.all().order_by('-createTime')
 
 
 class DefaultView(ListAPIView):

@@ -272,3 +272,12 @@ class Message(models.Model):
     manager_id = models.IntegerField(null=True)
     content = models.CharField(max_length=500)
     createTime = models.DateTimeField(auto_now_add=True)
+
+
+class News(models.Model):
+    # 暂时版本的消息
+    type = models.CharField(max_length=10)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField(max_length=100)
+    createTime = models.DateTimeField(auto_now_add=True)
+    checked = models.BooleanField(default=False, verbose_name='是否已读')
