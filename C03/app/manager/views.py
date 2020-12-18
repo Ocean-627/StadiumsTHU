@@ -123,9 +123,18 @@ def minute_task():
             reserveEvent.user.save()
         elif judgeTime(reserveEvent.startTime, calculateTime(myTime, 600)) == 0:
             print("You have a reserve event!")
-            news = News(user=reserveEvent.user, date=myDate, time=myTime)
+            newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将开始，请按时签到'\
+                .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
+                        startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
+            news = News(user=reserveEvent.user, type="预约即将开始", content=newsStr)
+            news.save()
         elif judgeTime(reserveEvent.endTime, calculateTime(myTime, 600) == 0) and reserveEvent.leave == 0:
             print("You are going to leave!")
+            newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将结束，请带好个人物品，按时离开' \
+                .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
+                        startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
+            news = News(user=reserveEvent.user, type="预约即将结束", content=newsStr)
+            news.save()
     print("Finished!")
 
 
