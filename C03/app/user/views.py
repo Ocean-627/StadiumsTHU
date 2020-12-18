@@ -127,8 +127,9 @@ class ReserveView(ListAPIView, CreateAPIView):
             return Response({'error': ser.errors}, status=400)
         reserve = ReserveEvent.objects.get(id=ser.validated_data.get('id'))
         ser.update(reserve, ser.validated_data)
+        print(ser.validated_data)
         # 额外处理退订事件
-        if 'cancel' in ser.validated_data:
+        if ser.validated_data.get('cancel'):
             duration = Duration.objects.filter(id=reserve.duration_id).first()
             if not duration:
                 return Response({'error': 'Duration not found'}, status=404)
@@ -137,6 +138,9 @@ class ReserveView(ListAPIView, CreateAPIView):
             cur = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
             if judgeDate(date, cur) < 2:
                 return Response({'error': 'You can not cancel this reserve because it will due in 2 days.'}, status=400)
+            # 发送取消成功
+            content = '您预定的' + duration.stadium.name + duration.court.name + '时间为' + duration.date + ',' + duration.startTime + '-' + duration.endTime + '取消成功。'
+            News.objects.create(user=request.user, type='预约取消', content=content)
             duration.accessible = True
             duration.user = None
             duration.save()
@@ -214,6 +218,30 @@ class CollectView(ListAPIView, CreateAPIView):
         if not collect:
             return Response({'error': 'Invalid collect_id'}, status=400)
         collect.delete()
+        return Response({'message': 'ok'})
+
+
+class NewsView(ListAPIView):
+    """
+    消息，目前只使用这个版本，即后端自动生成消息，用户可以查看但不能发送给系统
+    """
+    authentication_classes = [UserAuthtication]
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+    filter_class = NewsFilter
+    pagination_class = NewsPagination
+
+    def get_queryset(self):
+        return News.objects.filter(user=self.request.user).order_by('-createTime')
+
+    def put(self, request):
+        req_data = request.data
+        id = req_data.get('id')
+        news = News.objects.filter(user=request.user, id=id).first()
+        if not news:
+            return Response({'error': 'Invalid id'}, status=400)
+        news.checked = True
+        news.save()
         return Response({'message': 'ok'})
 
 

@@ -61,10 +61,10 @@ def initStadium(info):
         court2.save()
         # 创建时段
         for t in range(10, 18):
-            duration = Duration(stadium=stadium, court=court1, date='11.16', startTime=str(t) + ':00',
+            duration = Duration(stadium=stadium, court=court1, date='2020-12-30', startTime=str(t) + ':00',
                                 endTime=str(t + 1) + ':00', openState=True, accessible=True)
             duration.save()
-            duration = Duration(stadium=stadium, court=court2, date='11.16', startTime=str(t) + ':00',
+            duration = Duration(stadium=stadium, court=court2, date='2020-12-30', startTime=str(t) + ':00',
                                 endTime=str(t + 1) + ':00', openState=True, accessible=True)
             duration.save()
 

@@ -116,7 +116,7 @@ class TestAddEvent(TestCase):
             'court_id': 1,
             'startTime': '10:00',
             'endTime': '13:00',
-            'date': '11.16',
+            'date': '2020-12-30',
         }
         resp = self.client.post('/api/manager/addevent/', params, **self.headers)
         self.assertEqual(resp.status_code, 200)
