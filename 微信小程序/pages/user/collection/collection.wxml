@@ -1,0 +1,53 @@
+<!--pages/user/collection/collection.wxml-->
+<!--弹出提示框-->
+<van-toast id="van-toast" />
+<!--空白页-->
+<van-empty description="您还没有任何收藏的场馆哦!赶快去主页看一看吧。" wx:if="{{empty}}">
+  <van-button round type="danger" class="bottom-button" id="vbtn" custom-class="van-btn"
+  color="linear-gradient(to right, #7232dd, #760280)" bindtap="jmpMain">
+    前往主页
+  </van-button>
+</van-empty>
+<view class="container" wx:else>
+  <van-notice-bar
+  id="notice"
+  left-icon="info-o"
+  text="向左滑动取消收藏"
+  scrollable="{{ false }}"
+  />
+  <view class="stadium-list">
+    <van-swipe-cell right-width="{{ 65 }}" 
+    wx:for="{{collect_list}}" wx:key="id" class="swipe-wrapper">
+      <view class="stadium-item">
+        <view class="pic-wrapper">
+          <image src="{{item.imgpath}}" bindtap="jmpInfo" data-stadiumId="{{item.id}}"></image>
+        </view>
+        <view class="info-wrapper" data-stadiumId="{{item.id}}" bindtap="jmpInfo">
+          <text id="name">{{item.name}}</text>
+          <view class="comment-wrapper">
+            <image src="{{starUrl}}"></image>
+            <text id="star">{{item.star}}分</text>
+            <text id="comment">  |  {{item.comment_num}}条评论</text>
+          </view>
+          <view class="pos-wrapper">
+            <view class="pos">
+              <text id="position">{{item.pos}}</text>
+            </view>
+          </view>
+          <text id="opentime">开放时间:{{item.opentime}}</text>
+          <text id="sports">运动项目:{{item.sports}}</text>
+        </view>
+        <view class="openstate-wrapper">
+          <van-tag color="#07c160" wx:if="{{item.open}}">开放中</van-tag>
+          <van-tag color="#fa5151" wx:else>关闭中</van-tag>
+          <van-tag color="#FF8300">已收藏</van-tag>
+        </view>
+      </view>
+      <view slot="right" class="cancel-collect" bindtap="cancelCollect" 
+      data-collectid="{{item.collect}}" data-idx="{{index}}">
+        <text>取消</text>
+        <text>收藏</text>
+      </view>
+    </van-swipe-cell>
+  </view>
+</view>

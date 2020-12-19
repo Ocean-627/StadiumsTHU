@@ -14,21 +14,21 @@
       </view>
     </view>
     <view class="menu-wrapper">
-      <view class="choice-wrapper">
-        <image src="/res/imgs/menu_favor.png"></image>
+      <view class="choice-wrapper" bindtap="jmpCollect">
+        <image src="{{favor_img}}"></image>
         <text>收藏</text>
       </view>
       <view class="choice-wrapper" bindtap="jmpMyBook">
-        <image src="/res/imgs/menu_my.png"></image>
-        <text>我的预约</text>
-      </view>
-      <view class="choice-wrapper">
-        <image src="/res/imgs/menu_history.png"></image>
-        <text>浏览历史</text>
+        <image src="{{my_img}}"></image>
+        <text>当前预约</text>
       </view>
       <view class="choice-wrapper" bindtap="jmpBookHis">
-        <image src="/res/imgs/menu_calindar.png"></image>
+        <image src="{{calindar_img}}"></image>
         <text>预约记录</text>
+      </view>
+      <view class="choice-wrapper">
+        <image src="{{history_img}}" bindtap="jmpVisitHistory"></image>
+        <text>浏览历史</text>
       </view>
     </view>
   </view>
@@ -37,15 +37,15 @@
     <view class="hmenu-wrapper">
       <view class="choice-wrapper" bindtap="jmpinfo">
         <text>个人资料</text>
-        <image src="/res/imgs/hmenu_info.png"></image>
+        <image src="{{info_img}}"></image>
       </view>
       <view class="choice-wrapper">
         <text>常见问题</text>
-        <image src="/res/imgs/hmenu_question.png"></image>
+        <image src="{{question_img}}"></image>
       </view>
       <view class="choice-wrapper">
         <text>设置</text>
-        <image src="/res/imgs/hmenu_settings.png"></image>
+        <image src="{{settings_img}}"></image>
       </view>
     </view>
   </view>

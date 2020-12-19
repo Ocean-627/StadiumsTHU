@@ -1,0 +1,86 @@
+/* pages/book/pay/pay.wxss */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width:100%;
+  height:100%;
+  padding:0;
+}
+
+/* 步骤图 */
+.container van-steps {
+  width:100%;
+}
+
+.payment-radio-group {
+  width:100%;
+  margin-top:20rpx;
+}
+
+.choose-payment-wrapper, .choose-payment-wrapper van-cell{
+  width: 100%;
+}
+
+.choose-payment-wrapper .payment-icon {
+  width:60rpx;
+  height: 60rpx;
+  margin-right: 10px;
+}
+
+.pay-divider {
+  width:90%;
+}
+
+.pay-divider .van-divider {
+  margin:0;
+}
+
+.pay-info {
+  align-self:flex-end;
+  margin-top:20rpx;
+  margin-right:40rpx;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 价格显示 */
+#total {
+  font-size: 16px;
+}
+
+#cny {
+  color:#FA5151;
+  font-size:14px;
+}
+
+#price {
+  color:#FA5151;
+  font-size:18px;
+}
+
+/* 确认按钮 */
+.pay-btn {
+  width:120%;
+  margin-top:20rpx;
+}
+
+.van-btn {
+  width:100%;
+}
+
+/* 提示页面 */
+.success-container #stadium-link {
+  color:#10aeff;
+}
+
+.msg-van-btn {
+  width:75vw;
+  margin-bottom: 30rpx;
+}
+
+.msg-van-btn .van-button__text {
+  font-weight: 600;
+  font-size:20px;
+}

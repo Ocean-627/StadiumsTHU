@@ -1,18 +1,21 @@
 {
   "pages": [
+    "pages/user/index/user",
+    "pages/login/login",
     "pages/home/index/home",
-    "pages/stadium/book/book",
+    "pages/book/book/book",
     "pages/user/book/book",
     "pages/home/result/result",
     "pages/message/message",
     "pages/stadium/comment/comment",
     "pages/stadium/info/stadium",
-    "pages/login/login",
     "pages/map/map",
-    "pages/user/index/user",
     "pages/user/info/info",
     "pages/logs/logs",
-    "pages/user/book_history/book_history"
+    "pages/user/book_history/book_history",
+    "pages/book/pay/pay",
+    "pages/user/visit_history/visit_history",
+    "pages/user/collection/collection"
   ],
   "window": {
     "backgroundTextStyle": "dark",

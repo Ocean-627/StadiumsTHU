@@ -1,11 +1,45 @@
 Page({
   data:{
     stadium_list:[],
-    filtered_list:[],
+    filter_text:'',
+    star_img:getApp().globalData.imgUrl+'/res/imgs/info_star.png',
   },
 
   // 设置场馆信息
   setStadiumInfo:function(res, updatePos=true) {
+    var newList = []
+    var value = this.data.filter_text
+    for(var info of res.data) {
+      if(info.name.indexOf(value) !== -1 || info.pinyin.indexOf(value) !== -1) {
+        var sports = ''
+        var dis = 0
+        var imgPath = ''
+        for(var sport of info.courtTypes) {
+          sports = sports + sport.type + ' '
+        }
+        if(info.images.length > 0) {
+          imgPath = info.images[0].image
+        }
+        newList.push({
+          id:info.id,
+          name:info.name,
+          star:info.score,
+          comment_num:info.comments,
+          opentime:info.openTime + '-' + info.closeTime,
+          sports:sports,
+          pos:info.location,
+          la:info.latitude,
+          lo:info.longitude,
+          dis:dis,
+          collect:info.collect,
+          imgpath:imgPath,
+          open:info.openState
+        });
+      }
+    }
+    this.setData({stadium_list:newList})
+
+    // 更新位置信息
     var _this = this
     if(updatePos) {
       wx.getLocation({
@@ -27,35 +61,13 @@ Page({
         }
       })
     }
-
-    var newList = []
-    for(var info of res.data) {
-      var sports = ''
-      var dis = 0
-      for(var sport of info.courtType) {
-        sports = sports + sport + ' '
-      }
-      newList.push({
-        id:info.id,
-        name:info.name,
-        star:info.score,
-        comment_num:info.comments,
-        opentime:info.openTime + '-' + info.closeTime,
-        sports:sports,
-        pos:info.location,
-        la:info.latitude,
-        lo:info.longitude,
-        dis:dis,
-        favor:true,
-        imgpath:'/res/test/stadium_2.jpg',
-      });
-    }
-    this.setData({stadium_list:newList})
   },
 
   // 创建时请求信息
-  onShow: function (options) {
-    var _this = this;
+  onLoad: function (options) {
+    const _this = this
+    const app = getApp()
+    this.data.filter_text = options.search
     wx.request({
       method: "GET",
       url: 'https://cbx.iterator-traits.com/api/user/stadium/',
@@ -65,27 +77,16 @@ Page({
         'loginToken': 1,
       },
       success(res) {
-        console.log('Get Info success!')
-        _this.setStadiumInfo(res)
+        if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
+          _this.setStadiumInfo(res)
+        } else {
+          app.reqFail("操作失败")
+        }
       },
       fail() {
-        console.log('Get Info fail!')
-      }
+        app.reqFail("获取信息失败")
+      },
     })
-  },
-
-  // 搜索函数
-  startSearch:function(e) {
-    var value = e.detail.value
-    var resultArr = []
-    if(value !== '') {
-      for(var info of this.data.stadium_list) {
-        if(info.name.indexOf(value) !== -1 || info.sports.indexOf(value) !== -1) {
-          resultArr.push(info)
-        }
-      }
-      this.setData({filtered_list:resultArr})
-    }
   },
 
   // 计算距离
@@ -104,9 +105,15 @@ Page({
      var len = this.data.stadium_list.length
      for(var i=0; i<len; i++) {
        let info = this.data.stadium_list[i]
-       let newDis = parseInt(this.calDistance(la, lo, info.la, info.lo))
+       let newDis = parseInt(this.calDistance(la, lo, info.la, info.lo)*1000)
        let updateItem = 'stadium_list[' + i + '].dis'
        this.setData({[updateItem]: newDis})
      }
-   }
+   },
+
+   jmpInfo:function(e) {
+    wx.navigateTo({
+      url: '/pages/stadium/info/stadium?'+'id='+e.currentTarget.dataset.stadiumid,
+    })
+  },
 })

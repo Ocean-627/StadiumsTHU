@@ -8,6 +8,7 @@
     bindblur="show_map"
     wx:if="{{!showmap}}" 
     focus="true"
+    throttle="200"
     ></mp-searchbar>
   </view>
   <view class="map-wrapper" wx:if="{{showmap}}">
@@ -20,12 +21,13 @@
     polyline="{{polyline}}" 
     show-location="true"
     show-compass="true"
+    polyline="{{polyline}}"
     >
       <view class="search-btn" hover-class="clickedBtn" bindtap="show_search">
-        <image src="/res/imgs/map_search.png"></image>
+        <image src="{{search_img}}"></image>
       </view>
       <view class="my-pos" hover-class="clickedBtn" bindtap="back_to_mypos">
-        <image src="/res/imgs/map_mypos.png"></image>
+        <image src="{{mypos_img}}"></image>
       </view>
     </map>
   </view>

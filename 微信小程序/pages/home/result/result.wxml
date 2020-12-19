@@ -1,28 +1,14 @@
 <!--pages/home/result/result.wxml-->
 <view class="container">
-  <view class="search-wrapper">
-      <view class="searchbar">
-        <image src="/res/imgs/home_search.png"></image>
-        <input id="search-input"
-          type="text"
-          placeholder="输入场馆名称或运动项目"
-          placeholder-class="ph-class"
-          focus="{{true}}"
-          confirm-type="search"
-          bindconfirm="startSearch"
-        />
-      </view>
-  </view>
-  <!--场馆信息-->
   <view class="stadium-list">
-    <view class="stadium-item" wx:for="{{filtered_list}}" wx:key="id">
+    <view class="stadium-item" wx:for="{{stadium_list}}" wx:key="id">
       <view class="pic-wrapper">
-        <image src="{{item.imgpath}}" bindtap="jmpInfo" data-stadiumId="{{index}}"></image>
+        <image src="{{item.imgpath}}" bindtap="jmpInfo" data-stadiumId="{{item.id}}"></image>
       </view>
-      <view class="info-wrapper">
-        <text id="name" bindtap="jmpInfo" data-stadiumId="{{index}}">{{item.name}}</text>
+      <view class="info-wrapper" data-stadiumId="{{item.id}}" bindtap="jmpInfo">
+        <text id="name">{{item.name}}</text>
         <view class="comment-wrapper">
-          <image src="/res/imgs/info_star.png"></image>
+          <image src="{{star_img}}"></image>
           <text id="star">{{item.star}}分</text>
           <text id="comment">  |  {{item.comment_num}}条评论</text>
         </view>
@@ -37,9 +23,10 @@
         <text id="opentime">开放时间:{{item.opentime}}</text>
         <text id="sports">运动项目:{{item.sports}}</text>
       </view>
-      <view class="favor-wrapper">
-        <image src="/res/imgs/info_isfavor.png" wx:if="{{item.favor}}" bindtap="addFavor"></image>
-        <image src="/res/imgs/info_notfavor.png" wx:else bindtap="removeFavor"></image>
+      <view class="openstate-wrapper">
+        <van-tag color="#07c160" wx:if="{{item.open}}">开放中</van-tag>
+        <van-tag color="#fa5151" wx:else>关闭中</van-tag>
+        <van-tag color="#FF8300" wx:if="{{item.collect}}">已收藏</van-tag>
       </view>
     </view>
   </view>

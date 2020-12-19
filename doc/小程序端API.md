@@ -1,4 +1,4 @@
-# 清动家园——小程序端`API`
+清动家园——小程序端`API`
 
 网址URL:https://cbx.iterator-traits.com
 
@@ -249,7 +249,7 @@ QueryParam:
       'openState': '',
       'accessible': '',
       'startTime': '',
-      'data': ''
+      'date': ''
 }
 Response:
 [

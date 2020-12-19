@@ -9,6 +9,7 @@
   "author": "hhy",
   "license": "ISC",
   "dependencies": {
-    "@vant/weapp": "^1.6.2"
+    "@vant/weapp": "^1.6.2",
+    "weui-miniprogram": "^1.0.6"
   }
 }

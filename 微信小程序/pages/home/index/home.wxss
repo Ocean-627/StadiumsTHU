@@ -22,26 +22,40 @@ page {
 }
 
 /*搜索框以及扫一扫*/
-.searchbar {
+.searchbar-wrapper {
   width:75%;
   height:70%;
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: #996699;
-  border-radius: 40rpx;
+  /*background-color: #996699;*/
 }
 
-.menu-wrapper .searchbar image {
-  margin-left:5%;
-  width:40rpx;
-  height:40rpx;
+#stadium-searchbar {
+  width:100%;
+  height:100%;
+  z-index: 100;
 }
 
-.menu-wrapper .searchbar text {
-  margin-left:5%;
-  color:rgba(200,200,200,0.7);
-  font-size: medium;
+.my-searchbar {
+  background-color: transparent;
+  width:100%;
+  height:100%;
+  padding:0;
+}
+
+.my-searchbar .weui-search-bar__form, .my-searchbar .weui-search-bar__label {
+  border-radius: 100rpx;
+  height:100%;
+  background-color: #DDAADD;  
+}
+
+.my-searchbar .weui-search-bar__input {
+  padding:0;
+}
+
+.my-searchbar .weui-search-bar__cancel-btn {
+  color:rgba(255,255,255,0.8);
 }
 
 .menu-wrapper .scan-btn {
@@ -58,7 +72,7 @@ page {
 /*滚动图片*/
 .gallery {
   width:100%;
-  height:350rpx;
+  height:400rpx;
 }
 
 .gallery swiper {
@@ -70,64 +84,54 @@ page {
   text-align: center;
 }
 
-.gallery image {
+.gallery .gallery-img {
   height:100%;
+  width:100%;
   justify-self: center;
 }
 
-/*排序*/
-.sort-container {
-  width:100%;
-  height:75rpx;
+/* 列表包装 */
+.stadium-wrapper {
+  width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  background-color: white;
-  box-shadow: 0 1px 5px 0 rgba(0,0,0,.2);
-}
-
-.sort-container .sort-wrapper {
-  width:25%;
   height:100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+}
+/* 侧边筛选栏 */
+#sport-chooser .van-sidebar-item--selected{
+  border-color: #760280;
+  color:#760280;
+}
+/* 上方筛选栏 */
+.stadium-list-wrapper {
+  flex-grow: 1;
 }
 
-.sort-container .clicksort {
-  background-color: rgba(100,100,100,.2);
-}
-
-.sort-container .sort-wrapper text{
-  color:#9B9B9B;
-  font-size: smaller;
-}
-
-.sort-container .sort-wrapper .sort {
-  color:black;
-  font-weight: 500;
+.stadium-list-wrapper #sort-menu {
+  width: 100%;
 }
 
 /*场馆列表*/
 .stadium-list {
   width:100%;
+  height:calc(100vh - 50px);
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: white;
 }
 
 .stadium-item {
-  width:95%;
-  margin-top: 10rpx;
-  margin-bottom: 10rpx;
+  width:96%;
   background-color: white;
-  border-radius: 20rpx;
-  box-shadow: 1px 1px 6px 0 rgba(0,0,0,0.2);
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-top: 5px;
+  padding-top: 5px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  border-top: solid 1px rgba(0,0,0,0.1);
 }
 
 .stadium-item .pic-wrapper {
@@ -135,11 +139,10 @@ page {
 }
 
 .stadium-item .pic-wrapper image {
-  width: 200rpx;
-  height: 150rpx;
+  width: 100%;
+  height:150rpx;
   border-radius: 20rpx;
   margin-top:10rpx;
-  margin-left:10rpx;
 }
 
 .stadium-item .info-wrapper {
@@ -189,12 +192,13 @@ page {
   height:20rpx;
 }
 
-.stadium-item .favor-wrapper {
-  width:10%;
+.stadium-item .openstate-wrapper {
+  width:15%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.stadium-item .favor-wrapper image {
-  width:60rpx;
-  height: 60rpx;
+.openstate-wrapper .van-tag {
+  font-size: 20rpx;
 }
-

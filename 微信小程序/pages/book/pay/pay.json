@@ -1,0 +1,14 @@
+{
+  "usingComponents": {
+    "van-steps": "/miniprogram/miniprogram_npm/@vant/weapp/steps/index",
+    "van-button":"/miniprogram/miniprogram_npm/@vant/weapp/button/index",
+    "van-cell": "/miniprogram/miniprogram_npm/@vant/weapp/cell/index",
+    "van-cell-group": "/miniprogram/miniprogram_npm/@vant/weapp/cell-group/index",
+    "van-radio": "/miniprogram/miniprogram_npm/@vant/weapp/radio/index",
+    "van-radio-group": "/miniprogram/miniprogram_npm/@vant/weapp/radio-group/index",
+    "van-divider":"/miniprogram/miniprogram_npm/@vant/weapp/divider/index",
+    "mp-msg": "/miniprogram/miniprogram_npm/weui-miniprogram/msg/msg"
+  },
+  "navigationBarTitleText": "付款",
+  "enablePullDownRefresh":false
+}

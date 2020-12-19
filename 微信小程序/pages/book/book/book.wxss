@@ -1,0 +1,271 @@
+/* pages/stadium/book.wxss */
+page {
+  background-color: #F2F2F2;
+  height:100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width:100%;
+  height:100%;
+  padding:0;
+}
+
+/* 步骤图 */
+.container van-steps {
+  width:100%;
+}
+
+/* 项目选择 */
+.info-wrapper {
+  box-sizing: border-box;
+  width:96%;
+  padding-left: 4%;
+  padding-right: 4%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top:1%;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2);
+}
+
+.info-wrapper #stadium-name {
+  font-size:30rpx;
+  font-weight: 700;
+  color:rgba(0,0,0,0.6)
+}
+
+.info-wrapper .info-divider {
+  width:100%;
+}
+
+.info-wrapper .info-divider .van-divider {
+  margin:0;
+}
+
+.info-wrapper .sports-list {
+  white-space: nowrap;
+  margin-bottom: 10rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.info-wrapper .sports-list image {
+  width:100rpx;
+  height:100rpx;
+}
+
+.sports-list .sport-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20rpx;
+  margin-top:25rpx;
+}
+
+.sport-wrapper text {
+  color:rgba(0,0,0,0.4);
+  font-size: 20rpx;
+}
+
+.sport-wrapper .choose {
+  color:rgba(0,0,0,0.8);
+}
+
+.book-operation {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width:96%;
+  height:60%;
+  padding-left: 4%;
+  padding-right: 4%;
+  border-radius: 15px;
+  box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2);
+  background-color: white;
+  margin-top: 30rpx;
+}
+
+.book-operation .time-wrapper {
+  white-space: nowrap;
+  height:100%;
+}
+
+.time-wrapper .time-table {
+  display: flex;
+  flex-direction: row;
+}
+
+.time-table .stamp, .court-time {
+  display: flex;
+  flex-direction: column;
+  margin-left:10px;
+}
+
+.court-time .status {
+  width:50px;
+  height:20px;
+  background-color: red;
+  margin-top:5px;
+  border-radius: 4px;
+}
+
+/* 场地选择 */
+.book-wrapper {
+  box-sizing: border-box;
+  width:100%;
+  display: flex;
+  flex-direction: row;
+
+  margin-top:1%;
+  background-color: white;
+  box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2);
+  padding-bottom: 100rpx;
+}
+
+.book-wrapper #date-choose {
+  width:20%;
+}
+.book-wrapper #court-choose {
+  width:80%;
+}
+
+.book-wrapper .date-choice {
+  width:100%;
+  font-size: 25rpx;
+}
+
+.book-wrapper .van-sidebar-item--selected{
+  border-color: #760280;
+}
+
+.book-wrapper .time-choose .check {
+  margin-bottom: 15rpx;
+}
+
+/*确认预定菜单*/
+.bottom-menu {
+  width:100%;
+  position: fixed;
+  bottom:0;
+  background-color:rgba(250,250,250,1);
+  border-top: solid 1px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.bottom-menu .favor-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left:5%;
+}
+
+.bottom-menu .msg-display {
+  width:40%;
+  margin-left: 5%;
+}
+
+.bottom-menu .error-display {
+  color:#FA5151;
+  font-size: 28rpx;
+}
+
+.bottom-menu .duration-display {
+  color:#FF8300;
+  font-size: 28rpx;
+}
+
+.book-btn {
+  width:35%;
+  margin-top:10rpx;
+  margin-bottom: 10rpx;
+  margin-left:15%;
+}
+
+.van-btn {
+  width:100%;
+}
+
+/* 底部弹出菜单 */
+.pop-menu-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pop-menu-wrapper .pop-menu-title {
+  font-size:36rpx;
+  font-weight: 600;
+  margin-top:3%;
+}
+
+.pop-menu-wrapper .pop-menu-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top:20rpx;
+  width:80%;
+  align-items: center;
+}
+
+.pop-menu-info-wrapper .pop-menu-book-wrapper {
+  width:100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.pop-menu-book-wrapper image {
+  width:150rpx;
+  height: 150rpx;
+}
+
+.pop-menu-book-wrapper .pop-menu-booking-info {
+  display: flex;
+  flex-direction: column;
+  margin-left:10%;
+}
+
+.pop-menu-booking-info #name {
+  font-weight: 800;
+  font-size:30rpx;
+}
+
+.pop-menu-booking-info #court{
+  font-size:26rpx;
+  color:rgba(0,0,0,0.4)
+}
+
+.pop-menu-booking-info #date-title {
+  margin-top:20rpx;
+  font-size:28rpx;
+}
+
+.pop-menu-booking-info #date {
+  font-size: 26rpx;
+  color:#FF8300;
+}
+
+.pop-menu-info-wrapper #price {
+  margin-left:auto;
+  margin-top:20rpx;
+  color:#FA5151;
+}
+
+.pop-menu-info-wrapper .pop-menu-btns { 
+  display: flex;
+  width:100%;
+  justify-content:space-evenly;
+  margin-top:20rpx;
+  margin-bottom: 20rpx;
+}
+
+.pop-menu-btns .pop-menu-btn {
+  width:40%;
+}
+

@@ -2,7 +2,7 @@
 Page({
   data: {
     // 用户信息
-    pic_path:"/res/imgs/header_test.jpg",  // 头像
+    pic_path:getApp().globalData.imgUrl+"/res/imgs/header_test.jpg",  // 头像
     usr_nickname:"一个大萝卜",
     usr_name:"",
     usr_id:"",
@@ -29,6 +29,8 @@ Page({
       nickName:"usr_nickname",
       name:"usr_name",
     },
+    // 图片资源
+    camera_img:getApp().globalData.imgUrl+"/res/imgs/camera.png",
   },
 
   onLoad:function(options) {
@@ -39,32 +41,6 @@ Page({
     this.reqUserInfo()
   },
 
-  //
-  reqUserInfo:function() {
-    var _this = this;
-    wx.request({
-      method: "GET",
-      url: 'https://cbx.iterator-traits.com/api/user/user/',
-      data: {},
-      header: {
-        'content-type': 'application/json',
-        'loginToken': 1,
-      },
-      success(res) {
-        console.log('Get Info success!')
-        _this.setUserData(res)
-      },
-      fail() {
-        console.log('Get Info fail!')
-      },
-      complete() {
-        wx.stopPullDownRefresh({
-          success: (res) => {},
-        })
-      }
-    })
-  },
-
   // 设置用户信息
   setUserData:function(res) {
     this.setData({
@@ -73,6 +49,7 @@ Page({
       usr_phone:res.data.phone,
       usr_mail:res.data.email,
       usr_nickname:res.data.nickName,
+      pic_path:res.data.image,
     })
   },
   
@@ -84,7 +61,7 @@ Page({
       sizeType: ['original', 'compressed'],
       sourceType: ['album', 'camera'],
       success (res) {
-        _this.setData({pic_path: res.tempFilePaths[0]})
+        _this.uploadImg(res.tempFilePaths[0])
       }
     })
   },
@@ -129,32 +106,6 @@ Page({
     this.setData({tmpInput:e.detail.value})
   },
 
-  // 发送修改req
-  postModifyMsg:function(key, value) {
-    var _this = this
-    wx.request({
-      method: "POST",
-      url: 'https://cbx.iterator-traits.com/api/user/user/',
-      data: {
-        [key]:value,
-      },
-      header: {
-        'content-type': 'application/json',
-        'loginToken': 1,
-      },
-      success(res) {
-        console.log('Modify User Info success!')
-        var varName = _this.data.varReflectTable[key]
-        _this.setData({[varName]:value})
-        _this.modifySuccess()
-      },
-      fail() {
-        console.log('Modify User Info fail!')
-        _this.modifyFail()
-      }
-    })
-  },
-
   // 修改成功/失败时顶部弹窗消息
   modifyFail:function() {
     this.setData({
@@ -173,4 +124,92 @@ Page({
       navi_show:false,
     })
   },
+
+  /*--------------------------------------
+    网络请求函数
+  --------------------------------------*/
+  // 请求用户数据
+  reqUserInfo:function() {
+    const _this = this
+    const app = getApp()
+    wx.request({
+      method: "GET",
+      url: 'https://cbx.iterator-traits.com/api/user/user/',
+      data: {},
+      header: {
+        'content-type': 'application/json',
+        'loginToken': 1,
+      },
+      success(res) {
+        if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
+          _this.setUserData(res)
+        } else {
+          app.reqFail('获取信息失败')
+        }
+      },
+      fail() {
+        app.reqFail('获取信息失败')
+      },
+      complete() {
+        wx.stopPullDownRefresh({
+          success: (res) => {},
+        })
+      }
+    })
+  },
+
+  // 发送修改req
+  postModifyMsg:function(key, value) {
+    var _this = this
+    const app = getApp()
+    wx.request({
+      method: "POST",
+      url: app.globalData.reqUrl + '/api/user/user/',
+      data: {
+        [key]:value,
+      },
+      header: {
+        'content-type': 'application/json',
+        'loginToken': 1,
+      },
+      success(res) {
+        if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
+          var varName = _this.data.varReflectTable[key]
+          _this.setData({[varName]:value})
+          _this.modifySuccess()
+        } else {
+          _this.modifyFail()
+        }
+      },
+      fail() {
+        _this.modifyFail()
+      }
+    })
+  },
+
+  // 上传头像
+  uploadImg:function(imgPath) {
+    const _this = this
+    const app = getApp()
+    wx.uploadFile({
+      url: app.globalData.reqUrl + '/api/user/user/',
+      filePath:imgPath,
+      name:'image',
+      header: {
+        'content-type': 'multipart/form-data',
+        'loginToken': 1,
+      },
+      success(res) {
+        if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
+          _this.setData({pic_path:imgPath})
+          _this.modifySuccess()
+        } else {
+          _this.modifyFail()
+        }
+      },
+      fail() {
+        _this.modifyFail()
+      }
+    })
+  }
 })
