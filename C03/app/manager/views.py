@@ -10,7 +10,8 @@ from app.utils.manager_serializer_event import *
 from app.utils.filter import *
 from app.utils.pagination import *
 from app.utils.authtication import ManagerAuthtication
-# from apscheduler.scheduler import Scheduler
+from app.user.wx import *
+from apscheduler.scheduler import Scheduler
 import time
 import datetime
 import pytz
@@ -127,23 +128,27 @@ def minute_task():
                 .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
                         startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
             news = News(user=reserveEvent.user, type="预约即将开始", content=newsStr)
+            courtType = Court.objects.get(id=reserveEvent.court_id).courtType.type
+            date = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M')
+            reserve_state_message(reserveEvent.user.openId, courtType, date, newsStr)
             news.save()
-        elif judgeTime(reserveEvent.endTime, calculateTime(myTime, 600) == 0) and reserveEvent.leave == 0:
+        elif judgeTime(reserveEvent.endTime, calculateTime(myTime, 600)) == 0 and reserveEvent.leave == 0:
             print("You are going to leave!")
             newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将结束，请带好个人物品，按时离开' \
                 .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
                         startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
             news = News(user=reserveEvent.user, type="预约即将结束", content=newsStr)
+            courtType = Court.objects.get(id=reserveEvent.court_id).courtType.type
+            date = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M')
+            reserve_state_message(reserveEvent.user.openId, courtType, date, newsStr)
             news.save()
-    print("Finished!")
 
+    print("Finished!")
 
 
 '''
 若代码已经部署到服务器上，在本机上运行后端时务必将以下四行注释掉，否则会更改服务器数据库
 '''
-
-
 # sched = Scheduler()
 # sched.add_cron_job(daily_task, hour=0, minute=0)
 # sched.add_interval_job(minute_task, seconds=60)
