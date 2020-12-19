@@ -18,6 +18,9 @@ from app.utils.utils import initStadium
 第二次修改 2020-12-18
 原因：加入了对ChangeDuration和AddEvent的撤销功能
 结果：正常
+
+第三次修改 2020-12-19
+原因：增加了user的openId,预留场馆时应该发送消息
 """
 
 
@@ -105,7 +108,7 @@ class TestAddEvent(TestCase):
         initStadium(stadiums[1])
         self.headers = {'HTTP_loginToken': 1}
 
-        User.objects.create(userId=2018011891, loginToken=1)
+        User.objects.create(userId=2018011891, loginToken=1, openId='123')
         self.user_headers = {'HTTP_loginToken': 1}
 
     def test_addevent(self):
@@ -127,6 +130,8 @@ class TestAddEvent(TestCase):
         resp = self.client.post('/api/user/reserve/', params, **self.user_headers)
         self.assertEqual(resp.status_code, 201)
 
+        self.assertEqual(len(News.objects.all()), 3)
+
         params = {
             'court_id': 1,
             'startTime': '10:00',
@@ -146,6 +151,8 @@ class TestAddEvent(TestCase):
         self.assertEqual(ReserveEvent.objects.get(id=1).cancel, 1)
         self.assertEqual(ReserveEvent.objects.get(id=2).cancel, 1)
         self.assertEqual(ReserveEvent.objects.get(id=3).cancel, 0)
+
+        self.assertEqual(len(News.objects.all()), 5)
 
         addEvent = AddEvent.objects.first()
         self.assertEqual(addEvent.state, 2)
