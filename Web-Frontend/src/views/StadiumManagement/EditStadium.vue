@@ -248,13 +248,8 @@
                           >修改生效日期：</label
                         >
                         <div class="col-lg-2 input-group date">
-                          <span class="input-group-addon"
-                            ><i class="fa fa-calendar"></i></span
-                          ><input
-                            type="text"
-                            class="form-control"
-                            ref="startDate"
-                          />
+                          <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                          <input type="text" class="form-control" ref="startDate" />
                         </div>
                       </div>
                       <div class="form-group row">

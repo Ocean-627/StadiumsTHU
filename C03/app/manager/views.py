@@ -32,7 +32,7 @@ def daily_task():
     # 修改场地预订时间修改信息使之生效
     changeDurations = ChangeDuration.objects.all()
     for changeDuration in changeDurations:
-        if changeDuration.state == 1 or changeDuration.state == 2:
+        if changeDuration.state == 1:
             continue
         if not judgeDate(changeDuration.date, now_date):
             courtType = changeDuration.courtType
@@ -44,13 +44,13 @@ def daily_task():
             courtType.save()
 
             # 更新场馆信息
-            openHours = courtType.split(" ")
+            openHours = courtType.openingHours.split(" ")
             for openHour in openHours:
                 startTime, endTime = openHour.split('-')
                 if judgeTime(courtType.stadium.openTime, startTime) > 0:
-                    courtType.stadium.startTime = startTime
-                if judgeTime(courtType.stadium.endTime, endTime) < 0:
-                    courtType.stadium.endTime = endTime
+                    courtType.stadium.openTime = startTime
+                if judgeTime(courtType.stadium.closeTime, endTime) < 0:
+                    courtType.stadium.closeTime = endTime
                 courtType.stadium.save()
 
     # 添加新数据
@@ -107,10 +107,10 @@ def minute_task():
     print("Start minute update...")
     myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
     myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
-    reserveEvents = ReserveEvent.objects.filter(date=myDate)
+    reserveEvents = ReserveEvent.objects.filter(date=myDate, cancel=0)
     for reserveEvent in reserveEvents:
         if judgeTime(reserveEvent.startTime,
-                     calculateTime(myTime, 600)) < 0 and reserveEvent.checked == 0 and reserveEvent.cancel == 0:
+                     calculateTime(myTime, -600)) == 0 and reserveEvent.checked == 0:
             print("default!")
             reserveEvent.checked = 1
             reserveEvent.user.defaults += 1
@@ -121,7 +121,22 @@ def minute_task():
                 reserveEvent.user.inBlacklistTime = myDate
                 reserveEvent.user.inBlacklist = True
             reserveEvent.user.save()
+        elif judgeTime(reserveEvent.startTime, calculateTime(myTime, 600)) == 0:
+            print("You have a reserve event!")
+            newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将开始，请按时签到'\
+                .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
+                        startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
+            news = News(user=reserveEvent.user, type="预约即将开始", content=newsStr)
+            news.save()
+        elif judgeTime(reserveEvent.endTime, calculateTime(myTime, 600) == 0) and reserveEvent.leave == 0:
+            print("You are going to leave!")
+            newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将结束，请带好个人物品，按时离开' \
+                .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
+                        startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
+            news = News(user=reserveEvent.user, type="预约即将结束", content=newsStr)
+            news.save()
     print("Finished!")
+
 
 
 '''
@@ -130,7 +145,7 @@ def minute_task():
 
 
 # sched = Scheduler()
-# sched.add_cron_job(daily_task, hour=0, minute=19)
+# sched.add_cron_job(daily_task, hour=0, minute=0)
 # sched.add_interval_job(minute_task, seconds=60)
 # sched.start()
 
@@ -291,13 +306,21 @@ class ReserveEventView(ListAPIView):
     预约信息
     """
     # authentication_classes = [ManagerAuthtication]
-    queryset = ReserveEvent.objects.all()
+    queryset = ReserveEvent.objects.all().order_by('-createTime')
     serializer_class = ReserveEventSerializerForManager
     filter_class = ReserveEventFilter
     pagination_class = ReserveHistoryPagination
 
-    def get_queryset(self):
-        return ReserveEvent.objects.all().order_by('-createTime')
+
+class CommentView(ListAPIView):
+    """
+    用户评论
+    """
+    authentication_classes = [ManagerAuthtication]
+    queryset = Comment.objects.all().order_by('-createTime')
+    serializer_class = CommentSerializerForManager
+    filter_class = CommentFilter
+    pagination_class = CommentPagination
 
 
 class DefaultView(ListAPIView):

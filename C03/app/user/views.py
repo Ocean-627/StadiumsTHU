@@ -13,6 +13,7 @@ from app.utils.user_serializer import *
 from app.utils.pagination import *
 from app.utils.utils import *
 from app.user import thss
+from app.user import wx
 
 
 class LoginView(APIView):
@@ -22,20 +23,31 @@ class LoginView(APIView):
 
     def post(self, request):
         req_data = request.data
+        # 从身份认证程序获取信息
         token = req_data.get('token')
         if not token:
             return Response({'error': 'Requires token'}, status=400)
         auth = thss.login(token=token).get('user')
         if not auth:
-            return JsonResponse({'error': 'Login failed'}, status=500)
+            return JsonResponse({'error': 'Login failed because something wrong with authtication_app'}, status=500)
         userId = auth.get('card')
+        # 从微信后端获取openid
+        js_code = req_data.get('js_code')
+        if not js_code:
+            return Response({'error': 'Requires js_code'}, status=400)
+        resp = wx.login(js_code)
+        openId = resp.get('openid')
+        if not openId:
+            return Response({'error': 'Login failed because something wrong with weixin_app'}, status=500)
+        # 创建用户
         user = User.objects.filter(userId=userId).first()
         if not user:
             user = User.objects.create(userId=userId, nickName=auth.get('name'), name=auth.get('name'),
-                                       phone=auth.get('cell'),
+                                       phone=auth.get('cell'), openId=openId,
                                        email=auth.get('mail'), major=auth.get('department'))
         loginToken = md5(userId)
         user.loginToken = loginToken
+        user.openId = openId
         user.save()
         return Response({'message': 'ok', 'loginToken': loginToken})
 
@@ -128,7 +140,7 @@ class ReserveView(ListAPIView, CreateAPIView):
         reserve = ReserveEvent.objects.get(id=ser.validated_data.get('id'))
         ser.update(reserve, ser.validated_data)
         # 额外处理退订事件
-        if 'cancel' in ser.validated_data:
+        if ser.validated_data.get('cancel'):
             duration = Duration.objects.filter(id=reserve.duration_id).first()
             if not duration:
                 return Response({'error': 'Duration not found'}, status=404)
@@ -137,6 +149,11 @@ class ReserveView(ListAPIView, CreateAPIView):
             cur = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
             if judgeDate(date, cur) < 2:
                 return Response({'error': 'You can not cancel this reserve because it will due in 2 days.'}, status=400)
+            # 发送取消成功
+            content = '您预定的' + duration.stadium.name + duration.court.name + '时间为' + duration.date + ',' + duration.startTime + '-' + duration.endTime + '取消成功。'
+            News.objects.create(user=request.user, type='预约取消', content=content)
+            wx.reserve_cancel_message(openId=request.user.openId, type=duration.court.type, date=duration.date,
+                                      content=content)
             duration.accessible = True
             duration.user = None
             duration.save()
@@ -176,12 +193,12 @@ class CommentView(ListAPIView, CreateAPIView):
         if not comment:
             return Response({'error': 'Delete comment failed'}, status=400)
         reserve = ReserveEvent.objects.filter(id=comment.reserve_id).first()
+        comment.delete()
         if reserve:
             num = len(Comment.objects.filter(reserve_id=reserve.id))
             if not num:
                 reserve.has_comments = False
                 reserve.save()
-        comment.delete()
         return Response({'message': 'ok'})
 
 
@@ -214,6 +231,30 @@ class CollectView(ListAPIView, CreateAPIView):
         if not collect:
             return Response({'error': 'Invalid collect_id'}, status=400)
         collect.delete()
+        return Response({'message': 'ok'})
+
+
+class NewsView(ListAPIView):
+    """
+    消息，目前只使用这个版本，即后端自动生成消息，用户可以查看但不能发送给系统
+    """
+    authentication_classes = [UserAuthtication]
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+    filter_class = NewsFilter
+    pagination_class = NewsPagination
+
+    def get_queryset(self):
+        return News.objects.filter(user=self.request.user).order_by('-createTime')
+
+    def put(self, request):
+        req_data = request.data
+        id = req_data.get('id')
+        news = News.objects.filter(user=request.user, id=id).first()
+        if not news:
+            return Response({'error': 'Invalid id'}, status=400)
+        news.checked = True
+        news.save()
         return Response({'message': 'ok'})
 
 

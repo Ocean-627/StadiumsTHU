@@ -57,7 +57,7 @@ class DurationFilter(filters.FilterSet):
 class ReserveEventFilter(filters.FilterSet):
     stadium = filters.CharFilter(field_name='stadium', lookup_expr='icontains')
     court = filters.CharFilter(field_name='court', lookup_expr='icontains')
-    sort = filters.OrderingFilter(fields=('createTime', ))
+    sort = filters.OrderingFilter(fields=('createTime',))
 
     # TODO:更多筛选信息
     class Meta:
@@ -68,11 +68,14 @@ class ReserveEventFilter(filters.FilterSet):
 
 class CommentFilter(filters.FilterSet):
     content = filters.CharFilter(field_name='content', lookup_expr='icontains')
+    sort = filters.OrderingFilter(fields=('createTime',))
+    scoreLt = filters.NumberFilter(field_name='score', lookup_expr='lt')
+    scoreGt = filters.NumberFilter(field_name='score', lookup_expr='gt')
 
     # TODO:更多筛选信息
     class Meta:
         model = Comment
-        fields = ['id', 'court_id', 'reserve_id', 'stadium_id']
+        fields = ['id', 'court_id', 'reserve_id', 'stadium_id', 'user_id', 'score']
 
 
 class CollectEventFilter(filters.FilterSet):
@@ -108,6 +111,16 @@ class DefaultFilter(filters.FilterSet):
     class Meta:
         model = Default
         fields = ['id', 'user_id', 'cancel', 'valid']
+
+
+class NewsFilter(filters.FilterSet):
+    type = filters.CharFilter(field_name='type', lookup_expr='icontains')
+    content = filters.CharFilter(field_name='content', lookup_expr='icontains')
+    sort = filters.OrderingFilter(fields=('createTime',))
+
+    class Meta:
+        model = News
+        fields = ['id', 'checked']
 
 
 class SessionFilter(filters.FilterSet):

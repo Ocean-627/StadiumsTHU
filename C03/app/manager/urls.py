@@ -12,6 +12,7 @@ urlpatterns = [
     path('manager/', views.ManagerView.as_view()),
     path('stadium/', views.StadiumView.as_view()),
     path('stadiumimage/', views.StadiumImageView.as_view()),
+    path('comment/', views.CommentView.as_view()),
     path('court/', views.CourtView.as_view()),
     path('courttype/', views.CourtTypeView.as_view()),
     path('duration/', views.DurationView.as_view()),

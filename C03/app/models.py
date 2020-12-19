@@ -7,6 +7,7 @@ import django.utils.timezone as timezone
 # Create your models here.
 class User(models.Model):
     # 普通用户
+    openId = models.CharField(max_length=1000)
     loginToken = models.CharField(max_length=100, null=True)
     loginTime = models.DateTimeField(auto_now=True, null=True)
     type = models.CharField(max_length=10, default='在校学生')
@@ -127,6 +128,7 @@ class Comment(models.Model):
     reserve_id = models.IntegerField()
     score = models.IntegerField(default=3)
     content = models.CharField(max_length=300)
+    createTime = models.DateTimeField(auto_now_add=True)
 
 
 class CommentImage(models.Model):
@@ -271,3 +273,12 @@ class Message(models.Model):
     manager_id = models.IntegerField(null=True)
     content = models.CharField(max_length=500)
     createTime = models.DateTimeField(auto_now_add=True)
+
+
+class News(models.Model):
+    # 暂时版本的消息
+    type = models.CharField(max_length=10)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField(max_length=100)
+    createTime = models.DateTimeField(auto_now_add=True)
+    checked = models.BooleanField(default=False, verbose_name='是否已读')

@@ -46,11 +46,6 @@ export default {
             }
             e = reserves[i].endTime
         }
-        // durations.push({
-        //     type: -1,
-        //     startTime: e,
-        //     endTime: "24:00"
-        // })
         var compare = function(obj1,obj2){
             var value1 = obj1["startTime"];
             var value2 = obj2["startTime"];
