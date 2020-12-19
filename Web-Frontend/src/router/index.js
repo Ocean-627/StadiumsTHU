@@ -14,7 +14,6 @@ import ReserveRecord from '@/views/StadiumManagement/ReserveRecord'
 import UserInfo from '@/views/UserManagement/UserInfo'
 import UserInfoDetail from '@/views/UserManagement/UserInfoDetail'
 import OperationRecord from '@/views/OperationRecord'
-import Statistic from '@/views/Statistic'
 import SystemLog from '@/views/SystemLog'
 import NewStadium from '@/views/StadiumManagement/NewStadium'
 import EditStadium from '@/views/StadiumManagement/EditStadium'
@@ -87,11 +86,6 @@ export default new Router({
       path: "/operation_record",
       name: "OperationRecord",
       component: OperationRecord
-    },
-    {
-      path: "/statistic",
-      name: "Statistic",
-      component: Statistic
     },
     {
       path: "/system_log",
