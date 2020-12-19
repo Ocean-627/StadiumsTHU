@@ -6,16 +6,13 @@
             <div class="row wrapper border-bottom white-bg page-heading">
                 <!--Breadcrum 导航-->
                 <div class="col-lg-9">
-                    <h2>用户信息 </h2>
+                    <h2>用户管理 </h2>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="/home">主页</a>
                         </li>
-                        <li class="breadcrumb-item">
-                            用户管理
-                        </li>
                         <li class="breadcrumb-item active">
-                            <strong>用户信息</strong>
+                            <strong>用户管理</strong>
                         </li>
                     </ol>
                 </div>
@@ -169,12 +166,12 @@ export default {
                                 return [
                                     h('u', {
                                         style: {
-                                            color: '007bff',
+                                            color: '#007bff',
                                             cursor: 'pointer'
                                         },
                                         on: {
                                             click: () => {
-                                                window.location.replace('/user_management/user_info/detail/' + row.userId.toString())
+                                                window.location.replace('/user_management/detail/' + row.userId.toString())
                                             }
                                         }
                                     }, row.name)

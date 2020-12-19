@@ -13,7 +13,6 @@ import GroundReserve from '@/views/StadiumManagement/GroundReserve'
 import ReserveRecord from '@/views/StadiumManagement/ReserveRecord'
 import UserInfo from '@/views/UserManagement/UserInfo'
 import UserInfoDetail from '@/views/UserManagement/UserInfoDetail'
-import Blacklist from '@/views/UserManagement/Blacklist'
 import OperationRecord from '@/views/OperationRecord'
 import Statistic from '@/views/Statistic'
 import SystemLog from '@/views/SystemLog'
@@ -75,19 +74,14 @@ export default new Router({
       component: ReserveRecord
     },
     {
-      path: "/user_management/user_info",
+      path: "/user_management",
       name: "UserInfo",
       component: UserInfo
     },
     {
-      path: "/user_management/user_info/detail/:userId",
+      path: "/user_management/detail/:userId",
       name: "UserInfoDetail",
       component: UserInfoDetail
-    },
-    {
-      path: "/user_management/blacklist",
-      name: "Blacklist",
-      component: Blacklist
     },
     {
       path: "/operation_record",

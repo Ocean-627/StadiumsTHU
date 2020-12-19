@@ -141,7 +141,7 @@ export default {
                                         },
                                         on: {
                                             click: () => {
-                                                window.location.replace('/user_management/user_info/detail/' + row.user.toString())
+                                                window.location.replace('/user_management/detail/' + row.user.toString())
                                             }
                                         }
                                     }, row.userName)

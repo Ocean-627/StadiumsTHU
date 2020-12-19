@@ -63,58 +63,7 @@ export default {
                     remote: true,
                     trigger: 'cell'
                 },
-                formConfig: {
-                    titleWidth: 100,
-                    titleAlign: 'right',
-                    items: [
-                        { 
-                            field: 'name',
-                            title: '姓名', 
-                            span: 6, 
-                            itemRender: { name: '$input', props: { placeholder: '请输入姓名' } } 
-                        },
-                        { 
-                            field: 'nickName', 
-                            title: '昵称', 
-                            span: 6, 
-                            itemRender: { name: '$input', props: { placeholder: '请输入昵称' } } 
-                        },
-                        { 
-                            field: 'userId',
-                            title: '学号/工号', 
-                            span: 6, 
-                            itemRender: { name: '$input', props: { placeholder: '请输入学号/工号' } } 
-                        },
-                        {
-                            field: 'type',
-                            title: '用户类型', 
-                            span: 6, 
-                            itemRender: { 
-                                name: '$select', 
-                                options: [
-                                    { label: '在校学生', value: '在校学生' },
-                                    { label: '教工', value: '教工' }
-                                ]
-                            } 
-                        },
-                        { 
-                            span: 24, 
-                            align: 'center', 
-                            collapseNode: true, 
-                            itemRender: { 
-                                name: '$buttons', 
-                                children: [
-                                    { props: { type: 'submit', content: '查询', status: 'primary' } }, 
-                                    { props: { type: 'reset', content: '重置' } }
-                                ] 
-                            } 
-                        }
-                    ]
-                },
                 toolbarConfig: {
-                    buttons: [
-                        { code: 'delete', name: '删除', icon: 'fa fa-trash-o', status: 'danger' },
-                    ],
                     refresh: true,
                     export: true,
                     print: true,
@@ -139,7 +88,7 @@ export default {
                             filters.forEach(({ property, values }) => {
                                 queryParams[property] = values.join(',')
                             })
-                            return this.$axios.get(`history/`, {params: queryParams}).then(res => console.log(res.data))
+                            return this.$axios.get(`history/`, {params: queryParams}).then(res => res.data)
                         },
                     }
                 },
@@ -147,53 +96,108 @@ export default {
                     { type: 'checkbox', width: 50 },
                     { type: 'seq', width: 60 },
                     { 
-                        field: 'name', 
-                        title: '操作者',
-                        sortable: true,
+                        field: 'type', 
+                        title: '操作类型',
+                        filters: [
+                            { label: "添加场馆", value: "添加场馆" },
+                            { label: "编辑场馆信息", value: "编辑场馆信息" },
+                            { label: "移入黑名单", value: "移入黑名单" },
+                            { label: "移除黑名单", value: "移除黑名单" },
+                            { label: "撤销信用记录", value: "撤销信用记录" },
+                            { label: "场馆预留", value: "场馆预留" },
+                            { label: "修改场馆预约时段", value: "修改场馆预约时段" },
+                        ]
+                    },
+                    { field: 'details', title: '操作详情' },
+                    { field: 'content', title: '备注' },
+                    { 
+                        field: 'state', 
+                        title: '状态', 
                         slots: {
                             default: ({row}, h) => {
+                                var content, color
+                                if(row.state == 0) {
+                                    content = "成功";
+                                    color = "#28a745"
+                                }
+                                if(row.state == 1) {
+                                    content = "已取消";
+                                    color = "#6c757d"
+                                }
+                                if(row.state == 2) {
+                                    content = "已过期";
+                                }
                                 return [
-                                    h('u', {
+                                    h('div', {
                                         style: {
-                                            color: '#007bff',
+                                            color: color,
                                             cursor: 'pointer'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                window.location.replace('/user_management/user_info/detail/' + row.userId.toString())
-                                            }
                                         }
-                                    }, row.name)
+                                    }, content)
                                 ]
                             }
                         }
                     },
-                    { 
-                        field: 'type', 
-                        title: '操作类型',
-                        filters: [
-                            { label: '第一种', value: 1 },
-                            { label: '第二种', value: 2 },
-                            { label: '第三种', value: 3 },
-                            { label: '第四种', value: 4 },
-                        ],
-                        formatter: function(value) {
-                            switch(value){
-                                case 1: return '第一种';
-                                case 2: return '第二种';
-                                case 3: return '第三种';
-                                case 4: return '第四种';
+                    {
+                        field: 'op',
+                        title: '操作',
+                        slots: {
+                            default: ({row}, h) => {
+                                if(row.state != 0) return []
+                                if(row.type === "添加场馆"
+                                || row.type === "编辑场馆信息"
+                                || row.type === "移除黑名单"
+                                || row.type === "撤销信用记录") return []
+                                let func = (res) => {
+                                    if(!res) return;
+                                    let req = {}
+                                    if(row.type === "添加黑名单"){
+                                        req.url = 'blacklist/';
+                                        req.method = 'put';
+                                        req.data = {
+                                            id: row.id
+                                        }
+                                    }
+                                    else if(row.type === "场馆预留"){
+                                        // TODO: 后端还没做
+                                        req.url = 'addevent/';
+                                        req.method = 'put';
+                                        req.data = {
+                                            id: row.id
+                                        }
+                                    }
+                                    else if(row.type === "修改场馆预定时段"){
+                                        // TODO: 后端还没做
+                                        req.url = 'changeduration/';
+                                        req.method = 'put';
+                                        req.data = {
+                                            id: row.id
+                                        }
+                                    }
+                                    this.$axios(req).then(res => {
+                                        swal("成功", "撤销操作成功", "success");
+                                        refreshColumn();
+                                    })
+                                }
+                                return [
+                                    h('button', {
+                                        class: "btn btn-sm btn-outline btn-danger",
+                                        on: {
+                                            click: () => {
+                                                swal({
+                                                    title: "确定要撤销这条操作吗？",
+                                                    type: "warning",
+                                                    showCancelButton: true,
+                                                    confirmButtonColor: "#DD6B55",
+                                                    confirmButtonText: "确认",
+                                                    cancelButtonText: "取消",
+                                                },
+                                                func)
+                                            }
+                                        }
+                                    }, "撤销")
+                                ]
                             }
-                        }
-                    },
-                    { field: 'detail', title: '操作详情' },
-                    { field: 'comment', title: '备注' },
-                    { 
-                        field: 'time', 
-                        sortable: true, 
-                        title: '操作时间', 
-                        formatter: function(value) {
-                            return moment(value).format("YYYY-MM-DD HH:mm:ss");
                         }
                     }
                 ],

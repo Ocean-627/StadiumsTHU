@@ -12,7 +12,6 @@
                             </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
                                 <li><a class="dropdown-item" href="/profile">个人信息</a></li>
-                                <li><a class="dropdown-item" href="/messages">信箱</a></li>
                                 <li class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="/login">登出</a></li>
                             </ul>
@@ -33,12 +32,7 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-group"></i> <span class="nav-label">用户管理</span><span
-                                class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level collapse">
-                            <li><a href="/user_management/user_info">用户信息</a></li>
-                            <li><a href="/user_management/blacklist">黑名单管理</a></li>
-                        </ul>
+                        <a href="/user_management"><i class="fa fa-group"></i> <span class="nav-label">用户管理</span></a>
                     </li>
                     <li>
                         <a href="/operation_record"><i class="fa fa-check-square-o"></i> <span class="nav-label">操作记录</span></a>
@@ -47,8 +41,7 @@
                         <a href="/statistic"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">统计分析</span></a>
                     </li>
                     <li>
-                        <a href="/system_log"><i class="fa fa-info"></i> <span class="nav-label">系统日志</span>
-                            <span class="label label-info float-right">新</span></a>
+                        <a href="/system_log"><i class="fa fa-info"></i> <span class="nav-label">系统日志</span></a>
                     </li>
                 </ul>
             </div>

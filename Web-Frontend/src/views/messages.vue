@@ -37,7 +37,7 @@
           <div class="col-lg-12">
             <div class="ibox-content forum-post-container">
               <div class="media" v-for="session in this.sessions" :key="session.id" :class="session | style_filter">
-                <a class="forum-avatar" :href="'/user_management/user_info/detail/' + session.user_id">
+                <a class="forum-avatar" :href="'/user_management/detail/' + session.user_id">
                   <img
                     :src="session.image"
                     class="rounded-circle"

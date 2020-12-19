@@ -343,8 +343,8 @@ export default {
                     closeOnConfirm: false
                 },
                 () => {
-                    // TODO: 删除场地
-                    swal("成功", "场地已成功删除", "success")
+                    // TODO: 删除场地swal
+                    ("成功", "场地已成功删除", "success")
                 });
         },
         submit(ground) {

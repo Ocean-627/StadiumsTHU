@@ -12,10 +12,7 @@
               <a href="/home">主页</a>
             </li>
             <li class="breadcrumb-item">
-              用户管理
-            </li>
-            <li class="breadcrumb-item">
-              <a href="/user_management/user_info">用户信息</a>
+              <a href="/user_management">用户管理</a>
             </li>
             <li class="breadcrumb-item active">
               <strong>详细信息</strong>
@@ -38,19 +35,6 @@
           </div>
           <div class="col-md-2">
             <h1 style="padding-top: 30px"><strong>{{ user.nickName }}</strong></h1>
-          </div>
-          <div class="col-md-4"></div>
-          <div
-            class="col-md-1"
-            style="cursor: pointer;"
-            v-on:click="sendMessage()"
-          >
-            <i
-              class="fa fa-envelope fa-2x"
-              style="margin-top: 50px; color: #FFBF00; cursor: pointer;"
-            ></i
-            ><br />
-            <strong style="color: #FFBF00;">发送私信</strong>
           </div>
         </div>
         <div class="row i-row">
@@ -102,11 +86,14 @@
           <div class="col-md-3">
             <strong>黑名单状态</strong>
           </div>
-          <div class="col-md-1">
+          <div class="col-md-1" v-show="user.inBlacklist">
             {{ user.inBlacklist ? "是" : "否" }}
           </div>
           <div class="col-md-2" v-show="user.inBlacklist">
             （拉黑于{{ user.inBlacklistTime | datetime_format("YYYY-MM-DD") }}）
+          </div>
+          <div class="col-md-2" v-show="!user.inBlacklist">
+            {{ user.inBlacklist ? "是" : "否" }}
           </div>
         </div>
         <div class="row i-row">
@@ -163,57 +150,21 @@
                 <th>操作</th>
               </thead>
               <tbody
-                v-for="credit_record in credit_records"
+                v-for="(credit_record, index) in credit_records"
                 :key="credit_record.id"
               >
                 <tr>
-                  <td>{{ credit_record.id }}</td>
-                  <td>{{ credit_record.content }}</td>
-                  <td>{{ credit_record.time }}</td>
-                  <td :style="credit_record.status | credit_status">
-                    {{ credit_record.status }}
+                  <td>{{ index }}</td>
+                  <td>{{ credit_record.detail }}</td>
+                  <td>{{ credit_record.date + " " + credit_record.time }}</td>
+                  <td :style="credit_record | credit_status_style">
+                    {{ credit_record | credit_status }}
                   </td>
                   <td style="padding: 5px;">
                     <button
                       class="btn btn-xs btn-danger btn-outline"
-                      v-show="credit_record.status === '生效中'"
-                    >
-                      撤销
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="row i-row">
-          <div class="col-md-3">
-            <strong>黑名单记录</strong>
-          </div>
-          <div class="col-md-8">
-            <table class="table">
-              <thead>
-                <th>#</th>
-                <th>内容</th>
-                <th>时间</th>
-                <th>生效状态</th>
-                <th>操作</th>
-              </thead>
-              <tbody
-                v-for="blacklist_record in blacklist_records"
-                :key="blacklist_record.id"
-              >
-                <tr>
-                  <td>{{ blacklist_record.id }}</td>
-                  <td>{{ blacklist_record.content }}</td>
-                  <td>{{ blacklist_record.time }}</td>
-                  <td :style="blacklist_record.status | credit_status">
-                    {{ blacklist_record.status }}
-                  </td>
-                  <td style="padding: 5px;">
-                    <button
-                      class="btn btn-xs btn-danger btn-outline"
-                      v-show="blacklist_record.status === '生效中'"
+                      v-show="!credit_record.cancel && credit_record.valid"
+                      v-on:click="cancel_credit(credit_record.id)"
                     >
                       撤销
                     </button>
@@ -248,26 +199,7 @@ export default {
     return {
       user: {},
       reserve_records: [],
-      credit_records: [
-        {
-          id: 1,
-          content: "不讲武德",
-          time: "2020-11-10 08:00-12:00",
-          status: "生效中"
-        },
-        {
-          id: 2,
-          content: "不讲武德",
-          time: "2020-11-10 08:00-12:00",
-          status: "已撤销"
-        },
-        {
-          id: 3,
-          content: "不讲武德",
-          time: "2020-11-10 08:00-12:00",
-          status: "已过期"
-        }
-      ],
+      credit_records: [],
       blacklist_records: [],
     };
   },
@@ -300,26 +232,49 @@ export default {
       if(record.checked && !record.leave) return "color: #17a2b8";
       return "color: #28a745";
     },
-    credit_status: function(status) {
-      if (status === "生效中") return "color: #23c6c8;";
-      if (status === "已撤销") return "color: orange;";
+    credit_status: function(r) {
+        if (r.cancel) return "已撤销";
+        if(!r.valid) return "已过期";
+        return "生效中";
+    },
+    credit_status_style: function(r) {
+        if (r.cancel) return "color: orange;";
+        if(!r.valid) return "";
+        return "color: #23c6c8;";
+      
     },
   },
   methods: {
     sendMessage() {},
     deleteUser() {},
-    cancel_reserve(record){}
+    cancel_reserve(record){},
+    cancel_credit(id) {
+        let func = this.axios.get("default/", { params: { id: id } }).then(res => {
+            swal("成功", "撤销操作成功", "success");
+            this.$forceUpdate();
+        })
+        swal({
+            title: "确定要撤销这条操作吗？",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "确认",
+            cancelButtonText: "取消",
+        },
+        func)
+    }
   },
   mounted() {
     let p = Promise.all([
       this.$axios.get("user/", { params: { userId: this.$route.params.userId } }),
       this.$axios.get("reserveevent/", { params: { userId: this.$route.params.user } }),
-
+      this.$axios.get("default/", { params: { userId: this.$route.params.userId }})
     ]);
     p.then(res => {
         this.user = res[0].data.results[0];
         this.reserve_records = res[1].data.results
-        console.log(res[1].data.results)
+        this.credit_records = res[2].data.results
+        console.log(res[0].data.results)
     });
   }
 };
