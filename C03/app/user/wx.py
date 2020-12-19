@@ -46,6 +46,7 @@ def reserve_success_message(openId, type, date, content):
     :param content: 备注
     :return:
     """
+    get_access_token()
     headers = {
         'Content-Type': 'application/json'
     }
@@ -81,6 +82,7 @@ def reserve_cancel_message(openId, type, date, content):
     :param content: 备注
     :return:
     """
+    get_access_token()
     headers = {
         'Content-Type': 'application/json'
     }
@@ -116,6 +118,7 @@ def reserve_state_message(openId, type, date, content):
     :param content: 备注
     :return:
     """
+    get_access_token()
     headers = {
         'Content-Type': 'application/json'
     }
@@ -143,8 +146,6 @@ def reserve_state_message(openId, type, date, content):
 
 
 if __name__ == '__main__':
-    get_access_token()
-    print(access_token)
     openId = 'ojXf94o4sj8EZKUS9l5mdn2NsH5U'
     res = reserve_state_message(openId, type='开军舰', date='2020-12-25', content='快开始啦')
     print(res)
