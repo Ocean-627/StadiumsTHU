@@ -406,7 +406,11 @@ class AddEventView(ListAPIView):
                 reserveEvent = ReserveEvent.objects.filter(duration_id=myDuration.id).first()
                 if not reserveEvent:
                     continue
-                # TODO: 最好在这里给用户发回一条消息
+                # 给用户发送消息
+                content = '非常抱歉，您预定的' + myDuration.stadium.name + myDuration.court.name + ',时间为' + myDuration.date + ',' + myDuration.startTime + '-' + myDuration.endTime + '由于管理员占用已被取消。'
+                News.objects.create(user=reserveEvent.user, type='预约取消', content=content)
+                reserve_cancel_message(reserveEvent.user.openId, type=myDuration.court.type, date=myDuration.date,
+                                       content=content)
                 reserveEvent.cancel = 1
                 reserveEvent.save()
         if myDurations:
