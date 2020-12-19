@@ -11,7 +11,7 @@ from app.utils.filter import *
 from app.utils.pagination import *
 from app.utils.authtication import ManagerAuthtication
 from app.user.wx import *
-from apscheduler.scheduler import Scheduler
+# from apscheduler.scheduler import Scheduler
 import time
 import datetime
 import pytz
@@ -124,12 +124,13 @@ def minute_task():
             reserveEvent.user.save()
         elif judgeTime(reserveEvent.startTime, calculateTime(myTime, 600)) == 0:
             print("You have a reserve event!")
-            newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将开始，请按时签到'\
+            newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将开始，请按时签到' \
                 .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
                         startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
             news = News(user=reserveEvent.user, type="预约即将开始", content=newsStr)
             courtType = Court.objects.get(id=reserveEvent.court_id).courtType.type
-            date = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M')
+            date = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime(
+                '%Y-%m-%d %H:%M')
             reserve_state_message(reserveEvent.user.openId, courtType, date, newsStr)
             news.save()
         elif judgeTime(reserveEvent.endTime, calculateTime(myTime, 600)) == 0 and reserveEvent.leave == 0:
@@ -139,7 +140,8 @@ def minute_task():
                         startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
             news = News(user=reserveEvent.user, type="预约即将结束", content=newsStr)
             courtType = Court.objects.get(id=reserveEvent.court_id).courtType.type
-            date = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M')
+            date = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime(
+                '%Y-%m-%d %H:%M')
             reserve_state_message(reserveEvent.user.openId, courtType, date, newsStr)
             news.save()
 
@@ -149,6 +151,8 @@ def minute_task():
 '''
 若代码已经部署到服务器上，在本机上运行后端时务必将以下四行注释掉，否则会更改服务器数据库
 '''
+
+
 # sched = Scheduler()
 # sched.add_cron_job(daily_task, hour=0, minute=0)
 # sched.add_interval_job(minute_task, seconds=60)
@@ -367,8 +371,14 @@ class ChangeDurationView(ListAPIView, CreateAPIView):
     filter_class = ChangeDurationFilter
 
     def put(self, request):
-        pass
-        # TODO: 只接受一个参数id，并实现逻辑
+        req_data = request.data
+        id = req_data.get('id')
+        changeDuration = ChangeDuration.objects.filter(id=id, state=0).first()
+        if not changeDuration:
+            return Response({'error': 'Invalid id'}, status=400)
+        changeDuration.state = 1
+        changeDuration.save()
+        return Response({'message': 'ok'})
 
 
 class AddEventView(ListAPIView):
@@ -399,11 +409,20 @@ class AddEventView(ListAPIView):
                 # TODO: 最好在这里给用户发回一条消息
                 reserveEvent.cancel = 1
                 reserveEvent.save()
+        if myDurations:
+            addEvent.state = 2
+            addEvent.save()
         return Response({'message': 'ok'})
 
     def put(self, request):
-        pass
-        # TODO: 只接受一个参数id，并实现逻辑
+        req_data = request.data
+        id = req_data.get('id')
+        addEvent = AddEvent.objects.filter(id=id, state=0).first()
+        if not addEvent:
+            return Response({'error': 'Invalid id'}, status=400)
+        addEvent.state = 1
+        addEvent.save()
+        return Response({'message': 'ok'})
 
 
 class AddBlacklistView(ListAPIView, CreateAPIView):
