@@ -25,5 +25,6 @@ urlpatterns = [
     path('message/', views.MessageView.as_view()),
     path('default/', views.DefaultView.as_view()),
     path('blacklist/', views.AddBlacklistView.as_view()),
+    path('statistics/', views.StatisticsView.as_view())
     # path('revoke/', views.revoke)
 ]

@@ -123,6 +123,14 @@ class NewsFilter(filters.FilterSet):
         fields = ['id', 'checked']
 
 
+class StatisticsFilter(filters.FilterSet):
+    type = filters.CharFilter(field_name='type', lookup_expr='icontains')
+
+    class Meta:
+        model = Statistics
+        fields = ['stadium_id']
+
+
 class SessionFilter(filters.FilterSet):
     sort = filters.OrderingFilter(fields=('createTime', 'updateTime'))
 

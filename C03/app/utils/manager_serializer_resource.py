@@ -158,3 +158,9 @@ class MessageSerializerForManager(serializers.ModelSerializer):
         model = Message
         fields = '__all__'
         read_only_fields = ['session', 'sender', 'manager_id']
+
+
+class StatisticsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Statistics
+        fields = '__all__'
