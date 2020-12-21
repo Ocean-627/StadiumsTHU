@@ -6,6 +6,7 @@ import pytz
 import time
 from app.models import *
 from app.utils.utils import *
+from app.user import wx
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -147,14 +148,16 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         duration = Duration.objects.filter(id=validated_data.get('duration_id')).first()
         stadium = duration.stadium
         court = duration.court
+        user = self.context['request'].user
         # modify corresponding duration
         duration.accessible = False
-        duration.user = self.context['request'].user
+        duration.user = user
         duration.save()
         # send reserve success message
         content = '您已经成功预约' + stadium.name + court.name + '预约时间为' + duration.date + ',' + duration.startTime + '-' + duration.endTime + '。'
-        News.objects.create(user=self.context['request'].user, type='预约成功', content=content)
-        return ReserveEvent.objects.create(user=self.context['request'].user, **validated_data, stadium=stadium.name,
+        News.objects.create(user=user, type='预约成功', content=content)
+        wx.reserve_success_message(openId=user.openId, type=court.type, date=duration.date, content=content)
+        return ReserveEvent.objects.create(user=user, **validated_data, stadium=stadium.name,
                                            stadium_id=stadium.id, court=court.name, date=duration.date,
                                            court_id=court.id,
                                            startTime=duration.startTime, endTime=duration.endTime,

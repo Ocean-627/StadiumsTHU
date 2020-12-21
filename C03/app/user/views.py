@@ -139,7 +139,6 @@ class ReserveView(ListAPIView, CreateAPIView):
             return Response({'error': ser.errors}, status=400)
         reserve = ReserveEvent.objects.get(id=ser.validated_data.get('id'))
         ser.update(reserve, ser.validated_data)
-        print(ser.validated_data)
         # 额外处理退订事件
         if ser.validated_data.get('cancel'):
             duration = Duration.objects.filter(id=reserve.duration_id).first()
@@ -153,6 +152,8 @@ class ReserveView(ListAPIView, CreateAPIView):
             # 发送取消成功
             content = '您预定的' + duration.stadium.name + duration.court.name + '时间为' + duration.date + ',' + duration.startTime + '-' + duration.endTime + '取消成功。'
             News.objects.create(user=request.user, type='预约取消', content=content)
+            wx.reserve_cancel_message(openId=request.user.openId, type=duration.court.type, date=duration.date,
+                                      content=content)
             duration.accessible = True
             duration.user = None
             duration.save()

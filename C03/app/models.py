@@ -2,6 +2,7 @@ from django.db import models
 from app.utils.validator import *
 from app.utils.utils import *
 import django.utils.timezone as timezone
+import datetime
 
 
 # Create your models here.
@@ -282,3 +283,12 @@ class News(models.Model):
     content = models.CharField(max_length=100)
     createTime = models.DateTimeField(auto_now_add=True)
     checked = models.BooleanField(default=False, verbose_name='是否已读')
+
+
+class Statistics(models.Model):
+    # 管理员查看的历史信息
+    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE)
+    type = models.CharField(max_length=20)
+    date = models.CharField(max_length=20)
+    availableDurations = models.IntegerField()
+    reservedDurations = models.IntegerField()

@@ -43,7 +43,7 @@ class AddEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = AddEvent
         fields = '__all__'
-        read_only_fields = ['manager', 'court']
+        read_only_fields = ['manager', 'court', 'state']
 
 
 class AddBlacklistSerializer(serializers.ModelSerializer):

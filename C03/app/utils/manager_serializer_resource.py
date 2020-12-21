@@ -93,10 +93,14 @@ class ReserveEventSerializerForManager(ReserveEventSerializer):
 
 
 class CommentSerializerForManager(CommentSerializer):
+    stadiumName = serializers.SerializerMethodField(required=False)
     userName = serializers.SerializerMethodField(required=False)
 
     def get_userName(self, obj):
         return obj.user.name
+
+    def get_stadiumName(self, obj):
+        return obj.court.stadium.name
 
 
 class SessionSerializerForManager(serializers.ModelSerializer):
@@ -154,3 +158,9 @@ class MessageSerializerForManager(serializers.ModelSerializer):
         model = Message
         fields = '__all__'
         read_only_fields = ['session', 'sender', 'manager_id']
+
+
+class StatisticsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Statistics
+        fields = '__all__'

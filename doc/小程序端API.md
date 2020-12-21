@@ -11,7 +11,8 @@ Method: POST
 URL: /api/user/login
 Request:
 {
-   	'code': '',
+   	'js_code': '',
+    'token': '',
 }
 Response:
 {
@@ -19,6 +20,8 @@ Response:
     'loginToken': '546sdwe54'		
 }
 ```
+
+请求参数`js_code`是微信小程序进行身份认证需要的，`token`用于给助教小程序发送请求。
 
 其中`loginToken`应该被前端存储在**请求头**中，用于后续身份验证。
 
@@ -30,17 +33,21 @@ URL: /api/user/user
 Request:
 Response:
 {
-    "id": 2,
-    "phone": "18801225328",
-    "openId": "yyh",
-    "loginToken": "3",
-    "loginTime": "2020-11-30T15:56:07.143532Z",
-    "auth": false,
-    "name": "cbx",
-    "nickName": "战神",
-    "userId": 2018011894,
-    "email": "cbx@qq.com",
-    "image": "/media/user/timg_VCjkG6O.jpg"
+    "id": 1,
+    "phone": "4008823823",
+    "openId": "ojXf94o4sj8EZKUS9l5mdn2NsH5U",
+    "loginToken": "1",
+    "loginTime": "2020-12-18T21:59:07.059572",
+    "type": "学生",
+    "name": "胡浩宇",
+    "nickName": "一只大萝卜",
+    "userId": 2017013594,
+    "email": "hhy17@mails.tsinghua.edu.cn",
+    "major": "软件学院",
+    "image": "http://127.0.0.1:8000/media/user/wx45b215f8db5d15f4.o6zAJs8rMS-DuYactSr6tHqzUn-A.WejhT0zkQ95o7920aa1e087379def2638b6_qbyOong.png",
+    "defaults": 0,
+    "inBlacklist": false,
+    "inBlacklistTime": "0"
 }
 ```
 

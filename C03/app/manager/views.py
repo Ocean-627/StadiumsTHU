@@ -4,12 +4,14 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
 from django.http import JsonResponse
+from django.db.models import Sum
 from app.utils.utils import *
 from app.utils.manager_serializer_resource import *
 from app.utils.manager_serializer_event import *
 from app.utils.filter import *
 from app.utils.pagination import *
 from app.utils.authtication import ManagerAuthtication
+from app.user.wx import *
 # from apscheduler.scheduler import Scheduler
 import time
 import datetime
@@ -25,6 +27,14 @@ def daily_task():
     # 删除旧数据
     old_date = calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), -1)
     now_date = datetime.datetime.now().strftime('%Y-%m-%d')
+    # TODO: 保存每日信息
+    for court in Court.objects.all():
+        durations = court.duration_set.all()
+        availableDurations = len(durations)
+        reservedDurations = len(durations.filter(accessible=False))
+        Statistics.objects.create(stadium=court.stadium, availableDurations=availableDurations,
+                                  reservedDurations=reservedDurations, date=old_date, type=court.type)
+
     durations = Duration.objects.all()
     delete_durations = durations.filter(date=old_date)
     delete_durations.delete()
@@ -123,20 +133,28 @@ def minute_task():
             reserveEvent.user.save()
         elif judgeTime(reserveEvent.startTime, calculateTime(myTime, 600)) == 0:
             print("You have a reserve event!")
-            newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将开始，请按时签到'\
+            newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将开始，请按时签到' \
                 .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
                         startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
             news = News(user=reserveEvent.user, type="预约即将开始", content=newsStr)
+            courtType = Court.objects.get(id=reserveEvent.court_id).courtType.type
+            date = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime(
+                '%Y-%m-%d %H:%M')
+            reserve_state_message(reserveEvent.user.openId, courtType, date, newsStr)
             news.save()
-        elif judgeTime(reserveEvent.endTime, calculateTime(myTime, 600) == 0) and reserveEvent.leave == 0:
+        elif judgeTime(reserveEvent.endTime, calculateTime(myTime, 600)) == 0 and reserveEvent.leave == 0:
             print("You are going to leave!")
             newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将结束，请带好个人物品，按时离开' \
                 .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
                         startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
             news = News(user=reserveEvent.user, type="预约即将结束", content=newsStr)
+            courtType = Court.objects.get(id=reserveEvent.court_id).courtType.type
+            date = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime(
+                '%Y-%m-%d %H:%M')
+            reserve_state_message(reserveEvent.user.openId, courtType, date, newsStr)
             news.save()
-    print("Finished!")
 
+    print("Finished!")
 
 
 '''
@@ -362,8 +380,14 @@ class ChangeDurationView(ListAPIView, CreateAPIView):
     filter_class = ChangeDurationFilter
 
     def put(self, request):
-        pass
-        # TODO: 只接受一个参数id，并实现逻辑
+        req_data = request.data
+        id = req_data.get('id')
+        changeDuration = ChangeDuration.objects.filter(id=id, state=0).first()
+        if not changeDuration:
+            return Response({'error': 'Invalid id'}, status=400)
+        changeDuration.state = 1
+        changeDuration.save()
+        return Response({'message': 'ok'})
 
 
 class AddEventView(ListAPIView):
@@ -391,14 +415,27 @@ class AddEventView(ListAPIView):
                 reserveEvent = ReserveEvent.objects.filter(duration_id=myDuration.id).first()
                 if not reserveEvent:
                     continue
-                # TODO: 最好在这里给用户发回一条消息
+                # 给用户发送消息
+                content = '非常抱歉，您预定的' + myDuration.stadium.name + myDuration.court.name + ',时间为' + myDuration.date + ',' + myDuration.startTime + '-' + myDuration.endTime + '由于管理员占用已被取消。'
+                News.objects.create(user=reserveEvent.user, type='预约取消', content=content)
+                reserve_cancel_message(reserveEvent.user.openId, type=myDuration.court.type, date=myDuration.date,
+                                       content=content)
                 reserveEvent.cancel = 1
                 reserveEvent.save()
+        if myDurations:
+            addEvent.state = 2
+            addEvent.save()
         return Response({'message': 'ok'})
 
     def put(self, request):
-        pass
-        # TODO: 只接受一个参数id，并实现逻辑
+        req_data = request.data
+        id = req_data.get('id')
+        addEvent = AddEvent.objects.filter(id=id, state=0).first()
+        if not addEvent:
+            return Response({'error': 'Invalid id'}, status=400)
+        addEvent.state = 1
+        addEvent.save()
+        return Response({'message': 'ok'})
 
 
 class AddBlacklistView(ListAPIView, CreateAPIView):
@@ -458,6 +495,33 @@ class HistoryView(APIView):
         operations = pagination.paginate(operations, page=ser.validated_data.get('page'),
                                          size=ser.validated_data.get('size'))
         return Response(operations)
+
+
+class StatisticsView(ListAPIView):
+    """
+    统计信息
+    """
+    authentication_classes = [ManagerAuthtication]
+    queryset = Statistics.objects.all()
+    serializers = StatisticsSerializer
+    filter_class = StatisticsFilter
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        now_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        res = {}
+        for i in range(1, 8):
+            date = calculateDate(now_date, -i)
+            res[date] = {
+                'availableDurations': -1,
+                'reservedDurations': -1
+            }
+            res[date]['availableDurations'] = queryset.filter(date=date).aggregate(Sum('availableDurations'))[
+                'availableDurations__sum']
+            res[date]['reservedDurations'] = queryset.filter(date=date).aggregate(Sum('reservedDurations'))[
+                'reservedDurations__sum']
+
+        return Response(res)
 
 
 class SessionView(ListAPIView, CreateAPIView):

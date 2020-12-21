@@ -14,6 +14,13 @@ from app.utils.utils import initStadium
 第一次修改 2020-12-17
 原因：测试加入黑名单功能
 结果：正常
+
+第二次修改 2020-12-18
+原因：加入了对ChangeDuration和AddEvent的撤销功能
+结果：正常
+
+第三次修改 2020-12-19
+原因：增加了user的openId,预留场馆时应该发送消息
 """
 
 
@@ -82,6 +89,17 @@ class TestChangeDuration(TestCase):
         self.assertEqual(content[0]['price'], 30)
         self.assertEqual(content[1]['openState'], 1)
 
+        params = {
+            'id': 1
+        }
+        resp = self.client.put('/api/manager/changeduration/', params, **self.headers, content_type='application/json')
+        self.assertEqual(resp.status_code, 200)
+        changeDuration = ChangeDuration.objects.first()
+        self.assertEqual(changeDuration.state, 1)
+
+        resp = self.client.put('/api/manager/changeduration/', params, **self.headers, content_type='application/json')
+        self.assertEqual(resp.status_code, 400)
+
 
 class TestAddEvent(TestCase):
     def setUp(self) -> None:
@@ -90,7 +108,7 @@ class TestAddEvent(TestCase):
         initStadium(stadiums[1])
         self.headers = {'HTTP_loginToken': 1}
 
-        User.objects.create(userId=2018011891, loginToken=1)
+        User.objects.create(userId=2018011891, loginToken=1, openId='123')
         self.user_headers = {'HTTP_loginToken': 1}
 
     def test_addevent(self):
@@ -112,6 +130,8 @@ class TestAddEvent(TestCase):
         resp = self.client.post('/api/user/reserve/', params, **self.user_headers)
         self.assertEqual(resp.status_code, 201)
 
+        self.assertEqual(len(News.objects.all()), 3)
+
         params = {
             'court_id': 1,
             'startTime': '10:00',
@@ -131,6 +151,31 @@ class TestAddEvent(TestCase):
         self.assertEqual(ReserveEvent.objects.get(id=1).cancel, 1)
         self.assertEqual(ReserveEvent.objects.get(id=2).cancel, 1)
         self.assertEqual(ReserveEvent.objects.get(id=3).cancel, 0)
+
+        self.assertEqual(len(News.objects.all()), 5)
+
+        addEvent = AddEvent.objects.first()
+        self.assertEqual(addEvent.state, 2)
+        params = {
+            'id': 1
+        }
+        resp = self.client.put('/api/manager/addevent/', params, **self.headers, content_type='application/json')
+        self.assertEqual(resp.status_code, 400)
+
+        params = {
+            'court_id': 1,
+            'startTime': '10:00',
+            'endTime': '13:00',
+            'date': '2020-12-31',
+        }
+        resp = self.client.post('/api/manager/addevent/', params, **self.headers)
+        self.assertEqual(resp.status_code, 200)
+        params = {
+            'id': 2
+        }
+        resp = self.client.put('/api/manager/addevent/', params, **self.headers, content_type='application/json')
+        addEvent = AddEvent.objects.get(id=2)
+        self.assertEqual(addEvent.state, 1)
 
 
 class TestAddBlacklist(TestCase):
