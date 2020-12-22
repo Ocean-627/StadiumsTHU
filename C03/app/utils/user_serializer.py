@@ -154,7 +154,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         duration.user = user
         duration.save()
         # send reserve success message
-        content = '您已经成功预约' + stadium.name + court.name + '预约时间为' + duration.date + ',' + duration.startTime + '-' + duration.endTime + '。'
+        content = '您已经成功预约' + stadium.name + court.name
         News.objects.create(user=user, type='预约成功', content=content)
         wx.reserve_success_message(openId=user.openId, type=court.type, date=duration.date, content=content)
         return ReserveEvent.objects.create(user=user, **validated_data, stadium=stadium.name,

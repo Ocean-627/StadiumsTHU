@@ -136,6 +136,7 @@ def minute_task():
             newsStr = '您预订的{stadium}{court}时间为{date},{startTime}-{endTime}即将开始，请按时签到' \
                 .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
                         startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
+            newsStr = '您的预定即将开始'
             news = News(user=reserveEvent.user, type="预约即将开始", content=newsStr)
             courtType = Court.objects.get(id=reserveEvent.court_id).courtType.type
             date = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime(
@@ -148,6 +149,7 @@ def minute_task():
                 .format(stadium=reserveEvent.stadium, court=reserveEvent.court, date=reserveEvent.date,
                         startTime=reserveEvent.startTime, endTime=reserveEvent.endTime)
             news = News(user=reserveEvent.user, type="预约即将结束", content=newsStr)
+            newsStr = '您的预定即将结束'
             courtType = Court.objects.get(id=reserveEvent.court_id).courtType.type
             date = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime(
                 '%Y-%m-%d %H:%M')
@@ -416,7 +418,7 @@ class AddEventView(ListAPIView):
                 if not reserveEvent:
                     continue
                 # 给用户发送消息
-                content = '非常抱歉，您预定的' + myDuration.stadium.name + myDuration.court.name + ',时间为' + myDuration.date + ',' + myDuration.startTime + '-' + myDuration.endTime + '由于管理员占用已被取消。'
+                content = '非常抱歉，您的预定由于管理员占用被取消'
                 News.objects.create(user=reserveEvent.user, type='预约取消', content=content)
                 reserve_cancel_message(reserveEvent.user.openId, type=myDuration.court.type, date=myDuration.date,
                                        content=content)
