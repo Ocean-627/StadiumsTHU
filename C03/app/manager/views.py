@@ -275,6 +275,15 @@ class StadiumImageView(CreateAPIView):
     # authentication_classes = [ManagerAuthtication]
     serializer_class = StadiumImageSerializer
 
+    def delete(self, request):
+        req_data = request.data
+        id = req_data.get('id')
+        stadiumImage = StadiumImage.objects.filter(id=id).first()
+        if not stadiumImage:
+            return Response({'error': 'Invalid image id'}, status=400)
+        stadiumImage.delete()
+        return Response({'message': 'ok'})
+
 
 class CourtTypeView(ListAPIView):
     """
