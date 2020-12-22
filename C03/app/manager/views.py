@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
 from django.http import JsonResponse
+from django.db.models import Sum
 from app.utils.utils import *
 from app.utils.manager_serializer_resource import *
 from app.utils.manager_serializer_event import *
@@ -26,6 +27,14 @@ def daily_task():
     # 删除旧数据
     old_date = calculateDate(datetime.datetime.now().strftime('%Y-%m-%d'), -1)
     now_date = datetime.datetime.now().strftime('%Y-%m-%d')
+    # TODO: 保存每日信息
+    for court in Court.objects.all():
+        durations = court.duration_set.all()
+        availableDurations = len(durations)
+        reservedDurations = len(durations.filter(accessible=False))
+        Statistics.objects.create(stadium=court.stadium, availableDurations=availableDurations,
+                                  reservedDurations=reservedDurations, date=old_date, type=court.type)
+
     durations = Duration.objects.all()
     delete_durations = durations.filter(date=old_date)
     delete_durations.delete()
@@ -486,6 +495,33 @@ class HistoryView(APIView):
         operations = pagination.paginate(operations, page=ser.validated_data.get('page'),
                                          size=ser.validated_data.get('size'))
         return Response(operations)
+
+
+class StatisticsView(ListAPIView):
+    """
+    统计信息
+    """
+    authentication_classes = [ManagerAuthtication]
+    queryset = Statistics.objects.all()
+    serializers = StatisticsSerializer
+    filter_class = StatisticsFilter
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        now_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        res = {}
+        for i in range(1, 8):
+            date = calculateDate(now_date, -i)
+            res[date] = {
+                'availableDurations': -1,
+                'reservedDurations': -1
+            }
+            res[date]['availableDurations'] = queryset.filter(date=date).aggregate(Sum('availableDurations'))[
+                'availableDurations__sum']
+            res[date]['reservedDurations'] = queryset.filter(date=date).aggregate(Sum('reservedDurations'))[
+                'reservedDurations__sum']
+
+        return Response(res)
 
 
 class SessionView(ListAPIView, CreateAPIView):
