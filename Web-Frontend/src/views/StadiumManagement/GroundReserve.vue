@@ -311,7 +311,7 @@ export default {
             });
         },
         manage(ground) {
-            // TODO: 跳转到相应的预约信息管理界面就行
+            window.location.replace('/stadium_management/stadium_info/record?id=' + this.$route.query.id.toString())
         },
         setDate(date) {
             var durations;

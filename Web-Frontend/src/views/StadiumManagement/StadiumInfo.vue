@@ -175,22 +175,6 @@ export default {
         checkReserve(stadium) {
             window.location.replace('/stadium_management/stadium_info/record?id='+stadium.id.toString())
         },
-        deleteStadium(index) {
-            swal({
-                    title: "你确定？",
-                    text: "删除场馆将删除附带的场地信息和所有的预定记录！",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "确认",
-                    cancelButtonText: "取消",
-                    closeOnConfirm: false
-                },
-                () => {
-                    // TODO: 删除场馆
-                    swal("成功", "场馆已成功删除", "success")
-                });
-        }
     },
     computed: {
         defaultImg () {

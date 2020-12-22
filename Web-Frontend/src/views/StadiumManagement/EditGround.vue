@@ -50,6 +50,14 @@
                             v-model="newGroundType"
                           />
                         </div>
+                        <div class="form-group">
+                          <label>场地数量</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            v-model="newGroundAmount"
+                          />
+                        </div>
                       </form>
                       <div>
                         <button
@@ -104,6 +112,12 @@
                     >
                   </div>
                   <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">场地数量：</label>
+                    <label class="col-sm-6 col-form-label"
+                      ><strong>{{ ground.amount }}</strong></label
+                    >
+                  </div>
+                  <div class="form-group row">
                     <label class="col-sm-4 col-form-label">开放状态：</label>
                     <div class="col-sm-4">
                       <select
@@ -114,16 +128,6 @@
                         <option>开放</option>
                         <option>未开放</option>
                       </select>
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">场地数量：</label>
-                    <div class="col-sm-4">
-                      <input
-                        class="touchspin"
-                        type="text"
-                        v-model="ground.amount"
-                      />
                     </div>
                   </div>
                   <div class="form-group row">
@@ -349,6 +353,7 @@ export default {
         }
       ],
       newGroundType: "",
+      newGroundAmount: null,
       name: ""
     };
   },
@@ -360,10 +365,6 @@ export default {
   },
   mounted() {
     $(".chosen-select").chosen({ width: "100%" });
-    $(".touchspin").TouchSpin({
-      buttondown_class: "btn btn-white",
-      buttonup_class: "btn btn-white"
-    });
     $(".input-group.date").datepicker({
       todayBtn: "linked",
       keyboardNavigation: false,
@@ -399,10 +400,6 @@ export default {
   },
   updated() {
     $(".chosen-select").chosen({ width: "100%" });
-    $(".touchspin").TouchSpin({
-      buttondown_class: "btn btn-white",
-      buttonup_class: "btn btn-white"
-    });
     var clocks = document.getElementsByClassName("clockpicker");
     for (var i = 0; i < clocks.length; i++) {
       $(clocks[i]).clockpicker();
