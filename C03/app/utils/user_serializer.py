@@ -57,7 +57,7 @@ class StadiumSerializer(serializers.ModelSerializer):
         if tot_num == 0:
             return 3
         else:
-            return tot_score / tot_num
+            return format(tot_score / tot_num, '.1f')
 
     def get_collect(self, obj):
         res = obj.collectevent_set.filter(user=self.context['request'].user).first()

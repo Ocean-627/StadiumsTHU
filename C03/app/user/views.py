@@ -95,6 +95,19 @@ class StadiumDetailView(ListAPIView):
     filter_class = StadiumFilter
 
 
+class CourtTypeView(APIView):
+    """
+    全部运动类型
+    """
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+
+    def get(self, request):
+        types = CourtType.objects.values('type').distinct()
+        res = [item['type'] for item in types]
+        return Response(res)
+
+
 class CourtView(ListAPIView):
     """
     场地信息
