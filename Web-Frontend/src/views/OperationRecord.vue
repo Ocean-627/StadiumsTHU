@@ -159,7 +159,6 @@ export default {
                                         }
                                     }
                                     else if(row.type === "场馆预留"){
-                                        // TODO: 后端还没做
                                         req.url = 'addevent/';
                                         req.method = 'put';
                                         req.data = {
@@ -167,7 +166,6 @@ export default {
                                         }
                                     }
                                     else if(row.type === "修改场馆预定时段"){
-                                        // TODO: 后端还没做
                                         req.url = 'changeduration/';
                                         req.method = 'put';
                                         req.data = {
