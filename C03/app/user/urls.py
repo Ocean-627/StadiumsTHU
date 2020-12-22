@@ -11,6 +11,7 @@ urlpatterns = [
     path('stadium/', views.StadiumView.as_view()),
     path('stadiumdetail/', views.StadiumDetailView.as_view()),
     path('collect/', views.CollectView.as_view()),
+    path('courttype/', views.CourtTypeView.as_view()),
     path('court/', views.CourtView.as_view()),
     path('duration/', views.DurationView.as_view()),
     path('reserve/', views.ReserveView.as_view()),

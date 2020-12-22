@@ -146,6 +146,6 @@ def reserve_state_message(openId, type, date, content):
 
 
 if __name__ == '__main__':
-    openId = 'ojXf94oKOFrVIh9Xe5gvUnpDToeE'
+    openId = 'ojXf94o4sj8EZKUS9l5mdn2NsH5U'
     res = reserve_state_message(openId, type='开军舰', date='2020-12-25', content='快开始啦')
     print(res)

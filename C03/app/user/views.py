@@ -95,6 +95,19 @@ class StadiumDetailView(ListAPIView):
     filter_class = StadiumFilter
 
 
+class CourtTypeView(APIView):
+    """
+    全部运动类型
+    """
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+
+    def get(self, request):
+        types = CourtType.objects.values('type').distinct()
+        res = [item['type'] for item in types]
+        return Response(res)
+
+
 class CourtView(ListAPIView):
     """
     场地信息
@@ -150,7 +163,7 @@ class ReserveView(ListAPIView, CreateAPIView):
             if judgeDate(date, cur) < 2:
                 return Response({'error': 'You can not cancel this reserve because it will due in 2 days.'}, status=400)
             # 发送取消成功
-            content = '您预定的' + duration.stadium.name + duration.court.name + '时间为' + duration.date + ',' + duration.startTime + '-' + duration.endTime + '取消成功。'
+            content = '您的预定取消成功'
             News.objects.create(user=request.user, type='预约取消', content=content)
             wx.reserve_cancel_message(openId=request.user.openId, type=duration.court.type, date=duration.date,
                                       content=content)
