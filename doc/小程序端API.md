@@ -51,6 +51,8 @@ Response:
 }
 ```
 
+其中`defualts`代表个人的违约次数，`inBlacklist`代表是否在黑名单中。
+
 ##### 更新个人信息
 
 ```js
@@ -58,12 +60,13 @@ Method: POST
 URL: /api/user/user
 Request:
 {
-	'auth': '',
-    'name': '',
+    'nickName': '',
     'userId': '',
     'email': '',
-    'phone': ''
-    'image': ''
+    'phone': '',
+    'major': '',
+    'image': '',
+    'type': ''
 }
 Response:
 {
@@ -71,21 +74,7 @@ Response:
 }
 ```
 
-参数即为用户需要完善的个人信息，其中`auth`字段代表用户是否绑定了清华身份，其他字段为具体信息。
-
-###### 需求：
-
- 1. ~~个人信息添加nickname字段，代表昵称，name代表真实姓名，在评论显示的时候使用昵称。~~
-
-    加上了
-
- 2. ~~为什么更新信息用的是GET指令？~~
-
-    应该用POST
-
- 3. ~~头像，以及修改头像~~
-
-    增加了image字段，在body中传入image即可
+参数即为用户需要完善的个人信息。解释为`type`是类型，包括在校学生和校友等。`nickName`是昵称。
 
 ### 场馆信息
 
@@ -105,41 +94,48 @@ QueryParam:{
 Response:
 [
     {
-        "id": 11,
-        "images": [],
-        "comments": 0,
-        "score": 3,
-        "courtTypes": [
+        "id": 1,
+        "images": [
             {
-                "id": 7,
-                "openingHours": "8:00-10:00 13:00-17:00",
-                "type": "羽毛球",
-                "duration": "01:00",
-                "price": 30,
-                "membership": 3
-            },
-            {
-                "id": 8,
-                "openingHours": "8:00-10:00 13:00-17:00",
-                "type": "篮球",
-                "duration": "01:00",
-                "price": 30,
-                "membership": 3
+                "id": 1,
+                "detail": null,
+                "image": "http://127.0.0.1:8000/media/stadium/1.jpg",
+                "stadium": 1
             }
         ],
-        “collect”: true,
-        "name": "西区体育馆",
-        "pinyin": "xiqutiyuguan",
-        "information": "cbx用来写bug的场馆",
-        "openTime": "07:00",
-        "closeTime": "18:00",
-        "contact": "18801225328",
+        "comments": 2,
+        "score": "3.0",
+        "collect": 10,
+        "courtTypes": [
+            {
+                "id": 1,
+                "openingHours": "08:00-10:00",
+                "type": "篮球",
+                "duration": "01:00",
+                "price": 1,
+                "membership": 1,
+                "openState": false
+            },
+            {
+                "id": 2,
+                "openingHours": "09:00-11:00 15:00-17:00",
+                "type": "羽毛球",
+                "duration": "00:30",
+                "price": 50,
+                "membership": 4,
+                "openState": true
+            }
+        ],
+        "name": "综合体育馆",
+        "pinyin": "zonghetiyuguan",
+        "openTime": "08:00",
+        "closeTime": "22:00",
         "openState": true,
-        "foreDays": 2,
-        "durations": "02:00",
-        "location": "至善路",
-        "longitude": "106.332390",
-        "latitude": "40.004239"
+        "durations": "01:00",
+        "location": "北京市海淀区新民路",
+        "longitude": "116.338968",
+        "latitude": "40.010093",
+        "createTime": "2020-12-01"
     }
 ]
 ```
@@ -157,28 +153,6 @@ Response:
 `openState`代表是否开放，布尔值。
 
 `foreDays`是一个整数，代表可提前预约时间。
-
-###### 需求
-
-1. ~~添加场馆地理位置（描述信息(xx路)和经纬度）~~
-
-​		目前返回在`location`,`latitude`和`longtitude`中
-
-  1. ~~添加场馆运动项目信息~~
-
-     返回在`courtType`中。
-
-  2. ~~添加场馆评分和评论数信息~~
-
-     分别返回在`score`和`location`中
-
-  3. ~~添加/api/user/stadium/{stadium-id}接口来获取某个场馆具体信息，包括场馆简介，场馆须知，评论~~
-
-     请求参数中增加id=要查询场馆参数即可
-
-  4. ~~场馆图片(1张)~~
-
-     返回在images列表中，列表中每一项是图片的URL，可以直接访问。
 
 **新增了加强版**
 
@@ -237,12 +211,6 @@ Response:
 `openState`代表开放状态。
 
 剩下两项就是字面意思。
-
-###### 需求：
-
-1. ~~场地能够提前多少天预约~~
-
-   返回在`foreDays`中
 
 ##### 获取时段信息
 
