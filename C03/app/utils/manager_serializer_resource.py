@@ -49,7 +49,7 @@ class StadiumSerializerForManager(StadiumSerializer):
     class Meta:
         model = Stadium
         fields = '__all__'
-        read_only_fields = ['openTime', 'closeTime', 'foreDays', 'openState']
+        read_only_fields = ['openTime', 'closeTime', 'foreDays', 'openState', 'createTime']
 
 
 class CreateStadiumSerializer(serializers.ModelSerializer):

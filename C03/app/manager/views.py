@@ -450,7 +450,6 @@ class AddBlacklistView(ListAPIView, CreateAPIView):
     def put(self, request):
         req_data = request.data
         id = req_data.get('id')
-        # TODO: 管理员可以撤销其他管理员的操作么？
         addBlacklist = AddBlacklist.objects.filter(id=id).first()
         if not addBlacklist:
             return Response({'error': 'Invalid Blacklist_id'}, status=400)
