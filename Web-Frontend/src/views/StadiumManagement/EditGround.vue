@@ -70,9 +70,9 @@
             <i class="fa fa-mail-reply"></i> 返回
           </a>
         </div>
-        <div class="row" style="text-align: center; margin-bottom: 10px;">
-          <label class="col-lg-2 col-form-label">修改生效日期：</label>
-          <div class="col-lg-3 input-group date">
+        <div class="row" style="text-align: right; margin-bottom: 10px;">
+          <label class="col-sm-3 col-form-label">修改生效日期：</label>
+          <div class="col-sm-3 input-group date">
             <span class="input-group-addon"
               ><i class="fa fa-calendar"></i
             ></span>
@@ -233,19 +233,12 @@
                     class="form-group row"
                     style="border-top: 1px solid #e7eaec; padding-top: 10px"
                   >
-                    <label class="col-sm-3 col-form-label"></label>
+                    <label class="col-sm-5 col-form-label"></label>
                     <div
                       class="col-sm-2 btn btn-outline btn-info"
                       v-on:click="submit(ground)"
                     >
                       提交
-                    </div>
-                    <label class="col-sm-2 col-form-label"></label>
-                    <div
-                      class="col-sm-2 btn btn-outline btn-danger"
-                      v-on:click="deleteGround(_index)"
-                    >
-                      删除
                     </div>
                   </div>
                 </fieldset>
@@ -418,8 +411,8 @@ export default {
   methods: {
     newGround() {
       this.grounds.push({
-        name: this.newGroundType,
-        count: 1,
+        type: this.newGroundType,
+        amount: 1,
         periods: []
       });
       toastr.options = {
@@ -458,30 +451,6 @@ export default {
       this.grounds[_index].periods.splice(index, 1);
       this.$forceUpdate();
     },
-    deleteGround(index) {
-      swal(
-        {
-          title: "你确定？",
-          text: "删除场地将同时删除所有的该场地预定记录！",
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#DD6B55",
-          confirmButtonText: "确认",
-          cancelButtonText: "取消",
-          closeOnConfirm: false
-        },
-        () => {
-          // TODO：删除courttype
-          swal(
-            {
-              title: "成功",
-              text: "场地删除成功",
-              type: "success"
-            }
-          );
-        }
-      );
-    },
     submit(ground) {
       swal(
         {
@@ -497,7 +466,7 @@ export default {
         res => {
           if (res) {
             // 检查表单合法性
-            // if (!this.validate()) return
+            if (!this.validate()) return;
             this.uploadForm(ground);
           }
         }
@@ -523,10 +492,16 @@ export default {
       );
     },
     validate() {
+      if (!this.date) {
+        swal({
+          title: "错误",
+          text: "请设置生效日期。",
+          type: "error"
+        });
+      }
       return true;
     },
     uploadForm(ground) {
-      console.log(ground);
       let duration =
         (Array(2).join("0") + ground.duration / 60).slice(-2) +
         ":" +
@@ -538,8 +513,7 @@ export default {
       }
       let date = $(".input-group.date").datepicker("getDate");
       let request_body = {
-        courtTypeId: ground.id,
-        managerId: 3,
+        courtType_id: ground.id,
         startDate:
           date.getFullYear() +
           "-" +
@@ -552,26 +526,16 @@ export default {
         openHours: openingHours
       };
       this.$axios.post("changeduration/", request_body).then(res => {
-        console.log(res);
-        if (res.data.error) {
-          swal({
-            title: "错误",
-            text: "出现了未知错误，请刷新重试！",
-            type: "error"
-          });
-        } else {
-          setTimeout(
-            () =>
-              swal({
-                title: "成功",
-                text: "场馆信息修改成功",
-                type: "success"
-              }),
-            1000
-          );
-          // TODO: 无法显示修改成功信息
-          window.location.replace("/stadium_management/stadium_info");
-        }
+        swal(
+          {
+            title: "成功",
+            text: "场地信息修改成功",
+            type: "success"
+          },
+          function() {
+            window.location.replace("/stadium_management/stadium_info");
+          }
+        );
       });
     }
   }
