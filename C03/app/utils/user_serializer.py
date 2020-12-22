@@ -173,6 +173,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
 class BatchReserveSerializer(serializers.ModelSerializer):
     # 此处传入的duration是预订对应的第一个duration
     duration_id = serializers.IntegerField(label='时段编号')
+    startTime = serializers.CharField(label='开始时间')
     endTime = serializers.CharField(label='结束时间')
 
     def validate_duration_id(self, value):
@@ -185,6 +186,13 @@ class BatchReserveSerializer(serializers.ModelSerializer):
             raise ValidationError('Invalid duration_id, you should not reserve duration that passed')
         return value
 
+    def validate_startTime(self, value):
+        id = self.context['request'].data.get('duration_id')
+        first_duration = Duration.objects.filter(id=id).first()
+        if value != first_duration.startTime:
+            raise ValidationError('Invalid startTime')
+        return value
+
     def validate_endTime(self, value):
         id = self.context['request'].data.get('duration_id')
         first_duration = Duration.objects.filter(id=id).first()
@@ -195,7 +203,7 @@ class BatchReserveSerializer(serializers.ModelSerializer):
         for duration in durations:
             if judgeAddEvent(startTime, duration.startTime, endTime, duration.endTime):
                 if not duration.openState or not duration.accessible:
-                    raise ValidationError('Invalid reserve')
+                    raise ValidationError('Invalid endTime')
         return value
 
     def create(self, validated_data):
