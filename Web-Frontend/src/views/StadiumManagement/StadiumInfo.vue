@@ -32,7 +32,7 @@
                             <!-- 主要部分 & 单个单元 -->
                             <div class="row i-row">
                                 <div class="col-md-7 i-infobox">
-                                    <img alt="image" class="rounded m-t-xs img-fluid i-img" :src="stadium.images[0].image">
+                                    <img alt="image" class="rounded m-t-xs img-fluid i-img" :src="(stadium.images[0])?stadium.images[0].image:defaultImg">
                                 </div>
                                 <div class="col-md-5 i-infobox">
                                     <div><h2 class="i-title"><strong>{{stadium.name}}</strong></h2></div>
@@ -190,6 +190,11 @@ export default {
                     // TODO: 删除场馆
                     swal("成功", "场馆已成功删除", "success")
                 });
+        }
+    },
+    computed: {
+        defaultImg () {
+            return 'this.src="' + require('../../../static/img/white.jpg') + '"';
         }
     }
 }

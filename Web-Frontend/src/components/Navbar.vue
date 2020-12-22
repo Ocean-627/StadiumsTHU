@@ -38,9 +38,6 @@
                         <a href="/operation_record"><i class="fa fa-check-square-o"></i> <span class="nav-label">操作记录</span></a>
                     </li>
                     <li>
-                        <a href="/statistic"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">统计分析</span></a>
-                    </li>
-                    <li>
                         <a href="/system_log"><i class="fa fa-info"></i> <span class="nav-label">系统日志</span></a>
                     </li>
                 </ul>
