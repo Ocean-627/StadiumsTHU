@@ -65,6 +65,7 @@ class TestCreateStadium(TestCase):
 
         stadium = Stadium.objects.first()
         self.assertEqual(stadium.openState, 0)
+        self.assertEqual(stadium.createTime, params['createTime'])
 
         params = {
             'stadium_id': 1,
