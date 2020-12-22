@@ -426,8 +426,8 @@ export default {
     },
     newPeriod(_index) {
       var period = {
-        start: "12:00",
-        end: "13:00"
+        start: "00:00",
+        end: "01:00"
       };
       this.grounds[_index].periods.push(period);
       this.$nextTick(function() {
