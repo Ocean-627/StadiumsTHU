@@ -186,6 +186,8 @@ class ReserveModifySerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     courtName = serializers.CharField(source='court.name', required=False)
+    userName = serializers.CharField(source='user.nickName', required=False)
+    userImage = serializers.CharField(source='user.image.url', required=False)
     images = serializers.SerializerMethodField(required=False)
 
     reserve_id = serializers.IntegerField(label='预订编号', write_only=True)

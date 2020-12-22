@@ -196,7 +196,11 @@ class CommentView(ListAPIView, CreateAPIView):
     pagination_class = CommentPagination
 
     def get_queryset(self):
-        return Comment.objects.filter(user=self.request.user)
+        req_data = self.request.query_params
+        selfOnly = req_data.get('selfOnly')
+        if selfOnly:
+            return Comment.objects.filter(user=self.request.user)
+        return Comment.objects.all()
 
     def delete(self, request):
         req_data = request.data
