@@ -93,7 +93,7 @@ class ReserveEvent(models.Model):
     stadium_id = models.IntegerField()
     court = models.CharField(max_length=32)
     court_id = models.IntegerField()
-    duration_id = models.IntegerField()
+    duration_id = models.IntegerField(null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     result = models.CharField(max_length=2, choices=APPLY_RESULT, default=WAITING, verbose_name='预定结果')
     date = models.CharField(max_length=10)
