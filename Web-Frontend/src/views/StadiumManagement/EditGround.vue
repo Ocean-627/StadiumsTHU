@@ -95,18 +95,27 @@
           horizontal-order="true"
           gutter="25"
         >
-          <div class="grid-item" v-masonry-tile v-for="(ground, _index) in grounds" v-bind:key="ground.name">
+          <div
+            class="grid-item"
+            v-masonry-tile
+            v-for="(ground, _index) in grounds"
+            v-bind:key="ground.name"
+          >
             <div class="contact-box">
               <!-- 主要部分 & 单个单元 -->
               <div class="panel-body">
                 <fieldset>
                   <div class="form-group row">
                     <label class="col-sm-4 col-form-label">场地类型：</label>
-                    <label class="col-sm-6 col-form-label"><strong>{{ ground.type }}</strong></label>
+                    <label class="col-sm-6 col-form-label"
+                      ><strong>{{ ground.type }}</strong></label
+                    >
                   </div>
                   <div class="form-group row">
                     <label class="col-sm-4 col-form-label">场地数量：</label>
-                    <label class="col-sm-6 col-form-label"><strong>{{ ground.amount }}</strong></label>
+                    <label class="col-sm-6 col-form-label"
+                      ><strong>{{ ground.amount }}</strong></label
+                    >
                   </div>
                   <div class="form-group row">
                     <label class="col-sm-4 col-form-label">开放状态：</label>
@@ -225,8 +234,32 @@
                     style="border-top: 1px solid #e7eaec; padding-top: 10px"
                   >
                     <label class="col-sm-5 col-form-label"></label>
-                    <div class="col-sm-2 btn btn-outline btn-info" v-on:click="submit(ground,_index)">
+                    <div
+                      class="col-sm-2 btn btn-outline btn-info"
+                      v-on:click="submit(ground, _index)"
+                      v-if="!ground.new"
+                    >
                       提交
+                    </div>
+                  </div>
+                  <div
+                    class="form-group row"
+                    style="border-top: 1px solid #e7eaec; padding-top: 10px"
+                    v-if="ground.new"
+                  >
+                    <label class="col-sm-3 col-form-label"></label>
+                    <div
+                      class="col-sm-2 btn btn-outline btn-info"
+                      v-on:click="add(ground, _index)"
+                    >
+                      提交
+                    </div>
+                    <label class="col-sm-2 col-form-label"></label>
+                    <div
+                      class="col-sm-2 btn btn-outline btn-danger"
+                      v-on:click="remove(ground, _index)"
+                    >
+                      删除
                     </div>
                   </div>
                 </fieldset>
@@ -310,36 +343,11 @@ import "@/assets/js/plugins/datapicker/bootstrap-datepicker.js";
 export default {
   data() {
     return {
-      grounds: [
-        {
-          name: "羽毛球场",
-          count: 8,
-          periods: [
-            {
-              start: "08:00",
-              end: "12:00"
-            },
-            {
-              start: "14:00",
-              end: "22:00"
-            }
-          ]
-        },
-        {
-          name: "乒乓球场",
-          count: 6,
-          periods: [
-            {
-              start: "08:00",
-              end: "22:00"
-            }
-          ]
-        }
-      ],
+      grounds: [],
       newGroundType: "",
       newGroundAmount: null,
       name: "",
-      models:"",
+      models: ""
     };
   },
   components: {
@@ -370,14 +378,13 @@ export default {
     this.$axios.get("stadium/", request).then(res => {
       this.name = res.data[0].name;
       this.grounds = res.data[0].courtTypes;
-      this.models = Array(this.grounds.length).fill('')
-      for (var i=0;i<this.grounds.length;i++){
-        if (this.grounds[i].openState == 1){
+      this.models = Array(this.grounds.length).fill("");
+      for (var i = 0; i < this.grounds.length; i++) {
+        if (this.grounds[i].openState == 1) {
           this.models[i] = "开放";
-        }
-        else{
+        } else {
           this.models[i] = "未开放";
-        }   
+        }
       }
       for (var i = 0; i < this.grounds.length; i++) {
         let duration = this.grounds[i].duration.split(":");
@@ -403,8 +410,9 @@ export default {
     newGround() {
       this.grounds.push({
         type: this.newGroundType,
-        amount: 1,
-        periods: []
+        amount: this.newGroundAmount,
+        periods: [],
+        new: true
       });
       toastr.options = {
         closeButton: true,
@@ -422,7 +430,31 @@ export default {
         showMethod: "fadeIn",
         hideMethod: "fadeOut"
       };
-      toastr.success("接下来你可以在页面中补充场地的信息。", "添加场地成功");
+      toastr.success("在真正添加场地之前你需要补全场地信息。", "成功");
+    },
+    add(ground, _index) {
+      swal(
+        {
+          title: "确认新建场地吗？",
+          text: "提交后将不可更改",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
+          closeModal: false
+        },
+        res => {
+          if (res) {
+            // 检查表单合法性
+            if (!this.validate()) return;
+            this.uploadAddForm(ground, _index);
+          }
+        }
+      );
+    },
+    remove(ground, _index) {
+      this.grounds.splice(_index, 1);
     },
     newPeriod(_index) {
       var period = {
@@ -442,7 +474,7 @@ export default {
       this.grounds[_index].periods.splice(index, 1);
       this.$forceUpdate();
     },
-    submit(ground,index) {
+    submit(ground, index) {
       swal(
         {
           title: "你确定？",
@@ -458,7 +490,7 @@ export default {
           if (res) {
             // 检查表单合法性
             if (!this.validate()) return;
-            this.uploadForm(ground,index);
+            this.uploadForm(ground, index);
           }
         }
       );
@@ -492,7 +524,7 @@ export default {
       }
       return true;
     },
-    uploadForm(ground,index) {
+    uploadForm(ground, index) {
       let duration =
         (Array(2).join("0") + ground.duration / 60).slice(-2) +
         ":" +
@@ -504,25 +536,76 @@ export default {
       }
       let date = $(".input-group.date").datepicker("getDate");
       let openState = 0;
-      if (this.models[index] == "开放" || this.models[index] == 1){
+      if (this.models[index] == "开放" || this.models[index] == 1) {
         openState = 1;
       }
       let request_body = {
         courtType_id: ground.id,
-        date:date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+        date:
+          date.getFullYear() +
+          "-" +
+          (date.getMonth() + 1) +
+          "-" +
+          date.getDate(),
         duration: duration,
         price: ground.price,
         membership: ground.membership,
         openState: openState,
         openingHours: openingHours
       };
-      let _this = this
+      let _this = this;
 
       this.$axios.post("changeduration/", request_body).then(res => {
         swal(
           {
             title: "成功",
             text: "场地信息修改成功",
+            type: "success"
+          },
+          function() {
+            window.location.replace("/stadium_management/stadium_info");
+          }
+        );
+      });
+    },
+    uploadAddForm(ground, index) {
+      let duration =
+        (Array(2).join("0") + ground.duration / 60).slice(-2) +
+        ":" +
+        (Array(2).join("0") + (ground.duration % 60)).slice(-2);
+      let openingHours = "";
+      for (var i = 0; i < ground.periods.length; i++) {
+        openingHours +=
+          ground.periods[i].start + "-" + ground.periods[i].end + " ";
+      }
+      let date = $(".input-group.date").datepicker("getDate");
+      let openState = 0;
+      if (this.models[index] == "开放" || this.models[index] == 1) {
+        openState = 1;
+      }
+      let request_body = {
+        stadium_id: this.$route.query.id,
+        num: ground.amount,
+        type: ground.type,
+        date:
+          date.getFullYear() +
+          "-" +
+          (date.getMonth() + 1) +
+          "-" +
+          date.getDate(),
+        duration: duration,
+        price: ground.price,
+        membership: ground.membership,
+        openState: openState,
+        openingHours: openingHours
+      };
+      let _this = this;
+
+      this.$axios.post("courttype/", request_body).then(res => {
+        swal(
+          {
+            title: "成功",
+            text: "新建场地成功！",
             type: "success"
           },
           function() {

@@ -148,7 +148,7 @@ export default {
             this.loaded = false;
             let queryParams = {
                 stadium_id: (this.cur_stadium === 0) ? null : this.cur_stadium,
-                type: (this.type === "全部场地") ? null : this.cur_courttype
+                type: (this.cur_courttype === "全部场地") ? null : this.cur_courttype
             }
             this.$axios
                 .get('statistics/', { params: queryParams })
