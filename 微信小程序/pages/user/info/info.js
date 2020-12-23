@@ -138,7 +138,7 @@ Page({
       data: {},
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
@@ -170,7 +170,7 @@ Page({
       },
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
@@ -197,7 +197,7 @@ Page({
       name:'image',
       header: {
         'content-type': 'multipart/form-data',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {

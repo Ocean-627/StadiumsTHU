@@ -34,6 +34,9 @@
             <van-button round plain size="small" class="op-btn" custom-class="van-btn"
             data-bookid="{{item.id}}" wx:if="{{item.leave && (!item.comment)}}" 
             data-idx="{{index}}" bindtap="jmpComment">去评论</van-button>
+            <van-button round plain size="small" class="op-btn" custom-class="van-btn"
+            data-bookid="{{item.id}}" wx:if="{{item.comment}}" 
+            data-idx="{{index}}" bindtap="jmpViewComment">查看评论</van-button>
             <van-button round size="small" type="danger" class="op-btn" custom-class="van-btn"
             data-bookid="{{item.id}}" wx:if="{{(item.leave) || (item.cancel)}}" 
             data-idx="{{index}}" bindtap="deleteRecord">删除记录</van-button>

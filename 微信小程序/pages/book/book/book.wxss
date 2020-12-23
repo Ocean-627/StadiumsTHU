@@ -74,7 +74,7 @@ page {
 }
 
 .sport-wrapper .choose {
-  color:rgba(0,0,0,0.8);
+  color:#760280;
 }
 
 .book-operation {

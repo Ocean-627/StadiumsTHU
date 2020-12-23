@@ -32,5 +32,5 @@ Page({
   mark_all:function() {
     var arr = new Array(this.data.msg_list.length).fill(0)
     this.setData({msg_read:arr})
-  }
+  },
 })

@@ -147,12 +147,7 @@ page {
   margin-right:3%; 
 }
 
-#exit{
-  position: relative;
-  margin-top:5%;
-  width:80%;
-  font-size: 30rpx;
-  color:white;
-  background-color: red;
-  border-radius: 50rpx;
+.exit-btn .van-btn {
+  width:80vw;
+  height:80rpx;
 }

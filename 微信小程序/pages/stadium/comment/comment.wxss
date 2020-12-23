@@ -17,6 +17,7 @@ page {
   flex-direction: column;
 }
 
+/* 信息显示 */
 .info-wrapper {
   width:100%;
   margin-top:20px;
@@ -50,25 +51,21 @@ page {
 
 .score-wrapper {
   width:100%;
-  margin-top:20px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 }
 
-.score-wrapper .left-deco, .score-wrapper .right-deco {
-  width:30%;
-  height:1px;
-  background-color: rgba(0,0,0,0.2);
+.info-divider {
+  width:80%;
 }
 
-.score-wrapper text {
-  font-size: 15px;
-  margin-left:3%;
-  margin-right: 3%;
+.info-divider .van-div {
+  margin-bottom: 0;
 }
 
+/* 打分栏 */
 .star-wrapper {
   width:100%;
   display: flex;
@@ -82,6 +79,7 @@ page {
   width: 30px;
 }
 
+/* 输入栏 */
 .input-wrapper {
   box-sizing: border-box;
   padding:5px 10px;
@@ -89,8 +87,13 @@ page {
   border:solid 1px rgba(0,0,0,0.2);
 }
 
+#input-tip {
+  font-size: smaller;
+  color:red;
+}
+
 /* 图片选择 */
-.pic-chooser {
+.pic-chooser,.pic-viewer {
   width:90%;
   margin-top:10px;
   border-top:solid 1px rgba(0,0,0,0.2);
@@ -98,7 +101,7 @@ page {
   padding-bottom: 10px;
 }
 
-.upload-wrapper {
+.upload-wrapper,.delete-comment {
   margin-top:20px;
   margin-bottom: 20px;
 }
@@ -106,6 +109,13 @@ page {
 .upload-wrapper #upload-btn {
   background-color: #A300B2;
   color:white;
+}
+
+.comment-image {
+  width:180rpx;
+  height:180rpx;
+  margin-top:20rpx;
+  margin-right:40rpx;
 }
 
 
@@ -116,8 +126,12 @@ page {
   margin-bottom: 10rpx;
 }
 
-.van-btn{
+.op-btn {
   width:200rpx;
-  height:30rpx;
+}
+
+.op-btn .van-btn{
+  width:260rpx;
+  height:90rpx;
   margin-right: 6rpx;
 }

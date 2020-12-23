@@ -1,4 +1,7 @@
 <!--pages/stadium/comment/comment.wxml-->
+<!--提示对话框-->
+<van-dialog id="van-dialog" />
+
 <view class="container">
   <view class="info-wrapper">
     <image src="{{stadium_img}}"></image>
@@ -8,25 +11,58 @@
     </view>
   </view>
   <view class="score-wrapper">
-    <view class="left-deco"></view>
-    <text>打分</text>
-    <view class="right-deco"></view>
+    <van-divider contentPosition="center" class="info-divider" custom-class="van-div"
+    customStyle="color: #760280; border-color: #760280; font-size: 14px;"
+    >打分</van-divider>
   </view>
-  <view class="star-wrapper">
-    <view class="star" wx:for="{{star_list}}" data-index="{{index}}" bindtap="change_score">
+  <!--打分区域-->
+  <view class="star-wrapper" wx:if="{{!view}}">
+    <view class="star" wx:for="{{star_list}}" data-index="{{index}}" 
+    bindtap="change_score">
       <image src="{{isfavor_img}}" wx:if="{{item === 1}}"></image>
       <image src="{{notfavor_img}}" wx:else></image>
     </view>
   </view>
+  <view class="star-wrapper" wx:else>
+    <view class="star" wx:for="{{star_list}}" data-index="{{index}}">
+      <image src="{{isfavor_img}}" wx:if="{{item === 1}}"></image>
+      <image src="{{notfavor_img}}" wx:else></image>
+    </view>
+  </view>
+  <!--评论内容输入区域-->
   <view class="input-wrapper">
-    <textarea placeholder="{{comment_placeholder}}" value="{{comment_text}}" bindinput="onModifyComment"></textarea>
+    <textarea placeholder="{{comment_placeholder}}" value="{{comment_text}}" 
+    bindinput="onModifyComment" maxlength="{{maxTextNum}}" disabled="{{view}}"></textarea>
   </view>
-  <view class="pic-chooser">
-    <mp-uploader bindfail="uploadError" bindsuccess="uploadSuccess" select="{{selectFile}}" upload="{{uplaodFile}}" files="{{files}}" max-count="5" title="图片上传"></mp-uploader>
+  <text id="input-tip" wx:if="{{!view && wrong_input}}">{{input_tip}}</text>
+  <!--图片选择/显示-->
+  <view class="pic-chooser" wx:if="{{!view}}">
+    <mp-uploader bindfail="uploadError" bindsuccess="uploadSuccess" select="{{selectFile}}" 
+    upload="{{uplaodFile}}" files="{{files}}" max-count="5" title="图片上传" files="{{imgList}}"
+    ></mp-uploader>
   </view>
-  <view class="upload-wrapper">
-    <van-button round class="op-btn" custom-class="van-btn"
-    color="linear-gradient(to right, #7232dd, #760280)" bindtap="makeComment"
+  
+  <view class="pic-viewer" wx:else>
+    <text id="comment-img-text">评论图片</text>
+    <view>
+      <image class="comment-image" wx:for="{{imgList}}" src="{{item}}"></image>
+    </view>
+  </view>
+  <!--按钮-->
+  <view class="upload-wrapper" wx:if="{{!view}}">
+    <van-button round disabled class="op-btn" custom-class="van-btn" color="linear-gradient(to right, #7232dd, #760280)" 
+    bindtap="makeComment" wx:if="{{wrong_input}}"
     >发表</van-button>
+    <van-button round class="op-btn" custom-class="van-btn" color="linear-gradient(to right, #7232dd, #760280)" 
+    bindtap="makeComment" wx:if="{{(!wrong_input) && (!post_comment)}}"
+    >发表</van-button>
+    <van-button round class="pop-menu-btn" custom-class="van-btn" 
+    loading color="linear-gradient(to right, #0099FF, #0033FF)" 
+    loading-text="处理中" wx:if="{{post_comment}}"/>
+  </view>
+  <view class="delete-comment" wx:else>
+    <van-button round class="op-btn" custom-class="van-btn" color="linear-gradient(to right, #7232dd, #760280)" 
+    bindtap="deleteComment"
+    >撤销评论</van-button>
   </view>
 </view>

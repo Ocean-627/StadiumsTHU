@@ -9,8 +9,10 @@ Page({
   setStadiumInfo:function(res, updatePos=true) {
     var newList = []
     var value = this.data.filter_text
+    
     for(var info of res.data) {
-      if(info.name.indexOf(value) !== -1 || info.pinyin.indexOf(value) !== -1) {
+      if(info.name.indexOf(value) !== -1 || 
+      (info.pinyin !== null && info.pinyin.indexOf(value) !== -1)) {
         var sports = ''
         var dis = 0
         var imgPath = ''
@@ -20,6 +22,8 @@ Page({
         if(info.images.length > 0) {
           imgPath = info.images[0].image
         }
+        var newLaLo = this.bdMap_to_txMap(info.latitude, info.longitude)
+
         newList.push({
           id:info.id,
           name:info.name,
@@ -28,8 +32,8 @@ Page({
           opentime:info.openTime + '-' + info.closeTime,
           sports:sports,
           pos:info.location,
-          la:info.latitude,
-          lo:info.longitude,
+          la:newLaLo.latitude,
+          lo:newLaLo.longitude,
           dis:dis,
           collect:info.collect,
           imgpath:imgPath,
@@ -65,28 +69,8 @@ Page({
 
   // 创建时请求信息
   onLoad: function (options) {
-    const _this = this
-    const app = getApp()
     this.data.filter_text = options.search
-    wx.request({
-      method: "GET",
-      url: 'https://cbx.iterator-traits.com/api/user/stadium/',
-      data: {},
-      header: {
-        'content-type': 'application/json',
-        'loginToken': 1,
-      },
-      success(res) {
-        if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
-          _this.setStadiumInfo(res)
-        } else {
-          app.reqFail("操作失败")
-        }
-      },
-      fail() {
-        app.reqFail("获取信息失败")
-      },
-    })
+    this.reqStadiumList()
   },
 
   // 计算距离
@@ -111,9 +95,48 @@ Page({
      }
    },
 
+    // 百度地图经纬度转腾讯地图
+    bdMap_to_txMap:function($lat,$lng){
+      var $x_pi = 3.14159265358979324 * 3000.0 / 180.0
+      var $x = $lng - 0.0065
+      var $y = $lat - 0.006
+      var $z = Math.sqrt($x * $x + $y * $y) - 0.00002 * Math.sin($y * $x_pi)
+      var $theta = Math.atan2($y, $x) - 0.000003 * Math.cos($x * $x_pi)
+      var $lng = $z * Math.cos($theta)
+      var $lat = $z * Math.sin($theta)
+      return {'longitude':$lng,'latitude':$lat}
+    },
+
    jmpInfo:function(e) {
     wx.navigateTo({
       url: '/pages/stadium/info/stadium?'+'id='+e.currentTarget.dataset.stadiumid,
     })
   },
+
+  /*-------------------------------
+    网络请求函数
+  -------------------------------*/
+  reqStadiumList:function() {
+    const _this = this
+    const app = getApp()
+    wx.request({
+      method: "GET",
+      url: 'https://cbx.iterator-traits.com/api/user/stadium/',
+      data: {},
+      header: {
+        'content-type': 'application/json',
+        'loginToken': app.globalData.loginToken,
+      },
+      success(res) {
+        if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
+          _this.setStadiumInfo(res)
+        } else {
+          app.reqFail("操作失败")
+        }
+      },
+      fail() {
+        app.reqFail("获取信息失败")
+      },
+    })
+  }
 })

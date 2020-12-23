@@ -18,10 +18,31 @@ Page({
     ],
     // 当前状态
     curStat:0,
+    // 当前分页
+    curPage:1,
+    // 到达底部
+    toBottom:false,
   },
 
   onLoad:function() {
     this.reqBookInfo(0)
+  },
+
+  // 页面卸载
+  onUnload:function() {
+    wx.switchTab({
+      url: '/pages/user/index/user',
+    })
+  },
+
+  // 页面下拉分页
+  onReachBottom:function() {
+    if(this.data.toBottom) {
+      return
+    }
+    const newPage = this.data.curPage+1
+    this.setData({curPage:newPage})
+    this.reqBookInfo(this.data.curStat,true)
   },
 
   // 设置预约记录
@@ -145,7 +166,15 @@ Page({
   jmpComment:function(e) {
     const bookId = e.currentTarget.dataset.bookid
     wx.navigateTo({
-      url: '/pages/stadium/comment/comment?'+'id='+bookId,
+      url: '/pages/stadium/comment/comment?'+'id='+bookId+'&type=comment',
+    })
+  },
+
+  // 跳转到查看评论
+  jmpViewComment:function(e) {
+    const bookId = e.currentTarget.dataset.bookid
+    wx.navigateTo({
+      url: '/pages/stadium/comment/comment?'+'id='+bookId+'&type=view',
     })
   },
 
@@ -159,13 +188,15 @@ Page({
     })
     const _this = this
     const app = getApp()
+    const queryData = Object.assign(this.data.queryList[statusId], 
+      {page:this.data.curPage})
     wx.request({
       method: "GET",
       url: app.globalData.reqUrl + '/api/user/reserve/',
-      data: _this.data.queryList[statusId],
+      data: queryData,
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
@@ -203,14 +234,18 @@ Page({
       },
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
           _this.removeBookInfo(idx)
           app.reqSuccess("删除成功")
-        } else {
-          app.reqFail("操作失败")
+        }  
+        else if(res.data.error.detail === 'Invalid page.') {
+          _this.setData({ toBottom:true })
+        }
+        else {
+          app.reqFail("获取信息失败")
         }
       },
       fail() {

@@ -8,7 +8,7 @@ Page({
     hasload:false,
 
     // 图片url
-    bg_src:getApp().globalData.imgUrl + '/res/sports/home-background.jpg',
+    bg_src:getApp().globalData.imgUrl + '/res/imgs/login-bg.jpg',
     title_src:getApp().globalData.imgUrl + '/res/imgs/login_title.png',
   },
 
@@ -56,27 +56,34 @@ Page({
   reqVerify:function(token) {
     const _this = this
     const app = getApp()
-    wx.request({
-      method:'POST',
-      url: app.globalData.reqUrl + '/api/user/login/',
-      data:{
-        'token':token,
-      },
-      header:{
-        'content-type': 'application/json',
-      },
-      success(res) {
-        console.log(res)
-        if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
-          app.reqSuccess("登录成功")
-          _this.jmpHome()
-        } else {
-          app.reqFail("操作失败")
-        }
-      },
-      fail() {
-        app.reqFail("获取信息失败")
-      },
+    wx.login({
+      success: res => {
+        wx.request({
+          method:'POST',
+          url: app.globalData.reqUrl + '/api/user/login/',
+          data:{
+            'token':token,
+            'js_code':res.code,
+          },
+          header:{
+            'content-type': 'application/json',
+          },
+          success(res) {
+            console.log(res)
+            if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
+              app.reqSuccess("登录成功")
+              wx.setStorageSync('loginToken', JSON.stringify(res.data.loginToken))
+              app.globalData.loginToken = res.data.loginToken
+              _this.jmpHome()
+            } else {
+              app.reqFail("操作失败")
+            }
+          },
+          fail() {
+            app.reqFail("获取信息失败")
+          },
+        })
+      }
     })
   }
 })

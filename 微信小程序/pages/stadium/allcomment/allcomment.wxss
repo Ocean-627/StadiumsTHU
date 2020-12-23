@@ -1,0 +1,102 @@
+/* pages/stadium/allcomment/allcomment.wxss */
+/*评论区*/
+
+page {
+  background-color: #F2F2F2;
+}
+
+.container {
+  width: 100%;
+  padding:0;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+.review {
+  background-color: white;
+  box-sizing: border-box;
+  width:100%;
+  padding-left: 2%;
+  padding-right: 2%;
+  margin-bottom:10rpx;
+  border-radius: 10px;
+}
+
+.head-wrapper image {
+  height:14px;
+  width: 14px;
+  margin-right:2%;
+}
+
+.comment-list {
+  width:100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-item {
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+  margin-bottom: 10px;
+  border-top: solid 1px rgba(0, 0, 0, 0.2);
+}
+
+.comment-item .reviewer-info, .img-list {
+  width:100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.comment-item .reviewer-info .reviewer_header {
+  width:40px;
+  height:40px;
+  border-radius: 50%;
+}
+
+.comment-item .reviewer-info .middle {
+  width:60%;
+  display: flex;
+  flex-direction: column;
+  margin-left:2%;
+}
+
+.reviewer-info .middle #name {
+  font-size:14px;
+}
+
+.reviewer-info .middle #date {
+  font-size:10px;
+  color:rgba(0, 0, 0, 0.4);
+}
+
+.comment-item .reviewer-info .score {
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.reviewer-info .score image {
+  height:14px;
+  width:14px;
+}
+
+.reviewer-info .score text {
+  color:#FF8300;
+  font-size: 10px;
+  margin-left:2px;
+}
+
+.comment-item .img-item image{
+  height:120rpx;
+  width: 120rpx;
+  margin-right:2px;
+}
+
+.comment-list image {
+  height: 30px;
+  width: 30px;
+}

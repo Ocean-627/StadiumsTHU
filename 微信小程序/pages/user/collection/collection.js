@@ -85,7 +85,7 @@ Page({
       data: {},
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         Toast.clear()
@@ -123,7 +123,7 @@ Page({
       },
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
