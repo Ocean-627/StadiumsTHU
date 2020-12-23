@@ -13,3 +13,4 @@ django-cors-headers
 django-crontab
 django-apscheduler
 apscheduler
+request
