@@ -39,7 +39,7 @@
   <view class="stadium-wrapper">
   <!--分类栏-->
     <van-sidebar active-key="{{ active_sports }}" id="sport-chooser" bind:change="onSportsChange">
-      <van-sidebar-item wx:for="{{sports_list}}" title="{{item}}" custom-class="sports-choice"/>
+      <van-sidebar-item wx:for="{{sports_list}}" wx:key="this" title="{{item}}" custom-class="sports-choice"/>
     </van-sidebar>
   <!--场馆信息-->
     <view class="stadium-list-wrapper">

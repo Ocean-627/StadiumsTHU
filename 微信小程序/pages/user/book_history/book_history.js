@@ -35,7 +35,13 @@ Page({
     })
   },
 
-  // 页面下拉分页
+  // 页面下拉刷新
+  onPullDownRefresh:function() {
+    this.setData({curPage:1, toBottom:false})
+    this.reqBookInfo(this.data.curStat)
+  },
+
+  // 页面上拉分页
   onReachBottom:function() {
     if(this.data.toBottom) {
       return
@@ -245,11 +251,11 @@ Page({
           _this.setData({ toBottom:true })
         }
         else {
-          app.reqFail("获取信息失败")
+          app.reqFail("删除失败")
         }
       },
       fail() {
-        app.reqFail("操作失败")
+        app.reqFail("删除失败")
       },
       complete() {
         Toast.clear()

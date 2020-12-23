@@ -42,7 +42,7 @@
         <text class="head">场馆须知</text>
       </view>
       <text id="note">
-        {{note}}
+        {{notice}}
       </text>
     </view>
     <!--评论区-->

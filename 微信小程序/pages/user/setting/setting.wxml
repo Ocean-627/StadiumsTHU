@@ -1,3 +1,2 @@
 <!--pages/user/setting/setting.wxml-->
-
-<van-empty description="" />
+<van-empty description="开发中" />

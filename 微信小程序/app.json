@@ -1,8 +1,8 @@
 {
   "pages": [
     "pages/login/login",
-    "pages/user/index/user",
     "pages/home/index/home",
+    "pages/user/index/user",
     "pages/book/book/book",
     "pages/user/book/book",
     "pages/home/result/result",
@@ -17,7 +17,9 @@
     "pages/user/visit_history/visit_history",
     "pages/user/collection/collection",
     "pages/book/ongo/ongo",
-    "pages/stadium/allcomment/allcomment"
+    "pages/stadium/allcomment/allcomment",
+    "pages/user/setting/setting",
+    "pages/user/tutorial/tutorial"
   ],
   "window": {
     "backgroundTextStyle": "dark",

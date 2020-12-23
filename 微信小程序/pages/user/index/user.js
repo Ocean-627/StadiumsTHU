@@ -35,7 +35,7 @@ Page({
 
   // 登出
   logout:function() {
-    
+
   },
 
   /*-------------------------------
@@ -100,6 +100,18 @@ Page({
   jmpVisitHistory:function() {
     wx.navigateTo({
       url: '/pages/user/visit_history/visit_history',
+    })
+  },
+
+  jmpSetting:function() {
+    wx.navigateTo({
+      url: '/pages/user/setting/setting',
+    })
+  },
+
+  jmpTutorial:function() {
+    wx.navigateTo({
+      url: '/pages/user/tutorial/tutorial',
     })
   }
 })

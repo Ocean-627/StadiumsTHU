@@ -15,6 +15,8 @@ App({
       console.log(error)
     }
 
+    console.log(1)
+
     // 获取用户信息
     wx.getSetting({
       success: res => {
@@ -36,6 +38,7 @@ App({
       }
     })
 
+    console.log(2)
     // 查看token
     try {
       var token = wx.getStorageSync('loginToken')
@@ -53,6 +56,7 @@ App({
     } catch (error) {
       console.log(error)
     }
+    console.log(3)
   },
   
   // 请求成功/失败时的行为

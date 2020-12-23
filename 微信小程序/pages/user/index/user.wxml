@@ -39,11 +39,11 @@
         <text>个人资料</text>
         <image src="{{info_img}}"></image>
       </view>
-      <view class="choice-wrapper">
+      <view class="choice-wrapper" bindtap="jmpTutorial">
         <text>使用教程</text>
         <image src="{{question_img}}"></image>
       </view>
-      <view class="choice-wrapper">
+      <view class="choice-wrapper" bindtap="jmpSetting">
         <text>设置</text>
         <image src="{{settings_img}}"></image>
       </view>

@@ -35,7 +35,13 @@ Page({
     })
   },
 
-  // 页面下拉分页
+  // 页面下拉刷新
+  onPullDownRefresh:function() {
+    this.setData({curPage:1, toBottom:false})
+    this.reqBookInfo(this.data.curStat)
+  },
+
+  // 页面上拉分页
   onReachBottom:function() {
     if(this.data.toBottom) {
       return

@@ -299,18 +299,19 @@ Page({
   // 显示确认菜单
   showVerify:function() {
     // 寻找场地名称
-    var courtName = ''
+    var selectCourt
     for(var court of this.data.court_list) {
       if(parseInt(court.id) === parseInt(this.data.activeName)) {
-        courtName = court.name
+        selectCourt = court
         break
       }
     }
     this.setData({
       show_verify:true,
       activeStep:1,
-      court_desc:courtName,
+      court_desc:selectCourt.name,
       time_desc:this.data.date_list[this.data.choose_date].text+this.data.duration_text,
+      price:parseInt(selectCourt.price*this.data.choose_duration_list.length) 
     })
   },
 
