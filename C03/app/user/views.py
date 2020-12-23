@@ -52,6 +52,19 @@ class LoginView(APIView):
         return Response({'message': 'ok', 'loginToken': loginToken})
 
 
+class LogoutView(APIView):
+    """
+    登出
+    """
+    authentication_classes = [UserAuthtication]
+
+    def post(self, request):
+        user = self.request.user
+        user.loginToken = ''
+        user.save()
+        return Response({'message': 'ok'})
+
+
 class UserView(APIView):
     """
     用户信息
