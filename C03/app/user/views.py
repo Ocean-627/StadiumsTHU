@@ -130,6 +130,15 @@ class DurationView(ListAPIView):
     filter_class = DurationFilter
 
 
+class BatchReserveView(CreateAPIView):
+    """
+    批量预订，只支持POST方法
+    """
+    authentication_classes = [UserAuthtication]
+    permission_classes = [UserPermission]
+    serializer_class = BatchReserveSerializer
+
+
 class ReserveView(ListAPIView, CreateAPIView):
     """
     预订信息
@@ -167,9 +176,16 @@ class ReserveView(ListAPIView, CreateAPIView):
             News.objects.create(user=request.user, type='预约取消', content=content)
             wx.reserve_cancel_message(openId=request.user.openId, type=duration.court.type, date=duration.date,
                                       content=content)
-            duration.accessible = True
-            duration.user = None
-            duration.save()
+            # 更改预订状态
+            court = duration.court
+            startTime = reserve.startTime
+            endTime = reserve.endTime
+            for myDuration in court.duration_set.filter(date=duration.date):
+                if judgeAddEvent(startTime, myDuration.startTime, endTime, myDuration.endTime):
+                    myDuration.user = None
+                    myDuration.accessible = True
+                    myDuration.save()
+
         return Response({'message': 'ok'})
 
     def delete(self, request):
@@ -196,7 +212,11 @@ class CommentView(ListAPIView, CreateAPIView):
     pagination_class = CommentPagination
 
     def get_queryset(self):
-        return Comment.objects.filter(user=self.request.user)
+        req_data = self.request.query_params
+        selfOnly = req_data.get('selfOnly')
+        if selfOnly:
+            return Comment.objects.filter(user=self.request.user)
+        return Comment.objects.all()
 
     def delete(self, request):
         req_data = request.data
