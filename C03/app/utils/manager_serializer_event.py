@@ -77,5 +77,14 @@ class HistorySerializer(serializers.Serializer):
     size = serializers.IntegerField(default=15, validators=[MinValueValidator(1)])
 
 
+class OperationSerailizer(serializers.Serializer):
+    time = serializers.DateTimeField()
+    type = serializers.CharField()
+    id = serializers.IntegerField()
+    state = serializers.IntegerField()
+    details = serializers.CharField()
+    content = serializers.CharField()
+
+
 class NumberSerializer(serializers.Serializer):
     num = serializers.IntegerField(validators=[MinValueValidator(1)])

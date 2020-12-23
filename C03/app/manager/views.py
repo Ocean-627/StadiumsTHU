@@ -495,8 +495,7 @@ class HistoryView(APIView):
             addEvent = manager.addevent_set.all()
             addBlackList = manager.addblacklist_set.all()
             operations = sorted(chain(changeDuration, addEvent, addBlackList), key=attrgetter('time'), reverse=True)
-        operations = [model_to_dict(ope, fields=['time', 'type', 'id', 'state', 'details', 'content']) for ope in
-                      operations]
+        operations = OperationSerailizer(operations, many=True).data
         # 分页
         ser = HistorySerializer(data=req_data)
         if not ser.is_valid():
