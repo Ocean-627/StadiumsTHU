@@ -95,6 +95,7 @@ class ReserveEvent(models.Model):
     court = models.CharField(max_length=32)
     court_id = models.IntegerField()
     duration_id = models.IntegerField(null=True)
+    price = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     result = models.CharField(max_length=2, choices=APPLY_RESULT, default=WAITING, verbose_name='预定结果')
     date = models.CharField(max_length=10)
