@@ -17,6 +17,10 @@ from app.utils.utils import initStadium
 第二次修改 2020-11-27
 原因：增加了分页功能
 结果：正常
+
+第三次修改 2020-12-18
+原因：增加了新建场地，修改场地改用PUT方法
+结果：发现了修改时必须修改createTime的bug
 """
 
 
@@ -82,7 +86,9 @@ class TestStadium(TestCase):
             'information': 'haha',
             'openTime': '10:00'
         }
-        resp = self.client.post('/api/manager/stadium/', params)
+        resp = self.client.put('/api/manager/stadium/', params, content_type='application/json')
+        content = json.loads(resp.content)
+        self.assertEqual(resp.status_code, 200)
         stadium = Stadium.objects.get(id=1)
         self.assertEqual(stadium.name, params['name'])
         self.assertEqual(stadium.information, params['information'])

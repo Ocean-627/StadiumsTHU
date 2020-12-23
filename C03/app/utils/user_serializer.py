@@ -57,7 +57,7 @@ class StadiumSerializer(serializers.ModelSerializer):
         if tot_num == 0:
             return 3
         else:
-            return tot_score / tot_num
+            return format(tot_score / tot_num, '.1f')
 
     def get_collect(self, obj):
         res = obj.collectevent_set.filter(user=self.context['request'].user).first()
@@ -154,7 +154,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         duration.user = user
         duration.save()
         # send reserve success message
-        content = '您已经成功预约' + stadium.name + court.name + '预约时间为' + duration.date + ',' + duration.startTime + '-' + duration.endTime + '。'
+        content = '您已经成功预约' + stadium.name + court.name
         News.objects.create(user=user, type='预约成功', content=content)
         wx.reserve_success_message(openId=user.openId, type=court.type, date=duration.date, content=content)
         return ReserveEvent.objects.create(user=user, **validated_data, stadium=stadium.name,
@@ -168,6 +168,73 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user', 'stadium', 'court', 'stadium_id', 'court_id', 'date', 'result', 'startTime',
                             'endTime', 'has_comments']
+
+
+class BatchReserveSerializer(serializers.ModelSerializer):
+    # 此处传入的duration是预订对应的第一个duration
+    duration_id = serializers.IntegerField(label='时段编号')
+    startTime = serializers.CharField(label='开始时间')
+    endTime = serializers.CharField(label='结束时间')
+
+    def validate_duration_id(self, value):
+        duration = Duration.objects.filter(id=value, accessible=True).first()
+        if not duration:
+            raise ValidationError('Invalid duration_id')
+        myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
+        myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
+        if judgeTime(duration.startTime, myTime) < 0 and duration.date == myDate:
+            raise ValidationError('Invalid duration_id, you should not reserve duration that passed')
+        return value
+
+    def validate_startTime(self, value):
+        TimeValidator(value)
+        id = self.context['request'].data.get('duration_id')
+        first_duration = Duration.objects.filter(id=id).first()
+        if value != first_duration.startTime:
+            raise ValidationError('Invalid startTime')
+        return value
+
+    def validate_endTime(self, value):
+        TimeValidator(value)
+        startTime = self.context['request'].data.get('startTime')
+        TimeValidator(startTime)
+        id = self.context['request'].data.get('duration_id')
+        first_duration = Duration.objects.filter(id=id).first()
+        court = first_duration.court
+        durations = court.duration_set.filter(date=first_duration.date)
+        startTime = self.context['request'].data.get('startTime')
+        endTime = self.context['request'].data.get('endTime')
+        for duration in durations:
+            if judgeAddEvent(startTime, duration.startTime, endTime, duration.endTime):
+                if not duration.openState or not duration.accessible:
+                    raise ValidationError('Invalid endTime')
+        return value
+
+    def create(self, validated_data):
+        first_duration = Duration.objects.filter(id=validated_data.get('duration_id')).first()
+        stadium = first_duration.stadium
+        court = first_duration.court
+        user = self.context['request'].user
+        startTime = validated_data.get('startTime')
+        endTime = validated_data.get('endTime')
+        # 修改
+        durations = court.duration_set.filter(date=first_duration.date)
+        for duration in durations:
+            if judgeAddEvent(startTime, duration.startTime, endTime, duration.endTime):
+                duration.accessible = False
+                duration.user = user
+                duration.save()
+        content = '您已经成功预约' + stadium.name + court.name
+        News.objects.create(user=user, type='预约成功', content=content)
+        wx.reserve_success_message(openId=user.openId, type=court.type, date=first_duration.date, content=content)
+        return ReserveEvent.objects.create(user=user, **validated_data, stadium=stadium.name,
+                                           stadium_id=stadium.id, court=court.name, date=first_duration.date,
+                                           court_id=court.id, result='S')
+
+    class Meta:
+        model = ReserveEvent
+        fields = '__all__'
+        read_only_fields = ['user', 'stadium', 'court', 'stadium_id', 'court_id', 'date', 'result', 'has_comments']
 
 
 class ReserveModifySerializer(serializers.ModelSerializer):
@@ -186,6 +253,8 @@ class ReserveModifySerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     courtName = serializers.CharField(source='court.name', required=False)
+    userName = serializers.CharField(source='user.nickName', required=False)
+    userImage = serializers.CharField(source='user.image.url', required=False)
     images = serializers.SerializerMethodField(required=False)
 
     reserve_id = serializers.IntegerField(label='预订编号', write_only=True)

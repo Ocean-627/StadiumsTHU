@@ -95,6 +95,19 @@ class StadiumDetailView(ListAPIView):
     filter_class = StadiumFilter
 
 
+class CourtTypeView(APIView):
+    """
+    全部运动类型
+    """
+    authentication_classes = [UserAuthtication]
+    throttle_classes = [UserThrottle]
+
+    def get(self, request):
+        types = CourtType.objects.values('type').distinct()
+        res = [item['type'] for item in types]
+        return Response(res)
+
+
 class CourtView(ListAPIView):
     """
     场地信息
@@ -115,6 +128,15 @@ class DurationView(ListAPIView):
     queryset = Duration.objects.all()
     serializer_class = DurationSerializer
     filter_class = DurationFilter
+
+
+class BatchReserveView(CreateAPIView):
+    """
+    批量预订，只支持POST方法
+    """
+    authentication_classes = [UserAuthtication]
+    permission_classes = [UserPermission]
+    serializer_class = BatchReserveSerializer
 
 
 class ReserveView(ListAPIView, CreateAPIView):
@@ -150,22 +172,20 @@ class ReserveView(ListAPIView, CreateAPIView):
             if judgeDate(date, cur) < 2:
                 return Response({'error': 'You can not cancel this reserve because it will due in 2 days.'}, status=400)
             # 发送取消成功
-            content = '您预定的' + duration.stadium.name + duration.court.name + '时间为' + duration.date + ',' + duration.startTime + '-' + duration.endTime + '取消成功。'
+            content = '您的预定取消成功'
             News.objects.create(user=request.user, type='预约取消', content=content)
             wx.reserve_cancel_message(openId=request.user.openId, type=duration.court.type, date=duration.date,
                                       content=content)
-            duration.accessible = True
-            duration.user = None
-            duration.save()
-        return Response({'message': 'ok'})
+            # 更改预订状态
+            court = duration.court
+            startTime = reserve.startTime
+            endTime = reserve.endTime
+            for myDuration in court.duration_set.filter(date=duration.date):
+                if judgeAddEvent(startTime, myDuration.startTime, endTime, myDuration.endTime):
+                    myDuration.user = None
+                    myDuration.accessible = True
+                    myDuration.save()
 
-    def delete(self, request):
-        req_data = request.data
-        id = req_data.get('id')
-        reserve = ReserveEvent.objects.filter(user=request.user, id=id).first()
-        if not reserve:
-            return Response({'error': 'Invalid id'}, status=400)
-        reserve.delete()
         return Response({'message': 'ok'})
 
 
@@ -183,7 +203,11 @@ class CommentView(ListAPIView, CreateAPIView):
     pagination_class = CommentPagination
 
     def get_queryset(self):
-        return Comment.objects.filter(user=self.request.user)
+        req_data = self.request.query_params
+        selfOnly = req_data.get('selfOnly')
+        if selfOnly:
+            return Comment.objects.filter(user=self.request.user)
+        return Comment.objects.all()
 
     def delete(self, request):
         req_data = request.data
@@ -219,6 +243,7 @@ class CollectView(ListAPIView, CreateAPIView):
     queryset = CollectEvent.objects.all()
     serializer_class = CollectEventSerializer
     filter_class = CollectEventFilter
+    pagination_class = CollectPagination
 
     def get_queryset(self):
         return CollectEvent.objects.filter(user=self.request.user)
