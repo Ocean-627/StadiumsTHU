@@ -54,8 +54,8 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   response => {
+    console.log(response);
     if (response.data.error) {
-      console.log(response);
       swal({
         title: "错误",
         text: response.data.error,

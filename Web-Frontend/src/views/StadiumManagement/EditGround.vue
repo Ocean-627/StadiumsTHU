@@ -347,7 +347,8 @@ export default {
       newGroundType: "",
       newGroundAmount: null,
       name: "",
-      models: ""
+      models: "",
+      date: null
     };
   },
   components: {
@@ -475,6 +476,7 @@ export default {
       this.$forceUpdate();
     },
     submit(ground, index) {
+      this.date = $(".input-group.date").datepicker("getDate");
       swal(
         {
           title: "你确定？",
@@ -534,7 +536,7 @@ export default {
         openingHours +=
           ground.periods[i].start + "-" + ground.periods[i].end + " ";
       }
-      let date = $(".input-group.date").datepicker("getDate");
+      let date = this.date;
       let openState = 0;
       if (this.models[index] == "开放" || this.models[index] == 1) {
         openState = 1;
