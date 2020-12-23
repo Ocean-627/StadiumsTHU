@@ -31,7 +31,7 @@
                         </el-select>
                     </div>
                 </div>
-                <div class="row" v-for="ground in grounds" :key="ground.type">
+                <div class="row" v-for="(ground, index) in grounds" :key="ground.type">
                     <div class="col-lg-12">
                         <div class="ibox">
                             <div class="ibox-title">
@@ -85,7 +85,7 @@
                                                 <div class="input-group date">
                                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
     
-                                                    <input type="text" class="form-control" />
+                                                    <input type="text" class="form-control" ref="useDate"/>
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -138,14 +138,14 @@
                                             </div>
                                             <div class="form-group">
                                                 <label class="font-normal">备注（选填）</label>
-                                                <input class="form-control" type="text" />
+                                                <input class="form-control" type="text" ref="content"/>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-white" data-dismiss="modal">
                                         取消
                                       </button>
-                                            <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="submit(ground)">
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal" v-on:click="submit(ground,index)">
                                         确认
                                       </button>
                                         </div>
@@ -172,7 +172,6 @@
 .i-row [class^="col-"] {
     padding: 10px;
 }
-
 .i-row {
     margin: 0;
 }
@@ -301,14 +300,82 @@ export default {
         Footer
     },
     methods: {
-        submit(ground) {
+        submit(ground,index) {
             // 为了节省局部变量，所有场地的预留的模态窗口共享表单变量，所以需要传入ground参数进行区分
             // TODO: 上传表单，检查合法性，比如输入的场地号码数=预约场地数
-            swal({
-                title: "成功",
-                text: "场地预留成功",
-                type: "success"
-            });
+            console.log(index);
+            let number = this.$refs.number[index].value
+            let courts = this.$refs.court_id[index].value.split(',')
+            let useDate = this.$refs.useDate[index].value
+            let startTime = this.$refs.startTime[index].value
+            let endTime = this.$refs.endTime[index].value
+            let content = this.$refs.content[index].value
+
+            if (number != courts.length){
+                swal({
+                    title: "错误",
+                    text: "请确认输入场地编号数与预留场地数相等",
+                    type: "error"
+                });
+            }else if(useDate == ''){
+                swal({
+                    title: "错误",
+                    text: "请输入日期",
+                    type: "error"
+                });
+            }
+            else if(startTime==""||endTime==""){
+                swal({
+                    title: "错误",
+                    text: "请输入正确的起始和终止时间",
+                    type: "error"
+                });
+            }
+            else{
+                var obj = new Date();
+                var hour = parseInt(obj.getHours());
+                var minute = parseInt(obj.getMinutes());
+                var myDate = new Date(useDate);
+                var nowDate = new Date(obj.getFullYear() + "-" + (obj.getMonth() + 1) + "-" + obj.getDate());
+                let sh = parseInt(startTime.split(":")[0]);
+                let sm = parseInt(startTime.split(":")[1]);
+                let eh = parseInt(endTime.split(":")[0]);
+                let em = parseInt(endTime.split(":")[1]);
+                if ( eh < sh || (eh == sh && em <= sm ) || (myDate.getTime() == nowDate.getTime() && (hour > sh || (hour == sh && minute > sm)))){
+                    swal({
+                        title: "错误",
+                        text: "请输入正确的起始和终止时间",
+                        type: "error"
+                    });
+                }
+                else{
+                    for (var i=0; i < courts.length; i++){
+                        var request = {
+                            court_id:parseInt(courts[i]),
+                            startTime:startTime,
+                            endTime:endTime,
+                            date:useDate,
+                            content: content,
+                        }
+                        console.log(request)
+                        this.$axios.post("addevent/", request).then(res => {
+                            if (res.data.error){
+                                swal({
+                                title: "错误",
+                                text: "请输入正确的场地编号",
+                                type: "error"
+                                });
+                                return;
+                            }
+                        });
+                    }
+                    swal({
+                        title: "成功",
+                        text: "场地预留成功",
+                        type: "success"
+                    });
+                }
+            }
         },
         manage(ground) {
             window.location.replace('/stadium_management/stadium_info/record?id=' + this.$route.query.id.toString())

@@ -95,39 +95,26 @@
           horizontal-order="true"
           gutter="25"
         >
-          <div
-            class="grid-item"
-            v-masonry-tile
-            v-for="(ground, _index) in grounds"
-            v-bind:key="ground.name"
-          >
+          <div class="grid-item" v-masonry-tile v-for="(ground, _index) in grounds" v-bind:key="ground.name">
             <div class="contact-box">
               <!-- 主要部分 & 单个单元 -->
               <div class="panel-body">
                 <fieldset>
                   <div class="form-group row">
                     <label class="col-sm-4 col-form-label">场地类型：</label>
-                    <label class="col-sm-6 col-form-label"
-                      ><strong>{{ ground.type }}</strong></label
-                    >
+                    <label class="col-sm-6 col-form-label"><strong>{{ ground.type }}</strong></label>
                   </div>
                   <div class="form-group row">
                     <label class="col-sm-4 col-form-label">场地数量：</label>
-                    <label class="col-sm-6 col-form-label"
-                      ><strong>{{ ground.amount }}</strong></label
-                    >
+                    <label class="col-sm-6 col-form-label"><strong>{{ ground.amount }}</strong></label>
                   </div>
                   <div class="form-group row">
                     <label class="col-sm-4 col-form-label">开放状态：</label>
                     <div class="col-sm-4">
-                      <select
-                        data-placeholder="..."
-                        class="chosen-select"
-                        tabindex="2"
-                      >
-                        <option>开放</option>
-                        <option>未开放</option>
-                      </select>
+                      <el-select v-model="models[_index]">
+                        <el-option label="开放" value="1"></el-option>
+                        <el-option label="未开放" value="0"></el-option>
+                      </el-select>
                     </div>
                   </div>
                   <div class="form-group row">
@@ -238,10 +225,7 @@
                     style="border-top: 1px solid #e7eaec; padding-top: 10px"
                   >
                     <label class="col-sm-5 col-form-label"></label>
-                    <div
-                      class="col-sm-2 btn btn-outline btn-info"
-                      v-on:click="submit(ground)"
-                    >
+                    <div class="col-sm-2 btn btn-outline btn-info" v-on:click="submit(ground,_index)">
                       提交
                     </div>
                   </div>
@@ -354,7 +338,8 @@ export default {
       ],
       newGroundType: "",
       newGroundAmount: null,
-      name: ""
+      name: "",
+      models:"",
     };
   },
   components: {
@@ -385,6 +370,15 @@ export default {
     this.$axios.get("stadium/", request).then(res => {
       this.name = res.data[0].name;
       this.grounds = res.data[0].courtTypes;
+      this.models = Array(this.grounds.length).fill('')
+      for (var i=0;i<this.grounds.length;i++){
+        if (this.grounds[i].openState == 1){
+          this.models[i] = "开放";
+        }
+        else{
+          this.models[i] = "未开放";
+        }   
+      }
       for (var i = 0; i < this.grounds.length; i++) {
         let duration = this.grounds[i].duration.split(":");
         this.grounds[i].duration =
@@ -432,8 +426,8 @@ export default {
     },
     newPeriod(_index) {
       var period = {
-        start: "12:00",
-        end: "13:00"
+        start: "00:00",
+        end: "01:00"
       };
       this.grounds[_index].periods.push(period);
       this.$nextTick(function() {
@@ -448,7 +442,7 @@ export default {
       this.grounds[_index].periods.splice(index, 1);
       this.$forceUpdate();
     },
-    submit(ground) {
+    submit(ground,index) {
       swal(
         {
           title: "你确定？",
@@ -464,7 +458,7 @@ export default {
           if (res) {
             // 检查表单合法性
             if (!this.validate()) return;
-            this.uploadForm(ground);
+            this.uploadForm(ground,index);
           }
         }
       );
@@ -498,7 +492,7 @@ export default {
       }
       return true;
     },
-    uploadForm(ground) {
+    uploadForm(ground,index) {
       let duration =
         (Array(2).join("0") + ground.duration / 60).slice(-2) +
         ":" +
@@ -509,19 +503,21 @@ export default {
           ground.periods[i].start + "-" + ground.periods[i].end + " ";
       }
       let date = $(".input-group.date").datepicker("getDate");
+      let openState = 0;
+      if (this.models[index] == "开放" || this.models[index] == 1){
+        openState = 1;
+      }
       let request_body = {
         courtType_id: ground.id,
-        startDate:
-          date.getFullYear() +
-          "-" +
-          (date.getMonth() + 1) +
-          "-" +
-          date.getDate(),
+        date:date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
         duration: duration,
         price: ground.price,
         membership: ground.membership,
-        openHours: openingHours
+        openState: openState,
+        openingHours: openingHours
       };
+      let _this = this
+
       this.$axios.post("changeduration/", request_body).then(res => {
         swal(
           {
