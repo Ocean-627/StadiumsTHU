@@ -104,7 +104,6 @@ class ReserveEventSerializer(serializers.ModelSerializer):
     result = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField(required=False)
     image = serializers.SerializerMethodField(required=False)
-    price = serializers.SerializerMethodField(required=False)
     type = serializers.SerializerMethodField(required=False)
 
     def get_result(self, obj):
@@ -121,11 +120,6 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         if not image:
             return None
         return image.image.url
-
-    def get_price(self, obj):
-        court = Court.objects.get(id=obj.court_id)
-        price = court.courtType.price
-        return price
 
     def get_type(self, obj):
         court = Court.objects.get(id=obj.court_id)
@@ -159,7 +153,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         wx.reserve_success_message(openId=user.openId, type=court.type, date=duration.date, content=content)
         return ReserveEvent.objects.create(user=user, **validated_data, stadium=stadium.name,
                                            stadium_id=stadium.id, court=court.name, date=duration.date,
-                                           court_id=court.id,
+                                           court_id=court.id, price=court.price,
                                            startTime=duration.startTime, endTime=duration.endTime,
                                            result='S')
 
@@ -167,7 +161,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         model = ReserveEvent
         fields = '__all__'
         read_only_fields = ['user', 'stadium', 'court', 'stadium_id', 'court_id', 'date', 'result', 'startTime',
-                            'endTime', 'has_comments']
+                            'endTime', 'has_comments', 'price']
 
 
 class BatchReserveSerializer(serializers.ModelSerializer):
@@ -218,23 +212,26 @@ class BatchReserveSerializer(serializers.ModelSerializer):
         startTime = validated_data.get('startTime')
         endTime = validated_data.get('endTime')
         # 修改
+        cnt = 0
         durations = court.duration_set.filter(date=first_duration.date)
         for duration in durations:
             if judgeAddEvent(startTime, duration.startTime, endTime, duration.endTime):
                 duration.accessible = False
                 duration.user = user
                 duration.save()
+                cnt += 1
         content = '您已经成功预约' + stadium.name + court.name
         News.objects.create(user=user, type='预约成功', content=content)
         wx.reserve_success_message(openId=user.openId, type=court.type, date=first_duration.date, content=content)
-        return ReserveEvent.objects.create(user=user, **validated_data, stadium=stadium.name,
+        return ReserveEvent.objects.create(user=user, **validated_data, stadium=stadium.name, price=court.price * cnt,
                                            stadium_id=stadium.id, court=court.name, date=first_duration.date,
                                            court_id=court.id, result='S')
 
     class Meta:
         model = ReserveEvent
         fields = '__all__'
-        read_only_fields = ['user', 'stadium', 'court', 'stadium_id', 'court_id', 'date', 'result', 'has_comments']
+        read_only_fields = ['user', 'stadium', 'court', 'stadium_id', 'court_id', 'date', 'result', 'has_comments',
+                            'price']
 
 
 class ReserveModifySerializer(serializers.ModelSerializer):
