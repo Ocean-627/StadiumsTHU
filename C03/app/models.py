@@ -245,6 +245,7 @@ class AddBlacklist(models.Model):
 class OtherOperation(models.Model):
     # 其他不可撤销操作，主要包括移出黑名单操作，撤销信用记录操作及编辑场馆信息操作
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    state = models.IntegerField(default=0, verbose_name='事件状态')
     time = models.DateTimeField(auto_now_add=True)
     type = models.CharField(default="其他操作", max_length=20)
     details = models.CharField(default="无", max_length=100)
