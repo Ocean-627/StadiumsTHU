@@ -49,6 +49,13 @@ class TestReserve(TestCase):
         Stadium.objects.all().delete()
         self.assertEqual(len(ReserveEvent.objects.all()), 1)
 
+        params = {
+            'id': 1
+        }
+        resp = self.client.delete('/api/user/reserve/', params, **self.headers, content_type='application/json')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(len(ReserveEvent.objects.all()), 0)
+
 
 class TestComment(TestCase):
     def setUp(self) -> None:

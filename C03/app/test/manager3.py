@@ -28,7 +28,7 @@ class TestDefault(TestCase):
     def setUp(self) -> None:
         Manager.objects.create(username='cbx', password='123', userId=1, email='cbx@qq.com', loginToken=1)
         self.headers = {'HTTP_loginToken': 1}
-        User.objects.create(userId=2018011891, inBlacklist=1, defaults=4)
+        User.objects.create(userId=2018011891, inBlacklist=1, defaults=4, name='战神')
         for _ in range(4):
             Default.objects.create(user_id=1)
 
@@ -38,6 +38,9 @@ class TestDefault(TestCase):
             'default_id': 1
         }
         resp = self.client.put('/api/manager/default/', params, **self.headers, content_type='application/json')
+
+        operation = OtherOperation.objects.first()
+        self.assertEqual(operation.type, '撤销信用记录')
         self.assertEqual(resp.status_code, 200)
         user = User.objects.first()
         self.assertEqual(user.defaults, 3)
@@ -182,7 +185,7 @@ class TestAddBlacklist(TestCase):
     def setUp(self) -> None:
         Manager.objects.create(username='cbx', password='123', userId=1, email='cbx@qq.com', loginToken=1)
         self.headers = {'HTTP_loginToken': 1}
-        User.objects.create(userId=2018011891)
+        User.objects.create(userId=2018011891, name='战神')
 
     def test_addblacklist(self):
         params = {
@@ -191,14 +194,20 @@ class TestAddBlacklist(TestCase):
         resp = self.client.post('/api/manager/blacklist/', params, **self.headers)
         self.assertEqual(resp.status_code, 201)
 
+        operation = OtherOperation.objects.first()
+        self.assertEqual(operation.type, '移入黑名单')
+
         user = User.objects.first()
         self.assertEqual(user.inBlacklist, 1)
 
         params = {
-            'id': 1
+            'user_id': 1
         }
         resp = self.client.put('/api/manager/blacklist/', params, **self.headers, content_type='application/json')
         self.assertEqual(resp.status_code, 200)
+
+        operation = OtherOperation.objects.last()
+        self.assertEqual(operation.type, '移除黑名单')
 
         user = User.objects.first()
         self.assertEqual(user.inBlacklist, 0)

@@ -71,6 +71,7 @@ class AddBlacklistSerializer(serializers.ModelSerializer):
         user.save()
         manager = self.context['request'].user
         content = '管理员' + manager.username + '将' + user.name + '加入黑名单'
+        OtherOperation.objects.create(manager=manager, content=content, type='移入黑名单')
         return AddBlacklist.objects.create(manager=self.context['request'].user, content=content, **validated_data)
 
     class Meta:

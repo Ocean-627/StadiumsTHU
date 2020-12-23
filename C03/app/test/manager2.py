@@ -13,17 +13,23 @@ from app.utils.utils import initStadium
 第一次修改 2020-12-17
 原因：增加了创建场馆功能
 结果：正常
+
+第二次修改 2020-12-24
+原因：所有操作均需要权限
+结果：发现重大bug,没传context
 """
 
 
 class TestStaticSource(TestCase):
     def setUp(self) -> None:
+        Manager.objects.create(username='cbx', password='123', userId=1, email='cbx@qq.com', loginToken=1)
+        self.headers = {'HTTP_loginToken': 1}
         initStadium(stadiums[0])
         initStadium(stadiums[1])
 
     def test_static(self):
         params = {}
-        resp = self.client.get('/api/manager/court/', params)
+        resp = self.client.get('/api/manager/court/', params, **self.headers)
         self.assertEqual(resp.status_code, 200)
         content = json.loads(resp.content)
         self.assertEqual(len(content), 20)
@@ -32,7 +38,7 @@ class TestStaticSource(TestCase):
             'stadium_id': 1,
             'type': '羽毛球'
         }
-        resp = self.client.get('/api/manager/court/', params)
+        resp = self.client.get('/api/manager/court/', params, **self.headers)
         self.assertEqual(resp.status_code, 200)
         content = json.loads(resp.content)
         self.assertEqual(len(content), 5)
@@ -40,7 +46,7 @@ class TestStaticSource(TestCase):
         params = {
             'court_id': 1
         }
-        resp = self.client.get('/api/manager/duration/', params)
+        resp = self.client.get('/api/manager/duration/', params, **self.headers)
         content = json.loads(resp.content)
         self.assertEqual(len(content), 8)
 
@@ -62,6 +68,9 @@ class TestCreateStadium(TestCase):
         }
         resp = self.client.post('/api/manager/stadium/', params, **self.headers)
         self.assertEqual(resp.status_code, 201)
+
+        operation = OtherOperation.objects.first()
+        self.assertEqual(operation.type, '添加场馆')
 
         stadium = Stadium.objects.first()
         self.assertEqual(stadium.openState, 0)
@@ -91,6 +100,8 @@ class TestReserve(TestCase):
         User.objects.create(userId=2018011904, loginToken=3)
         self.user1_headers = {'HTTP_loginToken': 1}
         self.user2_headers = {'HTTP_loginToken': 3}
+        Manager.objects.create(username='cbx', password='123', userId=1, email='cbx@qq.com', loginToken=1)
+        self.headers = {'HTTP_loginToken': 1}
 
     def test_reserve(self):
         params = {
@@ -114,13 +125,13 @@ class TestReserve(TestCase):
         params = {
             'user_id': 1
         }
-        resp = self.client.get('/api/manager/reserveevent/', params)
-        content = json.loads(resp.content)
+        resp = self.client.get('/api/manager/reserveevent/', params, **self.headers)
+        content = json.loads(resp.content)['results']
         self.assertEqual(len(content), 2)
 
         params = {
             'stadium_id': 1
         }
-        resp = self.client.get('/api/manager/reserveevent/', params)
-        content = json.loads(resp.content)
+        resp = self.client.get('/api/manager/reserveevent/', params, **self.headers)
+        content = json.loads(resp.content)['results']
         self.assertEqual(len(content), 3)
