@@ -1,5 +1,9 @@
+import Toast from '../../../miniprogram/miniprogram_npm/@vant/weapp/toast/toast';
 Page({
   data: {
+    // 正在进行的活动
+    ongoing_book:false,
+    event_id:Number,
     // 滚动图片
     gallery_imgs: [
       getApp().globalData.imgUrl+'/res/test/stadium_1.jpg',
@@ -27,10 +31,6 @@ Page({
     // 运动项目
     sports_list:[
       '全部',
-      '羽毛球',
-      '乒乓球',
-      '篮球',
-      '足球'
     ],
     // 图片资源
     scan_img:getApp().globalData.imgUrl+'/res/imgs/home_scan.png',
@@ -76,7 +76,7 @@ Page({
       newList.push({
         id:info.id,
         name:info.name,
-        pinyin:info.pinyin,
+        pinyin:(info.pinyin===null?info.name:info.pinyin),
         star:info.score,
         comment_num:info.comments,
         opentime:info.openTime + '-' + info.closeTime,
@@ -100,9 +100,46 @@ Page({
     this.filterStadium()
   },
 
+  // 设置当前活动信息
+  setOngoingEvent:function(res) {
+    for(var info of res.data.results) {
+      const startTimeText = info.date+' '+info.startTime
+      const endTimeText = info.date+' '+info.endTime
+      // 获取活动时间戳
+      const startStamp = new Date(startTimeText.replace(/-/g,"/")).getTime()
+      const endStamp = new Date(endTimeText.replace(/-/g,"/")).getTime()
+      const curStamp = getApp().getCurrentStamp()
+      if((curStamp >= startStamp) && (curStamp <= endStamp)) {
+        this.setData({
+          ongoing_book:true,
+          book_id:info.id,
+        })
+        return
+      }
+    }
+    this.setData({
+      ongoing_book:false,
+      book_id:0,
+    })
+  },
+
+  // 设置运动列表
+  setSportsList(res) {
+    var sportsList = ['全部']
+    for(var sport of res.data) {
+      sportsList.push(sport)
+    }
+    this.setData({sports_list:sportsList})
+  },
+
   // 创建时请求信息
   onLoad: function (options) {
+    Toast.loading({
+      message: '加载中...',
+      forbidClick: true,
+    })
     const _this = this
+    this.reqSportsInfo()
     this.reqStadiumInfo()
     wx.startLocationUpdate({
       success: (res) => {},
@@ -117,9 +154,16 @@ Page({
     this.setData({stadiumSearch: this.stadiumSearch.bind(this)})
   },
 
+  // 每次显示时查看是否有正在进行的预约
+  onShow:function() {
+    this.reqOngoingEvent()
+  },
+
   // 下拉刷新页面
   onPullDownRefresh:function() {
+    this.reqSportsInfo()
     this.reqStadiumInfo()
+    this.reqOngoingEvent()
   },
 
   // 场馆筛选函数
@@ -152,7 +196,7 @@ Page({
   sortStadium(key, desc) {
     let oldList = this.data.filter_list
     oldList.sort(function(a,b) {
-    　return desc ? ((parseInt(a[key]) < parseInt(b[key]))?1:((parseInt(a[key]) > parseInt(b[key]))?-1:0)):((parseInt(a[key]) < parseInt(b[key]))?-1:((parseInt(a[key]) > parseInt(b[key]))?1:0))  //杠杠的，注意括号就是！
+    　return desc ? ((parseFloat(a[key]) < parseFloat(b[key]))?1:((parseFloat(a[key]) > parseFloat(b[key]))?-1:0)):((parseFloat(a[key]) < parseFloat(b[key]))?-1:((parseFloat(a[key]) > parseFloat(b[key]))?1:0))  //杠杠的，注意括号就是！
     })
     this.setData({filter_list:oldList})
   },
@@ -196,7 +240,6 @@ Page({
    // 场馆搜索函数，每隔一段时间会调用
    stadiumSearch:function(value) {
       var resultArr = []
-      console.log(value)
       if(value !== '') {
         for(var info of this.data.stadium_list) {
           if(info.name.indexOf(value) !== -1 || info.pinyin.indexOf(value) !== -1) {
@@ -256,7 +299,7 @@ Page({
       data: {},
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
@@ -273,6 +316,65 @@ Page({
         wx.stopPullDownRefresh({
           success: (res) => {},
         })
+        Toast.clear()
+      },
+    })
+  },
+
+  // 请求正在进行的活动
+  reqOngoingEvent:function() {
+    const _this = this
+    const app = getApp()
+    wx.request({
+      method: "GET",
+      url: app.globalData.reqUrl + '/api/user/reserve/',
+      data: {
+        payment:true,
+        cancel:false,
+        leave:false,
+      },
+      header: {
+        'content-type': 'application/json',
+        'loginToken': app.globalData.loginToken,
+      },
+      success(res) {
+        if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
+          _this.setOngoingEvent(res)
+        } else {
+          app.reqFail("获取当前预约信息失败")
+        }
+      },
+      fail() {
+        app.reqFail("获取当前预约信息失败")
+      },
+      complete() {
+        wx.stopPullDownRefresh({
+          success: (res) => {},
+        })
+      },
+    })
+  },
+
+  // 请求运动项目列表
+  reqSportsInfo() {
+    const _this = this
+    const app = getApp()
+    wx.request({
+      method: "GET",
+      url: app.globalData.reqUrl + '/api/user/courttype/',
+      header: {
+        'content-type': 'application/json',
+        'loginToken': app.globalData.loginToken,
+      },
+      success(res) {
+        if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
+          _this.setSportsList(res)
+        } else {
+          app.reqFail("获取运动项目列表失败")
+        }
+      },
+      fail() {
+        app.reqFail("获取运动项目列表失败")
       },
     })
   },
@@ -280,29 +382,42 @@ Page({
 /*--------------------------------------------------
    页面跳转函数
 ---------------------------------------------------*/
+  // 跳转到具体信息
   jmpInfo:function(e) {
     // 设置历史记录
     const app = getApp()
-    var oldHis = JSON.parse(wx.getStorageSync('visitHistory'))
-    oldHis.push({
-      type:'浏览',
-      target:{
-        name:e.currentTarget.dataset.name,
-        id:e.currentTarget.dataset.stadiumid,
-      },
-      time:app.getCurrentTime()
-    })
-    oldHis = oldHis.slice(-app.globalData.maxRecordNum)
-    wx.setStorageSync('visitHistory', JSON.stringify(oldHis))
+
+    try {
+      var oldHis = JSON.parse(wx.getStorageSync('visitHistory'))
+      oldHis.push({
+        type:'浏览',
+        target:{
+          name:e.currentTarget.dataset.name,
+          id:e.currentTarget.dataset.stadiumid,
+        },
+        time:app.getCurrentTime()
+      })
+      oldHis = oldHis.slice(-app.globalData.maxRecordNum)
+      wx.setStorageSync('visitHistory', JSON.stringify(oldHis))
+    } catch(e) {}
 
     wx.navigateTo({
       url: '/pages/stadium/info/stadium?'+'id='+e.currentTarget.dataset.stadiumid,
     })
   },
 
+  // 跳转到搜索结果
   jmpSearch:function(e) {
     wx.navigateTo({
       url: '/pages/home/result/result',
     })
   },
+
+  // 跳转到正在进行的预约
+  jmpOngoingBook:function() {
+    const id = this.data.book_id
+    wx.navigateTo({
+      url: '/pages/book/ongo/ongo?id='+id,
+    })
+  }
 })

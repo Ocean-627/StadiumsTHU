@@ -1,6 +1,7 @@
 <!--pages/stadium/stadium.wxml-->
-<mp-navigation-bar show="{{true}}" back="{{true}}" color="#000" background="#f8f8f8" title="场馆详情">
-</mp-navigation-bar>
+<!--弹出提示框-->
+<van-toast id="van-toast" />
+
 <view class="container">
   <!--滚动图片-->
   <view class="gallery">
@@ -8,7 +9,7 @@
         autoplay="true" interval="2000" duration="500">
         <view wx:for="{{gallery_imgs}}" wx:key="*this">
           <swiper-item>
-            <image class="gallery-img" src="{{item}}" mode="heightFix"></image>
+            <image class="gallery-img" src="{{item}}" mode="scaleToFill"></image>
           </swiper-item>
         </view>
       </swiper>
@@ -49,9 +50,10 @@
       <view class="head-wrapper" id="review-header">
         <image src="{{comment_img}}"></image>
         <text class="head">评论区</text>
-        <text id="more">查看更多  ></text>
+        <text id="more" bindtap="jmpAllcomment" wx:if="{{!empty_comment}}">查看更多  ></text>
       </view>
-      <view class="comment-list">
+      <van-empty description="还没有人评论过这个场馆哦。" wx:if="{{empty_comment}}"/>
+      <view class="comment-list" wx:else>
         <view class="comment-item" wx:for="{{comment_list}}" wx:key="*this">
           <view class="reviewer-info">
             <image class="reviewer_header" src="{{item.headerPath}}"></image>

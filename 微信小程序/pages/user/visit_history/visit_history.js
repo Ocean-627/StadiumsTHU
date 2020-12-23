@@ -21,18 +21,13 @@ Page({
     })
   },
 
+  // 跳转到对应的记录
   jmpRecord:function(e) {
     const num = this.data.localData.length
     const info = this.data.localData[num - e.detail - 1]
-    switch(info.type) {
-      case '浏览':
-        wx.navigateTo({
-          url: '/pages/stadium/info/stadium?'+'id='+info.target.id,
-        })
-        break
-      case '预约':
-
-    }
+    wx.navigateTo({
+      url: '/pages/stadium/info/stadium?'+'id='+info.target.id,
+    })
   },
 
   // 清空记录

@@ -1,5 +1,18 @@
 <!--pages/home/home.wxml-->
-<!--提示框-->
+<!--弹出提示框-->
+<van-toast id="van-toast" />
+
+<!--当前进行的活动-->
+<van-notice-bar
+  left-icon="volume-o"
+  text="您有正在进行的预约，请及时签到和签退。"
+  mode="link"
+  color="#1989fa"
+  background="#ecf9ff"
+  speed="{{16}}"
+  bindtap="jmpOngoingBook"
+  wx:if="{{ongoing_book}}"
+/>
 <view class="container">
   <!--搜索框-->
   <view class="menu-wrapper">

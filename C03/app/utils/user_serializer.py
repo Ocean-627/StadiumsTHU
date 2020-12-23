@@ -67,7 +67,7 @@ class StadiumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stadium
-        exclude = ['information', 'contact', 'foreDays']
+        exclude = ['information', 'contact', 'foreDays', 'notice']
 
 
 class StadiumDetailSerializer(StadiumSerializer):

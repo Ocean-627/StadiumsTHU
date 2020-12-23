@@ -18,16 +18,31 @@ Page({
     ],
     // 当前状态
     curStat:0,
+    // 当前分页
+    curPage:1,
+    // 到达底部
+    toBottom:false,
   },
 
   onLoad:function() {
     this.reqBookInfo(0)
   },
 
+  // 页面卸载函数
   onUnload:function() {
     wx.switchTab({
       url: '/pages/user/index/user',
     })
+  },
+
+  // 页面下拉分页
+  onReachBottom:function() {
+    if(this.data.toBottom) {
+      return
+    }
+    const newPage = this.data.curPage+1
+    this.setData({curPage:newPage})
+    this.reqBookInfo(this.data.curStat,true)
   },
 
   // 设置预约记录
@@ -89,6 +104,7 @@ Page({
     const idx = e.detail.index
     this.setData({
       curStat:idx,
+      curPage:1
     })
     this.reqBookInfo(idx)
   },
@@ -151,10 +167,18 @@ Page({
     })
   },
 
+  // 跳转到正在进行的预约
+  jmpDetail:function(e) {
+    const bookId = e.currentTarget.dataset.bookid
+    wx.navigateTo({
+      url: '/pages/book/ongo/ongo?id='+bookId,
+    })
+  },
+
   /*----------------------------------
     网络请求函数
   -----------------------------------*/
-  reqBookInfo:function(statusId, add=false) {
+  reqBookInfo:function(statusId,add=false) {
     // 开始加载
     Toast.loading({
       message: '加载中...',
@@ -163,18 +187,24 @@ Page({
 
     const _this = this
     const app = getApp()
+    const queryData = Object.assign(this.data.queryList[statusId], 
+      {page:this.data.curPage})
     wx.request({
       method: "GET",
       url: app.globalData.reqUrl + '/api/user/reserve/',
-      data: _this.data.queryList[statusId],
+      data: queryData,
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
           _this.setBookingList(res, statusId, add)
-        } else {
+        }
+        else if(res.data.error.detail === 'Invalid page.') {
+          _this.setData({ toBottom:true })
+        }
+        else {
           app.reqFail("获取信息失败")
         }
       },
@@ -208,7 +238,7 @@ Page({
       },
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {

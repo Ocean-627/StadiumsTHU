@@ -1,6 +1,8 @@
 {
   "usingComponents": {
-    "van-button": "/miniprogram/miniprogram_npm/@vant/weapp/button/index"
+    "van-button": "/miniprogram/miniprogram_npm/@vant/weapp/button/index",
+    "van-empty": "/miniprogram/miniprogram_npm/@vant/weapp/empty/index"
   },
-  "navigationBarTitleText": "场馆详情"
+  "navigationBarTitleText": "场馆详情",
+  "enablePullDownRefresh":false
 }
