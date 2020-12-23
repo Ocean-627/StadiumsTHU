@@ -10,9 +10,11 @@ from app.user import wx
 
 
 class UserSerializer(serializers.ModelSerializer):
-    nickname = serializers.CharField(label='用户昵称', validators=[MinLengthValidator(3), MaxLengthValidator(20)],
+    nickname = serializers.CharField(label='用户昵称', validators=[MinLengthValidator(3, message='昵称长度至少为3'),
+                                                               MaxLengthValidator(20, message='昵称长度至多为20')],
                                      required=False)
-    phone = serializers.CharField(label='手机号', validators=[MinLengthValidator(11), MaxLengthValidator(11)],
+    phone = serializers.CharField(label='手机号',
+                                  validators=[MinLengthValidator(11, message='请输入11位手机号'), MaxLengthValidator(11)],
                                   required=False)
 
     class Meta:
@@ -20,6 +22,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
         # 设置read_only起到了保护的作用，即用户不能修改这些字段
         read_only_fields = ['loginToken', 'loginTime', 'userId', 'defaults', 'blacklist', 'openId']
+        extra_kwargs = {
+            'email': {'error_messages': {'invalid': '请输入一个合法的邮箱'}}
+        }
 
 
 class StadiumSerializer(serializers.ModelSerializer):
@@ -131,11 +136,11 @@ class ReserveEventSerializer(serializers.ModelSerializer):
     def validate_duration_id(self, value):
         duration = Duration.objects.filter(id=value, accessible=True).first()
         if not duration:
-            raise ValidationError('Invalid duration_id')
+            raise ValidationError('不存在的时段，或者该时段已经被预订')
         myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
         myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
         if judgeTime(duration.startTime, myTime) < 0 and duration.date == myDate:
-            raise ValidationError('Invalid duration_id, you should not reserve duration that passed')
+            raise ValidationError('非法的时段，该时段已经结束')
         return value
 
     def create(self, validated_data):
@@ -173,11 +178,11 @@ class BatchReserveSerializer(serializers.ModelSerializer):
     def validate_duration_id(self, value):
         duration = Duration.objects.filter(id=value, accessible=True).first()
         if not duration:
-            raise ValidationError('Invalid duration_id')
+            raise ValidationError('不存在的时段，或者该时段已经被预订')
         myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
         myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
         if judgeTime(duration.startTime, myTime) < 0 and duration.date == myDate:
-            raise ValidationError('Invalid duration_id, you should not reserve duration that passed')
+            raise ValidationError('非法的时段，该时段已经结束')
         return value
 
     def validate_startTime(self, value):
@@ -185,7 +190,7 @@ class BatchReserveSerializer(serializers.ModelSerializer):
         id = self.context['request'].data.get('duration_id')
         first_duration = Duration.objects.filter(id=id).first()
         if value != first_duration.startTime:
-            raise ValidationError('Invalid startTime')
+            raise ValidationError('开始时间与所预定订的第一个时段的开始时间不相等')
         return value
 
     def validate_endTime(self, value):
@@ -201,7 +206,7 @@ class BatchReserveSerializer(serializers.ModelSerializer):
         for duration in durations:
             if judgeAddEvent(startTime, duration.startTime, endTime, duration.endTime):
                 if not duration.openState or not duration.accessible:
-                    raise ValidationError('Invalid endTime')
+                    raise ValidationError('不合法的预订，预订与其他预订有冲突')
         return value
 
     def create(self, validated_data):
