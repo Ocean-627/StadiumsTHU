@@ -16,12 +16,14 @@ class ChangeDurationSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        return ChangeDuration.objects.create(manager=self.context['request'].user, **validated_data)
+        manager = self.context['request'].user
+        content = '管理员' + manager.username + '修改了预约时间段'
+        return ChangeDuration.objects.create(manager=manager, content=content, **validated_data)
 
     class Meta:
         model = ChangeDuration
         fields = '__all__'
-        read_only_fields = ['manager', 'courtType']
+        read_only_fields = ['manager', 'courtType', 'content']
 
 
 class AddEventSerializer(serializers.ModelSerializer):
@@ -38,12 +40,15 @@ class AddEventSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        return AddEvent.objects.create(**validated_data)
+        manager = self.context['request'].user
+        court = Court.objects.filter(id=validated_data.get('court_id')).first()
+        content = '管理员' + manager.username + '占用了' + court.stadium + court.name
+        return AddEvent.objects.create(content=content, **validated_data)
 
     class Meta:
         model = AddEvent
         fields = '__all__'
-        read_only_fields = ['manager', 'court', 'state']
+        read_only_fields = ['manager', 'court', 'state', 'content']
 
 
 class AddBlacklistSerializer(serializers.ModelSerializer):
@@ -54,7 +59,7 @@ class AddBlacklistSerializer(serializers.ModelSerializer):
         return obj.get_state_display()
 
     def validate_user_id(self, value):
-        user = User.objects.filter(id=value).first()
+        user = User.objects.filter(id=value, inBlacklist=False).first()
         if not user:
             raise ValidationError('Invalid user_id')
         return value
@@ -64,18 +69,29 @@ class AddBlacklistSerializer(serializers.ModelSerializer):
         user.inBlacklist = True
         user.inBlacklistTime = timezone.now().date()
         user.save()
-        return AddBlacklist.objects.create(manager=self.context['request'].user, **validated_data)
+        manager = self.context['request'].user
+        content = '管理员' + manager.username + '将' + user.name + '加入黑名单'
+        return AddBlacklist.objects.create(manager=self.context['request'].user, content=content, **validated_data)
 
     class Meta:
         model = AddBlacklist
         fields = '__all__'
-        read_only_fields = ['manager', 'user']
+        read_only_fields = ['manager', 'user', 'content']
 
 
 class HistorySerializer(serializers.Serializer):
-    page = serializers.IntegerField(default=1, validators=[MinValueValidator(1)])
-    size = serializers.IntegerField(default=15, validators=[MinValueValidator(1)])
+    page = serializers.IntegerField(default=1, validators=[MinValueValidator(1, message='page的最小值为1')])
+    size = serializers.IntegerField(default=15, validators=[MinValueValidator(1, message='size的最小值为1')])
+
+
+class OperationSerailizer(serializers.Serializer):
+    time = serializers.DateTimeField()
+    type = serializers.CharField()
+    id = serializers.IntegerField()
+    state = serializers.IntegerField()
+    details = serializers.CharField()
+    content = serializers.CharField()
 
 
 class NumberSerializer(serializers.Serializer):
-    num = serializers.IntegerField(validators=[MinValueValidator(1)])
+    num = serializers.IntegerField(validators=[MinValueValidator(1, 'num的最小值为1')])

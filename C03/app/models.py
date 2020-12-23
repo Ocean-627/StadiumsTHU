@@ -30,6 +30,7 @@ class Stadium(models.Model):
     name = models.CharField(max_length=32)
     pinyin = models.CharField(max_length=100, null=True)
     information = models.CharField(max_length=300)
+    notice = models.CharField(max_length=500, null=True)
     # TODO:开放时间和关闭时间可以设置为DateField
     openTime = models.CharField(max_length=32)
     closeTime = models.CharField(max_length=32)
@@ -94,6 +95,7 @@ class ReserveEvent(models.Model):
     court = models.CharField(max_length=32)
     court_id = models.IntegerField()
     duration_id = models.IntegerField(null=True)
+    price = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     result = models.CharField(max_length=2, choices=APPLY_RESULT, default=WAITING, verbose_name='预定结果')
     date = models.CharField(max_length=10)
@@ -190,8 +192,8 @@ class ChangeDuration(models.Model):
     price = models.IntegerField(default=1)
     membership = models.IntegerField(default=1)
     openState = models.BooleanField()
-    details = models.CharField(default="计算机网络", max_length=100)
-    content = models.CharField(default="软件工程", max_length=100)
+    details = models.CharField(default="无", max_length=100)
+    content = models.CharField(max_length=100)
     state = models.IntegerField(choices=APPLY_RESULT, default=V, verbose_name='事件状态')
     # TODO:完善事件信息
 
@@ -214,8 +216,8 @@ class AddEvent(models.Model):
     time = models.DateTimeField(auto_now_add=True)
     type = models.CharField(default="场地占用", max_length=20)
     information = models.CharField(max_length=1000, null=True)
-    details = models.CharField(default="汇编与编译原理", max_length=100)
-    content = models.CharField(default="软件工程", max_length=100)
+    details = models.CharField(default="无", max_length=100)
+    content = models.CharField(max_length=100)
     state = models.IntegerField(choices=APPLY_RESULT, default=V, verbose_name='事件状态')
     # TODO:完善事件信息
 
@@ -234,8 +236,8 @@ class AddBlacklist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     type = models.CharField(default="移入黑名单", max_length=20)
     time = models.DateTimeField(auto_now_add=True)
-    details = models.CharField(default="操作系统", max_length=100)
-    content = models.CharField(default="软件工程", max_length=100)
+    details = models.CharField(default="无", max_length=100)
+    content = models.CharField(max_length=100)
     state = models.IntegerField(choices=APPLY_RESULT, default=V, verbose_name='事件状态')
     # TODO:完善信息
 
@@ -245,8 +247,8 @@ class OtherOperation(models.Model):
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
     type = models.CharField(default="其他操作", max_length=20)
-    details = models.CharField(default="软件工程", max_length=100)
-    content = models.CharField(default="软件工程", max_length=100)
+    details = models.CharField(default="无", max_length=100)
+    content = models.CharField(default="无", max_length=100)
     # TODO:完善信息
 
 

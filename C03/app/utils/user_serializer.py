@@ -10,9 +10,11 @@ from app.user import wx
 
 
 class UserSerializer(serializers.ModelSerializer):
-    nickname = serializers.CharField(label='用户昵称', validators=[MinLengthValidator(3), MaxLengthValidator(20)],
+    nickname = serializers.CharField(label='用户昵称', validators=[MinLengthValidator(3, message='昵称长度至少为3'),
+                                                               MaxLengthValidator(20, message='昵称长度至多为20')],
                                      required=False)
-    phone = serializers.CharField(label='手机号', validators=[MinLengthValidator(11), MaxLengthValidator(11)],
+    phone = serializers.CharField(label='手机号',
+                                  validators=[MinLengthValidator(11, message='请输入11位手机号'), MaxLengthValidator(11)],
                                   required=False)
 
     class Meta:
@@ -20,6 +22,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
         # 设置read_only起到了保护的作用，即用户不能修改这些字段
         read_only_fields = ['loginToken', 'loginTime', 'userId', 'defaults', 'blacklist', 'openId']
+        extra_kwargs = {
+            'email': {'error_messages': {'invalid': '请输入一个合法的邮箱'}}
+        }
 
 
 class StadiumSerializer(serializers.ModelSerializer):
@@ -67,7 +72,7 @@ class StadiumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stadium
-        exclude = ['information', 'contact', 'foreDays']
+        exclude = ['information', 'contact', 'foreDays', 'notice']
 
 
 class StadiumDetailSerializer(StadiumSerializer):
@@ -104,7 +109,6 @@ class ReserveEventSerializer(serializers.ModelSerializer):
     result = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField(required=False)
     image = serializers.SerializerMethodField(required=False)
-    price = serializers.SerializerMethodField(required=False)
     type = serializers.SerializerMethodField(required=False)
 
     def get_result(self, obj):
@@ -122,11 +126,6 @@ class ReserveEventSerializer(serializers.ModelSerializer):
             return None
         return image.image.url
 
-    def get_price(self, obj):
-        court = Court.objects.get(id=obj.court_id)
-        price = court.courtType.price
-        return price
-
     def get_type(self, obj):
         court = Court.objects.get(id=obj.court_id)
         type = court.courtType.type
@@ -137,11 +136,11 @@ class ReserveEventSerializer(serializers.ModelSerializer):
     def validate_duration_id(self, value):
         duration = Duration.objects.filter(id=value, accessible=True).first()
         if not duration:
-            raise ValidationError('Invalid duration_id')
+            raise ValidationError('不存在的时段，或者该时段已经被预订')
         myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
         myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
         if judgeTime(duration.startTime, myTime) < 0 and duration.date == myDate:
-            raise ValidationError('Invalid duration_id, you should not reserve duration that passed')
+            raise ValidationError('非法的时段，该时段已经结束')
         return value
 
     def create(self, validated_data):
@@ -159,7 +158,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         wx.reserve_success_message(openId=user.openId, type=court.type, date=duration.date, content=content)
         return ReserveEvent.objects.create(user=user, **validated_data, stadium=stadium.name,
                                            stadium_id=stadium.id, court=court.name, date=duration.date,
-                                           court_id=court.id,
+                                           court_id=court.id, price=court.price,
                                            startTime=duration.startTime, endTime=duration.endTime,
                                            result='S')
 
@@ -167,7 +166,7 @@ class ReserveEventSerializer(serializers.ModelSerializer):
         model = ReserveEvent
         fields = '__all__'
         read_only_fields = ['user', 'stadium', 'court', 'stadium_id', 'court_id', 'date', 'result', 'startTime',
-                            'endTime', 'has_comments']
+                            'endTime', 'has_comments', 'price']
 
 
 class BatchReserveSerializer(serializers.ModelSerializer):
@@ -179,11 +178,11 @@ class BatchReserveSerializer(serializers.ModelSerializer):
     def validate_duration_id(self, value):
         duration = Duration.objects.filter(id=value, accessible=True).first()
         if not duration:
-            raise ValidationError('Invalid duration_id')
+            raise ValidationError('不存在的时段，或者该时段已经被预订')
         myDate = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d')
         myTime = datetime.datetime.fromtimestamp(int(time.time()), pytz.timezone('Asia/Shanghai')).strftime('%H:%M')
         if judgeTime(duration.startTime, myTime) < 0 and duration.date == myDate:
-            raise ValidationError('Invalid duration_id, you should not reserve duration that passed')
+            raise ValidationError('非法的时段，该时段已经结束')
         return value
 
     def validate_startTime(self, value):
@@ -191,7 +190,7 @@ class BatchReserveSerializer(serializers.ModelSerializer):
         id = self.context['request'].data.get('duration_id')
         first_duration = Duration.objects.filter(id=id).first()
         if value != first_duration.startTime:
-            raise ValidationError('Invalid startTime')
+            raise ValidationError('开始时间与所预定订的第一个时段的开始时间不相等')
         return value
 
     def validate_endTime(self, value):
@@ -207,7 +206,7 @@ class BatchReserveSerializer(serializers.ModelSerializer):
         for duration in durations:
             if judgeAddEvent(startTime, duration.startTime, endTime, duration.endTime):
                 if not duration.openState or not duration.accessible:
-                    raise ValidationError('Invalid endTime')
+                    raise ValidationError('不合法的预订，预订与其他预订有冲突')
         return value
 
     def create(self, validated_data):
@@ -218,23 +217,26 @@ class BatchReserveSerializer(serializers.ModelSerializer):
         startTime = validated_data.get('startTime')
         endTime = validated_data.get('endTime')
         # 修改
+        cnt = 0
         durations = court.duration_set.filter(date=first_duration.date)
         for duration in durations:
             if judgeAddEvent(startTime, duration.startTime, endTime, duration.endTime):
                 duration.accessible = False
                 duration.user = user
                 duration.save()
+                cnt += 1
         content = '您已经成功预约' + stadium.name + court.name
         News.objects.create(user=user, type='预约成功', content=content)
         wx.reserve_success_message(openId=user.openId, type=court.type, date=first_duration.date, content=content)
-        return ReserveEvent.objects.create(user=user, **validated_data, stadium=stadium.name,
+        return ReserveEvent.objects.create(user=user, **validated_data, stadium=stadium.name, price=court.price * cnt,
                                            stadium_id=stadium.id, court=court.name, date=first_duration.date,
                                            court_id=court.id, result='S')
 
     class Meta:
         model = ReserveEvent
         fields = '__all__'
-        read_only_fields = ['user', 'stadium', 'court', 'stadium_id', 'court_id', 'date', 'result', 'has_comments']
+        read_only_fields = ['user', 'stadium', 'court', 'stadium_id', 'court_id', 'date', 'result', 'has_comments',
+                            'price']
 
 
 class ReserveModifySerializer(serializers.ModelSerializer):
@@ -243,7 +245,7 @@ class ReserveModifySerializer(serializers.ModelSerializer):
     def validate_event_id(self, value):
         reserve = ReserveEvent.objects.filter(user=self.context['request'].user, id=value).first()
         if not reserve:
-            raise ValidationError('Invalid id')
+            raise ValidationError('不存在该预订记录')
         return value
 
     class Meta:
@@ -258,7 +260,9 @@ class CommentSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField(required=False)
 
     reserve_id = serializers.IntegerField(label='预订编号', write_only=True)
-    content = serializers.CharField(label='评论内容', validators=[MinLengthValidator(5), MaxLengthValidator(300)])
+    content = serializers.CharField(label='评论内容',
+                                    validators=[MinLengthValidator(5, message='评论应至少长度为5'),
+                                                MaxLengthValidator(300, message='单条评论长度至多为300')])
 
     def get_images(self, obj):
         images_list = obj.commentimage_set.all()
@@ -323,10 +327,10 @@ class CollectEventSerializer(serializers.ModelSerializer):
     def validate_stadium_id(self, value):
         stadium = Stadium.objects.filter(id=value).first()
         if not stadium:
-            raise ValidationError('Invalid stadium_id')
+            raise ValidationError('不存在的场馆')
         collect = stadium.collectevent_set.filter(user=self.context['request'].user).first()
         if collect:
-            raise ValidationError('You have collect that stadium')
+            raise ValidationError('你已经收藏过此场馆啦')
         return value
 
     def create(self, validated_data):
