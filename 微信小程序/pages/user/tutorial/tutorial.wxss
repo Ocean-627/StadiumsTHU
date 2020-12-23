@@ -1,0 +1,5 @@
+/* pages/user/tutorial/tutorial.wxss */
+.tutor-img {
+  align-self: center;
+  width:80vw;
+}

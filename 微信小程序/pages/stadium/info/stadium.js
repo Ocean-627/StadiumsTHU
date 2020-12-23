@@ -41,7 +41,8 @@ Page({
 
     this.setData({
       stadium_name:info.name,
-      intro:info.info,
+      intro:info.information,
+      notice:info.notice,
       open_time:info.openTime+" - "+info.closeTime,
       phone:info.contact,
       pos:info.location,
@@ -71,10 +72,13 @@ Page({
       for(var img of info.images) {
         imgList.push(img.image)
       }
+      var date = new Date(info.createTime)
+      var dateText = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDay()+' '+date.getHours()
+      +':'+date.getMinutes()
       newList.push({
         headerPath:info.userImage,
         name:info.userName,
-        date:info.createTime,
+        date:dateText,
         score:info.score,
         content:info.content,
         imgs:imgList
