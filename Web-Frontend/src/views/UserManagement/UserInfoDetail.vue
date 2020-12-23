@@ -23,6 +23,7 @@
       <div
         class="wrapper wrapper-content animated fadeInRight ecommerce white-bg"
         style="text-align: center;"
+        v-if="loaded"
       >
         <div class="row dashboard-header">
           <div class="col-md-3">
@@ -86,14 +87,16 @@
           <div class="col-md-3">
             <strong>黑名单状态</strong>
           </div>
-          <div class="col-md-1" v-show="user.inBlacklist">
-            {{ user.inBlacklist ? "是" : "否" }}
+          <div class="col-md-1" v-if="user.inBlacklist">
+            是
           </div>
-          <div class="col-md-2" v-show="user.inBlacklist">
+          <div class="col-md-2" v-if="user.inBlacklist">
             （拉黑于{{ user.inBlacklistTime | datetime_format("YYYY-MM-DD") }}）
+            <button class="btn btn-sm btn-outline btn-danger" style="float: right;" v-on:click="black_out()">移出黑名单</button>
           </div>
-          <div class="col-md-2" v-show="!user.inBlacklist">
-            {{ user.inBlacklist ? "是" : "否" }}
+          <div class="col-md-3" v-if="!user.inBlacklist">
+            否 
+            <button class="btn btn-sm btn-outline btn-danger" style="float: right;" v-on:click="black_in()">移入黑名单</button>
           </div>
         </div>
         <div class="row i-row">
@@ -197,6 +200,7 @@ import Toolbox from "@/components/Toolbox";
 export default {
   data() {
     return {
+      loaded: false,
       user: {},
       reserve_records: [],
       credit_records: [],
@@ -245,8 +249,6 @@ export default {
     },
   },
   methods: {
-    sendMessage() {},
-    deleteUser() {},
     cancel_reserve(record){},
     cancel_credit(id) {
         let func = this.axios.get("default/", { params: { id: id } }).then(res => {
@@ -274,7 +276,7 @@ export default {
         this.user = res[0].data.results[0];
         this.reserve_records = res[1].data.results
         this.credit_records = res[2].data.results
-        console.log(res[0].data.results)
+        this.loaded = true;
     });
   }
 };

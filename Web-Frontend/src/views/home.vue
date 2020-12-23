@@ -105,8 +105,8 @@ export default {
                 datasets: [{
                     label: '预约次数',
                     data: [],
-                    backgroundColor: 'rgba(75, 192, 192, 1)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(23, 162, 184, 1)',
+                    borderColor: 'rgba(23, 162, 184, 1)',
                     borderWidth: 1
                 }]
             },
@@ -124,8 +124,8 @@ export default {
                 datasets: [{
                     label: '预约比例',
                     data: [],
-                    backgroundColor: 'rgba(75, 192, 192, 1)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(255, 193, 7, 1)',
+                    borderColor: 'rgba(255, 193, 7, 1)',
                     borderWidth: 1
                 }]
             },
@@ -158,6 +158,7 @@ export default {
                     this.chartdata2.datasets[0].data = []
                     for(let v in res.data){
                         let ratio = (res.data[v].availableDurations) ? (res.data[v].reservedDurations / res.data[v].availableDurations) : 0;
+                        ratio = Math.floor(ratio * 10000) / 10000;
                         this.chartdata.datasets[0].data.push(res.data[v].reservedDurations || 0)
                         this.chartdata2.datasets[0].data.push(ratio)
                     }
@@ -192,6 +193,7 @@ export default {
                 this.chartdata.labels.push(v);
                 this.chartdata2.labels.push(v);
                 let ratio = (res[0].data[v].availableDurations) ? (res[0].data[v].reservedDurations / res[0].data[v].availableDurations) : 0;
+                ratio = Math.floor(ratio * 10000) / 10000;
                 this.chartdata.datasets[0].data.push(res[0].data[v].reservedDurations || 0)
                 this.chartdata2.datasets[0].data.push(ratio)
             }

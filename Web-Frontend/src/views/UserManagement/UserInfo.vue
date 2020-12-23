@@ -219,7 +219,6 @@ export default {
                         title: '拉黑时间', 
                         visible: false,
                         formatter: function(value) {
-                            console.log(value)
                             if(value.cellValue == "0") return ""
                             return moment(value).format("YYYY-MM-DD");
                         }

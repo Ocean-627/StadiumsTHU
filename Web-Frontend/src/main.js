@@ -66,7 +66,24 @@ axios.interceptors.response.use(
   },
   error => {
     console.log(error);
-    if (error) {
+    if (error.response.status === 403) {
+      swal(
+        {
+          title: "错误",
+          text: "未登录或登陆信息失效！",
+          type: "error"
+        },
+        function() {
+          window.location.replace("/login");
+        }
+      );
+    } else if (error.response.status === 400) {
+      swal({
+        title: "错误",
+        text: "信息填写不完整！",
+        type: "error"
+      });
+    } else {
       swal({
         title: "错误",
         text: error,

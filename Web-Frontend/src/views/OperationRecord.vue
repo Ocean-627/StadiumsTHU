@@ -122,16 +122,16 @@ export default {
                                 }
                                 if(row.state == 1) {
                                     content = "已取消";
-                                    color = "#6c757d"
+                                    color = "#ffc107"
                                 }
                                 if(row.state == 2) {
-                                    content = "已过期";
+                                    content = "已生效";
+                                    color = "#17a2b8"
                                 }
                                 return [
                                     h('div', {
                                         style: {
                                             color: color,
-                                            cursor: 'pointer'
                                         }
                                     }, content)
                                 ]
@@ -158,7 +158,7 @@ export default {
                                             id: row.id
                                         }
                                     }
-                                    else if(row.type === "场馆预留"){
+                                    else if(row.type === "场地预留"){
                                         req.url = 'addevent/';
                                         req.method = 'put';
                                         req.data = {
@@ -196,6 +196,14 @@ export default {
                                     }, "撤销")
                                 ]
                             }
+                        }
+                    },
+                    {
+                        field: 'time',  
+                        title: '时间', 
+                        formatter: function(value) {
+                            if(value.cellValue == "0") return ""
+                            return moment(value).format("YYYY-MM-DD HH:mm:ss");
                         }
                     }
                 ],
