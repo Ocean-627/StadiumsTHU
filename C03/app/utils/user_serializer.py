@@ -187,6 +187,7 @@ class BatchReserveSerializer(serializers.ModelSerializer):
         return value
 
     def validate_startTime(self, value):
+        TimeValidator(value)
         id = self.context['request'].data.get('duration_id')
         first_duration = Duration.objects.filter(id=id).first()
         if value != first_duration.startTime:
@@ -194,6 +195,9 @@ class BatchReserveSerializer(serializers.ModelSerializer):
         return value
 
     def validate_endTime(self, value):
+        TimeValidator(value)
+        startTime = self.context['request'].data.get('startTime')
+        TimeValidator(startTime)
         id = self.context['request'].data.get('duration_id')
         first_duration = Duration.objects.filter(id=id).first()
         court = first_duration.court

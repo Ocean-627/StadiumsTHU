@@ -36,6 +36,11 @@ class NewsPagination(BasePagination):
     max_page_size = 30
 
 
+class CollectPagination(BasePagination):
+    page_size = 20
+    max_page_size = 30
+
+
 class MyPagination(object):
 
     def __init__(self, max_page_size=30):

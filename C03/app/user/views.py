@@ -188,15 +188,6 @@ class ReserveView(ListAPIView, CreateAPIView):
 
         return Response({'message': 'ok'})
 
-    def delete(self, request):
-        req_data = request.data
-        id = req_data.get('id')
-        reserve = ReserveEvent.objects.filter(user=request.user, id=id).first()
-        if not reserve:
-            return Response({'error': 'Invalid id'}, status=400)
-        reserve.delete()
-        return Response({'message': 'ok'})
-
 
 class CommentView(ListAPIView, CreateAPIView):
     """
@@ -252,6 +243,7 @@ class CollectView(ListAPIView, CreateAPIView):
     queryset = CollectEvent.objects.all()
     serializer_class = CollectEventSerializer
     filter_class = CollectEventFilter
+    pagination_class = CollectPagination
 
     def get_queryset(self):
         return CollectEvent.objects.filter(user=self.request.user)
