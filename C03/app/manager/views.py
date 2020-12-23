@@ -477,7 +477,6 @@ class HistoryView(APIView):
     """
     历史操作信息
     """
-    # TODO: 至少要支持分页吧
     authentication_classes = [ManagerAuthtication]
 
     def get(self, request):
@@ -485,15 +484,15 @@ class HistoryView(APIView):
         req_data = request.query_params
         type = req_data.get('type')
         if type == '1':
-            operations = manager.changeduration_set.all().order_by('-time')
+            operations = ChangeDuration.objects.all().order_by('-time')
         elif type == '2':
-            operations = manager.addevent_set.all().order_by('-time')
+            operations = AddEvent.objects.all().order_by('-time')
         elif type == '3':
-            operations = manager.addblacklist_set.all().order_by('-time')
+            operations = AddBlacklist.objects.all().order_by('-time')
         else:
-            changeDuration = manager.changeduration_set.all()
-            addEvent = manager.addevent_set.all()
-            addBlackList = manager.addblacklist_set.all()
+            changeDuration = ChangeDuration.objects.all()
+            addEvent = AddEvent.objects.all()
+            addBlackList = AddBlacklist.objects.all()
             operations = sorted(chain(changeDuration, addEvent, addBlackList), key=attrgetter('time'), reverse=True)
         operations = OperationSerailizer(operations, many=True).data
         # 分页
