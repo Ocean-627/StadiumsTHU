@@ -1,3 +1,7 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+    "van-empty": "/miniprogram/miniprogram_npm/@vant/weapp/empty/index"
+  },
+  "navigationBarTitleText": "设置",
+  "enablePullDownRefresh":false
 }

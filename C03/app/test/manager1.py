@@ -21,6 +21,10 @@ from app.utils.utils import initStadium
 第三次修改 2020-12-18
 原因：增加了新建场地，修改场地改用PUT方法
 结果：发现了修改时必须修改createTime的bug
+
+第四次修改 2020-12-24
+原因：所有接口全部需要权限
+结果：正常
 """
 
 
@@ -68,6 +72,8 @@ class TestManager(TestCase):
 
 class TestStadium(TestCase):
     def setUp(self) -> None:
+        Manager.objects.create(username='cbx', password='123', userId=1, email='cbx@qq.com', loginToken=1)
+        self.headers = {'HTTP_loginToken': 1}
         Stadium.objects.create(name='综合体育馆', information='综合体育馆', openTime='08:00', closeTime='18:00', openState=True,
                                foreDays=3)
         Stadium.objects.create(name='陈明游泳馆', information='陈明游泳馆', openTime='09:00', closeTime='19:00', openState=True,
@@ -75,7 +81,7 @@ class TestStadium(TestCase):
 
     def test_stadium(self):
         params = {}
-        resp = self.client.get('/api/manager/stadium/', params)
+        resp = self.client.get('/api/manager/stadium/', params, **self.headers)
         content = json.loads(resp.content)
         self.assertEqual(len(content), 2)
         self.assertEqual(content[0]['name'], '综合体育馆')
@@ -86,8 +92,10 @@ class TestStadium(TestCase):
             'information': 'haha',
             'openTime': '10:00'
         }
-        resp = self.client.put('/api/manager/stadium/', params, content_type='application/json')
-        content = json.loads(resp.content)
+        resp = self.client.put('/api/manager/stadium/', params, content_type='application/json', **self.headers)
+        operation = OtherOperation.objects.first()
+        self.assertEqual(operation.type, '编辑场馆信息')
+
         self.assertEqual(resp.status_code, 200)
         stadium = Stadium.objects.get(id=1)
         self.assertEqual(stadium.name, params['name'])
@@ -97,6 +105,8 @@ class TestStadium(TestCase):
 
 class TestUser(TestCase):
     def setUp(self) -> None:
+        Manager.objects.create(username='cbx', password='123', userId=1, email='cbx@qq.com', loginToken=1)
+        self.headers = {'HTTP_loginToken': 1}
         chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
         chars.reverse()
         for i in range(10):
@@ -104,7 +114,7 @@ class TestUser(TestCase):
 
     def test_user(self):
         params = {}
-        resp = self.client.get('/api/manager/user/', params)
+        resp = self.client.get('/api/manager/user/', params, **self.headers)
         self.assertEqual(resp.status_code, 200)
         content = json.loads(resp.content)['results']
         self.assertEqual(len(content), 10)
@@ -114,7 +124,7 @@ class TestUser(TestCase):
             'page': 2,
             'size': 6
         }
-        resp = self.client.get('/api/manager/user/', params)
+        resp = self.client.get('/api/manager/user/', params, **self.headers)
         content = json.loads(resp.content)['results']
         self.assertEqual(len(content), 4)
         self.assertEqual(content[0]['userId'], 6)
@@ -124,7 +134,7 @@ class TestUser(TestCase):
             'size': 3,
             'sort': '-nickName'
         }
-        resp = self.client.get('/api/manager/user/', params)
+        resp = self.client.get('/api/manager/user/', params, **self.headers)
         content = json.loads(resp.content)['results']
         self.assertEqual(content[0]['nickName'], 'g' * 5)
         self.assertEqual(content[1]['nickName'], 'f' * 5)

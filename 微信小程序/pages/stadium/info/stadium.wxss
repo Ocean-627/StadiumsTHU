@@ -52,6 +52,10 @@ page {
   border-radius: 10px;
 }
 
+.intro, .notice {
+  padding-bottom: 30rpx;
+}
+
 .info .basic-info .name {
   display: flex;
   flex-direction: row;

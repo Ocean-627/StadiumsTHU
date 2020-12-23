@@ -201,6 +201,17 @@ class ReserveView(ListAPIView, CreateAPIView):
 
         return Response({'message': 'ok'})
 
+    def delete(self, request):
+        req_data = request.data
+        id = req_data.get('id')
+        reserve = ReserveEvent.objects.filter(id=id, user=request.user).first()
+        if not reserve:
+            return Response({'error': '预约不存在'}, status=400)
+        if not reserve.cancel and not reserve.leave:
+            return Response({'error': '预约正在进行中，无法删除'}, status=400)
+        reserve.delete()
+        return Response({'message': 'ok'})
+
 
 class CommentView(ListAPIView, CreateAPIView):
     """

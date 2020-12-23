@@ -255,8 +255,8 @@ class StadiumView(ListAPIView, CreateAPIView):
 
     def get_serializer(self, *args, **kwargs):
         if self.request.method == 'POST':
-            return CreateStadiumSerializer(*args, **kwargs)
-        return StadiumSerializerForManager(*args, **kwargs)
+            return CreateStadiumSerializer(*args, **kwargs, context={'request': self.request})
+        return StadiumSerializerForManager(*args, **kwargs, context={'request': self.request})
 
     def put(self, request):
         req_data = request.data

@@ -26,7 +26,7 @@ Page({
     }
     const newPage = this.data.curPage+1
     this.setData({curPage:newPage})
-    this.reqCommentInfo(this.data.curStat,true)
+    this.reqCommentInfo(this.data.curPage,true)
   },
 
   // 设置评论信息

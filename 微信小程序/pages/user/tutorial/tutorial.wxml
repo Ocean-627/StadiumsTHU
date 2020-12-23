@@ -1,0 +1,9 @@
+<!--pages/user/tutorial/tutorial.wxml-->
+<van-collapse accordion value="{{ activeName }}" bind:change="onChangeTutor" id="tutor-choose">
+  <van-collapse-item wx:for="{{tutor_list}}" wx:key="this" title="{{item.title}}" name="{{index}}">
+    <view class="node" wx:for="{{item.nodes}}">
+      <image src="{{item.value}}" wx:if="{{item.type === 'img'}}" class="tutor-img" mode="widthFix"></image>
+      <text wx:else>{{item.value}}</text>
+    </view>
+  </van-collapse-item>
+</van-collapse>
