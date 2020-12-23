@@ -72,12 +72,6 @@ export default {
                     titleAlign: 'right',
                     items: [
                         { 
-                            field: 'user',
-                            title: '姓名', 
-                            span: 6, 
-                            itemRender: { name: '$input', props: { placeholder: '请输入姓名' } } 
-                        },
-                        { 
                             field: 'stadiumName', 
                             title: '场馆名称', 
                             span: 6, 
@@ -182,7 +176,7 @@ export default {
                         title: '评论时间', 
                         visible: false,
                         formatter: function(value) {
-                            return moment(value).format("YYYY-MM-DD HH:mm:ss");
+                            return moment(value.cellValue).format("YYYY-MM-DD HH:mm:ss");
                         }
                     },
                 ],

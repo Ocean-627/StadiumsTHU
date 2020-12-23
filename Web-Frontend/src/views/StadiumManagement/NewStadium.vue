@@ -65,6 +65,7 @@
                 name="image"
                 accept="image/png,image/gif,image/jpg,image/jpeg"
                 list-type="picture-card"
+                :headers="{ loginToken: this.loginToken }"
                 :data="{ stadium_id: this.id }"
                 :limit="5"
                 :auto-upload="false"
@@ -264,6 +265,7 @@ export default {
   data() {
     return {
       id: null,
+      loginToken: localStorage.getItem('loginToken'),
       period: {
         start: "",
         end: ""

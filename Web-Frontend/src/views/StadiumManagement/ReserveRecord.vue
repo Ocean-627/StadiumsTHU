@@ -87,7 +87,7 @@ export default {
                     ajax: {
                         query: ({ page, sort, filters, form  }) => {
                             const queryParams = Object.assign({
-                                stadium: this.$route.params.id,
+                                stadium_id: this.$route.query.id,
                                 sort: (sort.order === "desc") ? ("-" + sort.property) : sort.property,
                                 page: page.currentPage,
                                 size: page.pageSize

@@ -67,6 +67,7 @@
                 name="image"
                 accept="image/png,image/gif,image/jpg,image/jpeg"
                 list-type="picture-card"
+                :headers="{ loginToken: this.loginToken }"
                 :file-list="fileList"
                 :data="{ stadium_id: this.$route.query.id }"
                 :limit="5"
@@ -137,6 +138,7 @@ export default {
         start: "",
         end: ""
       },
+      loginToken: localStorage.getItem('loginToken'),
       active_time: "",
       name: "",
       fileList: [],

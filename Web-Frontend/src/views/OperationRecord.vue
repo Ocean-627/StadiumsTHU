@@ -117,8 +117,8 @@ export default {
               { label: "修改场馆预约时段", value: "修改场馆预约时段" }
             ]
           },
-          { field: "details", title: "操作详情" },
-          { field: "content", title: "备注" },
+          { field: "content", title: "操作详情" },
+          { field: "details", title: "备注", visible: false },
           {
             field: "state",
             title: "状态",
@@ -165,13 +165,14 @@ export default {
                 )
                   return [];
                 let func = res => {
+                    console.log(row)
                   if (!res) return;
                   let req = {};
-                  if (row.type === "添加黑名单") {
+                  if (row.type === "移入黑名单") {
                     req.url = "blacklist/";
                     req.method = "put";
                     req.data = {
-                      id: row.id
+                      id: row.user
                     };
                   } else if (row.type === "场地预留") {
                     req.url = "addevent/";

@@ -287,7 +287,7 @@ export default {
           params: { user_id: this.user.id, page: ++this.reserve_page }
         })
         .then(res => {
-            this.reserve_records.push(...res.data.results)
+          this.reserve_records.push(...res.data.results);
         });
     },
     page_credit() {
@@ -296,15 +296,23 @@ export default {
           params: { user_id: this.user.id, page: ++this.credit_page }
         })
         .then(res => {
-            this.credit_records.push(...res.data.results)
+          this.credit_records.push(...res.data.results);
         });
     },
     cancel_credit(id) {
       let func = this.axios
         .get("default/", { params: { id: id } })
         .then(res => {
-          swal("成功", "撤销操作成功", "success");
-          this.$forceUpdate();
+          swal(
+            {
+              title: "成功",
+              text: "撤销成功",
+              type: "success"
+            },
+            () => {
+              location.reload(0);
+            }
+          );
         });
       swal(
         {
@@ -339,8 +347,16 @@ export default {
               user_id: this.user.id
             })
             .then(res => {
-              swal("成功", "拉黑成功", "success");
-              this.$forceUpdate();
+              swal(
+                {
+                  title: "成功",
+                  text: "成功加入黑名单",
+                  type: "success"
+                },
+                () => {
+                  location.reload(0);
+                }
+              );
             });
         }
       );
@@ -363,8 +379,16 @@ export default {
               user_id: this.user.id
             })
             .then(res => {
-              swal("成功", "撤销成功", "success");
-              this.$forceUpdate();
+              swal(
+                {
+                  title: "成功",
+                  text: "成功移除黑名单",
+                  type: "success"
+                },
+                () => {
+                  location.reload(0);
+                }
+              );
             });
         }
       );
