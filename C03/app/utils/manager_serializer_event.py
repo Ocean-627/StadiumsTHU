@@ -54,7 +54,7 @@ class AddBlacklistSerializer(serializers.ModelSerializer):
         return obj.get_state_display()
 
     def validate_user_id(self, value):
-        user = User.objects.filter(id=value).first()
+        user = User.objects.filter(id=value, inBlacklist=False).first()
         if not user:
             raise ValidationError('Invalid user_id')
         return value

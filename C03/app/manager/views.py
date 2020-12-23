@@ -460,10 +460,10 @@ class AddBlacklistView(ListAPIView, CreateAPIView):
 
     def put(self, request):
         req_data = request.data
-        id = req_data.get('id')
-        addBlacklist = AddBlacklist.objects.filter(id=id).first()
+        user_id = req_data.get('user_id')
+        addBlacklist = AddBlacklist.objects.filter(user_id=user_id, state=0).first()
         if not addBlacklist:
-            return Response({'error': 'Invalid Blacklist_id'}, status=400)
+            return Response({'error': 'Invalid user_id'}, status=400)
         addBlacklist.state = 1
         addBlacklist.save()
         user = addBlacklist.user
