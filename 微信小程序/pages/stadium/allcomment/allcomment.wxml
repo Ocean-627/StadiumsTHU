@@ -1,0 +1,33 @@
+<!--pages/stadium/allcomment/allcomment.wxml-->
+<!--评论区-->
+<view class="container">
+  <view class="review">
+    <view class="head-wrapper" id="review-header">
+      <image src="{{comment_img}}"></image>
+      <text class="head">评论区</text>
+    </view>
+    <view class="comment-list">
+      <view class="comment-item" wx:for="{{comment_list}}" wx:key="*this">
+        <view class="reviewer-info">
+          <image class="reviewer_header" src="{{item.headerPath}}"></image>
+          <view class="middle">
+            <text id="name">{{item.name}}</text>
+            <text id="date">{{item.date}}</text>
+          </view>
+          <view class="score">
+            <image src="{{star_img}}"></image>
+            <text>{{item.score}}分</text>
+          </view>
+        </view>
+        <view class="content">
+          <text>{{item.content}}</text>
+        </view>
+        <view class="img-list">
+          <view class="img-item" wx:for="{{item.imgs}}" wx:key="*this">
+            <image src="{{item}}"></image>
+          </view>
+        </view>
+      </view> 
+    </view>
+  </view>
+</view>

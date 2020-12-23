@@ -309,7 +309,7 @@ Page({
     this.setData({
       show_verify:true,
       activeStep:1,
-      court_desc:this.data.choose_sport+courtName,
+      court_desc:courtName,
       time_desc:this.data.date_list[this.data.choose_date].text+this.data.duration_text,
     })
   },
@@ -329,18 +329,25 @@ Page({
     })
     // 设置历史记录
     const app = getApp()
-    var oldHis = JSON.parse(wx.getStorageSync('visitHistory'))
-    oldHis.push({
-      type:'预定',
-      target:{
-        name:this.data.stadium_name+this.data.court_desc,
-        id:this.data.stadium_id,
-      },
-      time:app.getCurrentTime()
-    })
-    oldHis = oldHis.slice(-app.globalData.maxRecordNum)
-    wx.setStorageSync('visitHistory', JSON.stringify(oldHis))
-    this.reqBooking()
+    try{
+      var oldHis = JSON.parse(wx.getStorageSync('visitHistory'))
+      oldHis.push({
+        type:'预定',
+        target:{
+          name:this.data.stadium_name+this.data.court_desc,
+          id:this.data.stadium_id,
+        },
+        time:app.getCurrentTime()
+      })
+      oldHis = oldHis.slice(-app.globalData.maxRecordNum)
+      wx.setStorageSync('visitHistory', JSON.stringify(oldHis))
+    } catch(e) {}
+    if(this.data.choose_duration_list.length === 1) {
+      this.reqBooking()
+    }
+    else if(this.data.choose_duration_list.length > 1) {
+      this.reqMulBooking()
+    }
   },
 
   /*--------------------------------------------------
@@ -368,7 +375,7 @@ Page({
       },
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
@@ -398,7 +405,7 @@ Page({
       },
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
@@ -430,7 +437,7 @@ Page({
       },
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         Toast.clear()
@@ -465,7 +472,7 @@ Page({
       },
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
@@ -491,4 +498,45 @@ Page({
       },
     })
   },
+
+  // 发送多时段预约请求
+  reqMulBooking:function() {
+    const _this = this
+    const app = getApp()
+    wx.request({
+      method: "POST",
+      url: app.globalData.reqUrl + '/api/user/batchreserve/',
+      data: {
+        'duration_id':_this.data.choose_duration_list[0].id,
+        'startTime':_this.data.choose_duration_list[0].startTime,
+        'endTime':_this.data.choose_duration_list[_this.data.choose_duration_list.length-1].endTime,
+      },
+      header: {
+        'content-type': 'application/json',
+        'loginToken': app.globalData.loginToken,
+      },
+      success(res) {
+        if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
+          _this.jmpPay(res.data.id, res.data.stadium_id)
+        } else {
+          _this.setData({
+            show_verify:false,
+            activeStep:0,
+            handlingBook:false
+          })
+          app.reqFail('预定失败，请刷新页面后重试')
+        }
+      },
+      fail() {
+        _this.setData({
+          show_verify:false,
+          activeStep:0,
+          handlingBook:false
+        })
+        app.reqFail('预定失败，请刷新页面后重试')
+      },
+      complete() {
+      },
+    })
+  }
 })

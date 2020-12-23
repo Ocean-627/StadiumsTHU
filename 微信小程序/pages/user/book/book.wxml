@@ -37,7 +37,7 @@
             <van-button round size="small" type="danger" class="op-btn" custom-class="van-btn"
             data-bookid="{{item.id}}" wx:if="{{!item.checked && !item.cancel}}" 
             data-idx="{{index}}" bindtap="cancelBook">取消预约</van-button>
-            <van-button round plain size="small" class="op-btn" custom-class="van-btn"
+            <van-button round size="small" class="op-btn" custom-class="van-btn" color="#9933FF"
             data-bookid="{{item.id}}" wx:if="{{!item.leave && (item.checked)}}" 
             data-idx="{{index}}" bindtap="jmpDetail">查看详情</van-button>
           </view>

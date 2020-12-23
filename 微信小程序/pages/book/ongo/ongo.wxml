@@ -1,0 +1,75 @@
+<!--pages/book/ongo/ongo.wxml-->
+<!--弹出提示框-->
+<van-toast id="van-toast" />
+<!--提示对话框-->
+<van-dialog id="van-dialog" />
+
+<view class="container" wx:if="{{!leave}}">
+  <view class="info-wrapper">
+    <image src="{{stadium_img}}"></image>
+    <view class="stadium-info">
+      <text id="stadium-name">{{stadium_name}}</text>
+      <text id="court-name">{{court_name}}</text>
+    </view>
+  </view>
+  <view class="duration-wrapper">
+    <van-divider contentPosition="center" class="info-divider"
+    customStyle="color: #760280; border-color: #760280; font-size: 14px;">
+    预定时间</van-divider>
+    <view class="time-wrapper">
+      <text class="time">{{start_time}}</text>
+      <text class="time-div">-</text>
+      <text class="time">{{end_time}}</text>
+    </view>
+  </view>
+  <view class="progress">
+    <van-divider contentPosition="center" class="info-divider"
+    customStyle="color: #760280; border-color: #760280; font-size: 14px;">
+    剩余时间</van-divider>
+    <van-circle value="{{remain_percent}}" stroke-width="6" text="{{remain_percent+'%'}}"
+    layer-color="#eeeeee" color="#760280"/>
+    <van-count-down use-slot class="countdown" time="{{ remain_time }}" bind:change="onCountDown">
+      <text class="item">{{ timeData.hours }}</text>
+      <text class="div-item">:</text>
+      <text class="item">{{ timeData.minutes }}</text>
+      <text class="div-item">:</text>
+      <text class="item">{{ timeData.seconds }}</text>
+    </van-count-down>
+  </view>
+  <view class="btns-wrapper">
+    <!--签到按钮-->
+    <van-button round class="btn" custom-class="van-btn" 
+    color="linear-gradient(to right, #7232dd, #760280)"
+    bindtap="onCheckIn" wx:if="{{(!checkingIn) && (!checked)}}">我要签到</van-button>
+    <van-button round class="btn" custom-class="van-btn" 
+    loading color="linear-gradient(to right, #0099FF, #0033FF)" 
+    loading-text="处理中" wx:if="{{checkingIn}}"/>
+    <van-button round disabled class="btn" custom-class="van-btn" 
+    color="linear-gradient(to right, #7232dd, #760280)"
+    wx:if="{{checked}}">我要签到</van-button>
+
+    <!--签退按钮-->
+    <van-button round class="btn" custom-class="van-btn" 
+    color="linear-gradient(to right, #FF3366, #CC3300)"
+    bindtap="onCheckOut" wx:if="{{checked}}">我要签退</van-button>
+    <van-button round disabled class="btn" custom-class="van-btn" 
+    color="linear-gradient(to right, #FF3366, #CC3300)"
+    wx:else>我要签退</van-button>
+  </view>
+</view>
+
+<view class="success-container" wx:else>
+  <mp-msg type="success" title="签退成功">
+    <view slot="desc">
+      您已成功签退，请在离开场馆之前仔细检查是否有随身物品遗漏。
+    </view>
+    <view slot="handle" class="jmp-btns">
+      <van-button class="tip-btn" custom-class="msg-van-btn" 
+      color="linear-gradient(to right, #7232dd, #760280)"
+      bindtap="jmpMain">回到主页</van-button>
+      <van-button class="tip-btn" custom-class="msg-van-btn" 
+      color="linear-gradient(to right, #0099FF, #0033FF)"
+      bindtap="jmpMyBook">查看预约</van-button>
+    </view>
+  </mp-msg>
+</view>

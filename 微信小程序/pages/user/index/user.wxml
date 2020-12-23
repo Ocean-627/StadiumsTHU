@@ -40,7 +40,7 @@
         <image src="{{info_img}}"></image>
       </view>
       <view class="choice-wrapper">
-        <text>常见问题</text>
+        <text>使用教程</text>
         <image src="{{question_img}}"></image>
       </view>
       <view class="choice-wrapper">
@@ -49,6 +49,7 @@
       </view>
     </view>
   </view>
-  <!--退出按钮-->
-  <button id="exit">退出登录</button>
+  <!--退出按钮
+  <van-button round type="danger" class="exit-btn" custom-class="van-btn"
+  bindtap="logout">退出登录</van-button>-->
 </view>

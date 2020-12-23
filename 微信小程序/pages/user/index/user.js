@@ -33,6 +33,14 @@ Page({
     this.reqUserInfo();
   },
 
+  // 登出
+  logout:function() {
+    
+  },
+
+  /*-------------------------------
+    网络请求函数
+  -------------------------------*/
   reqUserInfo:function() {
     var _this = this
     const app = getApp()
@@ -42,7 +50,7 @@ Page({
       data: {},
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
@@ -62,7 +70,9 @@ Page({
     })
   },
 
-  // 页面跳转
+  /*-------------------------------
+    页面跳转函数
+  -------------------------------*/
   jmpinfo:function() {
     wx.navigateTo({
       url: '/pages/user/info/info',

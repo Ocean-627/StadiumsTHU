@@ -15,7 +15,7 @@ page {
 /*滚动图片*/
 .gallery {
   width:100%;
-  height:350rpx;
+  height:400rpx;
 }
 
 .gallery swiper {

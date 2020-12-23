@@ -1,0 +1,127 @@
+/* pages/book/ongo/ongo.wxss */
+page {
+  background-color: #F2F2F2;
+}
+
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  width: 96%;
+  margin-top: 30rpx;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-color:white;
+  border-radius: 20rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 信息显示 */
+.info-wrapper {
+  width:100%;
+  margin-top:20px;
+  display: flex;
+  flex-direction: row;
+}
+
+.info-wrapper image {
+  height: 60px;
+  width: 60px;
+  border-radius: 10%;
+  margin-left:5%;
+}
+
+.info-wrapper .stadium-info {
+  margin-left:5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.stadium-info #stadium-name {
+  font-weight: 600;
+  font-size:20px;
+}
+
+.stadium-info #court-name {
+  color:rgba(0,0,0,0.4);
+  font-size:18px;
+}
+
+/* 预定事件/剩余事件 */
+.duration-wrapper, .progress {
+  width:90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-divider {
+  width:70%;
+}
+
+.time {
+  background-color: #760280;
+  width:140rpx;
+  border-radius: 15rpx;
+  color:white;
+  display: inline-block;
+  height:60rpx;
+  line-height: 60rpx;
+  text-align: center;
+  font-size: 45rpx;
+}
+
+.time-div, .progress .div-item {
+  display: inline-block;
+  width:40rpx;
+  text-align: center;
+}
+
+/* 倒计时 */
+.progress .item {
+  background-color: #FA5151;
+  width:80rpx;
+  border-radius: 20%;
+  color:white;
+  display: inline-block;
+  height:80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  font-size: 60rpx;
+}
+
+.countdown {
+  margin-top:20rpx;
+}
+
+/* 按钮样式 */
+.btns-wrapper {
+  margin-top:100rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  flex-direction: row;
+  width:80%;
+  justify-content: space-between;
+}
+
+.van-btn{
+  width:260rpx;
+  height:30rpx;
+}
+
+/* 签退成功界面 */
+.msg-van-btn {
+  width:75vw;
+  margin-bottom: 30rpx;
+}
+
+.msg-van-btn .van-button__text {
+  font-weight: 600;
+  font-size:20px;
+}
+
+.success-container {
+  height:100vh;
+}

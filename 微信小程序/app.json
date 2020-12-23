@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/user/index/user",
     "pages/login/login",
+    "pages/user/index/user",
     "pages/home/index/home",
     "pages/book/book/book",
     "pages/user/book/book",
@@ -15,7 +15,9 @@
     "pages/user/book_history/book_history",
     "pages/book/pay/pay",
     "pages/user/visit_history/visit_history",
-    "pages/user/collection/collection"
+    "pages/user/collection/collection",
+    "pages/book/ongo/ongo",
+    "pages/stadium/allcomment/allcomment"
   ],
   "window": {
     "backgroundTextStyle": "dark",
@@ -43,12 +45,6 @@
         "iconPath": "res/imgs/tab_home.png",
         "selectedIconPath": "res/imgs/tab_home_select.png",
         "text": "主页"
-      },
-      {
-        "pagePath": "pages/message/message",
-        "iconPath": "res/imgs/tab_msg.png",
-        "selectedIconPath": "res/imgs/tab_msg_select.png",
-        "text": "消息"
       },
       {
         "pagePath": "pages/map/map",

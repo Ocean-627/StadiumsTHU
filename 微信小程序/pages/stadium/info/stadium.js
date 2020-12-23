@@ -1,9 +1,6 @@
 // pages/stadium/stadium.js
+import Toast from '../../../miniprogram/miniprogram_npm/@vant/weapp/toast/toast';
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
     // 场馆id
     stadium_id:Number,
@@ -15,33 +12,8 @@ Page({
       getApp().globalData.imgUrl+'/res/test/stadium_3.jpeg'
     ],
     // 评论列表
-    comment_list: [{
-      headerPath:'/res/imgs/header_test.jpg',
-      name:'hhy',
-      date:'2020年11月11日 15:00',
-      score:4,
-      content:'很好的场馆，下次还来',
-      imgs:[
-        getApp().globalData.imgUrl+'/res/test/stadium_1.jpg',
-        getApp().globalData.imgUrl+'/res/test/stadium_2.jpg',
-        getApp().globalData.imgUrl+'/res/test/stadium_1.jpg',
-        getApp().globalData.imgUrl+'/res/test/stadium_2.jpg',
-        getApp().globalData.imgUrl+'/res/test/stadium_1.jpg'
-      ]
-    },{
-      headerPath:'/res/imgs/header_test.jpg',
-      name:'hhy',
-      date:'2020年11月11日 15:00',
-      score:4,
-      content:'很好的场馆，下次还来',
-      imgs:[
-        getApp().globalData.imgUrl+'/res/test/stadium_1.jpg',
-        getApp().globalData.imgUrl+'/res/test/stadium_2.jpg',
-        getApp().globalData.imgUrl+'/res/test/stadium_1.jpg',
-        getApp().globalData.imgUrl+'/res/test/stadium_2.jpg',
-        getApp().globalData.imgUrl+'/res/test/stadium_1.jpg'
-      ]
-    }],
+    comment_list: [],
+    empty_comment:false,
     // 图片资源
     map_select_img:getApp().globalData.imgUrl+'/res/imgs/tab_map_select.png',
     info_img:getApp().globalData.imgUrl+'/res/imgs/stadium_info.png',
@@ -57,16 +29,61 @@ Page({
     this.reqStadiumDetail()
   },
 
+  onShow:function() {
+    this.reqCommentInfo()
+  },
+
   // 设置场馆信息
   setStadiumInfo:function(res) {
-    var data = res.data[0]
+    var info = res.data[0]
+    var newLaLo = this.bdMap_to_txMap(info.latitude, info.longitude)
+    var dis = 0
+
     this.setData({
-      stadium_name:data.name,
-      intro:data.info,
-      open_time:data.openTime+" - "+data.closeTime,
-      phone:data.contact,
-      pos:data.location,
-      collect:data.collect
+      stadium_name:info.name,
+      intro:info.info,
+      open_time:info.openTime+" - "+info.closeTime,
+      phone:info.contact,
+      pos:info.location,
+      collect:info.collect,
+      la:newLaLo.latitude,
+      lo:newLaLo.longitude,
+      dis:dis,
+    })
+
+    // 距离信息  
+    const _this = this
+    wx.getLocation({
+      type: 'gcj02',
+      success: function (res) {
+        _this.setData({
+          dis: parseInt(1000 * _this.calDistance(res.latitude, res.longitude, _this.data.la, _this.data.lo))
+        })
+      }
+    })
+  },
+
+  // 设置评论信息
+  setCommentInfo:function(res) {
+    var newList = []
+    for(var info of res.data.results) {
+      var imgList = []
+      for(var img of info.images) {
+        imgList.push(img.image)
+      }
+      newList.push({
+        headerPath:info.userImage,
+        name:info.userName,
+        date:info.createTime,
+        score:info.score,
+        content:info.content,
+        imgs:imgList
+      })
+    }
+
+    this.setData({
+      comment_list:newList,
+      empty_comment:(newList.length === 0),
     })
   },
 
@@ -81,9 +98,55 @@ Page({
    },
 
   /*--------------------------------------------------
+    地理位置计算函数
+  ---------------------------------------------------*/
+   // 计算距离
+  calDistance:function(la1, lo1, la2, lo2) {
+    var La1 = la1 * Math.PI / 180.0;
+    var La2 = la2 * Math.PI / 180.0;
+    var La3 = La1 - La2;
+    var Lb3 = lo1 * Math.PI / 180.0 - lo2 * Math.PI / 180.0;
+    var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(La3 / 2), 2) + Math.cos(La1) * Math.cos(La2) * Math.pow(Math.sin(Lb3 / 2), 2)));
+       s = s * 6378.137;//地球半径
+       s = Math.round(s * 10000) / 10000;
+    return s
+   },
+
+   // 更新距离
+   updateDis:function(la, lo) {
+     var len = this.data.stadium_list.length
+     for(var i=0; i<len; i++) {
+       let info = this.data.stadium_list[i]
+       let newDis = parseInt(this.calDistance(la, lo, info.la, info.lo)*1000)
+       let updateItem = 'stadium_list[' + i + '].dis'
+       this.setData({[updateItem]: newDis})
+     }
+     this.filterStadium()
+   },
+
+   // 百度地图经纬度转腾讯地图
+   bdMap_to_txMap:function($lat,$lng){
+    var $x_pi = 3.14159265358979324 * 3000.0 / 180.0
+    var $x = $lng - 0.0065
+    var $y = $lat - 0.006
+    var $z = Math.sqrt($x * $x + $y * $y) - 0.00002 * Math.sin($y * $x_pi)
+    var $theta = Math.atan2($y, $x) - 0.000003 * Math.cos($x * $x_pi)
+    var $lng = $z * Math.cos($theta)
+    var $lat = $z * Math.sin($theta)
+    return {'longitude':$lng,'latitude':$lat}
+  },
+
+  /*--------------------------------------------------
     页面跳转函数
   ---------------------------------------------------*/
   jmpBooking:function() {
+    wx.requestSubscribeMessage({
+      tmplIds: ['FLIjh95XJrOzgWWImzmXttYhs4eoCf9e6VAid0QjHbI',
+      'PdZ2sYAT_HXIkmho2wjfIbMS822H1f4d0xqiKFI6qgs', 'hf9hHSc8OEHfmwicqL4rqLGaDwwJ5NRG4usDQwEJ7Mc'],
+      success (res) { 
+        console.log(res)
+      }
+    })
     wx.navigateTo({
       url: '/pages/book/book/book?id='+this.data.stadium_id,
     })
@@ -96,11 +159,21 @@ Page({
     })
   },
 
+  jmpAllcomment:function() {
+    wx.navigateTo({
+      url: '/pages/stadium/allcomment/allcomment?id='+this.data.stadium_id,
+    })
+  },
+
   /*--------------------------------------------------
     网络请求函数
   ---------------------------------------------------*/
   // 请求场馆具体信息
   reqStadiumDetail:function() {
+    Toast.loading({
+      message: '加载中...',
+      forbidClick: true,
+    })
     const _this = this
     const app = getApp()
     wx.request({
@@ -111,7 +184,7 @@ Page({
       },
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
@@ -124,6 +197,7 @@ Page({
         app.reqFail('获取信息失败')
       },
       complete() {
+        Toast.clear()
       },
     })
   },
@@ -140,7 +214,7 @@ Page({
       },
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
@@ -163,11 +237,11 @@ Page({
       method: "DELETE",
       url: app.globalData.reqUrl + '/api/user/collect/',
       data: {
-        'collect_id':this.data.collect,
+        'collect_id':_this.data.collect,
       },
       header: {
         'content-type': 'application/json',
-        'loginToken': 1,
+        'loginToken': app.globalData.loginToken,
       },
       success(res) {
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
@@ -179,6 +253,33 @@ Page({
       },
       fail() {
         app.reqFail("操作失败")
+      },
+    })
+  },
+
+  // 请求评论信息
+  reqCommentInfo:function() {
+    const _this = this
+    const app = getApp()
+    wx.request({
+      method: "GET",
+      url: app.globalData.reqUrl + '/api/user/comment/',
+      data: {
+        'stadium_id':_this.data.stadium_id,
+      },
+      header: {
+        'content-type': 'application/json',
+        'loginToken': app.globalData.loginToken,
+      },
+      success(res) {
+        if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
+          _this.setCommentInfo(res)
+        } else {
+          app.reqFail("获取评论信息失败")
+        }
+      },
+      fail() {
+        app.reqFail("获取评论信息失败")
       },
     })
   },

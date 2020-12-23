@@ -15,12 +15,6 @@ App({
       console.log(error)
     }
 
-    // 登录
-    wx.login({
-      success: res => {
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
-      }
-    })
     // 获取用户信息
     wx.getSetting({
       success: res => {
@@ -41,6 +35,24 @@ App({
         }
       }
     })
+
+    // 查看token
+    try {
+      var token = wx.getStorageSync('loginToken')
+      if(!token) {
+        wx.setStorageSync('loginToken', JSON.stringify(''))
+      } else {
+        const loginToken = JSON.parse(token)
+        if(loginToken !== '') {
+          this.globalData.loginToken = JSON.parse(token)
+          wx.switchTab({
+            url: '/pages/home/index/home',
+          })
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
   },
   
   // 请求成功/失败时的行为
@@ -66,7 +78,7 @@ App({
 
   // 获取当前时间
   getCurrentTime() {
-    var date = new Date()
+    var date = new Date(this.getCurrentStamp())
     //获取年份  
     var Y =date.getFullYear();
     //获取月份  
@@ -80,11 +92,20 @@ App({
     return result
   },
 
+  getCurrentStamp() {
+    // 东8区时间
+    const targetTimezone = -8
+    const dif = new Date().getTimezoneOffset()
+    const curStamp = new Date().getTime() + dif * 60 * 1000 - (targetTimezone * 60 * 60 * 1000)
+    return curStamp
+  },
+
   globalData: {
     userInfo: null,
     reqUrl:'https://cbx.iterator-traits.com',
     imgUrl:'https://cbx.iterator-traits.com/media/miniprogram',
     seekStadiumId:0,    // 跳转地图页面的参数
     maxRecordNum:300,   // 最大历史记录条数
+    loginToken:'',      // 登录token
   }
 })

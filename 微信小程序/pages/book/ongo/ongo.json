@@ -1,0 +1,13 @@
+{
+  "usingComponents": {
+    "van-dialog": "/miniprogram/miniprogram_npm/@vant/weapp/dialog/index",
+    "van-toast": "/miniprogram/miniprogram_npm/@vant/weapp/toast/index",
+    "van-count-down": "/miniprogram/miniprogram_npm/@vant/weapp/count-down/index",
+    "van-circle": "/miniprogram/miniprogram_npm/@vant/weapp/circle/index",
+    "van-divider": "/miniprogram/miniprogram_npm/@vant/weapp/divider/index",
+    "van-button": "/miniprogram/miniprogram_npm/@vant/weapp/button/index",
+    "mp-msg": "/miniprogram/miniprogram_npm/weui-miniprogram/msg/msg"
+  },
+  "navigationBarTitleText": "当前预约",
+  "enablePullDownRefresh":false
+}
