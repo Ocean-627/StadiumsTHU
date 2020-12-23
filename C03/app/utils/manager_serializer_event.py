@@ -80,8 +80,8 @@ class AddBlacklistSerializer(serializers.ModelSerializer):
 
 
 class HistorySerializer(serializers.Serializer):
-    page = serializers.IntegerField(default=1, validators=[MinValueValidator(1)])
-    size = serializers.IntegerField(default=15, validators=[MinValueValidator(1)])
+    page = serializers.IntegerField(default=1, validators=[MinValueValidator(1, message='page的最小值为1')])
+    size = serializers.IntegerField(default=15, validators=[MinValueValidator(1, message='size的最小值为1')])
 
 
 class OperationSerailizer(serializers.Serializer):
@@ -94,4 +94,4 @@ class OperationSerailizer(serializers.Serializer):
 
 
 class NumberSerializer(serializers.Serializer):
-    num = serializers.IntegerField(validators=[MinValueValidator(1)])
+    num = serializers.IntegerField(validators=[MinValueValidator(1, 'num的最小值为1')])

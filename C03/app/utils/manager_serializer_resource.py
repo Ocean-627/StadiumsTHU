@@ -3,9 +3,11 @@ from app.utils.validator import *
 
 
 class LogonSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(label='用户名', validators=[MinLengthValidator(3), MaxLengthValidator(20)])
+    username = serializers.CharField(label='用户名', validators=[MinLengthValidator(3, message='用户名长度至少为3'),
+                                                              MaxLengthValidator(20, '用户名长度至多为20')])
     password = serializers.CharField(label='密码',
-                                     validators=[MinLengthValidator(8), MaxLengthValidator(18), SafeValidator])
+                                     validators=[MinLengthValidator(8, '密码应至少8位'), MaxLengthValidator(18, '密码应至多18位'),
+                                                 SafeValidator])
 
     class Meta:
         model = Manager
@@ -13,11 +15,12 @@ class LogonSerializer(serializers.ModelSerializer):
 
 
 class ManagerSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(label='用户名', validators=[MinLengthValidator(3), MaxLengthValidator(20)],
+    username = serializers.CharField(label='用户名', validators=[MinLengthValidator(3, '用户名长度应至少为3'),
+                                                              MaxLengthValidator(20, '用户名长度应至多为20')],
                                      required=False)
     password = serializers.CharField(label='密码',
-                                     validators=[MinLengthValidator(8), MaxLengthValidator(18), SafeValidator],
-                                     required=False)
+                                     validators=[MinLengthValidator(8, '密码应至少8位'), MaxLengthValidator(18, '密码应至多18位'),
+                                                 SafeValidator], required=False)
     email = serializers.EmailField(required=False)
 
     class Meta:
@@ -55,6 +58,10 @@ class StadiumSerializerForManager(StadiumSerializer):
 class CreateStadiumSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
+        # TODO: 检查是否生成
+        manager = self.context['request'].user
+        content = manager.username + '创建了' + validated_data.get('name')
+        OtherOperation.objects.create(manager=manager, content=content, type='添加场馆')
         return Stadium.objects.create(openState=0, **validated_data)
 
     class Meta:

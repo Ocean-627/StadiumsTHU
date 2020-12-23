@@ -245,7 +245,7 @@ class ReserveModifySerializer(serializers.ModelSerializer):
     def validate_event_id(self, value):
         reserve = ReserveEvent.objects.filter(user=self.context['request'].user, id=value).first()
         if not reserve:
-            raise ValidationError('Invalid id')
+            raise ValidationError('不存在该预订记录')
         return value
 
     class Meta:
@@ -260,7 +260,9 @@ class CommentSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField(required=False)
 
     reserve_id = serializers.IntegerField(label='预订编号', write_only=True)
-    content = serializers.CharField(label='评论内容', validators=[MinLengthValidator(5), MaxLengthValidator(300)])
+    content = serializers.CharField(label='评论内容',
+                                    validators=[MinLengthValidator(5, message='评论应至少长度为5'),
+                                                MaxLengthValidator(300, message='单条评论长度至多为300')])
 
     def get_images(self, obj):
         images_list = obj.commentimage_set.all()
@@ -325,10 +327,10 @@ class CollectEventSerializer(serializers.ModelSerializer):
     def validate_stadium_id(self, value):
         stadium = Stadium.objects.filter(id=value).first()
         if not stadium:
-            raise ValidationError('Invalid stadium_id')
+            raise ValidationError('不存在的场馆')
         collect = stadium.collectevent_set.filter(user=self.context['request'].user).first()
         if collect:
-            raise ValidationError('You have collect that stadium')
+            raise ValidationError('你已经收藏过此场馆啦')
         return value
 
     def create(self, validated_data):

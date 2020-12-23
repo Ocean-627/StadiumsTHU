@@ -237,7 +237,7 @@ class UserView(ListAPIView):
     """
     用户信息
     """
-    # authentication_classes = [ManagerAuthtication]
+    authentication_classes = [ManagerAuthtication]
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = UserPagination
@@ -248,7 +248,7 @@ class StadiumView(ListAPIView, CreateAPIView):
     """
     场馆信息
     """
-    # authentication_classes = [ManagerAuthtication]
+    authentication_classes = [ManagerAuthtication]
     queryset = Stadium.objects.all()
     serializer_class = StadiumSerializerForManager
     filter_class = StadiumFilter
@@ -265,6 +265,10 @@ class StadiumView(ListAPIView, CreateAPIView):
             return Response({'error': ser.errors}, status=400)
         stadium = Stadium.objects.filter(id=ser.validated_data.get('stadium_id')).first()
         ser.update(stadium, ser.validated_data)
+        # TODO: 测试是否生成
+        manager = request.user
+        content = '管理员' + manager.username + '修改了' + stadium.name
+        OtherOperation.objects.create(manager=manager, content=content, type='编辑场馆信息')
         return Response({'message': 'ok'})
 
 
@@ -272,7 +276,7 @@ class StadiumImageView(CreateAPIView):
     """
     场馆图片信息
     """
-    # authentication_classes = [ManagerAuthtication]
+    authentication_classes = [ManagerAuthtication]
     serializer_class = StadiumImageSerializer
 
     def delete(self, request):
@@ -289,6 +293,7 @@ class CourtTypeView(ListAPIView):
     """
     场地类型信息
     """
+    authentication_classes = [ManagerAuthtication]
     queryset = CourtType.objects.all()
     serializer_class = CourtTypeSerializerForManager
     filter_class = CourtTypeFilter
@@ -314,7 +319,7 @@ class CourtView(ListAPIView):
     场地信息
     """
 
-    # authentication_classes = [ManagerAuthtication]
+    authentication_classes = [ManagerAuthtication]
     queryset = Court.objects.all()
     serializer_class = CourtSerializer
     filter_class = CourtFilter
@@ -324,7 +329,7 @@ class DurationView(ListAPIView):
     """
     时段信息
     """
-    # authentication_classes = [ManagerAuthtication]
+    authentication_classes = [ManagerAuthtication]
     queryset = Duration.objects.all()
     serializer_class = DurationSerializer
     filter_class = DurationFilter
@@ -334,7 +339,7 @@ class ReserveEventView(ListAPIView):
     """
     预约信息
     """
-    # authentication_classes = [ManagerAuthtication]
+    authentication_classes = [ManagerAuthtication]
     queryset = ReserveEvent.objects.all().order_by('-createTime')
     serializer_class = ReserveEventSerializerForManager
     filter_class = ReserveEventFilter
@@ -377,6 +382,10 @@ class DefaultView(ListAPIView):
             user.inBlacklist = 0
             user.inBlacklistTime = None
         user.save()
+        # TODO: 检查是否生成
+        manager = request.user
+        content = manager.username + '撤销了' + user.name + '的违约记录'
+        OtherOperation.objects.create(manager=manager, content=content, type='撤销信用记录')
         return Response({'message': 'ok'})
 
 
@@ -470,6 +479,10 @@ class AddBlacklistView(ListAPIView, CreateAPIView):
         user.inBlacklist = 0
         user.inBlacklistTime = None
         user.save()
+        # TODO: 测试是否生成
+        manager = request.user
+        content = '管理员' + manager.username + '将' + user.name + '移出黑名单'
+        OtherOperation.objects.create(manager=manager, content=content, type='移除黑名单')
         return Response({'message': 'ok'})
 
 
@@ -480,20 +493,23 @@ class HistoryView(APIView):
     authentication_classes = [ManagerAuthtication]
 
     def get(self, request):
-        manager = request.user
         req_data = request.query_params
         type = req_data.get('type')
-        if type == '1':
+        if type == '修改场馆预约时段':
             operations = ChangeDuration.objects.all().order_by('-time')
-        elif type == '2':
+        elif type == '场馆预留':
             operations = AddEvent.objects.all().order_by('-time')
-        elif type == '3':
+        elif type == '移入黑名单':
             operations = AddBlacklist.objects.all().order_by('-time')
+        elif type in ['移除黑名单', '撤销信用记录', '编辑场馆信息', '添加场馆']:
+            operations = OtherOperation.objects.filter(type=type).order_by('-time')
         else:
             changeDuration = ChangeDuration.objects.all()
             addEvent = AddEvent.objects.all()
             addBlackList = AddBlacklist.objects.all()
-            operations = sorted(chain(changeDuration, addEvent, addBlackList), key=attrgetter('time'), reverse=True)
+            otherOperation = OtherOperation.objects.all()
+            operations = sorted(chain(changeDuration, addEvent, addBlackList, otherOperation), key=attrgetter('time'),
+                                reverse=True)
         operations = OperationSerailizer(operations, many=True).data
         # 分页
         ser = HistorySerializer(data=req_data)

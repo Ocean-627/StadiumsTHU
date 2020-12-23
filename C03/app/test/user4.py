@@ -13,6 +13,10 @@ from app.utils.utils import initStadium
 第一次修改 2020-12-23
 原因：增加了预订连续场馆
 结果：正常
+
+第二次修改 2020-12-23
+原因：修改了计算price的bug
+结果：正常
 """
 
 
@@ -67,6 +71,9 @@ class TestBatchReserve(TestCase):
         resp = self.client.post('/api/user/batchreserve/', params, **self.headers)
         self.assertEqual(resp.status_code, 201)
 
+        reserve = ReserveEvent.objects.first()
+        self.assertEqual(reserve.price, 60)
+
         user = User.objects.first()
 
         duration = Duration.objects.get(id=1)
@@ -86,7 +93,7 @@ class TestBatchReserve(TestCase):
         self.assertEqual(resp.status_code, 400)
 
         params = {
-            'duration_id' : 5,
+            'duration_id': 5,
             'startTime': '12:00',
             'endTime': '14:00'
         }

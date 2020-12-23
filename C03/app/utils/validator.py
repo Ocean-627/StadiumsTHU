@@ -12,7 +12,7 @@ def SafeValidator(content):
         if 'A' <= c <= 'Z':
             upper = True
     if not (number and lower and upper):
-        raise ValidationError('Requires number,lowercase character and uppercase character')
+        raise ValidationError('密码应包含大小写字母和数字')
 
 
 def TimeValidator(content):
