@@ -512,9 +512,7 @@ export default {
             $(clocks[i]).clockpicker();
         }
         $(document).ready(function() {
-            $("#setEventDate").change(function() {
-                alert("hi")
-            })
+            $("#setEventDate").change(function() {})
             //$("#demo").val("this is lily").change()   此种方法可以，下面的方法也可以
             $("#setEventDate").val("this is lily111")
             $("#setEventDate").trigger("change")

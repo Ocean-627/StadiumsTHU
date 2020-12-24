@@ -87,6 +87,12 @@
             <input type="text" class="form-control" />
           </div>
         </div>
+        <div class="row" style="margin-bottom: 10px;">
+          <label class="col-sm-3 col-form-label"></label>
+          <div class="col-sm-3">
+            <small>*为了不影响现有预约，该页面的修改将在指定日期后生效</small>
+          </div>
+        </div>
         <div
           class="grid"
           v-masonry
@@ -366,11 +372,7 @@ export default {
       format: "yyyy-mm-dd",
       startDate: new Date()
     });
-
-    var clocks = document.getElementsByClassName("clockpicker");
-    for (var i = 0; i < clocks.length; i++) {
-      $(clocks[i]).clockpicker();
-    }
+    this.updateClock();
     let request = {
       params: {
         id: this.$route.query.id
@@ -402,12 +404,28 @@ export default {
   },
   updated() {
     $(".chosen-select").chosen({ width: "100%" });
-    var clocks = document.getElementsByClassName("clockpicker");
-    for (var i = 0; i < clocks.length; i++) {
-      $(clocks[i]).clockpicker();
-    }
+    this.updateClock();
   },
   methods: {
+    updateClock() {
+      let i = 0,
+        j = 0,
+        k = 0;
+      var clocks = document.getElementsByClassName("clockpicker");
+      for(; i < this.grounds.length; i++){
+        for(; j < this.grounds[i].periods.length; j++) {
+            let p = this.grounds[i].periods[j]
+            $(clocks[k]).clockpicker().find('input').change(function(){
+                p.start = this.value;
+            })
+            k++;
+            $(clocks[k]).clockpicker().find('input').change(function(){
+                p.end = this.value;
+            })
+            k++;
+        }
+      }
+    },
     newGround() {
       this.grounds.push({
         type: this.newGroundType,
@@ -434,6 +452,7 @@ export default {
       toastr.success("在真正添加场地之前你需要补全场地信息。", "成功");
     },
     add(ground, _index) {
+      this.date = $(".input-group.date").datepicker("getDate");
       swal(
         {
           title: "确认新建场地吗？",

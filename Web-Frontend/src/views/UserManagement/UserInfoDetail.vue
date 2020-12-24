@@ -28,9 +28,9 @@
         <div class="row dashboard-header">
           <div class="col-md-3">
             <img
-              alt="image"
               class="img-circle img-responsive"
               :src="user.image"
+              :onerror="defaultImg"
               style="height: 150px; width:150px;"
             />
           </div>
@@ -417,6 +417,11 @@ export default {
         this.credit_total = res[1].data.count;
         this.loaded = true;
       });
-  }
+  },
+  computed: {
+    defaultImg() {
+      return 'this.src="' + require("../../../static/img/white.jpg") + '"';
+    }
+  },
 };
 </script>
