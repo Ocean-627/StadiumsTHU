@@ -305,7 +305,8 @@ export default {
                 for (var j = 0; j < this.grounds[index].courts.length; j++) {
                     courtlist.push(this.grounds[index].courts[j].id)
                 }
-                for (var w = 0; w < this.grounds[index].foreDays; w++) {
+                for (var w = 0; w < parseInt(this.grounds[index].courts[0].foreDays); w++) {
+                    
                     var date = new Date();
                     date.setDate(date.getDate() + w);
                     var dateString;
@@ -318,9 +319,12 @@ export default {
                     } else {
                         dateString = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
                     }
+                    console.log(dateString);
+                    console.log(useDate);
                     if (dateString == useDate) {
+                        var tmp = this.grounds[index].courts[0].courtType;
                         var list = this.myDurations[w].filter(function (x) {
-                            return (this.grounds[index].courts[0].courtType == courtType)
+                            return ( x.courtType == tmp )
                         })
                         for (var i = 0; i < list.length; i++) {
                             if (courtlist.indexValue(list[i].court) < 0) {
@@ -330,14 +334,16 @@ export default {
                             let end = list[i].endTime
                             var myStart = new Date(1, 1, 1, parseInt(start.split(":")[0]), parseInt(start.split(":")[1]));
                             var myEnd = new Date(1, 1, 1, parseInt(end.split(":")[0]), parseInt(end.split(":")[1]));
-                            if ((myStart <= myStartTime && myStartTime <= myEnd) || (myStartTime <= myStart && myStart <= myEndTime && list[i].accessible == false)) {
+                            if (((myStart <= myStartTime && myStartTime <= myEnd) || (myStartTime <= myStart && myStart <= myEndTime )) && (list[i].accessible == false)) {
                                 courtlist.splice(courtlist.indexValue(list[i].court))
                             }
                         }
                         break;
                     }
                 }
+                
                 courtlist = courtlist.slice(0, number);
+                console.log(courtlist)
                 // TODO: 根据courtlist中的序号设置场地默认选中（courtlist为智能推荐场地id结果列表）
             }
         },
