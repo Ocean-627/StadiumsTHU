@@ -340,9 +340,8 @@ export default {
             }
         },
         submit(ground, index) {
-            // 为了节省局部变量，所有场地的预留的模态窗口共享表单变量，所以需要传入ground参数进行区分
             let number = this.$refs.number[index].value
-
+            
             // TODO: 获取选中的场地的id列表并命名为courts
             let courts = this.$refs.court_id[index].value.split(',')
 
