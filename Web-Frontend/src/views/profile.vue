@@ -31,15 +31,15 @@
             />
           </div>
           <div class="col-md-2">
-            <h1 style="padding-top: 30px"><strong>{{ username }}</strong></h1>
+            <h1 style="padding-top: 30px"><strong>{{ manager.username }}</strong></h1>
           </div>
         </div>
         <div class="row i-row">
           <div class="col-md-3">
-            <strong>姓名</strong>
+            <strong>工号</strong>
           </div>
           <div class="col-md-2">
-            {{ manager.name }}
+            {{ manager.userId }}
           </div>
           <div class="col-md-1 border-right"></div>
           <div class="col-md-3">
@@ -95,14 +95,7 @@ import Toolbox from "@/components/Toolbox";
 export default {
   data() {
     return {
-      username: localStorage.getItem("username"),
-      manager: {
-          image: "/static/img/dog.jpg",
-          phone: 62782865,
-          email: "cbx@qq.com",
-          name: "孙笑川",
-          id: 1
-        }
+      manager: {}
     };
   },
   components: {
@@ -112,7 +105,11 @@ export default {
     Footer
   },
   mounted() {
-    
+    this.$axios.get("manager/")
+    .then(res => {
+        console.log(res.data)
+        this.manager = res.data;
+    })
   }
 };
 </script>

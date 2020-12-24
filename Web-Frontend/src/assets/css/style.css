@@ -8818,6 +8818,9 @@ body.rtls.top-navigation .footer.fixed {
  *   NAME - Blue light
  *
 */
+.profile-element {
+  text-align: center;
+}
 .skin-1 .minimalize-styl-2 {
   margin: 14px 5px 5px 30px;
 }
@@ -8894,11 +8897,11 @@ body.skin-1 {
   padding: 35px 25px 25px 25px;
 }
 .skin-1 .nav-header a.dropdown-toggle {
-  color: #fff;
+  color: #fff !important;
   margin-top: 10px;
 }
 .skin-1 .nav-header a.dropdown-toggle .text-muted {
-  color: #fff;
+  color: #fff !important;
   opacity: 0.8;
 }
 .skin-1 .profile-element {
@@ -9043,11 +9046,11 @@ body.skin-2 #wrapper {
   border: none;
 }
 .skin-2 .nav-header a.dropdown-toggle {
-  color: #edf6ff;
+  color: #edf6ff !important;
   margin-top: 10px;
 }
 .skin-2 .nav-header a.dropdown-toggle .text-muted {
-  color: #edf6ff;
+  color: #edf6ff !important;
   opacity: 0.8;
 }
 .skin-2 .rounded-circle {
@@ -9153,11 +9156,11 @@ body.skin-3 {
   padding: 35px 25px 25px 25px;
 }
 .skin-3 .nav-header a.dropdown-toggle {
-  color: #fff;
+  color: #fff !important;
   margin-top: 10px;
 }
 .skin-3 .nav-header a.dropdown-toggle .text-muted {
-  color: #fff;
+  color: #fff !important;
   opacity: 0.8;
 }
 .skin-3 .profile-element {

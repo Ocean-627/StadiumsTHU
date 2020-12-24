@@ -12,10 +12,7 @@
               <a href="/home">主页</a>
             </li>
             <li class="breadcrumb-item">
-              用户管理
-            </li>
-            <li class="breadcrumb-item">
-              <a href="/user_management/user_info">用户信息</a>
+              <a href="/user_management">用户管理</a>
             </li>
             <li class="breadcrumb-item active">
               <strong>详细信息</strong>
@@ -26,43 +23,21 @@
       <div
         class="wrapper wrapper-content animated fadeInRight ecommerce white-bg"
         style="text-align: center;"
+        v-if="loaded"
       >
         <div class="row dashboard-header">
           <div class="col-md-3">
             <img
-              alt="image"
               class="img-circle img-responsive"
               :src="user.image"
+              :onerror="defaultImg"
               style="height: 150px; width:150px;"
             />
           </div>
           <div class="col-md-2">
-            <h1 style="padding-top: 30px"><strong>{{ user.nickName }}</strong></h1>
-          </div>
-          <div class="col-md-3"></div>
-          <div
-            class="col-md-1"
-            style="cursor: pointer;"
-            v-on:click="sendMessage()"
-          >
-            <i
-              class="fa fa-envelope fa-3x"
-              style="margin-top: 40px; color: #FFBF00; cursor: pointer;"
-            ></i
-            ><br />
-            <strong style="color: #FFBF00;">发送私信</strong>
-          </div>
-          <div
-            class="col-md-1"
-            style="cursor: pointer;"
-            v-on:click="deleteUser()"
-          >
-            <i
-              class="fa fa-trash fa-3x"
-              style="margin-top: 40px; color: red;"
-            ></i
-            ><br />
-            <strong style="color: red;">注销用户</strong>
+            <h1 style="padding-top: 30px">
+              <strong>{{ user.nickName }}</strong>
+            </h1>
           </div>
         </div>
         <div class="row i-row">
@@ -104,22 +79,39 @@
           </div>
           <div class="col-md-1 border-right"></div>
           <div class="col-md-3">
-            <strong>认证状态</strong>
-          </div>
-          <div class="col-md-2">
-            {{ user.auth ? "已认证" : "未认证" }}
-            <i class="fa fa-check" style="color: green" v-show="user.auth"></i>
-            <i class="fa fa-times" style="color: red" v-show="!user.auth"></i>
-          </div>
-        </div>
-        <div class="row i-row">
-          <div class="col-md-3">
             <strong>最近登录时间</strong>
           </div>
           <div class="col-md-2">
             {{ user.loginTime | datetime_format }}
           </div>
-          <div class="col-md-1 border-right"></div>
+        </div>
+        <div class="row i-row">
+          <div class="col-md-3">
+            <strong>黑名单状态</strong>
+          </div>
+          <div class="col-md-1" v-if="user.inBlacklist">
+            是
+          </div>
+          <div class="col-md-4" v-if="user.inBlacklist">
+            （拉黑于{{ user.inBlacklistTime | datetime_format("YYYY-MM-DD") }}）
+            <button
+              class="btn btn-sm btn-outline btn-danger"
+              style="float: right;"
+              v-on:click="black_out()"
+            >
+              移出黑名单
+            </button>
+          </div>
+          <div class="col-md-3" v-if="!user.inBlacklist">
+            否
+            <button
+              class="btn btn-sm btn-outline btn-danger"
+              style="float: right;"
+              v-on:click="black_in()"
+            >
+              移入黑名单
+            </button>
+          </div>
         </div>
         <div class="row i-row">
           <div class="col-md-3">
@@ -132,32 +124,42 @@
                 <th>地点</th>
                 <th>使用时间</th>
                 <th>预约时间</th>
-                <th>生效状态</th>
-                <th>操作</th>
+                <th>状态</th>
               </thead>
               <tbody
-                v-for="reserve_record in reserve_records"
+                v-for="(reserve_record, index) in reserve_records"
                 :key="reserve_record.id"
               >
                 <tr>
-                  <td>{{ reserve_record.id }}</td>
+                  <td>{{ index + 1 }}</td>
                   <td>{{ reserve_record | reserve_place }}</td>
-                  <td>{{ reserve_record.use_time }}</td>
-                  <td>{{ reserve_record.reserve_time }}</td>
-                  <td :style="reserve_record.status | reserve_status">
-                    {{ reserve_record.status }}
+                  <td>
+                    {{
+                      reserve_record.date +
+                        " " +
+                        reserve_record.startTime +
+                        "-" +
+                        reserve_record.endTime
+                    }}
                   </td>
-                  <td style="padding: 5px;">
-                    <button
-                      class="btn btn-xs btn-danger btn-outline"
-                      v-show="reserve_record.status === '未生效'"
-                    >
-                      取消
-                    </button>
+                  <td>{{ reserve_record.createTime | datetime_format }}</td>
+                  <td :style="reserve_record | reserve_status_class">
+                    {{ reserve_record | reserve_status }}
                   </td>
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+        <div class="row" v-if="this.reserve_total > this.reserve_page * 15">
+          <div class="col-md-11">
+            <button
+              class="btn btn-sm btn-outline btn-info"
+              style="float: right; margin-top: -10px; margin-right: 10px; margin-bottom: 15px;"
+              v-on:click="page_reserve()"
+            >
+              加载更多
+            </button>
           </div>
         </div>
         <div class="row i-row">
@@ -174,20 +176,21 @@
                 <th>操作</th>
               </thead>
               <tbody
-                v-for="credit_record in credit_records"
+                v-for="(credit_record, index) in credit_records"
                 :key="credit_record.id"
               >
                 <tr>
-                  <td>{{ credit_record.id }}</td>
-                  <td>{{ credit_record.content }}</td>
-                  <td>{{ credit_record.time }}</td>
-                  <td :style="credit_record.status | credit_status">
-                    {{ credit_record.status }}
+                  <td>{{ index }}</td>
+                  <td>{{ credit_record.detail }}</td>
+                  <td>{{ credit_record.date + " " + credit_record.time }}</td>
+                  <td :style="credit_record | credit_status_style">
+                    {{ credit_record | credit_status }}
                   </td>
                   <td style="padding: 5px;">
                     <button
                       class="btn btn-xs btn-danger btn-outline"
-                      v-show="credit_record.status === '生效中'"
+                      v-show="!credit_record.cancel && credit_record.valid"
+                      v-on:click="cancel_credit(credit_record.id)"
                     >
                       撤销
                     </button>
@@ -197,41 +200,15 @@
             </table>
           </div>
         </div>
-        <div class="row i-row">
-          <div class="col-md-3">
-            <strong>黑名单记录</strong>
-          </div>
-          <div class="col-md-8">
-            <table class="table">
-              <thead>
-                <th>#</th>
-                <th>内容</th>
-                <th>时间</th>
-                <th>生效状态</th>
-                <th>操作</th>
-              </thead>
-              <tbody
-                v-for="blacklist_record in blacklist_records"
-                :key="blacklist_record.id"
-              >
-                <tr>
-                  <td>{{ blacklist_record.id }}</td>
-                  <td>{{ blacklist_record.content }}</td>
-                  <td>{{ blacklist_record.time }}</td>
-                  <td :style="blacklist_record.status | credit_status">
-                    {{ blacklist_record.status }}
-                  </td>
-                  <td style="padding: 5px;">
-                    <button
-                      class="btn btn-xs btn-danger btn-outline"
-                      v-show="blacklist_record.status === '生效中'"
-                    >
-                      撤销
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="row" v-if="this.credit_total > this.credit_page * 15">
+          <div class="col-md-11">
+            <button
+              class="btn btn-sm btn-outline btn-info"
+              style="float: right; margin-top: -10px; margin-right: 10px; margin-bottom: 15px;"
+              v-on:click="page_reserve()"
+            >
+              加载更多
+            </button>
           </div>
         </div>
       </div>
@@ -257,57 +234,15 @@ import Toolbox from "@/components/Toolbox";
 export default {
   data() {
     return {
+      loaded: false,
       user: {},
-      reserve_records: [
-        {
-          id: 1,
-          stadium: "紫荆气膜馆",
-          court_type: "羽毛球场",
-          court_name: "1",
-          use_time: "2020-11-10 08:00-12:00",
-          reserve_time: "2020-11-8 09:02",
-          status: "已结束"
-        },
-        {
-          id: 2,
-          stadium: "紫荆气膜馆",
-          court_type: "羽毛球场",
-          court_name: "1",
-          use_time: "2020-11-10 08:00-12:00",
-          reserve_time: "2020-11-8 09:02",
-          status: "已取消"
-        },
-        {
-          id: 3,
-          stadium: "紫荆气膜馆",
-          court_type: "羽毛球场",
-          court_name: "1",
-          use_time: "2020-11-10 08:00-12:00",
-          reserve_time: "2020-11-8 09:02",
-          status: "未生效"
-        }
-      ],
-      credit_records: [
-        {
-          id: 1,
-          content: "不讲武德",
-          time: "2020-11-10 08:00-12:00",
-          status: "生效中"
-        },
-        {
-          id: 2,
-          content: "不讲武德",
-          time: "2020-11-10 08:00-12:00",
-          status: "已撤销"
-        },
-        {
-          id: 3,
-          content: "不讲武德",
-          time: "2020-11-10 08:00-12:00",
-          status: "已过期"
-        }
-      ],
-      blacklist_records: [],
+      reserve_records: [],
+      reserve_page: 1,
+      reserve_total: null,
+      credit_records: [],
+      credit_page: 1,
+      credit_total: null,
+      blacklist_records: []
     };
   },
   components: {
@@ -318,34 +253,175 @@ export default {
   },
   filters: {
     reserve_place: function(reserve_record) {
-      return (
-        reserve_record.stadium +
-        "(" +
-        reserve_record.court_type +
-        "-" +
-        reserve_record.court_name +
-        ")"
-      );
+      return reserve_record.stadium + "(" + reserve_record.court + ")";
     },
-    reserve_status: function(status) {
-      if (status === "已取消") return "color: orange;";
-      if (status === "未生效") return "color: #23c6c8;";
+    reserve_status: function(record) {
+      if (record.cancel) return "已取消";
+      if (!record.payment) return "未付款";
+      if (record.leave) return "已结束";
+      if (record.checked && !record.leave) return "使用中";
+      return "未使用";
     },
-    credit_status: function(status) {
-      if (status === "生效中") return "color: #23c6c8;";
-      if (status === "已撤销") return "color: orange;";
+    reserve_status_class: function(record) {
+      if (record.cancel) return "color: orange;";
+      if (!record.payment) return "color: #dc3545";
+      if (record.leave) return "color: #6c757d";
+      if (record.checked && !record.leave) return "color: #17a2b8";
+      return "color: #28a745";
+    },
+    credit_status: function(r) {
+      if (r.cancel) return "已撤销";
+      if (!r.valid) return "已过期";
+      return "生效中";
+    },
+    credit_status_style: function(r) {
+      if (r.cancel) return "color: orange;";
+      if (!r.valid) return "";
+      return "color: #23c6c8;";
     }
   },
   methods: {
-    sendMessage() {},
-    deleteUser() {}
+    page_reserve() {
+      this.$axios
+        .get("reserveevent/", {
+          params: { user_id: this.user.id, page: ++this.reserve_page }
+        })
+        .then(res => {
+          this.reserve_records.push(...res.data.results);
+        });
+    },
+    page_credit() {
+      this.$axios
+        .get("default/", {
+          params: { user_id: this.user.id, page: ++this.credit_page }
+        })
+        .then(res => {
+          this.credit_records.push(...res.data.results);
+        });
+    },
+    cancel_credit(id) {
+      let func = this.axios
+        .get("default/", { params: { id: id } })
+        .then(res => {
+          swal(
+            {
+              title: "成功",
+              text: "撤销成功",
+              type: "success"
+            },
+            () => {
+              location.reload(0);
+            }
+          );
+        });
+      swal(
+        {
+          title: "确定要撤销这条操作吗？",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "确认",
+          cancelButtonText: "取消"
+        },
+        res => {
+          if (!res) return;
+          func;
+        }
+      );
+    },
+    black_in() {
+      swal(
+        {
+          title: "确定要拉黑该用户吗？",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
+          closeModal: false
+        },
+        res => {
+          if (!res) return;
+          this.$axios
+            .post("blacklist/", {
+              user_id: this.user.id
+            })
+            .then(res => {
+              swal(
+                {
+                  title: "成功",
+                  text: "成功加入黑名单",
+                  type: "success"
+                },
+                () => {
+                  location.reload(0);
+                }
+              );
+            });
+        }
+      );
+    },
+    black_out() {
+      swal(
+        {
+          title: "确定要解除黑名单吗？",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
+          closeModal: false
+        },
+        res => {
+          if (!res) return;
+          this.$axios
+            .put("blacklist/", {
+              user_id: this.user.id
+            })
+            .then(res => {
+              swal(
+                {
+                  title: "成功",
+                  text: "成功移除黑名单",
+                  type: "success"
+                },
+                () => {
+                  location.reload(0);
+                }
+              );
+            });
+        }
+      );
+    }
   },
   mounted() {
     this.$axios
-      .get(`/user/`, { params: { userId: this.$route.params.userId } })
+      .get("user/", {
+        params: { userId: this.$route.params.userId }
+      })
       .then(res => {
         this.user = res.data.results[0];
+        return Promise.all([
+          this.$axios.get("reserveevent/", {
+            params: { user_id: this.user.id }
+          }),
+          this.$axios.get("default/", {
+            params: { user_id: this.user.id }
+          })
+        ]);
+      })
+      .then(res => {
+        this.reserve_records = res[0].data.results;
+        this.reserve_total = res[0].data.count;
+        this.credit_records = res[1].data.results;
+        this.credit_total = res[1].data.count;
+        this.loaded = true;
       });
-  }
+  },
+  computed: {
+    defaultImg() {
+      return 'this.src="' + require("../../../static/img/white.jpg") + '"';
+    }
+  },
 };
 </script>

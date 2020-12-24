@@ -197,7 +197,7 @@ class LoginView(APIView):
         if obj.image:
             url = obj.image.url
         return Response(
-            {'message': 'ok', 'username': obj.username, 'image': url, 'loginToken': loginToken})
+            {'message': 'ok', 'id': obj.id, 'username': obj.username, 'image': url, 'loginToken': loginToken})
 
 
 class LogoutView(APIView):

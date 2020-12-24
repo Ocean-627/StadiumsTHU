@@ -54,6 +54,6 @@ class MyPagination(object):
         else:
             res = queryset[left:right]
         return {
-            'counts': len(queryset),
+            'count': len(queryset),
             'results': res
         }

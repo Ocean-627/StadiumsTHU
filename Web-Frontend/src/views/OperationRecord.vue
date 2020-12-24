@@ -1,221 +1,253 @@
 <template>
-    <div id="wrapper">
-        <Navbar></Navbar>
-        <div id="page-wrapper" class="gray-bg dashbard-1">
-            <Header></Header>
-            <div class="row wrapper border-bottom white-bg page-heading">
-                <!--Breadcrum 导航-->
-                <div class="col-lg-9">
-                    <h2>操作记录 </h2>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="/home">主页</a>
-                        </li>
-                        <li class="breadcrumb-item active">
-                            <strong>操作记录</strong>
-                        </li>
-                    </ol>
-                </div>
-            </div>
-            <div class="wrapper wrapper-content animated fadeInRight ecommerce">
-                <vxe-grid v-bind="gridOptions" class="white-bg" style="padding: 15px;"></vxe-grid>
-            </div>
-            <Footer></Footer>
+  <div id="wrapper">
+    <Navbar></Navbar>
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+      <Header></Header>
+      <div class="row wrapper border-bottom white-bg page-heading">
+        <!--Breadcrum 导航-->
+        <div class="col-lg-9">
+          <h2>操作记录</h2>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="/home">主页</a>
+            </li>
+            <li class="breadcrumb-item active">
+              <strong>操作记录</strong>
+            </li>
+          </ol>
         </div>
-        <Toolbox></Toolbox>
+      </div>
+      <div class="wrapper wrapper-content animated fadeInRight ecommerce">
+        <vxe-grid
+          v-bind="gridOptions"
+          class="white-bg"
+          style="padding: 15px;"
+          ref="grid"
+        ></vxe-grid>
+      </div>
+      <Footer></Footer>
     </div>
+    <Toolbox></Toolbox>
+  </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
 
 <script>
-import Navbar from "@/components/Navbar"
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
-import Toolbox from "@/components/Toolbox"
-import moment from "moment"
+import Navbar from "@/components/Navbar";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import Toolbox from "@/components/Toolbox";
+import moment from "moment";
 
 export default {
-    data() {
-        return {
-            gridOptions: {
-                border: true,
-                resizable: true,
-                showHeaderOverflow: true,
-                showOverflow: true,
-                highlightHoverRow: true,
-                keepSource: true,
-                height: 850,
-                rowId: 'id',
-                sortConfig: {
-                    trigger: 'cell'
+  data() {
+    return {
+      gridOptions: {
+        border: true,
+        resizable: true,
+        showHeaderOverflow: true,
+        showOverflow: true,
+        highlightHoverRow: true,
+        keepSource: true,
+        height: 850,
+        rowId: "id",
+        sortConfig: {
+          trigger: "cell"
+        },
+        filterConfig: {
+          remote: true
+        },
+        pagerConfig: {
+          pageSize: 10,
+          pageSizes: [5, 10, 15, 20, 50, 100, 200, 500]
+        },
+        sortConfig: {
+          remote: true,
+          trigger: "cell"
+        },
+        toolbarConfig: {
+          refresh: true,
+          export: true,
+          print: true,
+          custom: true
+        },
+        proxyConfig: {
+          seq: true,
+          sort: true, // 启用排序代理
+          filter: true, // 启用筛选代理
+          form: true, // 启用表单代理
+          props: {
+            result: "results",
+            total: "count"
+          },
+          ajax: {
+            query: ({ page, sort, filters, form }) => {
+              const queryParams = Object.assign(
+                {
+                  sort:
+                    sort.order === "desc" ? "-" + sort.property : sort.property,
+                  page: page.currentPage,
+                  size: page.pageSize
                 },
-                filterConfig: {
-                    remote: true
-                },
-                pagerConfig: {
-                    pageSize: 10,
-                    pageSizes: [5, 10, 15, 20, 50, 100, 200, 500]
-                },
-                sortConfig: {
-                    remote: true,
-                    trigger: 'cell'
-                },
-                formConfig: {
-                    titleWidth: 100,
-                    titleAlign: 'right',
-                    items: [
-                        { 
-                            field: 'name',
-                            title: '姓名', 
-                            span: 6, 
-                            itemRender: { name: '$input', props: { placeholder: '请输入姓名' } } 
-                        },
-                        { 
-                            field: 'nickName', 
-                            title: '昵称', 
-                            span: 6, 
-                            itemRender: { name: '$input', props: { placeholder: '请输入昵称' } } 
-                        },
-                        { 
-                            field: 'userId',
-                            title: '学号/工号', 
-                            span: 6, 
-                            itemRender: { name: '$input', props: { placeholder: '请输入学号/工号' } } 
-                        },
-                        {
-                            field: 'type',
-                            title: '用户类型', 
-                            span: 6, 
-                            itemRender: { 
-                                name: '$select', 
-                                options: [
-                                    { label: '在校学生', value: '在校学生' },
-                                    { label: '教工', value: '教工' }
-                                ]
-                            } 
-                        },
-                        { 
-                            span: 24, 
-                            align: 'center', 
-                            collapseNode: true, 
-                            itemRender: { 
-                                name: '$buttons', 
-                                children: [
-                                    { props: { type: 'submit', content: '查询', status: 'primary' } }, 
-                                    { props: { type: 'reset', content: '重置' } }
-                                ] 
-                            } 
-                        }
-                    ]
-                },
-                toolbarConfig: {
-                    buttons: [
-                        { code: 'delete', name: '删除', icon: 'fa fa-trash-o', status: 'danger' },
-                    ],
-                    refresh: true,
-                    export: true,
-                    print: true,
-                    custom: true
-                },
-                proxyConfig: {
-                    seq: true,
-                    sort: true, // 启用排序代理
-                    filter: true, // 启用筛选代理
-                    form: true, // 启用表单代理
-                    props: {
-                        result: 'results',
-                        total: 'count'
-                    },
-                    ajax: {
-                        query: ({ page, sort, filters, form  }) => {
-                            const queryParams = Object.assign({
-                                sort: (sort.order === "desc") ? ("-" + sort.property) : sort.property,
-                                page: page.currentPage,
-                                size: page.pageSize
-                            }, form)
-                            filters.forEach(({ property, values }) => {
-                                queryParams[property] = values.join(',')
-                            })
-                            return this.$axios.get(`user/`, {params: queryParams}).then(res => res.data)
-                        },
-                        delete: ({ body }) => {
-                            console.log(body)
-                        }
-                    }
-                },
-                columns: [
-                    { type: 'checkbox', width: 50 },
-                    { type: 'seq', width: 60 },
-                    { 
-                        field: 'name', 
-                        title: '操作者',
-                        sortable: true,
-                        slots: {
-                            default: ({row}, h) => {
-                                return [
-                                    h('u', {
-                                        style: {
-                                            color: 'blue',
-                                            cursor: 'pointer'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                window.location.replace('/user_management/user_info/detail/' + row.userId.toString())
-                                            }
-                                        }
-                                    }, row.name)
-                                ]
-                            }
-                        }
-                    },
-                    { 
-                        field: 'type', 
-                        title: '操作类型',
-                        filters: [
-                            { label: '第一种', value: 1 },
-                            { label: '第二种', value: 2 },
-                            { label: '第三种', value: 3 },
-                            { label: '第四种', value: 4 },
-                        ],
-                        formatter: function(value) {
-                            switch(value){
-                                case 1: return '第一种';
-                                case 2: return '第二种';
-                                case 3: return '第三种';
-                                case 4: return '第四种';
-                            }
-                        }
-                    },
-                    { field: 'detail', title: '操作详情' },
-                    { field: 'comment', title: '备注' },
-                    { 
-                        field: 'time', 
-                        sortable: true, 
-                        title: '操作时间', 
-                        formatter: function(value) {
-                            return moment(value).format("YYYY-MM-DD HH:mm:ss");
-                        }
-                    }
-                ],
-                exportConfig: {},
-                printConfig: {},
-                checkboxConfig: {
-                    reserve: true,
-                    highlight: true,
-                    range: true
-                },
+                form
+              );
+              filters.forEach(({ property, values }) => {
+                queryParams[property] = values.join(",");
+              });
+              return this.$axios
+                .get(`history/`, { params: queryParams })
+                .then(res => res.data);
             }
+          }
+        },
+        columns: [
+          { type: "checkbox", width: 50 },
+          { type: "seq", width: 60 },
+          {
+            field: "type",
+            title: "操作类型",
+            filters: [
+              { label: "添加场馆", value: "添加场馆" },
+              { label: "编辑场馆信息", value: "编辑场馆信息" },
+              { label: "移入黑名单", value: "移入黑名单" },
+              { label: "移除黑名单", value: "移除黑名单" },
+              { label: "撤销信用记录", value: "撤销信用记录" },
+              { label: "场馆预留", value: "场馆预留" },
+              { label: "修改场馆预约时段", value: "修改场馆预约时段" }
+            ]
+          },
+          { field: "content", title: "操作详情" },
+          { field: "details", title: "备注", visible: false },
+          {
+            field: "state",
+            title: "状态",
+            slots: {
+              default: ({ row }, h) => {
+                var content, color;
+                if (row.state == 0) {
+                  content = "成功";
+                  color = "#28a745";
+                }
+                if (row.state == 1) {
+                  content = "已取消";
+                  color = "#ffc107";
+                }
+                if (row.state == 2) {
+                  content = "已生效";
+                  color = "#17a2b8";
+                }
+                return [
+                  h(
+                    "div",
+                    {
+                      style: {
+                        color: color
+                      }
+                    },
+                    content
+                  )
+                ];
+              }
+            }
+          },
+          {
+            field: "op",
+            title: "操作",
+            slots: {
+              default: ({ row }, h) => {
+                if (row.state != 0) return [];
+                if (
+                  row.type === "添加场馆" ||
+                  row.type === "编辑场馆信息" ||
+                  row.type === "移除黑名单" ||
+                  row.type === "撤销信用记录"
+                )
+                  return [];
+                let func = res => {
+                    console.log(row)
+                  if (!res) return;
+                  let req = {};
+                  if (row.type === "移入黑名单") {
+                    req.url = "blacklist/";
+                    req.method = "put";
+                    req.data = {
+                      id: row.user
+                    };
+                  } else if (row.type === "场地预留") {
+                    req.url = "addevent/";
+                    req.method = "put";
+                    req.data = {
+                      id: row.id
+                    };
+                  } else if (row.type === "修改预约时间段") {
+                    req.url = "changeduration/";
+                    req.method = "put";
+                    req.data = {
+                      id: row.id
+                    };
+                  }
+                  this.$axios(req).then(res => {
+                    swal(
+                      {
+                        title: "成功",
+                        text: "撤销操作成功",
+                        type: "success"
+                      }
+                    );
+                  });
+                };
+                return [
+                  h(
+                    "button",
+                    {
+                      class: "btn btn-sm btn-outline btn-danger",
+                      on: {
+                        click: () => {
+                          swal(
+                            {
+                              title: "确定要撤销这条操作吗？",
+                              type: "warning",
+                              showCancelButton: true,
+                              confirmButtonColor: "#DD6B55",
+                              confirmButtonText: "确认",
+                              cancelButtonText: "取消"
+                            },
+                            func
+                          );
+                        }
+                      }
+                    },
+                    "撤销"
+                  )
+                ];
+              }
+            }
+          },
+          {
+            field: "time",
+            title: "时间",
+            formatter: function(value) {
+              if (value.cellValue == "0") return "";
+              return moment(value.cellValue).format("YYYY-MM-DD HH:mm:ss");
+            }
+          }
+        ],
+        exportConfig: {},
+        printConfig: {},
+        checkboxConfig: {
+          reserve: true,
+          highlight: true,
+          range: true
         }
-    },
-    components: {
-        Toolbox, Navbar, Header, Footer
-    },
-    methods: {
-
-    }
-}
-
+      }
+    };
+  },
+  components: {
+    Toolbox,
+    Navbar,
+    Header,
+    Footer
+  }
+};
 </script>

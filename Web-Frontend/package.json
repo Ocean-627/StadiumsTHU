@@ -15,6 +15,7 @@
     "dependencies": {
         "axios": "^0.21.0",
         "bootstrap": "^4.5.3",
+        "chart.js": "^2.9.4",
         "desandro-matches-selector": "^2.0.2",
         "element-ui": "^2.14.1",
         "ev-emitter": "^1.1.1",
@@ -28,8 +29,10 @@
         "moment": "^2.29.1",
         "outlayer": "^2.1.1",
         "popper.js": "^1.16.1",
+        "sweetalert": "^2.1.2",
         "vue": "^2.5.2",
         "vue-baidu-map": "^0.21.22",
+        "vue-chartjs": "^3.5.1",
         "vue-cookie": "^1.1.4",
         "vue-masonry": "^0.12.0",
         "vue-router": "^3.0.1",

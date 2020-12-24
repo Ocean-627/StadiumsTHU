@@ -93,7 +93,7 @@ $(document).ready(function () {
 
     // Initialize slimscroll for small chat
     $('.small-chat-box .content').slimScroll({
-        height: '234px',
+        height: '600px',
         railOpacity: 0.4
     });
 

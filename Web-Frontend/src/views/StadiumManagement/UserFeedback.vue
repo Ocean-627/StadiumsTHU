@@ -43,6 +43,7 @@ import moment from "moment"
 export default {
     data() {
         return {
+            name2id: {},
             gridOptions: {
                 border: true,
                 resizable: true,
@@ -71,66 +72,20 @@ export default {
                     titleAlign: 'right',
                     items: [
                         { 
-                            field: 'name',
-                            title: '姓名', 
+                            field: 'stadiumName', 
+                            title: '场馆名称', 
                             span: 6, 
-                            itemRender: { name: '$input', props: { placeholder: '请输入姓名' } } 
-                        },
-                        { 
-                            field: 'nickName', 
-                            title: '昵称', 
-                            span: 6, 
-                            itemRender: { name: '$input', props: { placeholder: '请输入昵称' } } 
-                        },
-                        { 
-                            field: 'userId',
-                            title: '学号/工号', 
-                            span: 6, 
-                            itemRender: { name: '$input', props: { placeholder: '请输入学号/工号' } } 
+                            itemRender: { name: '$input', props: { placeholder: '请输入场馆名称' } } 
                         },
                         {
-                            field: 'type',
-                            title: '用户类型', 
-                            span: 6, 
-                            itemRender: { 
-                                name: '$select', 
-                                options: [
-                                    { label: '在校学生', value: '在校学生' },
-                                    { label: '教工', value: '教工' }
-                                ]
-                            } 
+                            field: 'content',
+                            title: '评论内容', 
+                            span: 8, 
+                            itemRender: { name: '$input', props: { placeholder: '请输入评论内容' } } 
                         },
                         { 
-                            field: 'email', 
-                            title: '邮箱', 
-                            span: 6, 
-                            folding: true,
-                            itemRender: { name: '$input', props: { placeholder: '请输入邮箱' } } 
-                        },
-                        { 
-                            field: 'phone', 
-                            title: '手机', 
-                            span: 6, 
-                            folding: true,
-                            itemRender: { name: '$input', props: { placeholder: '请输入手机号' } } 
-                        },
-                        { 
-                            field: 'auth', 
-                            title: '是否认证', 
-                            span: 6, 
-                            folding: true, 
-                            itemRender: { 
-                                name: '$select', 
-                                options: [
-                                    { label: '已认证', value: true },
-                                    { label: '未认证', value: false }
-                                ]
-                            } 
-                        },
-                        { 
-                            span: 24, 
-                            align: 'center', 
-                            collapseNode: true, 
+                            span: 4, 
+                            align: 'right', 
                             itemRender: { 
                                 name: '$buttons', 
                                 children: [
@@ -142,9 +97,6 @@ export default {
                     ]
                 },
                 toolbarConfig: {
-                    buttons: [
-                        { code: 'delete', name: '删除', icon: 'fa fa-trash-o', status: 'danger' },
-                    ],
                     refresh: true,
                     export: true,
                     print: true,
@@ -161,6 +113,7 @@ export default {
                     },
                     ajax: {
                         query: ({ page, sort, filters, form  }) => {
+                            form.stadium_id = this.name2id[form.stadiumName];
                             const queryParams = Object.assign({
                                 sort: (sort.order === "desc") ? ("-" + sort.property) : sort.property,
                                 page: page.currentPage,
@@ -171,62 +124,61 @@ export default {
                             })
                             return this.$axios.get(`comment/`, {params: queryParams}).then(res => res.data)
                         },
-                        delete: ({ body }) => {
-                            console.log(body)
-                        }
                     }
                 },
                 columns: [
                     { type: 'checkbox', width: 50 },
                     { type: 'seq', width: 60 },
                     { 
-                        field: 'name', 
+                        field: 'user', 
                         title: '姓名',
-                        sortable: true,
                         slots: {
                             default: ({row}, h) => {
                                 return [
                                     h('u', {
                                         style: {
-                                            color: 'blue',
+                                            color: '#007bff',
                                             cursor: 'pointer'
                                         },
                                         on: {
                                             click: () => {
-                                                window.location.replace('/user_management/user_info/detail/' + row.userId.toString())
+                                                window.location.replace('/user_management/detail/' + row.user.toString())
                                             }
                                         }
-                                    }, row.name)
+                                    }, row.userName)
                                 ]
                             }
                         }
                     },
-                    { field: 'nickName', sortable: true, title: '昵称' },
-                    { field: 'userId', sortable: true, title: '学号/工号' },
-                    { field: 'type', sortable: true, title: '用户类型' },
-                    { field: 'email', sortable: true, title: '邮箱', visible: false },
-                    { field: 'phone', sortable: true, title: '手机'},
                     { 
-                        field: 'auth', 
-                        title: '是否认证', 
-                        filters: [
-                            { label: '已认证', value: true },
-                            { label: '未认证', value: false }
-                        ],
-                        formatter: function(value){
-                            if(value === "true") return "已认证"
-                            return "未认证"
+                        field: 'stadium_id', 
+                        title: '使用场馆',
+                        formatter: (cell) => {
+                            return cell.row.stadiumName
                         }
                     },
+                    { field: 'courtName', title: '使用场地' },
+                    { field: 'content', title: '评论内容' },
                     { 
-                        field: 'loginTime', 
-                        sortable: true, 
-                        title: '最近登陆时间', 
+                        field: 'score', 
+                        title: '评分',
+                        filters: [
+                            { label: '1', value: 1 },
+                            { label: '2', value: 2 },
+                            { label: '3', value: 3 },
+                            { label: '4', value: 4 },
+                            { label: '5', value: 5 },
+                        ],
+                        filterMultiple: false
+                    },
+                    { 
+                        field: 'createTime', 
+                        title: '评论时间', 
                         visible: false,
                         formatter: function(value) {
-                            return moment(value).format("YYYY-MM-DD HH:mm:ss");
+                            return moment(value.cellValue).format("YYYY-MM-DD HH:mm:ss");
                         }
-                    }
+                    },
                 ],
                 exportConfig: {},
                 printConfig: {},
@@ -242,7 +194,14 @@ export default {
         Toolbox, Navbar, Header, Footer
     },
     methods: {
-
+        
+    },
+    beforeCreate() {
+        this.$axios.get("stadium/").then(res => {
+            for(let s of res.data) {
+                this.name2id[s.name] = s.id
+            }
+        })
     }
 }
 

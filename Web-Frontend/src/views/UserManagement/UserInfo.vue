@@ -6,16 +6,13 @@
             <div class="row wrapper border-bottom white-bg page-heading">
                 <!--Breadcrum 导航-->
                 <div class="col-lg-9">
-                    <h2>用户信息 </h2>
+                    <h2>用户管理 </h2>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="/home">主页</a>
                         </li>
-                        <li class="breadcrumb-item">
-                            用户管理
-                        </li>
                         <li class="breadcrumb-item active">
-                            <strong>用户信息</strong>
+                            <strong>用户管理</strong>
                         </li>
                     </ol>
                 </div>
@@ -129,9 +126,6 @@ export default {
                     ]
                 },
                 toolbarConfig: {
-                    buttons: [
-                        { code: 'delete', name: '删除', icon: 'fa fa-trash-o', status: 'danger' },
-                    ],
                     refresh: true,
                     export: true,
                     print: true,
@@ -157,9 +151,6 @@ export default {
                                 queryParams[property] = values.join(',')
                             })
                             return this.$axios.get(`user/`, {params: queryParams}).then(res => res.data)
-                        },
-                        delete: ({ body }) => {
-                            console.log(body)
                         }
                     }
                 },
@@ -175,12 +166,12 @@ export default {
                                 return [
                                     h('u', {
                                         style: {
-                                            color: 'blue',
+                                            color: '#007bff',
                                             cursor: 'pointer'
                                         },
                                         on: {
                                             click: () => {
-                                                window.location.replace('/user_management/user_info/detail/' + row.userId.toString())
+                                                window.location.replace('/user_management/detail/' + row.userId.toString())
                                             }
                                         }
                                     }, row.name)
@@ -207,6 +198,29 @@ export default {
                         visible: false,
                         formatter: function(value) {
                             return moment(value).format("YYYY-MM-DD HH:mm:ss");
+                        }
+                    },
+                    { 
+                        field: 'inBlacklist',  
+                        title: '黑名单状态', 
+                        visible: false,
+                        filters: [
+                            { label: '是', value: true },
+                            { label: '否', value: false }
+                        ],
+                        formatter: function(value) {
+                            if(value.cellValue) return "是"
+                            return "否"
+                        }
+                    },
+                    {
+                        field: 'inBlacklistTime', 
+                        sortable: true, 
+                        title: '拉黑时间', 
+                        visible: false,
+                        formatter: function(value) {
+                            if(value.cellValue == "0") return ""
+                            return moment(value).format("YYYY-MM-DD");
                         }
                     }
                 ],
