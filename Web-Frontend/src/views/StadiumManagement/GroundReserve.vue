@@ -238,28 +238,6 @@
 }
 </style>
 
-<script type="text/javascript">
-var element = document.getElementById("demo")
-//element.focus();
-element.value = "this is sun222"
-//txtChange()  如果只是赋值后执行一个函数，只要调用函数即可
-if (element.fireEvent) {
-    element.fireEvent('onchange');
-} else {
-    ev = document.createEvent("HTMLEvents");
-    //event.initEvent(eventType,canBubble,cancelable)
-    //eventType:字符串值，事件的类型
-    //canBubble：事件是否冒泡
-    //cancelable：是否可以用preventDefault()方法取消事件
-    ev.initEvent("change", false, true);
-    element.dispatchEvent(ev);
-}
-
-function txtChange(a) {
-    alert(a.value);
-}
-</script>
-
 <script>
 import Navbar from "@/components/Navbar";
 import Header from "@/components/Header";
