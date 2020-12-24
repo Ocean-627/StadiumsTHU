@@ -127,6 +127,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Toolbox from "@/components/Toolbox";
 import "jquery";
+import "@/assets/js/jquery-3.1.1.min.js";
 import "@/assets/js/plugins/clockpicker/clockpicker.js";
 import "@/assets/js/plugins/chosen/chosen.jquery.js";
 import "@/assets/js/plugins/jasny/jasny-bootstrap.min.js";

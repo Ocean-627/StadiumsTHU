@@ -286,6 +286,7 @@
 @import "../../assets/css/plugins/clockpicker/clockpicker.css";
 @import "../../assets/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css";
 @import "../../assets/css/plugins/datapicker/datepicker3.css";
+@import '../../assets/css/plugins/toastr/toastr.min.css';
 .i-row [class^="col-"] {
   padding: 10px;
 }
@@ -341,11 +342,13 @@ import Footer from "@/components/Footer";
 import Toolbox from "@/components/Toolbox";
 import "jquery";
 import "masonry-layout";
+import "@/assets/js/jquery-3.1.1.min.js";
 import "@/assets/js/plugins/clockpicker/clockpicker.js";
 import "@/assets/js/plugins/chosen/chosen.jquery.js";
 import "@/assets/js/plugins/jasny/jasny-bootstrap.min.js";
 import "@/assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js";
 import "@/assets/js/plugins/datapicker/bootstrap-datepicker.js";
+import '@/assets/js/plugins/toastr/toastr.min.js'
 export default {
   data() {
     return {

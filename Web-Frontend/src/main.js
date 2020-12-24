@@ -16,6 +16,7 @@ import "vxe-table/lib/style.css";
 import VXETablePluginExportXLSX from "vxe-table-plugin-export-xlsx";
 import moment from "moment";
 import { VueMasonryPlugin } from "vue-masonry";
+import $ from "jquery";
 
 Vue.use(ElementUI);
 Vue.use(VXETable);
@@ -33,9 +34,9 @@ Vue.use(VueMasonryPlugin);
 //import '@/assets/js/plugins/pace/pace.min.js'
 //
 //import '@/assets/js/plugins/jquery-ui/jquery-ui.min.js'
-//
 //import '@/assets/js/plugins/gritter/jquery.gritter.min.js'
-//
+//import '@/assets/js/plugins/toastr/toastr.min.js'
+
 import "@/assets/js/plugins/sweetalert/sweetalert.min.js";
 
 axios.interceptors.request.use(

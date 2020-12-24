@@ -249,6 +249,7 @@ import Toolbox from "@/components/Toolbox";
 import Common from "@/Common";
 import "jquery";
 import "masonry-layout";
+import "@/assets/js/jquery-3.1.1.min.js";
 import "@/assets/js/plugins/clockpicker/clockpicker.js";
 import "@/assets/js/plugins/chosen/chosen.jquery.js";
 import "@/assets/js/plugins/jasny/jasny-bootstrap.min.js";

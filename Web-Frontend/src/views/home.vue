@@ -80,8 +80,8 @@
     </div>
 </template>
 
-<style scoped>
-
+<style>
+@import '../assets/css/plugins/toastr/toastr.min.css';
 </style>
 
 <script>
@@ -90,7 +90,8 @@ import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import Toolbox from "@/components/Toolbox"
 import Chart from "@/components/Chart"
-
+import "@/assets/js/jquery-3.1.1.min.js";
+import '@/assets/js/plugins/toastr/toastr.min.js'
 export default {
     data() {
         return {

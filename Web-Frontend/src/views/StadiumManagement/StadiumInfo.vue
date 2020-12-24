@@ -135,7 +135,7 @@ import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import Toolbox from "@/components/Toolbox"
 import 'jquery'
-
+import "@/assets/js/jquery-3.1.1.min.js";
 export default {
     data() {
         return {
