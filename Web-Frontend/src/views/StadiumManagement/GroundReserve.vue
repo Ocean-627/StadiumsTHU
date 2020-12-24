@@ -260,6 +260,7 @@ import {
 } from "moment";
 
 export default {
+    
     data() {
         let res = {
             grounds: [],
@@ -294,6 +295,14 @@ export default {
         },
         setNumber(index) {
             // TODO: 检查或强制设置预约场地数量一栏的合法性
+            Array.prototype.indexValue = function (arr) {
+                for (var i = 0; i < this.length; i++) {
+                    if (this[i] == arr) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
             let number = parseInt(this.$refs.number[index].value)
             let useDate = this.$refs.useDate[index].value
             let startTime = this.$refs.startTime[index].value
@@ -301,30 +310,15 @@ export default {
             var myStartTime = new Date(1, 1, 1, parseInt(startTime.split(":")[0]), parseInt(startTime.split(":")[1]));
             var myEndTime = new Date(1, 1, 1, parseInt(endTime.split(":")[0]), parseInt(endTime.split(":")[1]));
             if (startTime != '' && endTime != '' && useDate != '' && number != "") {
-                var courtlist = [];
+                let courtlist = [];
                 for (var j = 0; j < this.grounds[index].courts.length; j++) {
                     courtlist.push(this.grounds[index].courts[j].id)
                 }
                 for (var w = 0; w < parseInt(this.grounds[index].courts[0].foreDays); w++) {
-                    
-                    var date = new Date();
-                    date.setDate(date.getDate() + w);
-                    var dateString;
-                    if (date.getMonth() + 1 < 10 && date.getDate() + 1 >= 10) {
-                        dateString = date.getFullYear() + "-0" + (date.getMonth() + 1) + "-" + date.getDate();
-                    } else if (date.getMonth() + 1 >= 10 && date.getDate() + 1 < 10) {
-                        dateString = date.getFullYear() + "-" + (date.getMonth() + 1) + "-0" + date.getDate();
-                    } else if (date.getMonth() + 1 < 10 && date.getDate() + 1 < 10) {
-                        dateString = date.getFullYear() + "-0" + (date.getMonth() + 1) + "-0" + date.getDate();
-                    } else {
-                        dateString = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-                    }
-                    console.log(dateString);
-                    console.log(useDate);
-                    if (dateString == useDate) {
+                    if (this.myDurations[w][0].date == useDate) {
                         var tmp = this.grounds[index].courts[0].courtType;
                         var list = this.myDurations[w].filter(function (x) {
-                            return ( x.courtType == tmp )
+                            return ( x.courtType == tmp && x.date == useDate )
                         })
                         for (var i = 0; i < list.length; i++) {
                             if (courtlist.indexValue(list[i].court) < 0) {
@@ -334,23 +328,20 @@ export default {
                             let end = list[i].endTime
                             var myStart = new Date(1, 1, 1, parseInt(start.split(":")[0]), parseInt(start.split(":")[1]));
                             var myEnd = new Date(1, 1, 1, parseInt(end.split(":")[0]), parseInt(end.split(":")[1]));
-                            if (((myStart <= myStartTime && myStartTime <= myEnd) || (myStartTime <= myStart && myStart <= myEndTime )) && (list[i].accessible == false)) {
-                                courtlist.splice(courtlist.indexValue(list[i].court))
+                            if ((((myStart <= myStartTime) && (myStartTime <= myEnd)) || ((myStartTime <= myStart) && (myStart <= myEndTime))) && (list[i].accessible == false)) {
+                                courtlist.splice(courtlist.indexValue(list[i].court),1 )
                             }
                         }
                         break;
                     }
                 }
-                
                 courtlist = courtlist.slice(0, number);
-                console.log(courtlist)
                 // TODO: 根据courtlist中的序号设置场地默认选中（courtlist为智能推荐场地id结果列表）
             }
         },
         submit(ground, index) {
-            // 为了节省局部变量，所有场地的预留的模态窗口共享表单变量，所以需要传入ground参数进行区分
             let number = this.$refs.number[index].value
-
+            
             // TODO: 获取选中的场地的id列表并命名为courts
             let courts = this.$refs.court_id[index].value.split(',')
 
@@ -379,7 +370,6 @@ export default {
                     type: "error"
                 });
             } else {
-                console.log($(".chosen-select ")[index])
                 var obj = new Date();
                 var hour = parseInt(obj.getHours());
                 var minute = parseInt(obj.getMinutes());
@@ -531,9 +521,6 @@ export default {
         }
     },
     updated() {
-        console.log(this.myDurations);
-        console.log(this.courts);
-        console.log(this.grounds);
         $(".chosen-select").chosen({
             width: "100%"
         });
@@ -594,10 +581,6 @@ export default {
                     this.$refs.endTime[this.current_court].value = "";
                 }
             }
-        }
-        console.log(number)
-        if (startTime != '' && endTime != '' && useDate != '' && number != "") {
-            console.log($(".chosen-select ")[current_court])
         }
     },
     mounted() {
