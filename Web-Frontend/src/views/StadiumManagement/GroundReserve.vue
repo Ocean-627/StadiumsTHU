@@ -38,17 +38,16 @@
                                 <h5>{{ ground.type }}</h5>
                                 <div class="ibox-tools">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                                <i class="fa fa-wrench" style="color: green"></i>
+                                                <i class="fa fa-tasks" style="color: green"></i>
                                                 </a>
                                     <ul class="dropdown-menu dropdown-user">
                                         <li>
-                                            <a class="dropdown-item" data-toggle="modal" data-target="#myModal">场地预留</a>
+                                            <a class="dropdown-item" data-toggle="modal" :data-target="'#myModal'+index">场地预留</a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" v-on:click="manage(ground)">预约管理</a>
                                         </li>
                                     </ul>
-                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 </div>
                             </div>
                             <div class="ibox-content">
@@ -66,7 +65,7 @@
                                     <br/>
                                 </div>
                             </div>
-                            <div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal inmodal" :id="'myModal'+index" tabindex="-1" role="dialog" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content animated fadeIn">
                                         <div class="modal-header">
@@ -128,13 +127,16 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label class="font-normal">预留场地序号（选填）</label><br/>
+                                                <label class="font-normal">预留场地（选填）</label><br/>
                                                 <div>
                                                     <small>
-                                            如果指定了预留的场地序号，那么将预留指定的场地，即使场地上原本有预约（该预约将被取消并通过站内信通知用户）。如果未指定序号，那么后台将会自动选择空闲的场地进行预留。若空闲场地不足，则必须手动指定序号。
-                                          </small>
+                                                        如果指定了该项，那么将预留指定的场地，即使场地上原本有预约（该预约将被取消并通过站内信通知用户）。如果未指定序号，那么后台将会自动选择空闲的场地进行预留。若空闲场地不足，则必须手动指定序号。
+                                                    </small>
                                                 </div>
-                                                <input class="tagsinput form-control" type="text" ref="court_id" />
+                                                <select data-placeholder="Choose a Country..." class="chosen-select" multiple
+                                                 style="width:350px;">
+                                                    <option v-for="court in ground.courts" :key="court.id" :value="court.id">{{ court.name }}</option>
+                                                </select>
                                             </div>
                                             <div class="form-group">
                                                 <label class="font-normal">备注（选填）</label>
@@ -487,9 +489,18 @@ export default {
     updated() {
         $(".chosen-select").chosen({ width: "100%" });
         var clocks = document.getElementsByClassName("clockpicker");
-        for (var i = 0; i < clocks.length; i++) {
-            $(clocks[i]).clockpicker();
+        let _this = this, i = 0;
+        while(i < clocks.length){
+            $(clocks[i]).clockpicker().find('input').change(function() {
+                _this.form_start = this.value;
+            })
+            i++;
+            $(clocks[i]).clockpicker().find('input').change(function() {
+                _this.form_end = this.value;
+            });
+            i++;
         }
+        
         $("#data_1 .input-group.date").datepicker({
             todayBtn: "linked",
             keyboardNavigation: false,
@@ -499,11 +510,15 @@ export default {
         $(".tagsinput").tagsinput({
             tagClass: "label label-primary"
         });
-        $(".touchspin").TouchSpin({
-            min: 1,
-            buttondown_class: "btn btn-white",
-            buttonup_class: "btn btn-white"
-        });
+        let spins = $(".touchspin");
+        for(let i = 0; i < spins.length; i++){
+            $(spins[i]).TouchSpin({
+                min: 1,
+                max: this.grounds[i].courts.length,
+                buttondown_class: "btn btn-white",
+                buttonup_class: "btn btn-white"
+            });
+        }
     },
     mounted() {
         $(".chosen-select").chosen({ width: "100%" });
