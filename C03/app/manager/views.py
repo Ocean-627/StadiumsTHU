@@ -12,7 +12,7 @@ from app.utils.filter import *
 from app.utils.pagination import *
 from app.utils.authtication import ManagerAuthtication
 from app.user.wx import *
-# from apscheduler.scheduler import Scheduler
+from apscheduler.scheduler import Scheduler
 import time
 import datetime
 import pytz
@@ -164,10 +164,10 @@ def minute_task():
 '''
 
 
-# sched = Scheduler()
-# sched.add_cron_job(daily_task, hour=0, minute=0)
-# sched.add_interval_job(minute_task, seconds=60)
-# sched.start()
+sched = Scheduler()
+sched.add_cron_job(daily_task, hour=0, minute=0)
+sched.add_interval_job(minute_task, seconds=60)
+sched.start()
 
 
 class LogonView(CreateAPIView):
