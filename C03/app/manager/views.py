@@ -163,7 +163,6 @@ def minute_task():
 若代码已经部署到服务器上，在本机上运行后端时务必将以下四行注释掉，否则会更改服务器数据库
 '''
 
-
 sched = Scheduler()
 sched.add_cron_job(daily_task, hour=0, minute=0)
 sched.add_interval_job(minute_task, seconds=60)
@@ -421,7 +420,7 @@ class AddEventView(ListAPIView):
 
     def post(self, request):
         req_data = request.data
-        ser = AddEventSerializer(data=req_data)
+        ser = AddEventSerializer(data=req_data, context={'request': request})
         if not ser.is_valid():
             return Response({'error': ser.errors}, status=400)
         addEvent = ser.save(manager=request.user)
