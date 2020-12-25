@@ -42,7 +42,7 @@ class AddEventSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         manager = self.context['request'].user
         court = Court.objects.filter(id=validated_data.get('court_id')).first()
-        content = '管理员' + manager.username + '占用了' + court.stadium + court.name
+        content = '管理员' + manager.username + '占用了' + court.stadium.name + court.name
         return AddEvent.objects.create(content=content, **validated_data)
 
     class Meta:
