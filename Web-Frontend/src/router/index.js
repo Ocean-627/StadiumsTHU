@@ -1,25 +1,26 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from "vue";
+import Router from "vue-router";
 
 // route views
-import Login from '@/views/Login'
-import Home from '@/views/Home'
-import Profile from "@/views/Profile"
+import Login from "@/views/Login";
+import Home from "@/views/Home";
+import Profile from "@/views/Profile";
 import Messages from "@/views/Messages";
 import MessagesDetail from "@/views/MessagesDetail";
-import StadiumInfo from '@/views/StadiumManagement/StadiumInfo'
-import UserFeedback from '@/views/StadiumManagement/UserFeedback'
-import GroundReserve from '@/views/StadiumManagement/GroundReserve'
-import ReserveRecord from '@/views/StadiumManagement/ReserveRecord'
-import UserInfo from '@/views/UserManagement/UserInfo'
-import UserInfoDetail from '@/views/UserManagement/UserInfoDetail'
-import OperationRecord from '@/views/OperationRecord'
-import SystemLog from '@/views/SystemLog'
-import NewStadium from '@/views/StadiumManagement/NewStadium'
-import EditStadium from '@/views/StadiumManagement/EditStadium'
-import EditGround from '@/views/StadiumManagement/EditGround'
+import StadiumInfo from "@/views/StadiumManagement/StadiumInfo";
+import UserFeedback from "@/views/StadiumManagement/UserFeedback";
+import GroundReserve from "@/views/StadiumManagement/GroundReserve";
+import ReserveRecord from "@/views/StadiumManagement/ReserveRecord";
+import UserInfo from "@/views/UserManagement/UserInfo";
+import UserInfoDetail from "@/views/UserManagement/UserInfoDetail";
+import OperationRecord from "@/views/OperationRecord";
+import SystemLog from "@/views/SystemLog";
+import NewStadium from "@/views/StadiumManagement/NewStadium";
+import EditStadium from "@/views/StadiumManagement/EditStadium";
+import EditGround from "@/views/StadiumManagement/EditGround";
+import NotFound from "@/views/NotFound";
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
@@ -106,6 +107,15 @@ export default new Router({
       path: "/stadium_management/stadium_info/edit_ground",
       name: "EditGround",
       component: EditGround
+    },
+    {
+      path: "/404",
+      name: "NotFound",
+      component: NotFound
+    },
+    {
+      path: "*", // 此处需特别注意置于最底部
+      redirect: "/404"
     }
   ],
   mode: "history",

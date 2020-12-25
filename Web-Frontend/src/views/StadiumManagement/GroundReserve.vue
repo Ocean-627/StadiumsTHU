@@ -135,7 +135,7 @@
                                                     如果指定了该项，那么将预留指定的场地，即使场地上原本有预约（该预约将被取消并通过站内信通知用户）。如果未指定序号，那么后台将会自动选择空闲的场地进行预留。若空闲场地不足，则必须手动指定序号。
                                                 </small>
                                             </div>
-                                            <select data-placeholder="Choose a Country..." class="chosen-select" multiple style="width:350px;">
+                                            <select class="chosen-select" multiple style="width:350px;">
                                                 <option v-for="court in ground.courts" :key="court.id" :value="court.id">{{ court.name }}</option>
                                             </select>
                                         </div>
@@ -338,6 +338,8 @@ export default {
                 }
                 courtlist = courtlist.slice(0, number);
                 // TODO: 根据courtlist中的序号设置场地默认选中（courtlist为智能推荐场地id结果列表）
+                let sel = $('.chosen-select')[index];
+
             }
         },
         submit(ground, index) {
@@ -592,12 +594,6 @@ export default {
         for (var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker();
         }
-        $(document).ready(function () {
-            $("#setEventDate").change(function () {})
-            //$("#demo").val("this is lily").change()   此种方法可以，下面的方法也可以
-            $("#setEventDate").val("this is lily111")
-            $("#setEventDate").trigger("change")
-        })
         $("#data_1 .input-group.date").datepicker({
             todayBtn: "linked",
             keyboardNavigation: false,
