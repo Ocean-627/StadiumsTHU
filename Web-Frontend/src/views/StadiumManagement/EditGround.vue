@@ -286,7 +286,6 @@
 @import "../../assets/css/plugins/clockpicker/clockpicker.css";
 @import "../../assets/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css";
 @import "../../assets/css/plugins/datapicker/datepicker3.css";
-@import '../../assets/css/plugins/toastr/toastr.min.css';
 .i-row [class^="col-"] {
   padding: 10px;
 }
@@ -348,7 +347,6 @@ import "@/assets/js/plugins/chosen/chosen.jquery.js";
 import "@/assets/js/plugins/jasny/jasny-bootstrap.min.js";
 import "@/assets/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js";
 import "@/assets/js/plugins/datapicker/bootstrap-datepicker.js";
-import '@/assets/js/plugins/toastr/toastr.min.js'
 export default {
   data() {
     return {

@@ -66,7 +66,8 @@ export default {
         else{
           localStorage.setItem('loginToken',res.data.loginToken);
           localStorage.setItem("username", res.data.username);
-          localStorage.setItem("id", res.data.id);
+          localStorage.setItem("id", this.id);
+          localStorage.setItem("image", res.data.image)
           window.location.replace("/home");
         }
       });

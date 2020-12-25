@@ -97,7 +97,7 @@ axios.interceptors.response.use(
 
 axios.defaults.withCredentials = true;
 Vue.prototype.$http = axios;
-axios.defaults.baseURL = "http://127.0.0.1:8000/api/manager";
+axios.defaults.baseURL = "https://cbx.iterator-traits.com/api/manager";
 Vue.config.productionTip = false;
 Vue.prototype.Common = Common;
 Vue.prototype.$axios = axios;
