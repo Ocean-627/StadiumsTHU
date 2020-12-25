@@ -121,10 +121,7 @@
                                             <label class="font-normal">预留场地数</label>
                                             <div class="row">
                                                 <div class="col-sm-4">
-                                                    <!--
-                                                            <input class="touchspin" type="text" ref="number" />
-                                                        -->
-                                                    <input class="form-control" type="text" ref="number" @change="setNumber(index)" />
+                                                    <input class="form-control" type="text" v-model="ground.form_number" ref="number" v-on:change="setNumber(index)" />
                                                 </div>
                                             </div>
                                         </div>
@@ -295,7 +292,6 @@ export default {
             this.current_court = index;
         },
         setNumber(index) {
-            // TODO: 检查或强制设置预约场地数量一栏的合法性
             Array.prototype.indexValue = function (arr) {
                 for (var i = 0; i < this.length; i++) {
                     if (this[i] == arr) {
@@ -305,6 +301,14 @@ export default {
                 return -1;
             }
             let number = parseInt(this.$refs.number[index].value)
+            if(number > this.grounds[index].courts.length) {
+                swal({
+                  title: "错误",
+                  text: "场地数量超出限制！",
+                  type: "error"
+                });
+                return;
+            }
             let useDate = this.$refs.useDate[index].value
             let startTime = this.$refs.startTime[index].value
             let endTime = this.$refs.endTime[index].value
@@ -337,16 +341,13 @@ export default {
                     }
                 }
                 courtlist = courtlist.slice(0, number);
-                // TODO: 根据courtlist中的序号设置场地默认选中（courtlist为智能推荐场地id结果列表）
-                let sel = $('.chosen-select')[index];
-
+                let chosen = $($('.chosen-select')[index]).val(courtlist).trigger('chosen:updated')
             }
         },
         submit(ground, index) {
             let number = this.$refs.number[index].value
             
-            // TODO: 获取选中的场地的id列表并命名为courts
-            let courts = this.$refs.court_id[index].value.split(',')
+            let courts = $($('.chosen-select')[index]).val();
 
             let useDate = this.$refs.useDate[index].value
             let startTime = this.$refs.startTime[index].value
