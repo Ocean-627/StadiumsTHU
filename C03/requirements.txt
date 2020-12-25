@@ -11,6 +11,5 @@ Pillow
 django_filter
 django-cors-headers
 django-crontab
-django-apscheduler
-apscheduler
+apscheduler==2.1.2
 request
