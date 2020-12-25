@@ -10,12 +10,10 @@
             </div>
             <div class="wrapper wrapper-content animated fadeInRight ecommerce">
                 <div class="row" style="margin-bottom: 20px" v-show="loaded">
-                    <div class="col-lg-3">
+                    <div class="col-sm-12">
                         <el-select v-model="cur_stadium" id="stadium" @change="updateChart()">
                             <el-option v-for="s in stadiums" :key="s.id" :value="s.id" :label="s.name" />
                         </el-select>
-                    </div>
-                    <div class="col-lg-3">
                         <el-select v-model="cur_courttype" id="courttype" @change="updateChart()">
                             <el-option v-for="c in courttypes" :key="c" :value="c" />
                         </el-select>

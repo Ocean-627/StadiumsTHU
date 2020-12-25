@@ -121,7 +121,7 @@
                                             <label class="font-normal">预留场地数</label>
                                             <div class="row">
                                                 <div class="col-sm-4">
-                                                    <input class="form-control" type="text" v-model="ground.form_number" ref="number" v-on:change="setNumber(index)" />
+                                                    <input class="form-control" type="text" ref="number" v-on:change="setNumber(index)" />
                                                 </div>
                                             </div>
                                         </div>
@@ -525,12 +525,19 @@ export default {
         }
     },
     updated() {
-        $(".chosen-select").chosen({
-            width: "100%"
-        });
-        var clocks = document.getElementsByClassName("clockpicker");
         let _this = this,
             i = 0;
+        $(".chosen-select")
+            .chosen({width: "100%"})
+            .change(function(){
+                console.log(_this.$refs.number.value)
+                for(let j = 0; j < $(".chosen-select").length; j++){
+                    $(_this.$refs.number[j]).val($($('.chosen-select')[j]).val().length);
+                }
+            })
+
+        var clocks = document.getElementsByClassName("clockpicker");
+        
         while (i < clocks.length) {
             $(clocks[i]).clockpicker().find('input').change(function () {
                 _this.form_start = this.value;
