@@ -90,6 +90,7 @@ axios.interceptors.response.use(
         text: "未知的服务器错误！请刷新页面重试或联系开发人员。",
         type: "error"
       });
+    } else if (error.code === "ECONNABORTED") {
     } else {
       swal({
         title: "错误",
