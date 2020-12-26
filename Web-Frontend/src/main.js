@@ -84,6 +84,12 @@ axios.interceptors.response.use(
         text: "信息填写不完整！",
         type: "error"
       });
+    } else if (error.response.status === 500) {
+      swal({
+        title: "错误",
+        text: "未知的服务器错误！请刷新页面重试或联系开发人员。",
+        type: "error"
+      });
     } else {
       swal({
         title: "错误",
