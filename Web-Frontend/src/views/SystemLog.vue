@@ -41,7 +41,7 @@ import Navbar from "@/components/Navbar"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import Toolbox from "@/components/Toolbox"
-
+import "@/assets/js/jquery-3.1.1.min.js";
 export default {
     data() {
         return {

@@ -104,6 +104,7 @@
 
 <script>
 import Common from "@/Common"
+import "@/assets/js/jquery-3.1.1.min.js";
 export default {
     data() {
         return {}
@@ -133,9 +134,7 @@ export default {
                 $("body").removeClass("skin-2")
                 $("body").removeClass("skin-3")
             }
-            if (localStorageSupport) {
-                localStorage.setItem("colortype", n);
-            }
+            localStorage.setItem("colortype", n);
         },
         fixednavbar() {
             if ($('#fixednavbar').is(':checked')) {
@@ -143,24 +142,16 @@ export default {
                 $("body").removeClass('boxed-layout');
                 $("body").addClass('fixed-nav');
                 $('#boxedlayout').prop('checked', false);
-                if (localStorageSupport) {
-                    localStorage.setItem("boxedlayout", 'off');
-                }
-                if (localStorageSupport) {
-                    localStorage.setItem("fixednavbar", 'on');
-                }
+                localStorage.setItem("boxedlayout", 'off');
+                localStorage.setItem("fixednavbar", 'on');
             } 
             else {
                 $(".navbar-fixed-top").removeClass('navbar-fixed-top').addClass('navbar-static-top');
                 $("body").removeClass('fixed-nav');
                 $("body").removeClass('fixed-nav-basic');
                 $('#fixednavbar2').prop('checked', false);
-                if (localStorageSupport) {
-                    localStorage.setItem("fixednavbar", 'off');
-                }
-                if (localStorageSupport) {
-                    localStorage.setItem("fixednavbar2", 'off');
-                }
+                localStorage.setItem("fixednavbar", 'off');
+                localStorage.setItem("fixednavbar2", 'off');
             }
         },
         fixednavbar2() {
@@ -169,23 +160,15 @@ export default {
                 $("body").removeClass('boxed-layout');
                 $("body").addClass('fixed-nav').addClass('fixed-nav-basic');
                 $('#boxedlayout').prop('checked', false);
-                if (localStorageSupport) {
-                    localStorage.setItem("boxedlayout", 'off');
-                }
-                if (localStorageSupport) {
-                    localStorage.setItem("fixednavbar2", 'on');
-                }
+                localStorage.setItem("boxedlayout", 'off');
+                localStorage.setItem("fixednavbar2", 'on');
             } 
             else {
                 $(".navbar-fixed-top").removeClass('navbar-fixed-top').addClass('navbar-static-top');
                 $("body").removeClass('fixed-nav').removeClass('fixed-nav-basic');
                 $('#fixednavbar').prop('checked', false);
-                if (localStorageSupport) {
-                    localStorage.setItem("fixednavbar2", 'off');
-                }
-                if (localStorageSupport) {
-                    localStorage.setItem("fixednavbar", 'off');
-                }
+                localStorage.setItem("fixednavbar2", 'off');
+                localStorage.setItem("fixednavbar", 'off');
             }
         },
         boxedlayout() {
@@ -198,24 +181,14 @@ export default {
                 $("body").removeClass('fixed-nav-basic');
                 $(".footer").removeClass('fixed');
                 $('#fixedfooter').prop('checked', false);
-                if (localStorageSupport) {
-                    localStorage.setItem("fixednavbar", 'off');
-                }
-                if (localStorageSupport) {
-                    localStorage.setItem("fixednavbar2", 'off');
-                }
-                if (localStorageSupport) {
-                    localStorage.setItem("fixedfooter", 'off');
-                }
-                if (localStorageSupport) {
-                    localStorage.setItem("boxedlayout", 'on');
-                }
+                localStorage.setItem("fixednavbar", 'off');
+                localStorage.setItem("fixednavbar2", 'off');
+                localStorage.setItem("fixedfooter", 'off');
+                localStorage.setItem("boxedlayout", 'on');
             } 
             else {
                 $("body").removeClass('boxed-layout');
-                if (localStorageSupport) {
-                    localStorage.setItem("boxedlayout", 'off');
-                }
+                localStorage.setItem("boxedlayout", 'off');
             }
         },
         fixedfooter() {
@@ -223,43 +196,36 @@ export default {
                 $('#boxedlayout').prop('checked', false);
                 $("body").removeClass('boxed-layout');
                 $(".footer").addClass('fixed');
-                if (localStorageSupport) {
-                    localStorage.setItem("boxedlayout", 'off');
-                }
-                if (localStorageSupport) {
-                    localStorage.setItem("fixedfooter", 'on');
-                }
+                localStorage.setItem("boxedlayout", 'off');
+                localStorage.setItem("fixedfooter", 'on');
             } 
             else {
                 $(".footer").removeClass('fixed');
-                if (localStorageSupport) {
-                    localStorage.setItem("fixedfooter", 'off');
-                }
+                localStorage.setItem("fixedfooter", 'off');
             }
         }
     },
     mounted() {
-        if (localStorageSupport) {
-            var fixednavbar = localStorage.getItem("fixednavbar")
-            var fixednavbar2 = localStorage.getItem("fixednavbar2")
-            var boxedlayout = localStorage.getItem("boxedlayout")
-            var fixedfooter = localStorage.getItem("fixedfooter")
-            var colortype = localStorage.getItem("colortype")
-            if (fixednavbar == 'on') {
-                $('#fixednavbar').prop('checked', 'checked')
-            }
-            if (fixednavbar2 == 'on') {
-                $('#fixednavbar2').prop('checked', 'checked')
-            }
-            if (boxedlayout == 'on') {
-                $('#boxedlayout').prop('checked', 'checked')
-            }
-            if (fixedfooter == 'on') {
-                $('#fixedfooter').prop('checked', 'checked')
-            }
-            if(!colortype) colortype = '0'
-            this.skin(colortype)
+        var fixednavbar = localStorage.getItem("fixednavbar")
+        var fixednavbar2 = localStorage.getItem("fixednavbar2")
+        var boxedlayout = localStorage.getItem("boxedlayout")
+        var fixedfooter = localStorage.getItem("fixedfooter")
+        var colortype = localStorage.getItem("colortype")
+        if (fixednavbar == 'on') {
+            $('#fixednavbar').prop('checked', 'checked')
         }
+        if (fixednavbar2 == 'on') {
+            $('#fixednavbar2').prop('checked', 'checked')
+        }
+        if (boxedlayout == 'on') {
+            $('#boxedlayout').prop('checked', 'checked')
+        }
+        if (fixedfooter == 'on') {
+            $('#fixedfooter').prop('checked', 'checked')
+        }
+        if(!colortype) colortype = '0'
+        this.skin(colortype)
+        
     }
 }
 </script>

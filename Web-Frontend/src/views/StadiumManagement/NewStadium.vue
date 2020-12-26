@@ -61,7 +61,7 @@
             <div class="col-lg-10">
               <el-upload
                 ref="upload"
-                action="http://127.0.0.1:8000/api/manager/stadiumimage/"
+                action="https://cbx.iterator-traits.com/api/manager/stadiumimage/"
                 name="image"
                 accept="image/png,image/gif,image/jpg,image/jpeg"
                 list-type="picture-card"
@@ -257,6 +257,7 @@ import {
   BmCityList,
   BmLocalSearch
 } from "vue-baidu-map";
+import "@/assets/js/jquery-3.1.1.min.js";
 import "@/assets/js/plugins/clockpicker/clockpicker.js";
 import "@/assets/js/plugins/chosen/chosen.jquery.js";
 import "@/assets/js/plugins/jasny/jasny-bootstrap.min.js";
