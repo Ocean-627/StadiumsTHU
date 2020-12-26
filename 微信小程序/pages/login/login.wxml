@@ -7,7 +7,7 @@
   <view class="btns" wx:if="{{hasload}}">
     <van-button class="login-btn" bindtap="jmpVerifyApp"
     custom-class="van-btn" color="#07c160">身份认证登录</van-button>
-    <van-button class="login-btn" bindtap="jmpHome"
+    <van-button class="login-btn" bindtap="anonymousLogin"
     custom-class="van-btn" color="#7d90a9">以匿名身份登录</van-button>
   </view>
 </view>

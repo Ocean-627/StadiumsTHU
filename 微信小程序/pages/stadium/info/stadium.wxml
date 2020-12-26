@@ -7,9 +7,9 @@
   <view class="gallery">
     <swiper indicator-dots="true"
         autoplay="true" interval="2000" duration="500">
-        <view wx:for="{{gallery_imgs}}" wx:key="*this">
+        <view class="gallery-img-wrapper" wx:for="{{gallery_imgs}}" wx:key="*this">
           <swiper-item>
-            <image class="gallery-img" src="{{item}}" mode="scaleToFill"></image>
+            <image class="gallery-img" src="{{item}}"></image>
           </swiper-item>
         </view>
       </swiper>

@@ -131,7 +131,7 @@ Page({
         if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
           _this.setStadiumInfo(res)
         } else {
-          app.reqFail("操作失败")
+          app.reqFail("获取信息失败")
         }
       },
       fail() {

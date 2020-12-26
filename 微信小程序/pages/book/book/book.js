@@ -91,10 +91,16 @@ Page({
     this.updateDuration()
   },
 
+  // 快速选择
+  quickChoose:function() {
+    console.log(this.data.duration_list)
+  },
+
   // 切换场地
   onChangeCourt:function(e) {
     if(e.detail !== '') {
       var timeList = this.data.duration_list[e.detail]
+      // 将原场地对应的时段全部设置为未选择
       if(timeList !== undefined && timeList !== null) {
         for(var dur of timeList) {
           dur.choose = false
@@ -479,12 +485,16 @@ Page({
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
           _this.jmpPay(res.data.id, res.data.stadium_id)
         } else {
+          if(res.data.error['duration_id'] !== undefined && res.data.error['duration_id'] !== null){
+            app.reqFail(res.data.error['duration_id'][0])
+          } else {
+            app.reqFail('预定失败，请刷新页面后重试')
+          }
           _this.setData({
             show_verify:false,
             activeStep:0,
             handlingBook:false
           })
-          app.reqFail('预定失败，请刷新页面后重试')
         }
       },
       fail() {
@@ -520,12 +530,16 @@ Page({
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
           _this.jmpPay(res.data.id, res.data.stadium_id)
         } else {
+          if(res.data.error['duration_id'] !== undefined && res.data.error['duration_id'] !== null){
+            app.reqFail(res.data.error['duration_id'][0])
+          } else {
+            app.reqFail('预定失败，请刷新页面后重试')
+          }
           _this.setData({
             show_verify:false,
             activeStep:0,
             handlingBook:false
           })
-          app.reqFail('预定失败，请刷新页面后重试')
         }
       },
       fail() {

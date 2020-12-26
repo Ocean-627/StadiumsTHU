@@ -51,6 +51,10 @@
     <view class="msg-display duration-display" wx:else>
       <text>选择的时间段：\n{{duration_text}}</text>
     </view>
+    <!--<van-button round class="quickchoose-btn" custom-class="van-btn" 
+    color="linear-gradient(to right, #7232dd, #760280)"
+    bindtap="quickChoose"
+    >快速选择</van-button>-->
     <van-button round class="book-btn" custom-class="van-btn" 
     color="linear-gradient(to right, #7232dd, #760280)"
     bindtap="showVerify" wx:if="{{!show_error}}"

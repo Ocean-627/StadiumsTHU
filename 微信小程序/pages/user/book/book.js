@@ -24,8 +24,9 @@ Page({
     toBottom:false,
   },
 
-  onLoad:function() {
-    this.reqBookInfo(0)
+  onShow:function() {
+    this.setData({curPage:1, toBottom:false})
+    this.reqBookInfo(this.data.curStat)
   },
 
   // 页面卸载函数
@@ -110,7 +111,8 @@ Page({
     const idx = e.detail.index
     this.setData({
       curStat:idx,
-      curPage:1
+      curPage:1,
+      toBottom:false
     })
     this.reqBookInfo(idx)
   },
@@ -218,7 +220,9 @@ Page({
         app.reqFail("获取信息失败")
       },
       complete() {
-        Toast.clear()
+        setTimeout(()=>{
+          Toast.clear()
+        },100)
         wx.stopPullDownRefresh({
           success: (res) => {},
         })
@@ -251,14 +255,16 @@ Page({
           _this.removeBookInfo(idx)
           app.reqSuccess("取消成功")
         } else {
-          app.reqFail("操作失败")
+          app.reqFail("取消失败")
         }
       },
       fail() {
-        app.reqFail("操作失败")
+        app.reqFail("取消失败")
       },
       complete() {
-        Toast.clear()
+        setTimeout(()=>{
+          Toast.clear()
+        },100)
       }
     })
   },

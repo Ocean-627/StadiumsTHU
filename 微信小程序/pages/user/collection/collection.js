@@ -88,7 +88,9 @@ Page({
         'loginToken': app.globalData.loginToken,
       },
       success(res) {
-        Toast.clear()
+        setTimeout(()=>{
+          Toast.clear()
+        },100)
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
           _this.setCollectInfo(res)
           if(refresh) {
@@ -99,7 +101,9 @@ Page({
         }
       },
       fail() {
-        Toast.clear()
+        setTimeout(()=>{
+          Toast.clear()
+        },100)
         app.reqFail('获取收藏信息失败')
       },
       complete() {
@@ -130,11 +134,11 @@ Page({
           app.reqSuccess("取消收藏成功")
           _this.rmListItem(idx)
         } else {
-          app.reqFail("操作失败")
+          app.reqFail("取消收藏失败")
         }
       },
       fail() {
-        app.reqFail("操作失败")
+        app.reqFail("取消收藏失败")
       },
     })
   },

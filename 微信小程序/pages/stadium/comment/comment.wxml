@@ -56,7 +56,7 @@
     <van-button round class="op-btn" custom-class="van-btn" color="linear-gradient(to right, #7232dd, #760280)" 
     bindtap="makeComment" wx:if="{{(!wrong_input) && (!post_comment)}}"
     >发表</van-button>
-    <van-button round class="pop-menu-btn" custom-class="van-btn" 
+    <van-button round class="op-btn" custom-class="van-btn" 
     loading color="linear-gradient(to right, #0099FF, #0033FF)" 
     loading-text="处理中" wx:if="{{post_comment}}"/>
   </view>

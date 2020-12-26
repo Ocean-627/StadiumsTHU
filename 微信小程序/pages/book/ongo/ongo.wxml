@@ -1,8 +1,6 @@
 <!--pages/book/ongo/ongo.wxml-->
 <!--弹出提示框-->
 <van-toast id="van-toast" />
-<!--提示对话框-->
-<van-dialog id="van-dialog" />
 
 <view class="container" wx:if="{{!leave}}">
   <view class="info-wrapper">
@@ -27,7 +25,7 @@
     customStyle="color: #760280; border-color: #760280; font-size: 14px;">
     剩余时间</van-divider>
     <van-circle value="{{remain_percent}}" stroke-width="6" text="{{remain_percent+'%'}}"
-    layer-color="#eeeeee" color="#760280"/>
+    layer-color="#eeeeee" color="#760280" id="progress-circle" wx:if="{{!leaveIn}}"/>
     <van-count-down use-slot class="countdown" time="{{ remain_time }}" bind:change="onCountDown">
       <text class="item">{{ timeData.hours }}</text>
       <text class="div-item">:</text>
@@ -73,3 +71,6 @@
     </view>
   </mp-msg>
 </view>
+
+<!--提示对话框-->
+<van-dialog id="van-dialog" />

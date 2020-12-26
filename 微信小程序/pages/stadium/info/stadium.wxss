@@ -13,7 +13,7 @@ page {
 }
 
 /*滚动图片*/
-.gallery {
+.gallery, gallery-img-wrapper {
   width:100%;
   height:400rpx;
 }
@@ -27,8 +27,9 @@ page {
   text-align: center;
 }
 
-.gallery image {
+.gallery .gallery-img {
   height:100%;
+  width:100%;
   justify-self: center;
 }
 

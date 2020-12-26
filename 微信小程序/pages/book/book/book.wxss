@@ -137,7 +137,7 @@ page {
 
 .book-wrapper .date-choice {
   width:100%;
-  font-size: 25rpx;
+  font-size: calc(5px + 10rpx);
 }
 
 .book-wrapper .van-sidebar-item--selected{
@@ -174,15 +174,15 @@ page {
 
 .bottom-menu .error-display {
   color:#FA5151;
-  font-size: 28rpx;
+  font-size: calc(10px + 12rpx);
 }
 
 .bottom-menu .duration-display {
   color:#FF8300;
-  font-size: 28rpx;
+  font-size: calc(10px + 12rpx);
 }
 
-.book-btn {
+.book-btn, .quickchoose-btn {
   width:35%;
   margin-top:10rpx;
   margin-bottom: 10rpx;

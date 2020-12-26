@@ -24,8 +24,9 @@ Page({
     toBottom:false,
   },
 
-  onLoad:function() {
-    this.reqBookInfo(0)
+  onShow:function() {
+    this.setData({curPage:1, toBottom:false})
+    this.reqBookInfo(this.data.curStat)
   },
 
   // 页面卸载
@@ -116,6 +117,8 @@ Page({
     const idx = e.detail.index
     this.setData({
       curStat:idx,
+      curPage:1,
+      toBottom:false
     })
     this.reqBookInfo(idx)
   },
@@ -207,7 +210,11 @@ Page({
       success(res) {
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
           _this.setBookingList(res, statusId, add)
-        } else {
+        } 
+        else if(res.data.error.detail === 'Invalid page.') {
+          _this.setData({ toBottom:true })
+        }
+        else {
           app.reqFail("获取信息失败")
         }
       },
@@ -215,7 +222,9 @@ Page({
         app.reqFail("获取信息失败")
       },
       complete() {
-        Toast.clear()
+        setTimeout(()=>{
+          Toast.clear()
+        },100)
         wx.stopPullDownRefresh({
           success: (res) => {},
         })
@@ -246,9 +255,6 @@ Page({
         if((res.statusCode.toString().startsWith("2")) && (res.data.error === undefined || res.data.error === null)) {
           _this.removeBookInfo(idx)
           app.reqSuccess("删除成功")
-        }  
-        else if(res.data.error.detail === 'Invalid page.') {
-          _this.setData({ toBottom:true })
         }
         else {
           app.reqFail("删除失败")
@@ -258,7 +264,9 @@ Page({
         app.reqFail("删除失败")
       },
       complete() {
-        Toast.clear()
+        setTimeout(()=>{
+          Toast.clear()
+        },100)
       },
     })
   }
