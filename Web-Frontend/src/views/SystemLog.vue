@@ -22,7 +22,7 @@
                     <li class="list-group-item white-bg">
                         <h3>清动家园 v1.0.0 正式发布<small style="float: right;">2020/12/24</small></h3>
                         清动家园小程序、清动家园管理系统正式上线了！<br>
-                        详情请见开发文档。
+                        详情请见<a href="/static/doc.pdf">开发文档</a>。
                     </li>
                 </ul>
             </div>
