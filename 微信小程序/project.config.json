@@ -42,7 +42,7 @@
     "minifyWXSS": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.7.7",
+  "libVersion": "2.10.4",
   "appid": "wx45b215f8db5d15f4",
   "projectname": "weui",
   "debugOptions": {
