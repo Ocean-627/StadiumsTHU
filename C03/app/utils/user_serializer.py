@@ -272,7 +272,7 @@ class CommentSerializer(serializers.ModelSerializer):
     def validate_reserve_id(self, value):
         event = ReserveEvent.objects.filter(id=value, user=self.context['request'].user).first()
         if not event:
-            raise ValidationError('Invalid reserve_id')
+            raise ValidationError('不存在该条预约记录')
         return value
 
     def create(self, validated_data):
@@ -296,7 +296,7 @@ class CommentImageSerializer(serializers.ModelSerializer):
     def validate_comment_id(self, value):
         comment = Comment.objects.filter(id=value, user=self.context['request'].user).first()
         if not comment:
-            raise ValidationError('Invalid comment_id')
+            raise ValidationError('不存在该条评论')
         return value
 
     class Meta:
@@ -311,7 +311,7 @@ class StadiumImageSerializer(serializers.ModelSerializer):
     def validate_stadium_id(self, value):
         stadium = Stadium.objects.filter(id=value).first()
         if not stadium:
-            raise ValidationError('Invalid stadium_id')
+            raise ValidationError('不存在的场馆')
         return value
 
     class Meta:
@@ -367,7 +367,7 @@ class MessageSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         session = Session.objects.filter(id=value, user_id=user.id).first()
         if not session:
-            raise ValidationError('Invalid session_id')
+            raise ValidationError('不存在的会话')
         return value
 
     def create(self, validated_data):
