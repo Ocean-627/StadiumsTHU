@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import "@/assets/js/jquery-3.1.1.min.js";
 export default {
   data() {
     return {

@@ -200,5 +200,5 @@ page {
 }
 
 .openstate-wrapper .van-tag {
-  font-size: 20rpx;
+  font-size: calc(5px + 8rpx);
 }

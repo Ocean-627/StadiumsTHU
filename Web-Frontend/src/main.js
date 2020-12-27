@@ -16,6 +16,7 @@ import "vxe-table/lib/style.css";
 import VXETablePluginExportXLSX from "vxe-table-plugin-export-xlsx";
 import moment from "moment";
 import { VueMasonryPlugin } from "vue-masonry";
+import $ from "jquery";
 
 Vue.use(ElementUI);
 Vue.use(VXETable);
@@ -33,9 +34,9 @@ Vue.use(VueMasonryPlugin);
 //import '@/assets/js/plugins/pace/pace.min.js'
 //
 //import '@/assets/js/plugins/jquery-ui/jquery-ui.min.js'
-//
 //import '@/assets/js/plugins/gritter/jquery.gritter.min.js'
-//
+//import '@/assets/js/plugins/toastr/toastr.min.js'
+
 import "@/assets/js/plugins/sweetalert/sweetalert.min.js";
 
 axios.interceptors.request.use(
@@ -54,7 +55,7 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   response => {
-    console.log(response);
+    //console.log(response);
     if (response.data.error) {
       swal({
         title: "错误",
@@ -83,6 +84,13 @@ axios.interceptors.response.use(
         text: "信息填写不完整！",
         type: "error"
       });
+    } else if (error.response.status === 500) {
+      swal({
+        title: "错误",
+        text: "未知的服务器错误！请刷新页面重试或联系开发人员。",
+        type: "error"
+      });
+    } else if (error.code === "ECONNABORTED") {
     } else {
       swal({
         title: "错误",
@@ -96,7 +104,7 @@ axios.interceptors.response.use(
 
 axios.defaults.withCredentials = true;
 Vue.prototype.$http = axios;
-axios.defaults.baseURL = "http://127.0.0.1:8000/api/manager";
+axios.defaults.baseURL = "https://cbx.iterator-traits.com/api/manager";
 Vue.config.productionTip = false;
 Vue.prototype.Common = Common;
 Vue.prototype.$axios = axios;

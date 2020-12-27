@@ -15,6 +15,8 @@ Page({
     checked:true,
     // 是否正在签到
     checkingIn:false,
+    // 是否正在签退
+    leaveIn:false,
     // 是否已经签退
     leave:false,
   },
@@ -82,6 +84,9 @@ Page({
   // 签退
   onCheckOut:function() {
     const _this = this
+    this.setData({
+      leaveIn:true
+    })
     Dialog.confirm({
       title:'操作确认',
       message:'请确认是否要签退',
@@ -91,6 +96,11 @@ Page({
       _this.reqCheckOut({
         leave:true,
         id:this.data.bookId,
+      })
+    })
+    .catch(()=>{
+      _this.setData({
+        leaveIn:false
       })
     })
   },

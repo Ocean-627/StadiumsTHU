@@ -45,6 +45,15 @@ Page({
     })
   },
 
+  // 匿名用户
+  anonymousLogin:function() {
+    wx.showToast({
+      title: '暂不支持匿名用户登录',
+      icon:'none',
+      duration:2000,
+    })
+  },
+
   // 跳转到主页面
   jmpHome:function() {
     wx.switchTab({
@@ -76,7 +85,7 @@ Page({
               app.globalData.loginToken = res.data.loginToken
               _this.jmpHome()
             } else {
-              app.reqFail("操作失败")
+              app.reqFail("获取信息失败")
             }
           },
           fail() {

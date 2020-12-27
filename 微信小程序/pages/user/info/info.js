@@ -107,18 +107,18 @@ Page({
   },
 
   // 修改成功/失败时顶部弹窗消息
-  modifyFail:function() {
+  modifyFail:function(showText="修改信息失败") {
     this.setData({
-      tip:"修改信息失败",
+      tip:showText,
       tip_show:true,
       tip_type:"error",
       navi_show:false,
     })
   },
 
-  modifySuccess:function() {
+  modifySuccess:function(showText="修改信息成功") {
     this.setData({
-      tip:"修改信息成功",
+      tip:showText,
       tip_show:true,
       tip_type:"success",
       navi_show:false,
@@ -160,6 +160,10 @@ Page({
 
   // 发送修改req
   postModifyMsg:function(key, value) {
+    if(value.match(/^[ ]*$/)) {
+      this.modifyFail("该字段不能为空")
+      return
+    }
     var _this = this
     const app = getApp()
     wx.request({
@@ -177,8 +181,10 @@ Page({
           var varName = _this.data.varReflectTable[key]
           _this.setData({[varName]:value})
           _this.modifySuccess()
+        } else if(res.data.error[key] !== undefined && res.data.error[key] !== null){
+          _this.modifyFail(res.data.error[key][0])
         } else {
-          _this.modifyFail()
+          _this.modifyFai("修改失败(网络故障)")
         }
       },
       fail() {

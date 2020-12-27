@@ -306,7 +306,7 @@ Page({
           app.reqSuccess("获取信息成功")
           _this.setStadiumInfo(res)
         } else {
-          app.reqFail("操作失败")
+          app.reqFail("获取信息失败")
         }
       },
       fail() {

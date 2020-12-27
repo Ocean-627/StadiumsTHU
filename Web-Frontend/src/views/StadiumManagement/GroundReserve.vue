@@ -121,10 +121,7 @@
                                             <label class="font-normal">预留场地数</label>
                                             <div class="row">
                                                 <div class="col-sm-4">
-                                                    <!--
-                                                            <input class="touchspin" type="text" ref="number" />
-                                                        -->
-                                                    <input class="form-control" type="text" ref="number" @change="setNumber(index)" />
+                                                    <input class="form-control" type="text" ref="number" v-on:change="setNumber(index)" />
                                                 </div>
                                             </div>
                                         </div>
@@ -135,7 +132,7 @@
                                                     如果指定了该项，那么将预留指定的场地，即使场地上原本有预约（该预约将被取消并通过站内信通知用户）。如果未指定序号，那么后台将会自动选择空闲的场地进行预留。若空闲场地不足，则必须手动指定序号。
                                                 </small>
                                             </div>
-                                            <select data-placeholder="Choose a Country..." class="chosen-select" multiple style="width:350px;">
+                                            <select class="chosen-select" multiple style="width:350px;">
                                                 <option v-for="court in ground.courts" :key="court.id" :value="court.id">{{ court.name }}</option>
                                             </select>
                                         </div>
@@ -249,6 +246,7 @@ import Toolbox from "@/components/Toolbox";
 import Common from "@/Common";
 import "jquery";
 import "masonry-layout";
+import "@/assets/js/jquery-3.1.1.min.js";
 import "@/assets/js/plugins/clockpicker/clockpicker.js";
 import "@/assets/js/plugins/chosen/chosen.jquery.js";
 import "@/assets/js/plugins/jasny/jasny-bootstrap.min.js";
@@ -294,7 +292,6 @@ export default {
             this.current_court = index;
         },
         setNumber(index) {
-            // TODO: 检查或强制设置预约场地数量一栏的合法性
             Array.prototype.indexValue = function (arr) {
                 for (var i = 0; i < this.length; i++) {
                     if (this[i] == arr) {
@@ -304,6 +301,14 @@ export default {
                 return -1;
             }
             let number = parseInt(this.$refs.number[index].value)
+            if(number > this.grounds[index].courts.length) {
+                swal({
+                  title: "错误",
+                  text: "场地数量超出限制！",
+                  type: "error"
+                });
+                return;
+            }
             let useDate = this.$refs.useDate[index].value
             let startTime = this.$refs.startTime[index].value
             let endTime = this.$refs.endTime[index].value
@@ -336,14 +341,13 @@ export default {
                     }
                 }
                 courtlist = courtlist.slice(0, number);
-                // TODO: 根据courtlist中的序号设置场地默认选中（courtlist为智能推荐场地id结果列表）
+                let chosen = $($('.chosen-select')[index]).val(courtlist).trigger('chosen:updated')
             }
         },
         submit(ground, index) {
             let number = this.$refs.number[index].value
             
-            // TODO: 获取选中的场地的id列表并命名为courts
-            let courts = this.$refs.court_id[index].value.split(',')
+            let courts = $($('.chosen-select')[index]).val();
 
             let useDate = this.$refs.useDate[index].value
             let startTime = this.$refs.startTime[index].value
@@ -521,12 +525,19 @@ export default {
         }
     },
     updated() {
-        $(".chosen-select").chosen({
-            width: "100%"
-        });
-        var clocks = document.getElementsByClassName("clockpicker");
         let _this = this,
             i = 0;
+        $(".chosen-select")
+            .chosen({width: "100%"})
+            .change(function(){
+                console.log(_this.$refs.number.value)
+                for(let j = 0; j < $(".chosen-select").length; j++){
+                    $(_this.$refs.number[j]).val($($('.chosen-select')[j]).val().length);
+                }
+            })
+
+        var clocks = document.getElementsByClassName("clockpicker");
+        
         while (i < clocks.length) {
             $(clocks[i]).clockpicker().find('input').change(function () {
                 _this.form_start = this.value;
@@ -591,12 +602,6 @@ export default {
         for (var i = 0; i < clocks.length; i++) {
             $(clocks[i]).clockpicker();
         }
-        $(document).ready(function () {
-            $("#setEventDate").change(function () {})
-            //$("#demo").val("this is lily").change()   此种方法可以，下面的方法也可以
-            $("#setEventDate").val("this is lily111")
-            $("#setEventDate").trigger("change")
-        })
         $("#data_1 .input-group.date").datepicker({
             todayBtn: "linked",
             keyboardNavigation: false,

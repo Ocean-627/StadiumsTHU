@@ -88,43 +88,51 @@ Page({
 
   show_marker:function(info) {
     const _this = this
-    wx.serviceMarket.invokeService({
-      service: 'wxc1c68623b7bdea7b',
-      api: 'directionWalking',
-      data:{
-        "from":_this.data.user_la+','+_this.data.user_lo,
-        "to":info.latitude+','+info.longitude,
-      }
-    }).then(ret => {
-      console.log(ret)
-      if(ret.data.status !== 0) {
-        wx.showToast({
-          title: '查询路线失败',
-          icon:'none',
-          duration:1000,
-        })
-      } else {
-        var coors = ret.data.result.routes[0].polyline;
-        //坐标解压（返回的点串坐标，通过前向差分进行压缩）
-        for (var i = 2; i < coors.length; i++) {
-          coors[i] = Number(coors[i - 2]) + Number(coors[i]) / 1000000;
+    try{
+      wx.serviceMarket.invokeService({
+        service: 'wxc1c68623b7bdea7b',
+        api: 'directionWalking',
+        data:{
+          "from":_this.data.user_la+','+_this.data.user_lo,
+          "to":info.latitude+','+info.longitude,
         }
-        //解压后，用小程序map组件的polyline，绘制到图上上
-        var pl=[];  
-        for (var i = 0; i < coors.length; i += 2) {
-          //以polyline的points对象规范创建
-          pl.push({ latitude: coors[i], longitude: coors[i + 1] })
+      }).then(ret => {
+        console.log(ret)
+        if(ret.data.status !== 0) {
+          wx.showToast({
+            title: '查询路线失败',
+            icon:'none',
+            duration:1000,
+          })
+        } else {
+          var coors = ret.data.result.routes[0].polyline;
+          //坐标解压（返回的点串坐标，通过前向差分进行压缩）
+          for (var i = 2; i < coors.length; i++) {
+            coors[i] = Number(coors[i - 2]) + Number(coors[i]) / 1000000;
+          }
+          //解压后，用小程序map组件的polyline，绘制到图上上
+          var pl=[];  
+          for (var i = 0; i < coors.length; i += 2) {
+            //以polyline的points对象规范创建
+            pl.push({ latitude: coors[i], longitude: coors[i + 1] })
+          }
+          //设置polyline属性，将路线显示出来（关于地图容器的使用可另行参见小程序组件的开发文档）
+          _this.setData({
+            polyline: [{
+                points: pl,
+                color: '#07c160',
+                width: 4
+            }]
+          })
         }
-        //设置polyline属性，将路线显示出来（关于地图容器的使用可另行参见小程序组件的开发文档）
-        _this.setData({
-          polyline: [{
-              points: pl,
-              color: '#07c160',
-              width: 4
-          }]
-        })
-      }
-    })
+      })
+    } catch(e) {
+      wx.showToast({
+        title: '无法获取地图导航服务，请检查您的小程序版本是否过低',
+        icon:'none',
+        duration:2000,
+      })
+    }
 
     this.setData({
       latitude: info.latitude,
@@ -157,7 +165,7 @@ Page({
       posArr.push({
         id:info.id,
         name:info.name,
-        pinyin:info.pinyin,
+        pinyin:(info.pinyin === null?info.name:info.pinyin),
         latitude:newLaLo.latitude,
         longitude:newLaLo.longitude
       })
@@ -209,7 +217,7 @@ Page({
         if((res.statusCode === 200) && (res.data.error === undefined || res.data.error === null)) {
           _this.setStadiumPosInfo(res)
         } else {
-          app.reqFail("操作失败")
+          app.reqFail("获取信息失败")
         }
       },
       fail() {

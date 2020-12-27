@@ -125,3 +125,12 @@ page {
 .success-container {
   height:100vh;
 }
+
+/* 弹出提示框 */
+#van-dialog {
+  z-index: 100;
+}
+
+#progress-circle {
+  z-index: -1;
+}

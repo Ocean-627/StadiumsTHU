@@ -10,7 +10,7 @@
             </div>
             <div class="wrapper wrapper-content animated fadeInRight ecommerce">
                 <div class="row" style="margin-bottom: 20px" v-show="loaded">
-                    <div class="col-lg-5">
+                    <div class="col-sm-12">
                         <el-select v-model="cur_stadium" id="stadium" @change="updateChart()">
                             <el-option v-for="s in stadiums" :key="s.id" :value="s.id" :label="s.name" />
                         </el-select>
@@ -80,8 +80,7 @@
     </div>
 </template>
 
-<style scoped>
-
+<style>
 </style>
 
 <script>
@@ -90,7 +89,7 @@ import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import Toolbox from "@/components/Toolbox"
 import Chart from "@/components/Chart"
-
+import "@/assets/js/jquery-3.1.1.min.js";
 export default {
     data() {
         return {

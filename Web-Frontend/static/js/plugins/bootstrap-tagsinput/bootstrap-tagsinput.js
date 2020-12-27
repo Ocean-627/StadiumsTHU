@@ -518,46 +518,50 @@
   /**
    * Register JQuery plugin
    */
-  $.fn.tagsinput = function(arg1, arg2, arg3) {
-    var results = [];
+  $ = jQuery;
+  
+  $.fn.extend({
+    tagsinput: function(arg1, arg2, arg3) {
+      var results = [];
 
-    this.each(function() {
-      var tagsinput = $(this).data('tagsinput');
-      // Initialize a new tags input
-      if (!tagsinput) {
-          tagsinput = new TagsInput(this, arg1);
-          $(this).data('tagsinput', tagsinput);
-          results.push(tagsinput);
+      this.each(function() {
+        var tagsinput = $(this).data('tagsinput');
+        // Initialize a new tags input
+        if (!tagsinput) {
+            tagsinput = new TagsInput(this, arg1);
+            $(this).data('tagsinput', tagsinput);
+            results.push(tagsinput);
 
-          if (this.tagName === 'SELECT') {
-              $('option', $(this)).attr('selected', 'selected');
-          }
-
-          // Init tags from $(this).val()
-          $(this).val($(this).val());
-      } else if (!arg1 && !arg2) {
-          // tagsinput already exists
-          // no function, trying to init
-          results.push(tagsinput);
-      } else if(tagsinput[arg1] !== undefined) {
-          // Invoke function on existing tags input
-            if(tagsinput[arg1].length === 3 && arg3 !== undefined){
-               var retVal = tagsinput[arg1](arg2, null, arg3);
-            }else{
-               var retVal = tagsinput[arg1](arg2);
+            if (this.tagName === 'SELECT') {
+                $('option', $(this)).attr('selected', 'selected');
             }
-          if (retVal !== undefined)
-              results.push(retVal);
-      }
-    });
 
-    if ( typeof arg1 == 'string') {
-      // Return the results from the invoked function calls
-      return results.length > 1 ? results : results[0];
-    } else {
-      return results;
+            // Init tags from $(this).val()
+            $(this).val($(this).val());
+        } else if (!arg1 && !arg2) {
+            // tagsinput already exists
+            // no function, trying to init
+            results.push(tagsinput);
+        } else if(tagsinput[arg1] !== undefined) {
+            // Invoke function on existing tags input
+              if(tagsinput[arg1].length === 3 && arg3 !== undefined){
+                 var retVal = tagsinput[arg1](arg2, null, arg3);
+              }else{
+                 var retVal = tagsinput[arg1](arg2);
+              }
+            if (retVal !== undefined)
+                results.push(retVal);
+        }
+      });
+
+      if ( typeof arg1 == 'string') {
+        // Return the results from the invoked function calls
+        return results.length > 1 ? results : results[0];
+      } else {
+        return results;
+      }
     }
-  };
+  });
 
   $.fn.tagsinput.Constructor = TagsInput;
 

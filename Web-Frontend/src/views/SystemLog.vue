@@ -18,7 +18,13 @@
                 </div>
             </div>
             <div class="wrapper wrapper-content animated fadeInRight ecommerce">
-                
+                <ul class="list-group">
+                    <li class="list-group-item white-bg">
+                        <h3>清动家园 v1.0.0 正式发布<small style="float: right;">2020/12/24</small></h3>
+                        清动家园小程序、清动家园管理系统正式上线了！<br>
+                        详情请见开发文档。
+                    </li>
+                </ul>
             </div>
             <Footer></Footer>
         </div>
@@ -35,7 +41,7 @@ import Navbar from "@/components/Navbar"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import Toolbox from "@/components/Toolbox"
-
+import "@/assets/js/jquery-3.1.1.min.js";
 export default {
     data() {
         return {

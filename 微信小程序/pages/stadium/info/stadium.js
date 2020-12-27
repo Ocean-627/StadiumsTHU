@@ -7,9 +7,7 @@ Page({
     stadium_name:'',
     // 滚动图片test
     gallery_imgs: [
-      getApp().globalData.imgUrl+'/res/test/stadium_1.jpg',
-      getApp().globalData.imgUrl+'/res/test/stadium_2.jpg',
-      getApp().globalData.imgUrl+'/res/test/stadium_3.jpeg'
+      
     ],
     // 评论列表
     comment_list: [],
@@ -38,6 +36,10 @@ Page({
     var info = res.data[0]
     var newLaLo = this.bdMap_to_txMap(info.latitude, info.longitude)
     var dis = 0
+    var imgList = []
+    for (var imgInfo of info.images) {
+      imgList.push(imgInfo.image)
+    }
 
     this.setData({
       stadium_name:info.name,
@@ -50,6 +52,7 @@ Page({
       la:newLaLo.latitude,
       lo:newLaLo.longitude,
       dis:dis,
+      gallery_imgs:imgList
     })
 
     // 距离信息  
@@ -144,13 +147,22 @@ Page({
     页面跳转函数
   ---------------------------------------------------*/
   jmpBooking:function() {
-    wx.requestSubscribeMessage({
-      tmplIds: ['FLIjh95XJrOzgWWImzmXttYhs4eoCf9e6VAid0QjHbI',
-      'PdZ2sYAT_HXIkmho2wjfIbMS822H1f4d0xqiKFI6qgs', 'hf9hHSc8OEHfmwicqL4rqLGaDwwJ5NRG4usDQwEJ7Mc'],
-      success (res) { 
-        console.log(res)
-      }
-    })
+    // 请求推送通知权限
+    try {
+      wx.requestSubscribeMessage({
+        tmplIds: ['FLIjh95XJrOzgWWImzmXttYhs4eoCf9e6VAid0QjHbI',
+        'PdZ2sYAT_HXIkmho2wjfIbMS822H1f4d0xqiKFI6qgs', 'hf9hHSc8OEHfmwicqL4rqLGaDwwJ5NRG4usDQwEJ7Mc'],
+        success (res) { 
+          console.log(res)
+        }
+      })
+   } catch(e) {
+     wx.showToast({
+       title: '无法启动通知服务，请检查您的小程序版本是否过低',
+       icon:'none',
+       duration:2000,
+     })
+   }
     wx.navigateTo({
       url: '/pages/book/book/book?id='+this.data.stadium_id,
     })
@@ -201,7 +213,9 @@ Page({
         app.reqFail('获取信息失败')
       },
       complete() {
-        Toast.clear()
+        setTimeout(()=>{
+          Toast.clear()
+        },100)
       },
     })
   },
@@ -225,11 +239,11 @@ Page({
           app.reqSuccess("收藏成功")
           _this.setData({collect:res.data.id})
         } else {
-          app.reqFail("操作失败")
+          app.reqFail("收藏失败")
         }
       },
       fail() {
-        app.reqFail("操作失败")
+        app.reqFail("收藏失败")
       },
     })
   },
@@ -252,11 +266,11 @@ Page({
           app.reqSuccess("取消收藏成功")
           _this.setData({collect:null})
         } else {
-          app.reqFail("操作失败")
+          app.reqFail("取消收藏失败")
         }
       },
       fail() {
-        app.reqFail("操作失败")
+        app.reqFail("取消收藏失败")
       },
     })
   },

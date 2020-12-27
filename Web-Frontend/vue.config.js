@@ -1,8 +1,9 @@
 module.exports = {
   devServer: {
+    https: true,
     proxy: {
       "/": {
-        target: "http://127.0.0.1:8000",
+        target: "https://cbx.iterator-traits.com",
         ws: true,
         changeOrigin: true
       }
